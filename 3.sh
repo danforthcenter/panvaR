@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 process_gene(){
 
     gene_name="$1"
@@ -17,7 +15,7 @@ process_gene(){
     gene_line=$(grep -F "$gene_name" "$gene_location")
     if [[ -z "$gene_line" ]]; then
         echo "Warning: $gene_name does not exist in $gene_location"
-        exit 1
+        return 1
     fi
 
     # If gene_name exists in gene_location file, use awk to create the required string
@@ -26,12 +24,12 @@ process_gene(){
     tabix -h $vcf_file $gene_string | \
         grep -E "#|${gene_name}" > "${gene_dir}/${gene_name}_region_filtered.vcf"
 
-    awk '{if(!/^##/) {print $0; exit}}' $vcf_file > "${gene_dir}/${gene_name}.vcf_header"
+    tabix -H $vcf_file | tail -n 1 > "${gene_dir}/${gene_name}.vcf_header"
 
     # New line added here
-    cat  ${gene_dir}/${gene_name}_region_filtered.vcf | vcfEffOnePerLine.pl | grep -E "#|${gene_name}" | \
-    java -jar SnpSift.jar extractFields - CHROM POS "ANN[*].FEATUREID" REF ALT "ANN[*].EFFECT" "ANN[*].AA" "ANN[*].IMPACT" "GEN[*].GT" | \
-    grep Chr >> "${gene_dir}/${gene_name}_processed.vcf"
+    cat  ${gene_dir}/${gene_name}_region_filtered.vcf | /home/rijan/work_in_progress/panvar/vcfEffOnePerLine.pl | grep -E "#|${gene_name}" | \
+    java -jar /home/rijan/work_in_progress/panvar/snpSift.jar extractFields - CHROM POS "ANN[*].FEATUREID" REF ALT "ANN[*].EFFECT" "ANN[*].AA" "ANN[*].IMPACT" "GEN[*].GT" | \
+    grep 'Chr' >> "${gene_dir}/${gene_name}_processed.vcf"
 
     # Rijan: remove multiple/non-relevant gene snps
     grep -v "-" "${gene_dir}/${gene_name}_processed.vcf" > "${gene_dir}/${gene_name}_single_processed.vcf"
@@ -40,8 +38,6 @@ process_gene(){
 
     grep -E 'CHROM|LOW|MODERATE|HIGH' "${gene_dir}/${gene_name}_numerical_allele_scores.vcf" > "${gene_dir}/${gene_name}_impactful.vcf"
 }
-
-
 
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
@@ -69,8 +65,6 @@ while [[ "$#" -gt 0 ]]; do
     esac
 done
 
-
-
 # Check if the gene_location file exists
 if [[ ! -f "$GENE_LOCATION" ]]; then
     echo "The gene_location file does not exist. Please enter the correct path:"
@@ -95,3 +89,7 @@ if [[ ! -d "$OUTPUT_DIR" ]]; then
         exit 1
     fi
 fi
+
+# Call the function
+process_gene "$GENE_NAME" "$GENE_LOCATION" "$VCF_FILE" "$OUTPUT_DIR"
+
