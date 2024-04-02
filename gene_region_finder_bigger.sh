@@ -34,18 +34,19 @@ gene_region_finder () {
 
   tabix -h ${vcf_file} ${chromosome}:${snp_start_ld}-${snp_stop_ld} > ${tabix_output_file}
 
-  cat <<- HERE > temp_region_file.txt
+  cat <<- HERE > "${chromosome}_${distance}_temp_region_file.txt"
   Chr Snp
   $chromosome $distance
 HERE
 
   vcftools --vcf $tabix_output_file \
-    --geno-r2-positions temp_region_file.txt  \
+    --geno-r2-positions "${chromosome}_${distance}_temp_region_file.txt" \
     --ld-window 500 \
     --out $output/${tabix_output_file_name}
   
   # remove unwanted files here
-  rm temp_region_file.txt # the temp file that holds the `--geno-r2-positions` input data for vcftools, was created using the HERE doc.
+  rm "${chromosome}_${distance}_temp_region_file.txt" # the temp file that holds the `--geno-r2-positions` input data for vcftools, was created using the HERE doc.
+  
   rm $output/${tabix_output_file_name}.log # the log file that is completely unnecessary for us.
 
   rm $tabix_output_file
@@ -54,8 +55,16 @@ HERE
   
   awk_file_output="$output/${base_name}_${snp_start_ld}_${snp_stop_ld}.ld_data"
 
-  awk '$6 >= "0.1"' $vcf_file | grep -v "nan" | grep -v "N_IDV" | sort -k4,4n > $awk_file_output
+  awk '$6 >= "0.1"' $vcf_file | grep -v "nan" | grep -v "N_INDV" | sort -k4,4n > $awk_file_output
 
+  # Print the first item of the 4th column
+  start=$(awk '{if(NR==1) print $4}' $awk_file_output)
+  
+  # Print the last item of the 4th column
+  stop=$(awk '{last=$4} END{print last}' $awk_file_output)
+
+  printf "%s %s %s\n" "$chromosome" "$start" "$stop" > $awk_file_output
+  
   rm $vcf_file # remove unnecessary intermediate file
   
  }
