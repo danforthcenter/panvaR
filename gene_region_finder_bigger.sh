@@ -26,6 +26,16 @@ gene_region_finder () {
   base_name="$(basename -- $vcf_file)"
   base_name="${base_name%.*}" # this should be the base of the file without the extension
 
+  # Check if the .tbi file exists
+  if [[ ! -f "${vcf_file}.tbi" ]]; then
+    read -p "The .tbi file for the given vcf file does not exist. Would you like to generate it? (y/n) " yn
+    case $yn in
+        [Yy]* ) tabix -p vcf $vcf_file;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no."; exit;;
+    esac
+  fi
+
   # Crunching the numbers for the linkage distance range from the input
   snp_start_ld=$((distance-500000))
   snp_stop_ld=$((distance+500000))
