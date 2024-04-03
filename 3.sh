@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Check for dependencies
+if ! command -v vcfEffOnePerLine.pl &> /dev/null
+then
+    echo "vcfEffOnePerLine.pl could not be found"
+    exit
+fi
+
+if [ ! -f "./snpSift.jar" ]; then
+    echo "snpSift.jar does not exist in the current directory"
+    exit
+fi
+
 process_gene(){
 
     gene_name="$1"
