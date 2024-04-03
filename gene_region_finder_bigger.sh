@@ -13,6 +13,16 @@ gene_region_finder () {
   distance="$3"
   output="$4"
 
+  # Check if the output directory exists
+  if [[ ! -d "$output" ]]; then
+    read -p "Output directory '$output' does not exist. Would you like to create it? (y/n) " yn
+    case $yn in
+        [Yy]* ) mkdir -p "$output";;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no."; exit;;
+    esac
+  fi
+
   base_name="$(basename -- $vcf_file)"
   base_name="${base_name%.*}" # this should be the base of the file without the extension
 
