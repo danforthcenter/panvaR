@@ -39,8 +39,8 @@ process_gene(){
     tabix -H $vcf_file | tail -n 1 > "${gene_dir}/${gene_name}.vcf_header"
 
     # New line added here
-    cat  ${gene_dir}/${gene_name}_region_filtered.vcf | /home/rijan/work_in_progress/panvar/vcfEffOnePerLine.pl | grep -E "#|${gene_name}" | \
-    java -jar /home/rijan/work_in_progress/panvar/snpSift.jar extractFields - CHROM POS "ANN[*].FEATUREID" REF ALT "ANN[*].EFFECT" "ANN[*].AA" "ANN[*].IMPACT" "GEN[*].GT" | \
+    cat  ${gene_dir}/${gene_name}_region_filtered.vcf | vcfEffOnePerLine.pl | grep -E "#|${gene_name}" | \
+    java -jar snpSift.jar extractFields - CHROM POS "ANN[*].FEATUREID" REF ALT "ANN[*].EFFECT" "ANN[*].AA" "ANN[*].IMPACT" "GEN[*].GT" | \
     grep 'Chr' >> "${gene_dir}/${gene_name}_processed.vcf"
 
     # Rijan: remove multiple/non-relevant gene snps
