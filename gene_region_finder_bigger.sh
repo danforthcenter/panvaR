@@ -75,7 +75,7 @@ HERE
   
   awk_file_output="$output/${base_name}_${snp_start_ld}_${snp_stop_ld}.ld_data"
 
-  awk '$6 >= "0.1"' $vcf_file | grep -v "nan" | grep -v "N_INDV" | sort -k4,4n > $awk_file_output
+  awk '$6+0 >= 0.1' $vcf_file | grep -v "nan" | grep -v "N_INDV" | sort -k4,4n > $awk_file_output
 
   # Print the first item of the 4th column
   start=$(awk '{if(NR==1) print $4}' $awk_file_output)
