@@ -10,7 +10,7 @@ gene_region_finder () {
   # re-assign the variables here to use inside the function
   chromosome="$1"
   vcf_file_holder="$2"
-  distance="$3"
+  loci="$3"
   output="$4"
 
   # Check if the output directory exists
@@ -36,15 +36,15 @@ gene_region_finder () {
     esac
   fi
 
-  # Crunching the numbers for the linkage distance range from the input
-  snp_start_ld=$((distance-500000))
-  snp_stop_ld=$((distance+500000))
+  # Crunching the numbers for the linkage loci range from the input
+  snp_start_ld=$((loci-500000))
+  snp_stop_ld=$((loci+500000))
 
   ## make sure that the start LD is not below zero
 
   if (( ${snp_start_ld} < 1)); then
     snp_start_ld=0
-    echo "the given distance was too close to the start and needed to be reset to 0"
+    echo "the given loci was too close to the start and needed to be reset to 0"
   fi
 
   # generate a base name for the output file using the base name of the input file and the ld range
@@ -54,18 +54,18 @@ gene_region_finder () {
 
   tabix -h ${vcf_file} ${chromosome}:${snp_start_ld}-${snp_stop_ld} > ${tabix_output_file}
 
-  cat <<- HERE > "${chromosome}_${distance}_temp_region_file.txt"
+  cat <<- HERE > "${chromosome}_${loci}_temp_region_file.txt"
   Chr Snp
-  $chromosome $distance
+  $chromosome $loci
 HERE
 
   vcftools --vcf $tabix_output_file \
-    --geno-r2-positions "${chromosome}_${distance}_temp_region_file.txt" \
+    --geno-r2-positions "${chromosome}_${loci}_temp_region_file.txt" \
     --ld-window 500 \
     --out $output/${tabix_output_file_name}
   
   # remove unwanted files here
-  rm "${chromosome}_${distance}_temp_region_file.txt" # the temp file that holds the `--geno-r2-positions` input data for vcftools, was created using the HERE doc.
+  rm "${chromosome}_${loci}_temp_region_file.txt" # the temp file that holds the `--geno-r2-positions` input data for vcftools, was created using the HERE doc.
   
   rm $output/${tabix_output_file_name}.log # the log file that is completely unnecessary for us.
 
@@ -117,12 +117,12 @@ if [[ -n "$input_file" ]]; then
   fi
 
   # Process the TSV file
-  while IFS=$' ' read -r chromosome vcf_file distance; do
+  while IFS=$' ' read -r chromosome vcf_file loci; do
     # Use the parsed values here
-    #DEBUG echo "first debug Processing: $chromosome $vcf_file $distance"
+    #DEBUG echo "first debug Processing: $chromosome $vcf_file $loci"
     #DEBUG echo "$output"
     # pass arguments to the function that wrangles the data
-    gene_region_finder "$chromosome" "$vcf_file" "$distance" "$output" 
+    gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output" 
   done < "$input_file"
 else
   # Reset the argument pointer if necessary
@@ -145,9 +145,9 @@ else
         output=$1
         shift
         ;;
-      --distance)
+      --loci)
         shift
-        distance=$1
+        loci=$1
         shift
         ;;
       *)
@@ -157,6 +157,5 @@ else
     esac
   done
   # Validate and use the arguments here
-  gene_region_finder "$chromosome" "$vcf_file" "$distance" "$output"
+  gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output"
 fi
-
