@@ -127,91 +127,85 @@ def genotype_correlation(X:list, Y:list):
 
 
 # use vcf_path to pass path to vcf_file, else just pass vcf_data
-def rtwo_calculator(chromosome:str, loci_one:int, loci_two:int,vcf_path:str = None, vcf_data = None):
-
+def rtwo_calculator(chromosome:str, loci:list, vcf_path:str = None, vcf_data = None):
     """
-       This is a function of convienience to bundle up some code that needs to work together. 
-    """
+    This function calculates r^2 values between the first locus and multiple other loci.
 
-    #TODO: what to do if the index file is not there?
-    # Warning this assumes that the .tbi (tabix index file exits)
-    # I would have coded in logic to handle the exception of the .tbi file not being there but pysam is not producing the proper exceptions
-    
+    Args:
+        chromosome (str): The chromosome in the file of interest.
+        loci (list): A list of loci of interest. The first locus is used as the reference.
+        vcf_path (str): The path to the VCF file of interest.
+        vcf_data: An open VCF file object (optional).
+
+    Returns:
+        dict: A dictionary with locus pairs as keys and r^2 values as values.
+    """
     # if vcf_path is supplied open the vcf_file
     if vcf_path != None:
         vcf_data = pysam.VariantFile(vcf_path)
     # else just use vcf_dat as supplied
 
-    # get the phased genotypes in [<char>,<char>] format
-    
-    genotype_array_one = fetch_alleles(vcf_data, chromosome, loci_one)
+    # get the phased genotypes in [<char>,<char>] format for the first locus
+    genotype_array_ref = fetch_alleles(vcf_data, chromosome, loci[0])
 
-    genotype_array_two = fetch_alleles(vcf_data, chromosome, loci_two)
+    # convert the phased genotypes into numerical format for the first locus
+    ref_allele = reference_allele(vcf_data, chromosome, loci[0])
+    genotype_array_ref_numerical = allele_to_ints(genotype_array_ref, ref_allele)
 
-    # convert the phased genotypes into numberical format depending on what there reference is
-    
-    # but we need the reference first 
-    loci_one_ref = reference_allele(vcf_data,chromosome,loci_one)
+    # compact the numerical genotype data for the first locus
+    genotype_array_ref_compacted = list(map(add_if_not_none, genotype_array_ref_numerical))
 
-    loci_two_ref = reference_allele(vcf_data,chromosome,loci_two)
+    rtwo_values = {}
 
-    # now we can convert the phased genomes into numbers
+    for locus in loci[1:]:
+        # get the phased genotypes in [<char>,<char>] format for the current locus
+        genotype_array = fetch_alleles(vcf_data, chromosome, locus)
 
-    genotype_array_one_numerical = allele_to_ints(genotype_array_one, loci_one_ref)
+        # convert the phased genotypes into numerical format for the current locus
+        locus_ref = reference_allele(vcf_data, chromosome, locus)
+        genotype_array_numerical = allele_to_ints(genotype_array, locus_ref)
 
-    genotype_array_two_numerical = allele_to_ints(genotype_array_two,loci_two_ref)
+        # compact the numerical genotype data for the current locus
+        genotype_array_compacted = list(map(add_if_not_none, genotype_array_numerical))
 
-    # now we need to compact the numerical genotype data. As in [0,0] becomes 0, [1,0] becomes 1 and [1,1] becomes 2
+        n_indv_list = []
+        for i in zip(genotype_array_ref_compacted, genotype_array_compacted):
+            if all([j is not None for j in i]):
+                n_indv_list.append(True)
+            else:
+                n_indv_list.append(False)
 
-    genotype_array_one_compacted = list(map(add_if_not_none, genotype_array_one_numerical))
+        # filter the genotype data for the first locus and the current locus
+        genotype_ref_filtered = list(compress(genotype_array_ref_compacted, n_indv_list))
+        genotype_filtered = list(compress(genotype_array_compacted, n_indv_list))
 
-    genotype_array_two_compacted = list(map(add_if_not_none, genotype_array_two_numerical))
+        # calculate the r^2 value between the first locus and the current locus
+        rtwo_value = genotype_correlation(genotype_ref_filtered, genotype_filtered)
 
-    n_indv_list = []
+        # store the r^2 value with the locus pair as the key
+        rtwo_values[(loci[0], locus)] = rtwo_value
 
-    for i in zip(genotype_array_one_compacted,genotype_array_two_compacted):
-        
-        if all([j is not None for j in i]):
-            
-            n_indv_list.append(True)
-        
-        else:
-            n_indv_list.append(False)
+    return rtwo_values
 
-    # "zip" the genotype data such that only lineages with data in both loci is take in
-    genotype_one_filtered = list(compress(genotype_array_one_compacted,n_indv_list))
-
-    genotype_two_filtered = list(compress(genotype_array_two_compacted, n_indv_list))
-
-    # now use the `genotype_correlation` function to calculate the r^2 value and return it
-
-    rtwo_value = genotype_correlation(genotype_one_filtered, genotype_two_filtered)
-
-    return rtwo_value
-    
 if __name__ == "__main__":
-
     import sys, argparse
 
-    parser = argparse.ArgumentParser(description = "Calculate the r^2 values between two loci in a VCF file.")
+    parser = argparse.ArgumentParser(description = "Calculate the r^2 values between the first locus and multiple other loci in a VCF file.")
 
     parser.add_argument('-v','--vcf_file', nargs= 1, default=None, help = "The path to the VCF file of interest.")
 
-    parser.add_argument('-l','--loci', nargs= 2, default=None, type=int , help = "The two loci of interest.")
+    parser.add_argument('-l','--loci', nargs= '+', default=None, type=int , help = "The loci of interest. The first locus is used as the reference.")
 
     parser.add_argument('-c','--chrom',nargs = 1, help = "The chromosome in the file of interest.")
 
     #get a persistent iterator
     args = parser.parse_args()
-    
-    # get the list of loci
-    first_loci, second_loci = args.loci
-    
-    rtwo = rtwo_calculator(
+
+    rtwo_values = rtwo_calculator(
         vcf_path = args.vcf_file[0],
         chromosome = args.chrom[0],
-        loci_one = first_loci,
-        loci_two = second_loci
+        loci = args.loci
     )
 
-    print("The value for r^2 is: ",rtwo)
+    for locus_pair, rtwo in rtwo_values.items():
+        print(f"The value for r^2 between loci {locus_pair[0]} and {locus_pair[1]} is: {rtwo}")
