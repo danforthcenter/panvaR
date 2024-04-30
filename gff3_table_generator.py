@@ -1,5 +1,6 @@
 import gffutils
 import argparse
+import os
 
 def main():
     parser = argparse.ArgumentParser(description='Extract gene features from a GFF3 file')
@@ -16,12 +17,16 @@ def main():
 
     # Write output to file or print to console
     if args.output:
-        with open(args.output, 'w') as f:
+        with open(args.output, 'w+') as f:
             for gene in genes:
                 f.write(f"{gene.chrom}\t{gene.start}\t{gene.end}\t{gene.strand}\n")
     else:
         for gene in genes:
             print(gene.chrom, gene.start, gene.end, gene.strand)
+
+    # Delete the database file if it's the default one
+    if args.db_file == 'default.db':
+        os.remove(args.db_file)
 
 if __name__ == '__main__':
     main()
