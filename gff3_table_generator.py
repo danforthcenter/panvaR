@@ -18,11 +18,13 @@ def main():
     # Write output to file or print to console
     if args.output:
         with open(args.output, 'w+') as f:
+            f.write("Chrom\tExt_Start\tExt_Stop\tGene\n")  # header
             for gene in genes:
-                f.write(f"{gene.chrom}\t{gene.start}\t{gene.end}\t{gene.strand}\n")
+                f.write(f"{gene.chrom}\t{gene.start}\t{gene.end}\t{gene.attributes['Name'][0]}\n")
     else:
+        print("Chrom\tExt_Start\tExt_Stop\tGene")  # header
         for gene in genes:
-            print(gene.chrom, gene.start, gene.end, gene.strand)
+            print(f"{gene.chrom}\t{gene.start}\t{gene.end}\t{gene.attributes['Name'][0]}")
 
     # Delete the database file if it's the default one
     if args.db_file == 'default.db':
