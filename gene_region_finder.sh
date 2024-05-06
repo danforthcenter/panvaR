@@ -4,6 +4,9 @@
 command -v tabix >/dev/null || { echo "This shell does not have access to tabix. This software requires tabix in path"; exit; }
 command -v vcftools >/dev/null || { echo "This shell does not have access to vcftools. This software requires vcftools in path"; exit; }
 
+# defining defaults
+distance=500000 # this will be used if the user does not supply any defaults
+
 # defining functions
 
 gene_region_finder () {
@@ -12,6 +15,7 @@ gene_region_finder () {
   vcf_file_holder="$2"
   loci="$3"
   output="$4"
+  distance="$5"
 
   # Check if the output directory exists
   if [[ ! -d "$output" ]]; then
@@ -37,8 +41,8 @@ gene_region_finder () {
   fi
 
   # Crunching the numbers for the linkage loci range from the input
-  snp_start_ld=$((loci-500000))
-  snp_stop_ld=$((loci+500000))
+  snp_start_ld=$((loci-distance))
+  snp_stop_ld=$((loci+distance))
 
   ## make sure that the start LD is not below zero
 
@@ -93,12 +97,12 @@ HERE
 # CLI flags
 while test $# -gt 0; do
   case "$1" in
-    --file)
+    -f|--file)
       shift
       input_file="$1"
       shift
       ;;
-    --output)
+    -o|--output)
       shift
       output="${1:-"panvar_run"}"
       shift
@@ -122,7 +126,7 @@ if [[ -n "$input_file" ]]; then
     #DEBUG echo "first debug Processing: $chromosome $vcf_file $loci"
     #DEBUG echo "$output"
     # pass arguments to the function that wrangles the data
-    gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output" 
+    gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output" "$distance"
   done < "$input_file"
 else
   # Reset the argument pointer if necessary
@@ -130,22 +134,27 @@ else
 
   while test $# -gt 0; do
     case "$1" in
-      --chromosome)
+      -c|--chromosome)
         shift
         chromosome=$1
         shift
         ;;
-      --vcf_file)
+      -v|--vcf_file)
         shift
         vcf_file=$1
         shift
         ;;
-      --output)
+      -o|--output)
         shift
         output=$1
         shift
         ;;
-      --loci)
+      -l|--loci)
+        shift
+        loci=$1
+        shift
+        ;;
+      -d|--distance)
         shift
         loci=$1
         shift
@@ -157,5 +166,5 @@ else
     esac
   done
   # Validate and use the arguments here
-  gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output"
+  gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output" "$distance"
 fi
