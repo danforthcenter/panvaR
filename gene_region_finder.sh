@@ -19,26 +19,32 @@ gene_region_finder () {
   distance="$5"
   window="$6"
 
-  echo "The window is $window"
-
   # Check if the output file's directory exists, create if not
   output_dir=$(dirname "$output_file")
   if [[ ! -d "$output_dir" ]]; then
     mkdir -p "$output_dir"
   fi
 
+  # get file base_names for later use
   base_name="$(basename -- $vcf_file)"
   base_name="${base_name%.*}" # this should be the base of the file without the extension
 
   # Check if the .tbi file exists
   if [[ ! -f "${vcf_file}.tbi" ]]; then
-    read -p "The .tbi file for the given vcf file does not exist. Would you like to generate it? (y/n) " yn
-    case $yn in
-        [Yy]* ) tabix -p vcf $vcf_file;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer yes or no."; exit;;
-    esac
+    # Check if a bulk file is supplied by checking the input_file variable
+    if [[ -n "$input_file" ]]; then
+      echo "Bulk file detected. Generating .tbi file for $vcf_file."
+      tabix -p vcf $vcf_file
+    else
+      read -p "The .tbi file for the given vcf file does not exist. Would you like to generate it? (y/n) " yn
+      case $yn in
+          [Yy]* ) tabix -p vcf $vcf_file;;
+          [Nn]* ) exit;;
+          * ) echo "Please answer yes or no."; exit;;
+      esac
+    fi
   fi
+
 
   # Crunching the numbers for the linkage loci range from the input
   snp_start_ld=$((loci-distance))
@@ -87,7 +93,21 @@ HERE
   # Print the last item of the 4th column
   stop=$(awk '{last=$4} END{print last}' $awk_file_output)
 
-  printf "%s %s %s\n" "$chromosome" "$start" "$stop" "$base_name" "$loci" "$distance" >> $output_file
+  ## Format output
+
+  # Check if the output file exists and has the header line
+  if [[ ! -f "$output_file" ]]; then
+    # If the file doesn't exist, create it and add the header
+    echo "VCF_file Chrom locus distance start stop" > "$output_file"
+  else
+    # If the file exists, check for the header
+    if ! grep -q "VCF_file Chrom locus distance start stop" "$output_file"; then
+      # If the header is not found, add it
+      sed -i '1iVCF_file Chrom locus distance start stop' "$output_file"
+    fi
+  fi
+
+  printf "%s %s %s %s %s %s\n" "$base_name" "$chromosome" "$loci" "$distance" "$start" "$stop"  >> $output_file
   
   rm $vcf_file # remove unnecessary intermediate file
   rm $awk_file_output
@@ -120,10 +140,15 @@ if [[ -n "$input_file" ]]; then
     exit 1
   fi
 
-  # Process the TSV file
-  while IFS=$' ' read -r chromosome vcf_file loci; do
-    gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output_file" "$distance" "$window"
-  done < "$input_file"
+  # Process the SSV file
+while IFS=$' ' read -r chromosome vcf_file loci custom_distance custom_window; do
+  # Skip the loop iteration if the line is empty
+  [[ -z "$chromosome" ]] && continue
+  # Use the provided distance and window if present, otherwise use the defaults
+  gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output_file" "${custom_distance:-$distance}" "${custom_window:-$window}"
+done < "$input_file"
+
+
 else
   # Reset the argument pointer if necessary
   # set -- 
