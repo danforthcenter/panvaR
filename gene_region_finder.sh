@@ -6,25 +6,25 @@ command -v vcftools >/dev/null || { echo "This shell does not have access to vcf
 
 # defining defaults
 distance=500000 # this will be used if the user does not supply any defaults
+window=500000
 
 # defining functions
 
 gene_region_finder () {
   # re-assign the variables here to use inside the function
   chromosome="$1"
-  vcf_file_holder="$2"
+  vcf_file="$2"
   loci="$3"
-  output="$4"
+  output_file="$4"
   distance="$5"
+  window="$6"
 
-  # Check if the output directory exists
-  if [[ ! -d "$output" ]]; then
-    read -p "Output directory '$output' does not exist. Would you like to create it? (y/n) " yn
-    case $yn in
-        [Yy]* ) mkdir -p "$output";;
-        [Nn]* ) exit;;
-        * ) echo "Please answer yes or no."; exit;;
-    esac
+  echo "The window is $window"
+
+  # Check if the output file's directory exists, create if not
+  output_dir=$(dirname "$output_file")
+  if [[ ! -d "$output_dir" ]]; then
+    mkdir -p "$output_dir"
   fi
 
   base_name="$(basename -- $vcf_file)"
@@ -54,7 +54,7 @@ gene_region_finder () {
   # generate a base name for the output file using the base name of the input file and the ld range
   tabix_output_file_name="${base_name}_${snp_start_ld}_${snp_stop_ld}"
 
-  tabix_output_file="${output}/${tabix_output_file_name}.txt"
+  tabix_output_file="${output_dir}/${tabix_output_file_name}.txt"
 
   tabix -h ${vcf_file} ${chromosome}:${snp_start_ld}-${snp_stop_ld} > ${tabix_output_file}
 
@@ -65,19 +65,19 @@ HERE
 
   vcftools --vcf $tabix_output_file \
     --geno-r2-positions "${chromosome}_${loci}_temp_region_file.txt" \
-    --ld-window 500 \
-    --out $output/${tabix_output_file_name}
+    --ld-window-bp $window \
+    --out $output_dir/${tabix_output_file_name}
   
   # remove unwanted files here
   rm "${chromosome}_${loci}_temp_region_file.txt" # the temp file that holds the `--geno-r2-positions` input data for vcftools, was created using the HERE doc.
   
-  rm $output/${tabix_output_file_name}.log # the log file that is completely unnecessary for us.
+  rm $output_dir/${tabix_output_file_name}.log # the log file that is completely unnecessary for us.
 
   rm $tabix_output_file
 
-  vcf_file="$output/${tabix_output_file_name}.list.geno.ld"
+  vcf_file="$output_dir/${tabix_output_file_name}.list.geno.ld"
   
-  awk_file_output="$output/${base_name}_${snp_start_ld}_${snp_stop_ld}.ld_data"
+  awk_file_output="$output_dir/${base_name}_${snp_start_ld}_${snp_stop_ld}.ld_data"
 
   awk '$6+0 >= 0.1' $vcf_file | grep -v "nan" | grep -v "N_INDV" | sort -k4,4n > $awk_file_output
 
@@ -87,12 +87,11 @@ HERE
   # Print the last item of the 4th column
   stop=$(awk '{last=$4} END{print last}' $awk_file_output)
 
-  printf "%s %s %s\n" "$chromosome" "$start" "$stop" > $awk_file_output
+  printf "%s %s %s\n" "$chromosome" "$start" "$stop" "$base_name" "$loci" "$distance" >> $output_file
   
   rm $vcf_file # remove unnecessary intermediate file
-  
- }
-
+  rm $awk_file_output
+}
 
 # CLI flags
 while test $# -gt 0; do
@@ -104,7 +103,7 @@ while test $# -gt 0; do
       ;;
     -o|--output)
       shift
-      output="${1:-"panvar_run"}"
+      output_file="${1:-"panvar_run.txt"}"
       shift
       ;;
     *)
@@ -114,6 +113,7 @@ while test $# -gt 0; do
   esac
 done
 
+# Process the input file or command line arguments
 if [[ -n "$input_file" ]]; then
   if [[ ! -f "$input_file" ]]; then
     echo "Input file '$input_file' not found."
@@ -122,11 +122,7 @@ if [[ -n "$input_file" ]]; then
 
   # Process the TSV file
   while IFS=$' ' read -r chromosome vcf_file loci; do
-    # Use the parsed values here
-    #DEBUG echo "first debug Processing: $chromosome $vcf_file $loci"
-    #DEBUG echo "$output"
-    # pass arguments to the function that wrangles the data
-    gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output" "$distance"
+    gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output_file" "$distance" "$window"
   done < "$input_file"
 else
   # Reset the argument pointer if necessary
@@ -146,7 +142,7 @@ else
         ;;
       -o|--output)
         shift
-        output=$1
+        output_file=$1
         shift
         ;;
       -l|--loci)
@@ -156,7 +152,12 @@ else
         ;;
       -d|--distance)
         shift
-        loci=$1
+        distance=$1
+        shift
+        ;;
+      -w|--window)
+        shift
+        window=$1
         shift
         ;;
       *)
@@ -165,6 +166,5 @@ else
         ;;
     esac
   done
-  # Validate and use the arguments here
-  gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output" "$distance"
+  gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output_file" "$distance" "$window"
 fi
