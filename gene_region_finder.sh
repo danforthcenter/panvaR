@@ -141,7 +141,7 @@ if [[ -n "$input_file" ]]; then
   fi
 
   # Process the SSV file
-while IFS=$' ' read -r chromosome vcf_file loci custom_distance custom_window; do
+while IFS=$' ' read -r chromosome vcf_file loci custom_distance custom_window; do # this is where the file reads things
   # Skip the loop iteration if the line is empty
   [[ -z "$chromosome" ]] && continue
   # Use the provided distance and window if present, otherwise use the defaults
