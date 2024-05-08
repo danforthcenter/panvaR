@@ -3,7 +3,7 @@
 # Check for dependencies
 if ! command -v vcfEffOnePerLine.pl &> /dev/null
 then
-    echo "vcfEffOnePerLine.pl could not be found"
+    echo "vcfEffOnePerLine.pl is not installed. Please install it and try again."
     exit 1 # Changed exit code to 1 for error indication
 fi
 
@@ -37,6 +37,11 @@ process_gene(){
     # If gene_name exists in gene_location file, use awk to create the required string
     gene_string=$(echo "$gene_line" | awk '{print $1 ":" $2 "-" $3}') # this creates the query for tabix to use against the vcf file
 
+    # Check if the .tbi file exists
+    if [[ ! -f "${vcf_file}.tbi" ]]; then
+      tabix -p vcf "$vcf_file"
+    fi
+
     # Corrected the use of variables in tabix command
     tabix -h "$vcf_file" "$gene_string" | \
         grep -E "#|${gene_name}" > "${gene_name}_region_filtered.vcf"
@@ -52,32 +57,24 @@ process_gene(){
     # Rijan: remove multiple/non-relevant gene snps
     grep -v "-" "${gene_name}_processed.vcf" > "${gene_name}_single_processed.vcf"
 
-    # Improved sed command readability
-    sed -e 's|0/0|0|g' \
-        -e 's|0/1|1|g' \
-        -e 's|1/1|2|g' \
-        -e 's|./.|NA|g' "${gene_name}_single_processed.vcf" > "${gene_name}_numerical_allele_scores.vcf"
+    sed -e 's/0|0/0/g' \
+    -e 's/1|0/1/g' \
+    -e 's/1|1/2/g' \
+    -e 's/\.|./NA/g' "${gene_name}_single_processed.vcf" > "${gene_name}_numerical_allele_scores.vcf"
 
-    # set up the output file if need be
-    header_file="${gene_name}.vcf_header"
-    impactful_file="$output_file.impactful_hits.vcf"
-
-    # Check if the impactful hits file exists before reading
-    if [[ -f "$impactful_file" ]]; then
-        read -r first_line < "$impactful_file"
+    # check:
+      # if the output files exits
+      # if it already has the header
+    if [[ ! -f "$output_file" ]]; then
+        # If the file doesn't exist, simply move the header to be the new output file
+        cp "${gene_name}.vcf_header" "$output_file"
     else
-        touch "$impactful_file" # Create the file if it doesn't exist
-        first_line=""
+        # If the file exists but the header is not present, add the header
+        if ! grep -q -F -f "${gene_name}.vcf_header" "$output_file"; then
+            cat "${gene_name}.vcf_header" > "${output_file}.tmp" && cat "$output_file" >> "${output_file}.tmp" && mv "${output_file}.tmp" "$output_file"
+        fi
     fi
 
-    # Read the content of the header file
-    read -r header < "$header_file"
-
-    # Check if the first line matches the header
-    if [ "$first_line" != "$header" ]; then
-      # Add the header to the top of the impactful hits file
-      { echo "$header"; cat "$impactful_file"; } > temp_file && mv temp_file "$impactful_file"
-    fi
 
     # append outcome to file
     grep -E 'CHROM|LOW|MODERATE|HIGH' "${gene_name}_numerical_allele_scores.vcf" >> "$output_file"
@@ -128,7 +125,7 @@ if [[ -n "$input_file" ]]; then
   fi
 
   # Process the SSV file
-  while IFS=$' ' read -r gene_name custom_gene_location_file custom_vcf_file custom_output; do
+  while IFS=$' ' read -r gene_name custom_vcf_file custom_gene_location_file custom_output; do
     # Skip the loop iteration if the line is empty
     [[ -z "$gene_name" ]] && continue # Corrected the variable name from chromosome to gene_name
     # Use the provided distance and window if present, otherwise use the defaults
