@@ -188,14 +188,14 @@ genotype_data_effect_size_filter <- impactful_SNPs %>%
 rates_of_mutation <- mutation_rates(genotype_data_effect_size_filter)
 
 rates_of_mutation <- genotype_data_effect_size_filter %>% 
-    select(is_lineage) %>% 
+    select(where(is_lineage)) %>% 
     mutation_rates()
 
 
 genotype_data_effect_size_filter_mutation_rate_filter <- genotype_data_effect_size_filter[rates_of_mutation >= 1,]
 
 genotype_data <- genotype_data_effect_size_filter_mutation_rate_filter %>% 
-    select(is_lineage) %>%  # select columns that are lineages
+    select(where(is_lineage)) %>%  # select columns that are lineages
     mutate(across(everything(), integer_to_type)) %>% # convert the types of genotype data from integer based to character based
     t() %>% # transpose the data to prepare for a left join
     as.data.table(keep.rownames = TRUE) %>% # turn things into a data.table for type reasons
@@ -235,7 +235,7 @@ for(i in 1:nrow(tally_table)){
 }
 
 metadata_fields <- genotype_data_effect_size_filter_mutation_rate_filter %>% 
-    select(!is_lineage)
+    select(!(is_lineage))
 
 
 summary_table <- cbind(metadata_fields,adjusted_pvalues, filler_count_data)
