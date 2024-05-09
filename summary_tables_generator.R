@@ -11,17 +11,16 @@ library(data.table)
 # Load the argparse package
 library(argparse)
 
-# Define the command line interface
 parser <- ArgumentParser()
 
 # Add arguments
-parser <- add_argument(parser, "--geno", help="Path to genotype file")
-parser <- add_argument(parser, "--pheno", help="Path to phenotype file")
-parser <- add_argument(parser, "--alpha", help="Significance level (default: 0.05)", default=0.05, type="double")
-parser <- add_argument(parser, "--output", help="Path to output directory (default: current working directory)", default=getwd(), type="character")
+parser$add_argument("--geno", help="Path to genotype file")
+parser$add_argument("--pheno", help="Path to phenotype file")
+parser$add_argument("--alpha", help="Significance level (default: 0.05)", default=0.05, type="double")
+parser$add_argument("--output", help="Path to output directory (default: current working directory)", default=getwd(), type="character")
 
 # Parse the command line arguments
-args <- parse_args(parser)
+args <- parser$parse_args()
 
 # Check if files exist
 if (!file.exists(args$geno)) {
@@ -179,10 +178,16 @@ adjusted_p_values <- function(genotype_data, phenotype_data) {
 	return(tukey_data)
 }
 
+## Inputs
+
+phenotype_data <- fread(args$pheno)
+
+geno_base <- fread(args$geno)
+
 # # Wrangling
 
 # use the `replace_version_substring` function to remove extraneous chars from the ID field
-impactful_SNPs <- replace_version_substring(impactful_SNPs,"ID")
+impactful_SNPs <- replace_version_substring(geno_base,"ID")
 
 genotype_data_effect_size_filter <- impactful_SNPs %>% 
     filter(EFFECT %in% c("MODERATE","HIGH"))

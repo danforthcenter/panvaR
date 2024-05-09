@@ -57,10 +57,11 @@ process_gene(){
     # Rijan: remove multiple/non-relevant gene snps
     grep -v "-" "${gene_name}_processed.vcf" > "${gene_name}_single_processed.vcf"
 
-    sed -e 's/0|0/0/g' \
-    -e 's/1|0/1/g' \
-    -e 's/1|1/2/g' \
-    -e 's/\.|./NA/g' "${gene_name}_single_processed.vcf" > "${gene_name}_numerical_allele_scores.vcf"
+    sed -e 's|0/0|0|g' \
+    -e 's|1/0|1|g' \
+    -e 's|0/1|1|g' \
+    -e 's|1/1|2|g' \
+    -e 's|\./.|NA|g' "${gene_name}_single_processed.vcf" > "${gene_name}_numerical_allele_scores.vcf"
 
     # check:
       # if the output files exits
@@ -125,7 +126,7 @@ if [[ -n "$input_file" ]]; then
   fi
 
   # Process the SSV file
-  while IFS=$' ' read -r gene_name custom_vcf_file custom_gene_location_file custom_output; do
+  while IFS=$'\t' read -r gene_name custom_vcf_file custom_gene_location_file custom_output; do
     # Skip the loop iteration if the line is empty
     [[ -z "$gene_name" ]] && continue # Corrected the variable name from chromosome to gene_name
     # Use the provided distance and window if present, otherwise use the defaults

@@ -97,17 +97,18 @@ HERE
 
   # Check if the output file exists and has the header line
   if [[ ! -f "$output_file" ]]; then
-    # If the file doesn't exist, create it and add the header
-    echo "VCF_file Chrom locus distance start stop" > "$output_file"
+    # If the file doesn't exist, create it and add the header with tabs
+    printf "VCF_file\tChrom\tlocus\tdistance\tstart\tstop\n" > "$output_file"
   else
     # If the file exists, check for the header
-    if ! grep -q "VCF_file Chrom locus distance start stop" "$output_file"; then
-      # If the header is not found, add it
-      sed -i '1iVCF_file Chrom locus distance start stop' "$output_file"
+    if ! grep -q $'VCF_file\tChrom\tlocus\tdistance\tstart\tstop\n' "$output_file"; then
+      # If the header is not found, add it with tabs
+      sed -i '1iVCF_file\tChrom\tlocus\tdistance\tstart\tstop' "$output_file"
     fi
   fi
 
-  printf "%s %s %s %s %s %s\n" "$base_name" "$chromosome" "$loci" "$distance" "$start" "$stop"  >> $output_file
+
+  printf "%s\t%s\t%s\t%s\t%s\t%s\n" "$base_name" "$chromosome" "$loci" "$distance" "$start" "$stop" >> $output_file
   
   rm $vcf_file # remove unnecessary intermediate file
   rm $awk_file_output
