@@ -174,7 +174,6 @@ Here is what a typical input file looks like
 
 ```
 | Sobic.006G235650 | /scratch/vcf_files/annotated/sbicolor/Sorghum_V5.maf0.001.Chr06.snp_final.vcf.gz | custom_gene_location (optional) | custom_output (optional) |
-|------------------|----------------------------------------------------------------------------------|---------------------------------|--------------------------|
 | Sobic.006G235700 | /scratch/vcf_files/annotated/sbicolor/Sorghum_V5.maf0.001.Chr06.snp_final.vcf.gz | defaults to `-loc`              | defaults to `-o`         |
 | Sobic.006G235800 | /scratch/vcf_files/annotated/sbicolor/Sorghum_V5.maf0.001.Chr06.snp_final.vcf.gz | defaults to `-loc`              | defaults to `-o`         |
 | Sobic.006G235801 | /scratch/vcf_files/annotated/sbicolor/Sorghum_V5.maf0.001.Chr06.snp_final.vcf.gz | defaults to `-loc`              | defaults to `-o`         |
@@ -215,3 +214,36 @@ The script checks for the existence of required files and dependencies at runtim
 - Ensure that the gene location file is formatted correctly with gene names and their corresponding locations.
 - The script assumes that the VCF file has an associated `.tbi` index file. If not present, it will attempt to create one using `tabix`.
 
+### Statistical calculations
+
+**User Manual for R Script**
+
+**Introduction**
+This R script is designed to perform statistical analysis on genotype and phenotype data. It includes functions for data cleaning, mutation rate calculation, ANOVA testing, and significance adjustment.
+
+**Dependencies**
+- `dplyr`: For data manipulation.
+- `data.table`: For efficient data handling.
+- `argparse`: For parsing command-line arguments.
+
+**Input Requirements**
+1. **Genotype File (--geno)**: A file path to the genotype data. The data should be in a tabular format where each row represents an individual and columns represent genotypic information.
+2. **Phenotype File (--pheno)**: A file path to the phenotype data. This file should also be in a tabular format with rows representing individuals and at least one column of phenotypic data.
+3. **Alpha (--alpha)**: A significance level for statistical tests. The default is set to 0.05.
+4. **Output Directory (--output)**: A file path to the desired output directory. If not specified, the current working directory is used.
+
+**Output Description**
+The script will generate a summary table with the following columns:
+- Metadata fields from the genotype data.
+- Adjusted p-values from the ANOVA tests.
+- Mutation counts for different genotypes (mut, wild, hybrid).
+- A Bonferroni corrected significance value.
+- A significance column indicating whether the mutation rates are significant based on the Bonferroni correction.
+
+**Execution Instructions**
+To run the script, use the command line to navigate to the directory containing the script and execute it with Rscript, providing the necessary arguments. For example:
+```sh
+Rscript script_name.R --geno path/to/geno_file --pheno path/to/pheno_file --alpha 0.05 --output path/to/output_directory
+```
+
+**Note**: Ensure that the input files exist and are in the correct format before running the script to avoid errors.
