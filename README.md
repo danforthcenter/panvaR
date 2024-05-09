@@ -43,12 +43,12 @@ The script can be run with either command-line arguments or an input file contai
 
 Here is what an actual input file can look like:
 
-| Chr06 | /scratch/vcf_files/annotated/sbicolor/Sorghum_V5.maf0.001.Chr06.snp_final.vcf.gz | 59629117 | 500000 | 500000 |
-| Chr08 | /scratch/vcf_files/annotated/sbicolor/Sorghum_V5.maf0.001.Chr08.snp_final.vcf.gz | 308199   | 500000 | 500000 |
-| Chr06 | /scratch/vcf_files/annotated/sbicolor/Sorghum_V5.maf0.001.Chr06.snp_final.vcf.gz | 59629117 | 500000 | 500000 |
-| Chr06 | /scratch/vcf_files/annotated/sbicolor/Sorghum_V5.maf0.001.Chr06.snp_final.vcf.gz | 59629117 | 500000 | 500000 |
-| Chr08 | /scratch/vcf_files/annotated/sbicolor/Sorghum_V5.maf0.001.Chr08.snp_final.vcf.gz | 308199   | 500000 | 500000 |
-| Chr02 | /scratch/vcf_files/annotated/sbicolor/Sorghum_V5.maf0.001.Chr02.snp_final.vcf.gz | 4811079  | 500000 | 500000 |
+| Chr06 | <path_to_vcf_file> | 59629117 | 500000 | 500000 |
+| Chr08 | <path_to_vcf_file> | 308199   | 500000 | 500000 |
+| Chr06 | <path_to_vcf_file> | 59629117 | 500000 | 500000 |
+| Chr06 | <path_to_vcf_file> | 59629117 | 500000 | 500000 |
+| Chr08 | <path_to_vcf_file> | 308199   | 500000 | 500000 |
+| Chr02 | <path_to_vcf_file> | 4811079  | 500000 | 500000 |
 
 **Output**
 The script generates several files during its operation, including:
