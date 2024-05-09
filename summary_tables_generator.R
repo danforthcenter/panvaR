@@ -1,12 +1,5 @@
 # # Dependencies
-library(ggplot2)
 library(dplyr)
-library(reshape2)
-library(tidyr)
-library(gtable)
-library(patchwork)
-library(stringr)
-library(feather)
 library(data.table)
 # Load the argparse package
 library(argparse)
