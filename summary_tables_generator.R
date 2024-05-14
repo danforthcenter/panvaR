@@ -1,5 +1,6 @@
 # # Dependencies
 library(dplyr)
+library(tidyr)
 library(data.table)
 # Load the argparse package
 library(argparse)
@@ -34,7 +35,7 @@ pheno_base <- basename(args$pheno)
 geno_base <- basename(args$geno)
 
 # Create output file name
-output_file <- file.path(args$output, paste0(pheno_base, "_", geno_base))
+output_name <- file.path(args$output, paste0(pheno_base, "_", geno_base))
 
 # # Functions
 
@@ -243,7 +244,7 @@ summary_table <- cbind(metadata_fields,adjusted_pvalues, filler_count_data)
 summary_table$bonferroni_value <- args$alpha / nrow(summary_table)
 
 summary_table <- summary_table %>% 
-    mutate(signifance = 'mut-hybrid' < bonferroni_value | 'wild-hybrid' < bonferroni_value | 'wild-mut' < bonferroni_value)
+    mutate(Significance = 'mut-hybrid' < bonferroni_value | 'wild-hybrid' < bonferroni_value | 'wild-mut' < bonferroni_value)
 
 
-fwrite(summary_table,output_file,sep="\t")
+fwrite(summary_table,output_name,sep="\t")

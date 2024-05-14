@@ -24,6 +24,8 @@ def region_file_parser(file_name: str, chromosome: str, start: int, stop: int) -
 
 def write_output_files(gene_subsets: pd.DataFrame, output_file: str):
     output_dir = os.path.dirname(output_file)
+    if not output_dir:
+        output_dir = os.getcwd()  # Set to current working directory if output_dir is empty
     file_base_name = os.path.splitext(os.path.basename(output_file))[0]
 
     # Concatenate all subsets and drop duplicates
