@@ -7,7 +7,7 @@ command -v vcftools >/dev/null || { echo "This shell does not have access to vcf
 # defining defaults
 distance=500000 # this will be used if the user does not supply any defaults
 window=500000
-
+output_file="panvar_run.txt"
 # defining functions
 
 gene_region_finder () {
@@ -19,6 +19,7 @@ gene_region_finder () {
   distance="$5"
   window="$6"
 
+	echo "maybe this works ${output_file}"
   # Check if the output file's directory exists, create if not
   output_dir=$(dirname "$output_file")
   if [[ ! -d "$output_dir" ]]; then
@@ -124,7 +125,7 @@ while test $# -gt 0; do
       ;;
     -o|--output)
       shift
-      output_file="${1:-"panvar_run.txt"}"
+      output_file=$1
       shift
       ;;
     *)
