@@ -7,7 +7,8 @@ command -v vcftools >/dev/null || { echo "This shell does not have access to vcf
 # defining defaults
 distance=500000 # this will be used if the user does not supply any defaults
 window=500000
-
+output_file="panvar_run.txt"
+r2_threshold=0.1
 # defining functions
 
 gene_region_finder () {
@@ -18,6 +19,7 @@ gene_region_finder () {
   output_file="$4"
   distance="$5"
   window="$6"
+  r2_threshold="$7"
 
   # Check if the output file's directory exists, create if not
   output_dir=$(dirname "$output_file")
@@ -85,7 +87,7 @@ HERE
   
   awk_file_output="$output_dir/${base_name}_${snp_start_ld}_${snp_stop_ld}.ld_data"
 
-  awk '$6+0 >= 0.1' $vcf_file | grep -v "nan" | grep -v "N_INDV" | sort -k4,4n > $awk_file_output
+  awk -v r2_threshold=$r2_threshold '$6+0 >= r2_threshold'  $vcf_file | grep -v "nan" | grep -v "N_INDV" | sort -k6,6n > $awk_file_output
 
   # Print the first item of the 4th column
   start=$(awk '{if(NR==1) print $4}' $awk_file_output)
@@ -98,17 +100,17 @@ HERE
   # Check if the output file exists and has the header line
   if [[ ! -f "$output_file" ]]; then
     # If the file doesn't exist, create it and add the header with tabs
-    printf "VCF_file\tChrom\tlocus\tdistance\tstart\tstop\n" > "$output_file"
+    printf "VCF_file\tChrom\tlocus\tdistance\tstart\tstop\tr2_threshold\n" > "$output_file"
   else
     # If the file exists, check for the header
-    if ! grep -q $'VCF_file\tChrom\tlocus\tdistance\tstart\tstop\n' "$output_file"; then
+    if ! grep -q $'VCF_file\tChrom\tlocus\tdistance\tstart\tstop\tr2_threshold\n' "$output_file"; then
       # If the header is not found, add it with tabs
-      sed -i '1iVCF_file\tChrom\tlocus\tdistance\tstart\tstop' "$output_file"
+      sed -i '1iVCF_file\tChrom\tlocus\tdistance\tstart\tstop\tr2_threshold' "$output_file"
     fi
   fi
 
 
-  printf "%s\t%s\t%s\t%s\t%s\t%s\n" "$base_name" "$chromosome" "$loci" "$distance" "$start" "$stop" >> $output_file
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "$base_name" "$chromosome" "$loci" "$distance" "$start" "$stop" "$r2_threshold" >> $output_file
   
   rm $vcf_file # remove unnecessary intermediate file
   rm $awk_file_output
@@ -124,7 +126,7 @@ while test $# -gt 0; do
       ;;
     -o|--output)
       shift
-      output_file="${1:-"panvar_run.txt"}"
+      output_file=$1
       shift
       ;;
     *)
@@ -146,7 +148,7 @@ while IFS=$' ' read -r chromosome vcf_file loci custom_distance custom_window; d
   # Skip the loop iteration if the line is empty
   [[ -z "$chromosome" ]] && continue
   # Use the provided distance and window if present, otherwise use the defaults
-  gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output_file" "${custom_distance:-$distance}" "${custom_window:-$window}"
+  gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output_file" "${custom_distance:-$distance}" "${custom_window:-$window}" "${custom_r2_threshold:-$r2_threshold}"
 done < "$input_file"
 
 
@@ -186,11 +188,16 @@ else
         window=$1
         shift
         ;;
+      -r2|--r2_threshold)
+        shift
+        r2_threshold=$1
+        shift
+        ;;
       *)
         # Handle unknown option or break
         break
         ;;
     esac
   done
-  gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output_file" "$distance" "$window"
+  gene_region_finder "$chromosome" "$vcf_file" "$loci" "$output_file" "$distance" "$window" "$r2_threshold"
 fi
