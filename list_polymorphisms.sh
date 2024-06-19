@@ -126,7 +126,7 @@ if [[ -n "$input_file" ]]; then
   fi
 
   # Process the SSV file
-  while IFS=$'\t' read -r gene_name custom_vcf_file custom_gene_location_file custom_output; do
+  while IFS=$',' read -r gene_name custom_vcf_file custom_gene_location_file custom_output; do
     # Skip the loop iteration if the line is empty
     [[ -z "$gene_name" ]] && continue # Corrected the variable name from chromosome to gene_name
     # Use the provided distance and window if present, otherwise use the defaults
