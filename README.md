@@ -29,7 +29,7 @@ Ensure that both `tabix` and `vcftools` are installed and available in your syst
 The script can be run with either command-line arguments or an input file containing the parameters.
 
 **Command-Line Arguments**
-- `-c` or `--chromosome`: Specify the chromosome number.
+- `-c` or `--chromosome`: Specify the chromosome number or the alphanumerical.
 - `-v` or `--vcf_file`: Specify the path to the VCF file.
 - `-l` or `--loci`: Specify the locus position.
 - `-d` or `--distance`: Specify the distance from the locus to define the region (default: 500000).
@@ -45,7 +45,7 @@ Here is what an actual input file can look like:
 
 (**Note**:Header only included for Markdown formatting purposes.)
 
-| Chr | path_to_vcf_file | 59629117 | 500000 | 500000 |
+| Chr | path_to_vcf_file | SNP | distance | window |
 |:-----:|:----------------:|:--------:|:------:|:------:|
 | Chr06 | path_to_vcf_file | 59629117 | 500000 | 500000 |
 | Chr08 | path_to_vcf_file | 308199   | 500000 | 500000 |
