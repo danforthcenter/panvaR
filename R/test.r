@@ -1,5 +1,5 @@
-# This is me messing with git to create a conflict
-# I want to do some conflict management practice
+# Changes made on the remote machine
+# setting rebase to false on the local
 call_another <- function(){
 	called()
 }
