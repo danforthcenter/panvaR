@@ -23,16 +23,21 @@ locate_bin_on_shell <- function(command){
     if (result == 0){
         return(TRUE)
     }
+	else{
+		return(FALSE)
+	}
 }
 
+
+# Make a tbi file for a given VCF file if it does not already exist
 proper_tbi <- function(vcf_file) {
   if (!file.exists(paste0(vcf_file, ".tbi"))) {
     # ask the user if they want to generate the .tbi file
-    cat("The .tbi file for the given vcf file does not exist. Would you like to generate it? (y/n) ")
-    answer <- tolower(readLines("stdin", n = 1))
+    message("The .tbi file for the given vcf file does not exist. Would you like to generate it? (y/n) ")
+    answer <- tolower(readline())
     if (answer == "y") {
       # generate the .tbi file
-      print("Asking tabix to generate the .tbi file...")
+      message("Asking tabix to generate the .tbi file...")
       system(paste0("tabix -p vcf ", vcf_file))
       return(TRUE)
     } else {
@@ -45,7 +50,6 @@ proper_tbi <- function(vcf_file) {
 
 
 # Count and provide the number of cells that should be used
-
 good_core_count <- function(){
 	
 	core_count = nb_cores() - 1 
@@ -58,7 +62,6 @@ good_core_count <- function(){
 
 
 # A general function to convert vcf files to Plink
-
 vcf_to_bed <- function(vcf_file_path, output_prefix = "auto"){
 
     # make a prefix for output
