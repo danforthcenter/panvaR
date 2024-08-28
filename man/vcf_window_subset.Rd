@@ -9,7 +9,8 @@ vcf_window_subset(
   chrom,
   base_snp,
   window = 500000,
-  output_name = NA
+  output_name = NA,
+  write_file = FALSE
 )
 }
 \arguments{

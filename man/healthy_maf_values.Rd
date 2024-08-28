@@ -5,15 +5,15 @@
 \title{Title
 A function to take a vcf file and filter it for missing values.}
 \usage{
-healthy_maf_values(path_to_vcf_file, missing_rate = 0.05, new_name = NA)
+healthy_maf_values(path_to_vcf_file, missing_rate = 0.1, new_name = NA)
 }
 \arguments{
 \item{path_to_vcf_file}{Path to the vcf file.}
 
-\item{missing_rate}{What is the missing rate that you want to filter for.
-Defaults to 0.05}
+\item{missing_rate}{(optional) What is the missing rate that you want to filter for.
+Defaults to 0.1}
 
-\item{new_name}{What should be the new basename or prefix for the new file be?
+\item{new_name}{(optional) What should be the new basename or prefix for the new file be?
 Defaults to {base_name}_filtered{missing_rate}.vcf}
 }
 \value{

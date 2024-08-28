@@ -1,8 +1,22 @@
+options(scipen=999) # This makes sure that scientific notation does not supplant natural numbers
+
 # This R script is meant to set the default values for the supplied list of inputs
 
 # function will generate and return two data.tables that hold the missing information for the vcf files that you supply
 
-options(scipen=999) # This makes sure that scientific notation does not supplant natural numbers
+#' generate_missing_reports
+#' @description
+#' This function takes a vcf file and generate the missing reports for both lines and SNPs
+#'
+#' @param path_to_vcf_file Path to the vcf file.
+#' @return A list containing the following elements:
+#'   \item{table_for_snps}{A table that shows the missing values for the SNPS in the given VCF file.}
+#'   \item{table_for_lines}{A table that shows the missing values for the lines in the given VCF file.}
+
+#' @export
+#'
+#' @examples
+#' generate_missing_report("/path/to/your/vcf/file.vcf")
 
 generate_missing_report <- function(path_to_vcf_file){
 
@@ -77,5 +91,5 @@ generate_missing_report <- function(path_to_vcf_file){
 	variant_table <- fread(vmiss_path)
 	sample_table <- fread(smiss_path)
 
-	return(list(v_table = variant_table, s_table = sample_table))
+	return(list(table_for_snps = variant_table, table_for_lines = sample_table))
 }
