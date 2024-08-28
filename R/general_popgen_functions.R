@@ -38,7 +38,37 @@ proper_tbi <- function(vcf_file) {
     if (answer == "y") {
       # generate the .tbi file
       message("Asking tabix to generate the .tbi file...")
-      system(paste0("tabix -p vcf ", vcf_file))
+      
+      binary_name <- "tabix"
+      the_args <- c("-p", "vcf", vcf_file)
+      
+      tryCatch(
+        {
+          std_err_file <- tempfile()  # Create a temporary file to store standard error
+          try <- exec_wait(
+            binary_name,
+            args = the_args,
+            std_out = NULL,  # We don't need to capture standard output
+            std_err = std_err_file  # Redirect standard error to a file
+          )
+          
+          # After exec_wait, read the standard error from the file
+          std_err_content <- readLines(std_err_file)
+          if (length(std_err_content) > 0) {
+            message("Please read this error produced by tabix:")
+            message(paste(std_err_content, collapse = "\n"))
+          }
+          
+          # Clean up: Remove the temporary file
+          unlink(std_err_file)
+        },
+        error = function(e) {
+          # Custom error message
+          message("There was an error while generating the .tbi file.")
+          message(paste("Execution attempt produced this error:", conditionMessage(e)))
+          stop("Failed to generate .tbi file. Please check the error message and try again.")
+        }
+      )
       return(TRUE)
     } else {
       stop("The .tbi file for the given vcf file does not have a tabix index. Please generate it and try again.")
@@ -47,7 +77,6 @@ proper_tbi <- function(vcf_file) {
     return(TRUE)
   }
 }
-
 
 # Count and provide the number of cells that should be used
 good_core_count <- function(){
