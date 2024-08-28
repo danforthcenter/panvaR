@@ -26,3 +26,45 @@ base_name_func <- function(path_to_file,super_name = FALSE, include_dir = FALSE)
 
     return(output_name)
 }
+
+
+# Is the binary you want to use available in the shell?
+locate_bin_on_shell <- function(command){
+
+    the_command <- paste0(command)
+
+    result <- tryCatch(
+        {
+            test <- sys::exec_wait(command,
+            args = "-v",
+            std_out = TRUE,
+            std_err = FALSE
+            )
+            0 # Return 0 on success
+        },
+        error = function(e) {
+            # Custom error message
+            print(paste0(command, " is either not installed or not available in this shell."))
+            print(paste("Execution attempt produced error:-", e$message))
+            1 # Return 1 on error
+        }
+    )
+
+    if (result == 0){
+        return(TRUE)
+    }
+	else{
+		return(FALSE)
+	}
+}
+
+# Count and provide the number of cells that should be used
+good_core_count <- function(){
+	
+	core_count = nb_cores() - 1 
+	if(core_count < 1){
+	    core_count = 1
+	}
+
+	return(core_count)
+}
