@@ -1,0 +1,83 @@
+#' vcf_to_plink
+#'
+#' @description 
+#' This is a function that takes a vcf file and converts it to Plink format.
+#'
+#' @param vcf_file Path to the input VCF file.
+#' @param output The path where the Plink file should be written.
+#' Defaults to writing the output file in a `tempdir`. If you want the file to be kept around longer supply an accessible path.
+#' 
+#' @return The path to the new Bed file.
+#'
+#' @examples
+#' vcf_window_subset("path/to/your_file.vcf",chrom = "Chr_001", base_snp = 6857045, output_name = "windowed_vcf_file")
+#'
+#' @export
+
+# A general function to convert vcf files to Plink
+vcf_to_plink2 <- function(vcf_file_path, output_prefix = NA){
+
+    # make a prefix for output
+    if(is.na(output_prefix)){
+
+		# tempoarary directory to store the files
+
+		plink2_tempdir <- tempdir()
+		
+        base_name_prefix <- 
+            base_name_func(vcf_file_path)
+
+		output_path = paste0(plink2_tempdir,"/",base_name_prefix)
+		
+    } else {
+        output_path <- output_prefix
+    }
+	# TODO :- If the user supplies a name copy the bed file from scratch to  
+	# create a temporary directory 
+    binary_call <- "plink2"
+
+	binary_args <- c(
+		"--vcf",
+		vcf_file_path, "--make-bed",
+		"--out", output_path
+	)
+
+	# Rijan: Given how legible Plink2's error messages are
+	# Rijan: I think a simple STDOUT catch is good enough
+
+	# Rijan: By the looks of it Plink2 can handle .gz and .vcf paths just fine
+	
+    tryCatch(
+        {
+			error_message <- tempfile()
+            try <- exec_wait(
+                binary_call,
+                args = binary_args,
+                std_out = TRUE,
+                std_err = error_message
+            )
+        },
+        error = function(e){
+            # Custom error message
+            print(paste("Execution attempt produced error:-", e$message))
+            1 # Return 1 on error
+        }
+    )
+
+
+
+    if(try == 0){
+
+		bed_file_path = paste0(output_path,".bed")
+		
+        print(
+            paste("The Plink files are available in",bed_file_path)
+        )
+		return(bed_file_path)
+    } else{
+
+		print("Your VCF file could not be converted to Plink2's native format.")
+		print("Please read the error message and re-try")
+		return(readLines(error_message))
+	}
+}
