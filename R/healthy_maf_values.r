@@ -14,7 +14,7 @@
 #' @examples
 #' healthy_maf_values("your_vcf_file_here.vcf", missing_rate = 0.10, new_name = "tidy_organized_name.vcf")
 
-healthy_maf_values <- function(path_to_vcf_file, missing_rate = 0.1, new_name = NA){
+missing_rate_filter <- function(path_to_vcf_file, missing_rate = 0.1, new_name = NA){
 
 	# Check if the vcf file supplied has a tbi file
 	proper_tbi(path_to_vcf_file) # This function was defined in `general_popgen_functions`

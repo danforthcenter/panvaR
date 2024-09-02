@@ -49,10 +49,10 @@ proper_tbi <- function(vcf_file) {
 
 
 # A general function to convert vcf files to Plink
-vcf_to_bed <- function(vcf_file_path, output_prefix = "auto"){
+vcf_to_bed <- function(vcf_file_path, output_prefix = NA){
 
     # make a prefix for output
-    if(output_prefix == "auto"){
+    if(is.na(output_prefix)){
         base_name_prefix <- 
             strsplit(vcf_file_path,".", fixed = TRUE)[[1]][1]
     } else {
