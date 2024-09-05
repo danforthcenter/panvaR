@@ -27,6 +27,18 @@ base_name_func <- function(path_to_file,super_name = FALSE, include_dir = FALSE)
     return(output_name)
 }
 
+# This function get the extention of the file supplied
+extention_func <- function(path_to_file,super_name = FALSE, include_dir = FALSE){
+
+    # use this code to get the basename of the file without the extension
+    name_string_items <- strsplit(basename(path_to_file),"\\.")[[1]]
+
+    # Just get the last item in the list
+    extension <- name_string_items[length(name_string_items)]
+
+    return(extension)
+}
+
 
 # Is the binary you want to use available in the shell?
 locate_bin_on_shell <- function(command){
