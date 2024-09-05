@@ -31,5 +31,5 @@ Title
 A function to take a Bed file and filter it for missing values.
 }
 \examples{
-bed_file_clean_up("your_bed_file_here.bed", missing_rate = 0.10, output_prefix = "tidy_organized_name.bed")
+bed_file_clean_up('<path_to_your_bed_file>')
 }

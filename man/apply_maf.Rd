@@ -23,6 +23,3 @@ The path to the new vcf file with the missing rate filter applied.
 Title
 A function to take a vcf file and filter applies a minor allele frequency filter.
 }
-\examples{
-healthy_maf_values("your_vcf_file_here.vcf", missing_rate = 0.10, new_name = "tidy_organized_name.vcf")
-}
