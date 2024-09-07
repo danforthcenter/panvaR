@@ -21,7 +21,7 @@ return_snplist_for_bp <- function(path_to_bed_file, chrom, bp){
 
 	bed_file_input = base_name_func(path_to_bed_file, super_name = TRUE, include_dir = TRUE) # to more accurately get the bed file path
     
-	output_file <- tempdir()
+	output_file <- temporary_directory()
 
 	snp_list_name <- paste(sample(LETTERS, 5, replace = TRUE), collapse = "")
 

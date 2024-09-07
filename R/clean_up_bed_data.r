@@ -26,7 +26,7 @@ bed_file_clean_up <- function(path_to_bed_file, missing_rate = 0.1, maf = 0.05, 
 
 		# tempoarary directory to store the files
 
-		cleanup <- tempdir()
+		cleanup <- temporary_directory()
 		
         base_name_prefix <- 
             base_name_func(path_to_bed_file)

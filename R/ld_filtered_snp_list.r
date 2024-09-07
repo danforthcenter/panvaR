@@ -22,7 +22,7 @@ ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5
 
 	bed_file_input = base_name_func(path_to_bed_file, super_name = TRUE, include_dir = TRUE) # to more accurately get the bed file path
     
-	output_file <- tempdir()
+	output_file <- temporary_directory()
 
 	r2_table_name <- paste(sample(LETTERS, 5, replace = TRUE), collapse = "") # A random letter generator
 

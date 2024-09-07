@@ -22,7 +22,7 @@ vcf_to_plink2 <- function(vcf_file_path, output_prefix = NA){
 
 		# tempoarary directory to store the files
 
-		plink2_tempdir <- tempdir()
+		plink2_tempdir <- temporary_directory()
 		
         base_name_prefix <- 
             base_name_func(vcf_file_path)

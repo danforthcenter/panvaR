@@ -27,7 +27,7 @@ filter_vcf_file <- function(vcf_file_path, keep_table, output_prefix = NA){
 
 		# tempoarary directory to store the files
 
-		vcf_file_dir <- tempdir()
+		vcf_file_dir <- temporary_directory()
 		
         base_name_prefix <- 
             base_name_func(vcf_file_path)

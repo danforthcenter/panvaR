@@ -179,4 +179,6 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_count = 5, maf = 0.05, 
 
 	return_gwas <- as.data.table(cbind(the_chromosomes, the_bp, gwas_snp_gc_object,pvalues)) %>%
     	arrange(pvalues, "desc")
+
+	return(return_gwas)
 }

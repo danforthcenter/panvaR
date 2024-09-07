@@ -73,7 +73,7 @@ locate_bin_on_shell <- function(command){
 # Count and provide the number of cells that should be used
 good_core_count <- function(){
 	
-	core_count = nb_cores() - 1 
+	core_count = detectCores() - 1 
 	if(core_count < 1){
 	    core_count = 1
 	}

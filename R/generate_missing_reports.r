@@ -27,7 +27,7 @@ generate_missing_report <- function(path_to_vcf_file){
 	plink2_call <- "plink2"
 
 	# varaint file directory
-	missing_reports_directory <- tempdir()
+	missing_reports_directory <- temporary_directory()
 
 	# general output basename
 	# This is where we will receive the report files

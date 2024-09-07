@@ -26,7 +26,7 @@ subset_around_tag <- function(path_to_bed_file, chrom, bp, window = 500000,outpu
 
 		# tempoarary directory to store the files
 
-		windowed <- tempdir()
+		windowed <- temporary_directory()
 		
         base_name_prefix <- 
             base_name_func(path_to_bed_file)

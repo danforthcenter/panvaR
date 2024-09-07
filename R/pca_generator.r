@@ -44,7 +44,7 @@ pca_matrix_generator <- function(genotype_data,pc_count = 5, maf = 0.05, missing
 
 		# if the data is already in plink2 format
 		# Clean up for the missing rate and the maf
-		cleaned_up_bed_file <- bed_file_clean_up(genotype_data_right_format,maf = maf, missing_rate = missing_rate)
+		cleaned_up_bed_file <- bed_file_clean_up(genotype_data,maf = maf, missing_rate = missing_rate)
 	}
 
 	# Read the bam file into using `snp_readBed`

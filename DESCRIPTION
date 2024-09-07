@@ -13,4 +13,7 @@ RoxygenNote: 7.3.2
 Depends:
 	tidyverse,
 	data.table,
-	sys
+	sys,
+	parallel,
+	bigsnpr,
+	modelr
