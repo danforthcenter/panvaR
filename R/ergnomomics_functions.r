@@ -130,3 +130,28 @@ keep_table_sanitizer <- function(table) {
     return(keep_table_path)
     
 }
+
+# A function to get the tag snp out of the gwas results table
+tag_snp_func <- function(gwas_results){
+
+    # This function assumes that the supplied tables has the following fields
+    # 1. 'the_bp`
+    # 2. 'the_chromosomes'
+    # 3. 'the_pvalues' -> -log10() of the pvalues 
+
+    # Just double checking to make sure that the table is arranged properly
+    
+    current_table <- gwas_results %>% 
+        arrange(desc(pvalues))
+
+    tag_snp_row <-current_table %>%
+        slice(1)
+
+    tag_snp_bp <- tag_snp_row$the_bp
+
+    tag_snp_chromosome <- tag_snp_row$the_chromosomes
+
+    tag_snp <- paste0(tag_snp_chromosome,":",tag_snp_bp)
+
+    return(tag_snp)
+}
