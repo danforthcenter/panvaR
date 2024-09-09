@@ -16,3 +16,21 @@ temporary_directory <- function(delete_files = FALSE) {
   
   return(dir_path)
 }
+
+# A function to roll my own tempfiles 
+# Might as well for the simplicity of it
+# This file just returns a path to a tempfile in 
+# the .panvar directory
+
+temp_file <- function(create_file = FALSE) {
+
+  random_name <- paste(sample(LETTERS, 5, replace = TRUE), collapse = "") # A random letter generator
+
+  if (create_file) {
+    # Create the file
+    file.create(paste0(".panvar/", random_name))
+  }
+
+  return(paste0(".panvar", "/", random_name))
+  
+}

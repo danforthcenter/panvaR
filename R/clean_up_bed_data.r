@@ -1,7 +1,7 @@
 # A function to apply default missing rates and minor allele frequency filter to bed files using plink2
 
 #' Title
-#' A function to take a Bed file and filter it for missing values.
+#' A function to take a Bed file and filter for the missing rate and minor allele frequency.
 #'
 #' @param path_to_bed_file Path to the bed file.
 #' @param missing_rate (optional) What is the missing rate that you want to filter for.

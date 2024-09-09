@@ -1,7 +1,7 @@
 # A function to apply default missing rates and minor allele frequency filter to bed files using plink2
 
 #' Title
-#' A function to take a Bed file and filter it for missing values.
+#' A function to take a Bed file and make a window around the tag snp.
 #'
 #' @param path_to_bed_file Path to the bed file that should have the tag SNP.
 #' @param chrom The chromosome of the tag SNP.

@@ -155,3 +155,13 @@ tag_snp_func <- function(gwas_results){
 
     return(tag_snp)
 }
+
+# For a tag snp supplied in the format "chrom:bp"
+# We need to be able to split it into chrom and bp
+# This function does that
+tag_snp_splitter <- function(tag_snp){
+    tag_snp_items <- strsplit(tag_snp,":")[[1]]
+    tag_snp_chrom <- tag_snp_items[1]
+    tag_snp_bp <- tag_snp_items[2]
+    return(list(tag_snp_chrom,tag_snp_bp))
+}
