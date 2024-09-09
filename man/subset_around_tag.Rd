@@ -3,7 +3,7 @@
 \name{subset_around_tag}
 \alias{subset_around_tag}
 \title{Title
-A function to take a Bed file and filter it for missing values.}
+A function to take a Bed file and make a window around the tag snp.}
 \usage{
 subset_around_tag(
   path_to_bed_file,
@@ -31,7 +31,7 @@ The path to the new bed file with the missing rate filter applied.
 }
 \description{
 Title
-A function to take a Bed file and filter it for missing values.
+A function to take a Bed file and make a window around the tag snp.
 }
 \examples{
 subset_around_tag('<path_to_your_bed_file>')

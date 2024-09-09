@@ -3,7 +3,7 @@
 \name{bed_file_clean_up}
 \alias{bed_file_clean_up}
 \title{Title
-A function to take a Bed file and filter it for missing values.}
+A function to take a Bed file and filter for the missing rate and minor allele frequency.}
 \usage{
 bed_file_clean_up(
   path_to_bed_file,
@@ -28,7 +28,7 @@ The path to the new bed file with the missing rate filter applied.
 }
 \description{
 Title
-A function to take a Bed file and filter it for missing values.
+A function to take a Bed file and filter for the missing rate and minor allele frequency.
 }
 \examples{
 bed_file_clean_up('<path_to_your_bed_file>')

@@ -17,3 +17,7 @@ Depends:
 	parallel,
 	bigsnpr,
 	modelr
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
