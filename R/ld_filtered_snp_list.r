@@ -85,8 +85,12 @@ ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5
 			"Subset_snp_id",
 			"Phased_r2"
 		)
+
+		# Just to safe-guard against being bombarded with all the snps
+		confirmed_final_ld_table <- final_ld_table %>% 
+			filter(Tag_snp_bp == bp)
 		
-		return(final_ld_table)
+		return(confirmed_final_ld_table)
     } else{
 
 		print("There were errors when calculating ld for this set of inputs.")

@@ -112,7 +112,7 @@ snps_to_keep <- function(ld_table){
 # Sanitize the tables to keep
 keep_table_sanitizer <- function(table) {
 
-    keep_table_path <- tempfile()
+    keep_table_path <- temp_file()
     
     if(is.character(table)){
 
