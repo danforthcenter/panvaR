@@ -20,10 +20,36 @@ library(panvaR)
 
 # The different ways of using PanvaR
 
+## When you have tag SNP/s handy
+
 `PanvaR` can be run in multiple ways. These different ways of running `panvaR` come down to the type of input you have. The possible inputs to `panvaR` can be divided into optional and required as follows:-
 
 1. Annotated-VCF - A `SnpEff` annotated VCF file, crucial for the `IMPACT` information that `SnpEff` adds to the VCF data.
 2. Tag SNP - The chromosome and the BP of the tag SNP. 
   - (Vocabulary) Tag SNP:- What `panvaR` call a tag SNP is the BP around which `panvaR`'s scientific logic will be applied. Usually just the SNP with the highest score from the GWAS.
-3. GWAS results - In tabular format - the results of the GWAS for the data that you are working with.
+3. GWAS results - In tabular format - the results of the GWAS for the data that you are working with. This supplies the assocation data for each SNP.
 
+## When you don't have a tag SNP/s handy
+
+But if you don't have the `tag SNP` you can use the `panvar_gwas` functionality built into `panvaR`. This is a fairly straight forward `GWAS` pipeline that depends on:-
+
+```
+library(bigsnpr)
+library(modelr)
+```
+
+The default behaviour is to use 5 PCs and produce GWAS results using `big_randomSVD`, `big_random_pca`, `big_univLinReg` and `snp_gc` for most of its functionality.
+
+If you are looking for details into how the `GWAS` pipeline has been implemented - please read into `R/panvar_gwas.R`. 
+
+And if you would prefer to use your own `GWAS` results - this too can be done so long as the data is in tabular format and has the following data fileds:-
+
+| Chroms | BP  | Pvalues |
+| ------ | --- | ------- |
+|        |     |         |
+
+The `Chroms` fields should have the chromosomes as they are present in the annotation data. For example, `Chr01` should not be `01` - this can cause issues with data matching.
+
+`BP` - This should have the locations of your base-pairs.
+
+`Pvalues` - This should be the `-log10()` of of your gwas results.  
