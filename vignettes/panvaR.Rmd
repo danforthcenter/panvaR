@@ -17,3 +17,13 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(panvaR)
 ```
+
+# The different ways of using PanvaR
+
+`PanvaR` can be run in multiple ways. These different ways of running `panvaR` come down to the type of input you have. The possible inputs to `panvaR` can be divided into optional and required as follows:-
+
+1. Annotated-VCF - A `SnpEff` annotated VCF file, crucial for the `IMPACT` information that `SnpEff` adds to the VCF data.
+2. Tag SNP - The chromosome and the BP of the tag SNP. 
+  - (Vocabulary) Tag SNP:- What `panvaR` call a tag SNP is the BP around which `panvaR`'s scientific logic will be applied. Usually just the SNP with the highest score from the GWAS.
+3. GWAS results - In tabular format - the results of the GWAS for the data that you are working with.
+

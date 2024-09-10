@@ -31,12 +31,15 @@ pca_matrix_generator <- function(genotype_data,pc_count = 5, maf = 0.05, missing
 	# if the format is gz or vcf send to plink2
 	# else send the genotype data to be filtered for maf and missing rate filter
 	if(genotype_data_format == "gz"){
-		genotype_data_right_format <- vcf_to_plink2(genotype_data)
+		genotype_data_right_format_base <- vcf_to_plink2(genotype_data) # This returns a list of bed and bim file
+		genotype_data_right_format <- genotype_data_right_format_base$bed
+		genotype_data_right_format <- genotype_data_right_format_base$bed
 
 		# Now clean up the data
 		cleaned_up_bed_file <- bed_file_clean_up(genotype_data_right_format,maf = maf, missing_rate = missing_rate)
 	} else if (genotype_data_format == "vcf"){
-		genotype_data_right_format <- vcf_to_plink2(genotype_data)
+		genotype_data_right_format_base <- vcf_to_plink2(genotype_data) # This returns a list of bed and bim file
+		genotype_data_right_format <- genotype_data_right_format_base$bed
 
 		# Now clean up the data
 		cleaned_up_bed_file <- bed_file_clean_up(genotype_data_right_format,maf = maf, missing_rate = missing_rate)

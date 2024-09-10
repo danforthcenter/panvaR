@@ -75,7 +75,7 @@ vcf_to_plink2 <- function(vcf_file_path, output_prefix = NA){
         print(
             paste("The Plink files are available in",bed_file_path)
         )
-		return(list(bed_file_path,bim_file_path))
+		return(list(bed = bed_file_path,bim = bim_file_path))
     } else{
 
 		print("Your VCF file could not be converted to Plink2's native format.")
