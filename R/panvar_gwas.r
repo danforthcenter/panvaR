@@ -6,7 +6,9 @@
 #' @param genotype_data Path to the input genotype data.
 #' Either a vcf file (vcf/gz) or bed file
 #' @param phenotype_data Path to your genotype data.
-#' @param pc_count (optional) How many principle components do you want?
+#' @param pc_min (optional) What is the minimum number of PCs that should be included in GWAS?
+#' Defaults to 5
+#' @param pc_max (optional) What is the maximum number of PCs that should be included in GWAS?
 #' Defaults to 5
 #' @param maf (optional) The minor allele frequency that will be applied to the genotype data.
 #' Defaults to 0.05
@@ -15,13 +17,13 @@
 #' @return GWAS results in tabular format.
 #'
 #' @examples
-#' panvar_gwas("path/to/genotype_data",pc_count = 5, maf = 0.05, missing_rate = 0.1)
+#' panvar_gwas("path/to/genotype_data",pc_min = 5,pc_max = 5, maf = 0.05, missing_rate = 0.1)
 #'
 #' @export
 
 # A function to make PCAs for your genotype data.
 
-panvar_gwas <- function(genotype_data,phentotype_path,pc_count = 5, maf = 0.05, missing_rate = 0.1) {
+panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf = 0.05, missing_rate = 0.1) {
 
 	# Get the core count from the ergonomics set of code
 	core_count = good_core_count()
@@ -111,7 +113,7 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_count = 5, maf = 0.05, 
 
 	the_PCs <- predict(big_random_pca)
 
-	the_covariates <- the_PCs[,1:pc_count]
+	the_covariates <- the_PCs[,1:pc_max]
 
 	tryCatch(
 	  expr = {
@@ -156,12 +158,16 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_count = 5, maf = 0.05, 
 
 	include_in_gwas <- which(!is.na(phenotype_scores) & complete.cases(the_covariates))
 
-	pcs_to_include = c()
-	for (j in 1:pc_count) {
-	  if (cor.test(phenotype_scores, the_covariates[, j])[3] < 0.05) {
-	    pcs_to_include = c(pcs_to_include, j)
-	  }
+	pcs_to_include = seq(1:pc_min)
+
+	if(pc_max > pc_min){
+		for (j in pc_min:pc_max) {
+		  if (cor.test(phenotype_scores, the_covariates[, j])[3] < 0.05) {
+		    pcs_to_include = c(pcs_to_include, j)
+		  }
+		}
 	}
+	
 
 	gwas <- big_univLinReg(
     	the_genotypes, 

@@ -17,14 +17,18 @@ split_vcf_eff <- function(input_file = NULL, output_file = NULL) {
     field_name <- sub("=.*", "", eff_field)
     effs <- strsplit(sub("^[^=]+=", "", eff_field), ",")[[1]]
     
-    other_info <- paste(info_fields[!grepl("^(EFF|ANN)=", info_fields)], collapse = ";")
+    other_info <- info_fields[!grepl("^(EFF|ANN)=", info_fields)]
     
     pre <- paste(fields[1:(INFO_FIELD_NUM-1)], collapse = "\t")
     post <- paste(fields[(INFO_FIELD_NUM+1):length(fields)], collapse = "\t")
     
     output_lines <- character(length(effs))
     for (i in seq_along(effs)) {
-      new_info <- paste(c(other_info, paste0(field_name, "=", effs[i])), collapse = ";")
+      new_info <- if (length(other_info) > 0) {
+        paste(c(other_info, paste0(field_name, "=", effs[i])), collapse = ";")
+      } else {
+        paste0(field_name, "=", effs[i])
+      }
       output_lines[i] <- paste(pre, new_info, post, sep = "\t")
     }
     return(output_lines)
@@ -40,7 +44,9 @@ split_vcf_eff <- function(input_file = NULL, output_file = NULL) {
   }
 
   if (is.null(output_file)) {
-    con_out <- stdout()
+	output_file <- temp_file()
+	con_out <- file(output_file, "w")
+    return(output_file)
   } else {
     con_out <- file(output_file, "w")
   }
