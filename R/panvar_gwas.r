@@ -186,8 +186,8 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf
 
 	pvalues <- -1 * pvalues # To just get the -log10 values
 
-	return_gwas <- as.data.table(cbind(the_chromosomes, the_bp, gwas_snp_gc_object,pvalues)) %>%
-    	arrange(desc(pvalues))
+	return_gwas <- as.data.table(cbind(CHROM = the_chromosomes, BP = the_bp,Pvalues = pvalues)) %>%
+    	arrange(desc(Pvalues))
 
 	return(return_gwas)
 }

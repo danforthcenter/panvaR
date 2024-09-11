@@ -43,14 +43,13 @@ split_vcf_eff <- function(input_file = NULL, output_file = NULL) {
     con_in <- file(input_file, "r")
   }
 
+  # Handle output
   if (is.null(output_file)) {
-	output_file <- temp_file()
-	con_out <- file(output_file, "w")
-    return(output_file)
-  } else {
-    con_out <- file(output_file, "w")
+    output_file <- temp_file()
   }
+  con_out <- file(output_file, "w")
 
+  # Main processing
   tryCatch({
     while (TRUE) {
       line <- readLines(con_in, n = 1)
@@ -60,11 +59,10 @@ split_vcf_eff <- function(input_file = NULL, output_file = NULL) {
     }
   }, finally = {
     if (!is.null(input_file)) close(con_in)
-    if (!is.null(output_file)) close(con_out)
+    close(con_out)
   })
+
+  # Return the output file name
+  return(output_file)
 }
 
-# Example usage:
-# split_vcf_eff("input.vcf", "output.vcf")
-# Or to read from stdin and write to stdout:
-# split_vcf_eff()

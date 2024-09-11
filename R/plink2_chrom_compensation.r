@@ -18,7 +18,7 @@ check_plink2_chroms <- function(vcf_file_path,bim_file_path,keep_table) {
         return(keep_table_path)
     } else{
 
-        print("When you used Plink2 to make a bed file is forcefully changed the names of the - PanvaR will now use a heuristic to work around this.")
+        print("When you used Plink2 to make a bed file, Plink2 forcefully changed the names of the Chromosomes - PanvaR will now use a heuristic to work around this.")
         print("Please read about it here: https://www.biostars.org/p/9602116/")
 
           bcf_chroms_table <- data.table(
