@@ -165,3 +165,25 @@ tag_snp_splitter <- function(tag_snp){
     tag_snp_bp <- tag_snp_items[2]
     return(list(tag_snp_chrom,tag_snp_bp))
 }
+
+# Make the table of LD that retains the tag SNP
+ld_table_maker <- function(ld_table){
+
+    ld_table_subject <- ld_table %>% 
+        select(
+            Subject_snp_chrom,
+            Subject_snp_bp,
+            Phased_r2
+        ) %>%
+        rename(CHROM = Subject_snp_chrom,BP = Subject_snp_bp, LD = Phased_r2)
+
+    ld_table_tag <- ld_table %>%
+        select(Tag_snp_chrom, Tag_snp_bp) %>%
+        distinct() %>%
+        rename(CHROM = Tag_snp_chrom, BP = Tag_snp_bp)
+    
+    ld_table <- rbind(ld_table_subject,ld_table_tag, fill = TRUE)
+
+    return(ld_table)
+    
+}

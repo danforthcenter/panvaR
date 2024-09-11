@@ -44,12 +44,17 @@ If you are looking for details into how the `GWAS` pipeline has been implemented
 
 And if you would prefer to use your own `GWAS` results - this too can be done so long as the data is in tabular format and has the following data fileds:-
 
-| Chroms | BP  | Pvalues |
-| ------ | --- | ------- |
-|        |     |         |
+| Chroms | BP   | Pvalues |
+| ------ | ---- | ------- |
+| Chr01  | 515  | 15.487  |
+| Chr_01 | 2552 | 14.87   |
+| chr01  | 4657 | 12.87   |
+| 01     | 7889 | 26.72   |
 
 The `Chroms` fields should have the chromosomes as they are present in the annotation data. For example, `Chr01` should not be `01` - this can cause issues with data matching.
 
 `BP` - This should have the locations of your base-pairs.
 
-`Pvalues` - This should be the `-log10()` of of your gwas results.  
+`Pvalues` - This should be the `-log10()` of of your gwas results. 
+
+For `panvaR` to run smoothly the above fields should be named exactly as preseted - this makes the manipulation of tabular data easier and faster.
