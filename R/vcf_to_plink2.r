@@ -34,6 +34,20 @@ vcf_to_plink2 <- function(vcf_file_path, output_prefix = NA){
     }
 	# TODO :- If the user supplies a name copy the bed file from scratch to  
 	# create a temporary directory 
+
+
+    # check if bed and bim files already exist
+    bim_file_path = paste0(output_path,".bim")
+    bed_file_path = paste0(output_path,".bed")
+
+    if(file.exists(bim_file_path) && file.exists(bed_file_path)){
+        # return the path to the bed file
+        print("It looks like your bed and bim files already exist. This was done with heuristics and regex.")
+
+        print("The heuristics could be wrong, if that's the case please delete them and try again.")
+
+        return(list(bed = bed_file_path,bim = bim_file_path))
+    }
     binary_call <- "plink2"
 
 	binary_args <- c(

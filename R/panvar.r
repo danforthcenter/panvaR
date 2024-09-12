@@ -19,7 +19,7 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
     subset_genotype_data <- subset_around_tag(cleaned_up,chrom = chrom, bp = bp, window = window)
 
     # using ld get the list of bps to keep
-    table <- ld_filtered_snp_list(subset_genotype_data,chrom = chrom, bp = bp=, r2_threshold = r2_threshold)
+    table <- ld_filtered_snp_list(subset_genotype_data,chrom = chrom, bp = bp, r2_threshold = r2_threshold)
 
     # Make the LD table
     # This is one of the ld tables that will be left_joined later
