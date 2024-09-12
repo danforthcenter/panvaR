@@ -1,0 +1,82 @@
+panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2_threshold, maf = 0.05, missing_rate = 0.10, window = 500000){
+
+    # The end goal of this function is to convieneintly make
+    # 1. The plot from Panvar
+    # 2. The report table -
+    # The report table should have - Gwas pvalues,
+
+    # Read the gwas table
+    # TODO - This need to go to input verification
+    gwas_table <- check_gwas_table(gwas_table_path)
+
+    # convert the vcf file to plink format
+    in_plink_format <- vcf_to_plink2(vcf_file_path)
+
+    # clean up the supplied vcf file
+    cleaned_up <- bed_file_clean_up(in_plink_format$bed, maf = maf, missing_rate = missing_rate)
+
+    # subset your genotype data around the tag snp
+    subset_genotype_data <- subset_around_tag(cleaned_up,chrom = chrom, bp = bp, window = window)
+
+    # using ld get the list of bps to keep
+    table <- ld_filtered_snp_list(subset_genotype_data,chrom = chrom, bp = bp=, r2_threshold = r2_threshold)
+
+    # Make the LD table
+    # This is one of the ld tables that will be left_joined later
+    ld_table <- ld_table_maker(table)
+
+    # Convert the table into the list of SNPs to keep
+    # such that BCFtools can filter them out of a the original VCF file
+    keep_snp_list <- snps_to_keep(table)
+
+    # The way plink2 converts vcf files may lead to - 
+    # a situation where the names in plink2 -
+    # and BCFtools have different chromosomes names. -
+    # This needs to be accounted for.
+    checked_table <- check_plink2_chroms(vcf_file_path = vcf_file_path,in_plink_format$bim,keep_snp_list)
+
+    # Sanitize the table 
+    keep_table_path <- keep_table_sanitizer(checked_table)
+
+    # Send the keep table to bcftools
+    filtered_vcf_table <- filter_vcf_file(vcf_file_path = vcf_file_path, keep_table_path)
+
+    # split the SNP such that they have one annotation per line
+    split_table_path <- split_vcf_eff(filtered_vcf_table)
+
+    # Send the split table to SnpSift
+    # This returns a list that has a $path and -
+    # a $table
+    snpeff_table <- execute_snpsift(split_table_path)
+
+    # Read the output produced by SnpSift
+    snpsift_table <- snpeff_table$table
+    
+    snpsift_table_highs_and_moderate <- snpsift_table %>% 
+        filter(IMPACT %in% c("HIGH","MODERATE") | BP == bp)
+
+    
+    # This table should have 
+    # 1. The impact factor
+    # 2. The tag SNP
+    # 3. The Pvalues from GWAS
+    # 4. The LD with the tag_snp included
+    pvalues_impact_ld_table <- snpsift_table_highs_and_moderate %>%
+        left_join(gwas_table, by = c("CHROM","BP")) %>%
+        left_join(ld_table, by = c("CHROM","BP"))
+
+    # Annotate the tag_snp
+    pvalues_impact_ld_colors_table <- pvalues_impact_ld_table %>% mutate(
+        IMPACT = case_when(
+            BP == bp ~ "tag_snp",
+            TRUE ~ as.character(IMPACT)
+        )
+    )
+
+    # Call the weight function
+    final_reports_table <- overall_weight_func(pvalues_impact_ld_colors_table, bp = bp)
+
+    plot <- panvar_plot(final_reports_table, nrow(gwas))
+
+    return(list(plot = plot, table = final_reports_table))
+}

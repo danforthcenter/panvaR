@@ -27,7 +27,31 @@ execute_snpsift <- function(file_path) {
                 std_err = error_message  # Capture error messages
             )
             
-            return(snp_eff_table)  # Return the result table file path on success
+            # snp_eff_table is the path -
+            # let's return a data.table as well
+            snp_eff_datatable <- fread(snp_eff_table)
+
+            # Change the names of the table
+            colnames(snp_eff_datatable) <- c(
+                "CHROM",
+                "BP",
+                "GENE",
+                "REF",
+                "ALT",
+                "EFFECT",
+                "AA",
+                "IMPACT"
+            )
+
+            # Make a list and return it
+
+            return(
+                list(
+                    path = snp_eff_table,
+                    table = snp_eff_datatable
+                )
+            )
+            
         },
         error = function(e) {
             print(paste("Execution attempt produced error:", e$message))
