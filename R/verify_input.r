@@ -1,7 +1,9 @@
 # The general goal of the functions in this script is to verify  -
 # that the inputs are correct.
 
-# Check if the gwas table has the required data fields
+
+# Check if the gwas table has the required data fields -
+# if not then stop, if yes then return the right subset
 check_gwas_table <- function(current_gwas_table){
 
     needed_call_names <- c("CHROM","BP","Pvalues")
