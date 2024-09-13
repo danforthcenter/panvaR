@@ -1,5 +1,15 @@
 # Make a tbi file for a given VCF file if it does not already exist
 proper_tbi <- function(vcf_file) {
+
+  # get the extension of the supplied vcf file
+  vcf_file_extenion <- extention_func(path_to_file = vcf_file)
+
+  if (vcf_file_extenion != "gz") {
+    print("The file you have supplied is not compressed using BGZIP and BCFtools cannot work with it.")
+    stop("The supplied file is not a vcf file.")
+  }
+
+
   if (!file.exists(paste0(vcf_file, ".tbi"))) {
     # ask the user if they want to generate the .tbi file
     message("The .tbi file for the given vcf file does not exist. Would you like to generate it? (y/n) ")
@@ -8,8 +18,8 @@ proper_tbi <- function(vcf_file) {
       # generate the .tbi file
       message("Asking tabix to generate the .tbi file...")
       
-      binary_name <- "tabix"
-      the_args <- c("-p", "vcf", vcf_file)
+      binary_name <- "bcftools"
+      the_args <- c("index", "-t", vcf_file)
       
       tryCatch(
         {
