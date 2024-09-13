@@ -1,3 +1,4 @@
+#' @export
 panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2_threshold, maf = 0.05, missing_rate = 0.10, window = 500000){
 
     # The end goal of this function is to convieneintly make
