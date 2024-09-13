@@ -76,7 +76,7 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
     # Call the weight function
     final_reports_table <- overall_weight_func(pvalues_impact_ld_colors_table, bp = bp)
 
-    plot <- panvar_plot(final_reports_table, nrow(gwas))
+    plot <- panvar_plot(final_reports_table, nrow(gwas_table))
 
     return(list(plot = plot, table = final_reports_table))
 }
