@@ -9,6 +9,7 @@
 #' @param new_name (optional) What should be the new basename or prefix for the new file be?
 #' Defaults to {base_name}_filtered_{maf_rate}.vcf
 #' @return The path to the new vcf file with the missing rate filter applied.
+#' @export
 
 
 apply_maf <- function(path_to_vcf_file, maf = 0.05, output_name = NA){

@@ -1,5 +1,21 @@
-#' @export
-panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2_threshold, maf = 0.05, missing_rate = 0.10, window = 500000){
+#' Title
+#' A function that automates the Panvar analysis when the user supplies a GWAS table, a VCF file and a tag SNP
+#' 
+#' @param gwas_table_path Path to the GWAS table
+#' @param vcf_file_path Path to the VCF file
+#' @param chrom The chromosome alphanumeric of the tag SNP
+#' @param bp The base pair loci of the tag SNP
+#' @param r2_threshold The r2 threshold
+#' Defaults to 0.6
+#' @param maf The minor Allele Frequency
+#' Defaults to 0.05
+#' @param missing_rate The missing rate filter for your genotype data
+#' Defaults to 0.1
+#' @param window The window around the tag snp
+#' Defaults to 500000
+
+#' @export--
+panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000){
 
     # The end goal of this function is to convieneintly make
     # 1. The plot from Panvar
