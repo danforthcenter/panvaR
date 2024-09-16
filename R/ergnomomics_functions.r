@@ -147,11 +147,11 @@ tag_snp_func <- function(gwas_results){
     tag_snp_row <-current_table %>%
         slice(1)
 
-    tag_snp_bp <- tag_snp_row$the_bp
+    tag_snp <- list(
+        tag_snp_bp = tag_snp_row$the_bp, 
+        tag_snp_chromosome = tag_snp_row$the_chromosomes
 
-    tag_snp_chromosome <- tag_snp_row$the_chromosomes
-
-    tag_snp <- paste0(tag_snp_chromosome,":",tag_snp_bp)
+    )
 
     return(tag_snp)
 }
