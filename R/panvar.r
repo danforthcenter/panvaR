@@ -13,8 +13,7 @@
 #' Defaults to 0.1
 #' @param window The window around the tag snp
 #' Defaults to 500000
-
-#' @export--
+#' @export
 panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000){
 
     # The end goal of this function is to convieneintly make
