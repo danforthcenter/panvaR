@@ -17,3 +17,5 @@ With `devtools` :- `devtools::install_github("VectorFrankenstein/panvaR")`
 After this you should be ready to play around with `PanvaR`.
 
 Having a fresh `Conda`/`mamba`/`Renv` could make from a smoother experience install/using `PanvaR`, but `PanvaR` does have a fairly large dependency profile on the `tidyverse` and being close to the latest version of `tidyverse` will make for a smooth user experience.
+
+Once you have `panvaR` installed you can use `browseVignettes("panvaR")` to get started.

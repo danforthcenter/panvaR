@@ -1,4 +1,3 @@
-#' Title
 #' A function that automates the Panvar analysis when the user supplies a GWAS table, a VCF file and a tag SNP
 #' 
 #' @param gwas_table_path Path to the GWAS table
@@ -14,7 +13,20 @@
 #' @param window The window around the tag snp
 #' Defaults to 500000
 #' @export
+#' 
+#' @examples
+#' panvar_gwas_tagsnp_snpeff("<path_to_gwas_table>", "<path_to_vcf_file>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
+#' panvar_gwas_tagsnp_snpeff(
+#'    "<path_to_gwas_table>", 
+#'    "<path_to_vcf_file>", 
+#'    chrom = chr_05, 
+#'    bp = 54675,
+#'    r2_threshold = 0.6
+#' )
 panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000){
+
+    # Check if the vcf_file has a tbi file
+    proper_tbi(vcf_file_path)
 
     # The end goal of this function is to convieneintly make
     # 1. The plot from Panvar

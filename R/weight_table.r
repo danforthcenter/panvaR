@@ -1,3 +1,11 @@
+# Currently mostly conceptual
+
+# The goal of this function is to make a weight value
+# for the Panvar analysis.
+# The table should have - CHROM, BP, Pvalues, LD.
+# This function will generate weight scores -
+# using normalized and then averaged scores for LD, Pvalues and distance.
+
 overall_weight_func <- function(current_table, bp){
 
     subject_snps <- current_table %>% 

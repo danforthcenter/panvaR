@@ -94,4 +94,45 @@ panvar_gwas(
 )
 ```
 
-If you are looking for details into how the `GWAS` pipeline has been implemented - please read into `R/panvar_gwas.R`. 
+If you are looking for details into how the `GWAS` pipeline has been implemented - please read into `R/panvar_gwas.R`.
+
+
+# Elaborate example run
+
+(The links in this section are stores in a OneDrive account - if you have diffculty accessing them, please contact maintainers.)
+
+Here is an example of `PanvaR` being used with real world data.
+
+Reference publication:- https://doi.org/10.1038/s41587-020-0681-2
+
+Data:-
+
+[genotype data (annotated VCF file)](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/EdfaZqrVgA1BuXfr275_jZ4B8s6BqjdP8x6ZIbSQHh2FgA?e=MWa9vP)
+
+[Phentotype data(shattering scores)](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/EdfaZqrVgA1BuXfr275_jZ4B8s6BqjdP8x6ZIbSQHh2FgA?e=MWa9vP)
+
+The above genotype and phenotype data will produce [this GWAS table](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/Eb52QTajVw9FgELlyvKaWvkB6sA9I0yPTF_WdIPh3hytSw?e=kDOMXd) (when run with 5 PCs).
+
+To run the above data you can:-
+
+```r
+panvar_gwas_tagsnp_snpeff(
+  "setaria_gwas_table.tsv", 
+  "setaria_annotated_vcf.vcf.gz", 
+  chrom = chr_05, 
+  bp = 54675,
+  r2_threshold = 0.6
+)
+```
+Note:- Be sure to run the above example in `R` before downloading the unit test outcome.
+
+Which should produce [this table](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/ETUszsHynbdAnb4WaWbJ8kYBDRhsxsGAaXOrBRzOAE3LbA?e=FoJolr) as outcome.
+
+Table for SHA512sums of the inputs and outputs of the above section.
+
+| File                                                            | SHA512sum                                                                                                                        |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| setaria_annotated_vcf.vcf.gz                                    | 6d437b9863295ccd76194f382beee66ed7b66a930ee1462d4a83c57a74bab2dde63d1a2fd1777df1f65708ea091adb190a9e16eb65f53c28ed6afb8e706c9629 |
+| setaria_gwas_table.tsv                                          | ff019601bfcd2d2a6ea2d26d749ad1656ce6237b1d0045eb9a014d04bbefce622a8a0d88e6d0d49e88e7a3c65731d48ae7fc9b01a537fb432f328022e823ac17 |
+| setaria_shattering_unit_test_r2_008_maf_005_missng_rate_001.tsv | 67778fb07a69af3a5acd307641c3b7c1153edf4ba1da28776583eb32e9097936b2a5339505bed789b4c47435c35f32762cf56543d933f7f7e59fe94cd51f910b |
+| shattering.tsv                                                  | 883c1a0104ac4c1cbf9c041b9ebd67ad1c1b8fa8c83ab4bd09b8a71963e4509974fb3aa3437080a33eb957976515fa45b69328525fe5862cf66603df2f9c56c5 |

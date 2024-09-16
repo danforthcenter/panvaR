@@ -10,6 +10,10 @@
 #' Defaults to {base_name}_filtered_{maf_rate}.vcf
 #' @return The path to the new vcf file with the missing rate filter applied.
 #' @export
+#' 
+#' @examples
+#' apply_maf("<path_to_vcf_file>", missing_rate = 0.05)
+#' apply_maf <- function(path_to_vcf_file, missing_rate = 0.05, output_name = "new_file"){
 
 
 apply_maf <- function(path_to_vcf_file, maf = 0.05, output_name = NA){

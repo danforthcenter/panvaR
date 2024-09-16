@@ -14,6 +14,8 @@
 #' Defaults to 0.05
 #' @param missing_rate (optional) The missing_rate filter that will be applied to the genotype data.
 #' Defaults to 0.1
+#' @param dynamic_correlation (optional) Should the PCs, beyond minimum, be calculated dynamically?
+#' Defaults to FALSE
 #' @return GWAS results in tabular format.
 #'
 #' @examples
@@ -23,7 +25,7 @@
 
 # A function to make PCAs for your genotype data.
 
-panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf = 0.05, missing_rate = 0.1) {
+panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf = 0.05, missing_rate = 0.1, dynamic_correlation = FALSE) {
 
 	# Get the core count from the ergonomics set of code
 	core_count = good_core_count()
@@ -160,15 +162,19 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf
 
 	pcs_to_include = seq(1:pc_min)
 
-	if(pc_max > pc_min){
-		for (j in pc_min:pc_max) {
-		  if (cor.test(phenotype_scores, the_covariates[, j])[3] < 0.05) {
-		    pcs_to_include = c(pcs_to_include, j)
-		  }
+	# If the dynamic correlation is set to TRUE 
+	# then the more than the minimum number of PC will be included after they 
+	# have been tested for correlation
+	if(dynamic_correlation == TRUE) {
+		if(pc_max > pc_min){
+			for (j in pc_min:pc_max) {
+			  if (cor.test(phenotype_scores, the_covariates[, j])[3] < 0.05) {
+			    pcs_to_include = c(pcs_to_include, j)
+			  }
+			}
 		}
 	}
-	
-
+		
 	gwas <- big_univLinReg(
     	the_genotypes, 
     	scale(
