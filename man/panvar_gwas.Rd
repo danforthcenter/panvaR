@@ -10,7 +10,8 @@ panvar_gwas(
   pc_min = 5,
   pc_max = 5,
   maf = 0.05,
-  missing_rate = 0.1
+  missing_rate = 0.1,
+  dynamic_correlation = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,9 @@ Defaults to 0.05}
 
 \item{missing_rate}{(optional) The missing_rate filter that will be applied to the genotype data.
 Defaults to 0.1}
+
+\item{dynamic_correlation}{(optional) Should the PCs, beyond minimum, be calculated dynamically?
+Defaults to FALSE}
 
 \item{phenotype_data}{Path to your genotype data.}
 }

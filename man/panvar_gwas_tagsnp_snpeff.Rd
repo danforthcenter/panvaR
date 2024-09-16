@@ -2,8 +2,7 @@
 % Please edit documentation in R/panvar.r
 \name{panvar_gwas_tagsnp_snpeff}
 \alias{panvar_gwas_tagsnp_snpeff}
-\title{Title
-A function that automates the Panvar analysis when the user supplies a GWAS table, a VCF file and a tag SNP}
+\title{A function that automates the Panvar analysis when the user supplies a GWAS table, a VCF file and a tag SNP}
 \usage{
 panvar_gwas_tagsnp_snpeff(
   gwas_table_path,
@@ -38,6 +37,15 @@ Defaults to 0.1}
 Defaults to 500000}
 }
 \description{
-Title
 A function that automates the Panvar analysis when the user supplies a GWAS table, a VCF file and a tag SNP
+}
+\examples{
+panvar_gwas_tagsnp_snpeff("<path_to_gwas_table>", "<path_to_vcf_file>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
+panvar_gwas_tagsnp_snpeff(
+   "<path_to_gwas_table>", 
+   "<path_to_vcf_file>", 
+   chrom = chr_05, 
+   bp = 54675,
+   r2_threshold = 0.6
+)
 }
