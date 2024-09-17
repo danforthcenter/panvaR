@@ -96,10 +96,28 @@ panvar_gwas(
 
 If you are looking for details into how the `GWAS` pipeline has been implemented - please read into `R/panvar_gwas.R`.
 
+## Using `panvaR` with a Phenotype file
+
+If you want to automate the a `panvaR` run starting with a phenotype file and an annotated VCF file, you can use the `panvar_pheno_geno_snpeff` function.
+
+```r
+panvar_pheno_geno_snpeff(
+    phenotype_data_path = "</path/to/phenotype/file>",
+    vcf_file_path = "</path/to/vcf/file>"
+)
+```
+
+The above function is really just a convienience wrapper that:-
+
+1. Runs GWAS with the supplied phenotype and genotype data.
+2. Gets the `Tag_snp` (i.e. the SNP with the strongest Pvalues from GWAS)
+3. Then calls `panvar_gwas_tagsnp_snpeff` 
 
 # Elaborate example run
 
-(The links in this section are stores in a OneDrive account - if you have diffculty accessing them, please contact maintainers.)
+Example input and output for `panvaR`.
+
+(The links in this section are stored in a OneDrive account - if you have diffculty accessing them, please contact maintainers.)
 
 Here is an example of `PanvaR` being used with real world data.
 
