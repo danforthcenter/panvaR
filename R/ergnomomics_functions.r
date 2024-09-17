@@ -142,7 +142,7 @@ tag_snp_func <- function(gwas_results){
     # Just double checking to make sure that the table is arranged properly
     
     current_table <- gwas_results %>% 
-        arrange(desc(Pvalues))
+        arrange(desc(as.numeric(Pvalues)))
 
     tag_snp_row <- current_table %>%
         slice(1)

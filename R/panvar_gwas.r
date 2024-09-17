@@ -60,9 +60,14 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf
 	fam_file_path <- paste0(cleaned_up_bed_file_path,".fam")
 
 	# Read the bam file into using `snp_readBed`
-	bed_file_readout <- snp_readBed(
-	    cleaned_up_bed_file
-	)
+	
+	# but first check to see if the .bk file exists
+	bk_base_path <- base_name_func(cleaned_up_bed_file, include_dir = TRUE)
+	bk_file_path <- paste0(bk_base_path,".bk")
+
+	if(!file.exists(bk_file_path)){
+		snp_readBed(cleaned_up_bed_file)
+	}
 
 	rds_file_base <- base_name_func(cleaned_up_bed_file,include_dir = TRUE)
 
@@ -192,10 +197,23 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf
 
 	pvalues <- -1 * pvalues # To just get the -log10 values
 
-	numeric_pvalues <- as.numeric(pvalues) # So err on the side of caution.
+	the_gwas <- as.data.table(
+		cbind(
+			CHROM = the_chromosomes,
+			BP = the_bp,
+			Pvalues = pvalues
+		)
+	)
 
-	return_gwas <- as.data.table(cbind(CHROM = the_chromosomes, BP = the_bp,Pvalues = numeric_pvalues)) %>%
-    	arrange(desc(Pvalues))
+	# convert bp and pvalues to numeric types -
+	# to err on the side of caution
+	the_gwas[, `:=`(BP = as.integer(BP), Pvalues = as.numeric(Pvalues))]
 
+
+	# return the gwas table in descending order per pvalues
+	return_gwas <- the_gwas %>%
+		arrange(desc(Pvalues))
+	
+	
 	return(return_gwas)
 }
