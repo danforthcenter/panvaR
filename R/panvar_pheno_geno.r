@@ -30,7 +30,7 @@ panvar_pheno_geno_snpeff <- function(phenotype_data_path,vcf_file_path,chrom,bp,
 
     # Run GWAS for the user
     gwas_table_denovo <- panvar_gwas(
-        phenotype_data_path = phenotype_path,
+        phentotype_path = phenotype_data_path,
         genotype_data = vcf_file_path,
         pc_min = pc_min,
         pc_max = pc_max,

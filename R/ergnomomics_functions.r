@@ -142,14 +142,14 @@ tag_snp_func <- function(gwas_results){
     # Just double checking to make sure that the table is arranged properly
     
     current_table <- gwas_results %>% 
-        arrange(desc(pvalues))
+        arrange(desc(Pvalues))
 
-    tag_snp_row <-current_table %>%
+    tag_snp_row <- current_table %>%
         slice(1)
 
     tag_snp <- list(
-        tag_snp_bp = tag_snp_row$the_bp, 
-        tag_snp_chromosome = tag_snp_row$the_chromosomes
+        tag_snp_bp = as.integer(tag_snp_row$BP), 
+        tag_snp_chromosome = tag_snp_row$CHROM
 
     )
 

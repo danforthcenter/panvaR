@@ -23,3 +23,7 @@ The path to the new vcf file with the missing rate filter applied.
 Title
 A function to take a vcf file and filter applies a minor allele frequency filter.
 }
+\examples{
+apply_maf("<path_to_vcf_file>", missing_rate = 0.05)
+apply_maf <- function(path_to_vcf_file, missing_rate = 0.05, output_name = "new_file")
+}
