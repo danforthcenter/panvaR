@@ -118,16 +118,17 @@ keep_table_sanitizer <- function(table) {
 
         keep_table <- fread(table)
 
-		keep_table <-keep_table %>% 
-			select(CHROM,BP)
+		# TODO:- How to make sure the Chrs -
+		# Come before the loci in the the -
+		# keep tables?
 
         keep_table %>%
             fwrite(keep_table_path,sep = "\t",col.names = FALSE)
     } else{
-        keep_table <- as.data.table(table)
+        keep_table <- as.data.table(table,col.names=TRUE)
 
-		keep_table <-keep_table %>% 
-			select(CHROM,BP)
+		keep_table <- keep_table %>%
+            select(CHROM,BP)
 
         keep_table %>%
             fwrite(keep_table_path,sep = "\t",col.names = FALSE)

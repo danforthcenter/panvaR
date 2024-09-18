@@ -65,10 +65,17 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
 
 	plink2_bcf_dictionary <- plink2_bcftools_chroms_dictionary(vcf_file_path,in_plink_format$bim)
 
-	ld_table_checked <- apply_dict(plink2_bcf_dictionary, ld_table)
+	if(!is.null(plink2_bcf_dictionary)){
+		ld_table_checked <- apply_dict(plink2_bcf_dictionary, ld_table)
 
-	snp_keep_list_checked <- apply_dict(plink2_bcf_dictionary, snp_keep_list)
+		snp_keep_list_checked <- apply_dict(plink2_bcf_dictionary, keep_snp_list)
+	} else{
+		
+		ld_table_checked <-  ld_table
 
+		snp_keep_list_checked <- keep_snp_list
+	}
+	
     # Sanitize the table 
     keep_table_path <- keep_table_sanitizer(snp_keep_list_checked)
 
@@ -97,7 +104,7 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
     # 4. The LD with the tag_snp included
     pvalues_impact_ld_table <- snpsift_table_highs_and_moderate %>%
         left_join(gwas_table, by = c("CHROM","BP")) %>%
-        left_join(ld_table, by = c("CHROM","BP"))
+        left_join(ld_table_checked, by = c("CHROM","BP"))
 
     # Annotate the tag_snp
     pvalues_impact_ld_colors_table <- pvalues_impact_ld_table %>% mutate(
