@@ -53,6 +53,7 @@ vcf_to_plink2 <- function(vcf_file_path, output_prefix = NA){
 	binary_args <- c(
 		"--vcf",
 		vcf_file_path, "--make-bed",
+		"--set-all-var-ids", "Chr_@_BP_#",
 		"--out", output_path
 	)
 

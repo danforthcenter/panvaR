@@ -50,7 +50,8 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
     table <- ld_filtered_snp_list(subset_genotype_data,chrom = chrom, bp = bp, r2_threshold = r2_threshold)
 
     # Make the LD table
-    # This is one of the ld tables that will be left_joined later
+	# This table has the CHROM, BP and LD values and re-adds the tag SNP
+    # This is one of the tables that will be left_joined later
     ld_table <- ld_table_maker(table)
 
     # Convert the table into the list of SNPs to keep
@@ -61,10 +62,17 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
     # a situation where the names in plink2 -
     # and BCFtools have different chromosomes names. -
     # This needs to be accounted for.
+
+	plink2_bcf_dictionary <- plink2_bcftools_chroms_dictionary(vcf_file_path,in_plink_format$bim)
+
+	ld_table_checked <- apply_dict(plink2_bcf_dictionary, ld_table)
+
+	snp_keep_list_checked <- apply_dict(plink2_bcf_dictionary, snp_keep_list)
+	
     checked_table <- check_plink2_chroms(vcf_file_path = vcf_file_path,in_plink_format$bim,keep_snp_list)
 
     # Sanitize the table 
-    keep_table_path <- keep_table_sanitizer(checked_table)
+    keep_table_path <- keep_table_sanitizer(snp_keep_list_checked)
 
     # Send the keep table to bcftools
     filtered_vcf_table <- filter_vcf_file(vcf_file_path = vcf_file_path, keep_table_path)

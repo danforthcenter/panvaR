@@ -84,11 +84,11 @@ good_core_count <- function(){
 # A function to get all the BPs to keep
 snps_to_keep <- function(ld_table){
 
-    # This functions only takes the very striclty defined
+    # This function only takes the very striclty defined
     # and shaped table as made by the function `ld_filtered_snp_list`
     # in the file `ld_filtered_snp_list.R`
 
-    # This function is need because the way
+    # This function is needed because the way
     # Plink2 calculates LD, it leaves out the tag snp
     # and keeps everything else
     # that is all that we are accomodating for.
@@ -96,13 +96,13 @@ snps_to_keep <- function(ld_table){
     # Get other snps
     other_snps <- ld_table %>%
         select(Subject_snp_chrom,Subject_snp_bp)  %>%
-        rename(Chrom = Subject_snp_chrom,bp = Subject_snp_bp)
+        rename(CHROM = Subject_snp_chrom,BP = Subject_snp_bp)
 
     # Get tag snps
     tag_snp <- ld_table %>%
         select(Tag_snp_chrom, Tag_snp_bp) %>%
         distinct() %>%
-        rename(Chrom = Tag_snp_chrom,bp = Tag_snp_bp)
+        rename(CHROM = Tag_snp_chrom,BP = Tag_snp_bp)
     
     keep_list <- rbind(other_snps,tag_snp)
 
@@ -118,10 +118,16 @@ keep_table_sanitizer <- function(table) {
 
         keep_table <- fread(table)
 
+		keep_table <-keep_table %>% 
+			select(CHROM,BP)
+
         keep_table %>%
             fwrite(keep_table_path,sep = "\t",col.names = FALSE)
     } else{
         keep_table <- as.data.table(table)
+
+		keep_table <-keep_table %>% 
+			select(CHROM,BP)
 
         keep_table %>%
             fwrite(keep_table_path,sep = "\t",col.names = FALSE)
