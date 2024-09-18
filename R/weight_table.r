@@ -14,7 +14,7 @@ overall_weight_func <- function(current_table, bp){
             abs_dist = abs(BP - bp)
         ) %>%
         mutate(
-            normalized_dist = (abs_dist - min(abs_dist)) / (max(abs_dist) - min(abs_dist))
+            normalized_dist = ( min(abs_dist)) / abs_dist)
         ) %>%
         mutate(
             normalized_LD = (LD - min(LD)) / (max(LD) - min(LD))
