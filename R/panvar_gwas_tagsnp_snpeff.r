@@ -68,8 +68,6 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
 	ld_table_checked <- apply_dict(plink2_bcf_dictionary, ld_table)
 
 	snp_keep_list_checked <- apply_dict(plink2_bcf_dictionary, snp_keep_list)
-	
-    checked_table <- check_plink2_chroms(vcf_file_path = vcf_file_path,in_plink_format$bim,keep_snp_list)
 
     # Sanitize the table 
     keep_table_path <- keep_table_sanitizer(snp_keep_list_checked)
