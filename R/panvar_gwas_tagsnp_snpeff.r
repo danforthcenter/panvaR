@@ -12,6 +12,8 @@
 #' Defaults to 0.1
 #' @param window The window around the tag snp
 #' Defaults to 500000
+#' @param all_impacts (optional) Should all impacts be included in the report?
+#' Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
 #' @export
 #' 
 #' @examples
@@ -23,7 +25,7 @@
 #'    bp = 54675,
 #'    r2_threshold = 0.6
 #' )
-panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000){
+panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000, all.impacts = FALSE){
 
     # Check if the vcf_file has a tbi file
     proper_tbi(vcf_file_path)
@@ -92,17 +94,20 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
 
     # Read the output produced by SnpSift
     snpsift_table <- snpeff_table$table
-    
-    snpsift_table_highs_and_moderate <- snpsift_table %>% 
-        filter(IMPACT %in% c("HIGH","MODERATE") | BP == bp)
 
-    
+    if(all.impacts){
+        snpsift_table_impacts <- snpsift_table
+    } else {
+        snpsift_table_impacts <- snpsift_table %>% 
+            filter(IMPACT %in% c("HIGH","MODERATE"))
+    }
+
     # This table should have 
     # 1. The impact factor
     # 2. The tag SNP
     # 3. The Pvalues from GWAS
     # 4. The LD with the tag_snp included
-    pvalues_impact_ld_table <- snpsift_table_highs_and_moderate %>%
+    pvalues_impact_ld_table <- snpsift_table_impacts %>%
         left_join(gwas_table, by = c("CHROM","BP")) %>%
         left_join(ld_table_checked, by = c("CHROM","BP"))
 

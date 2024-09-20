@@ -15,10 +15,12 @@
 #' @param pc_max (optional) What is the maximum number of PCs that should be included in GWAS?
 #' Defaults to 5
 #' @param dynamic_correlation (optional) Should the PCs, beyond minimum, be calculated dynamically?
+#' @param all_impacts (optional) Should all impacts be included in the report?
+#' Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
 #' @examples
 #' panvar_pheno_geno_snpeff("<path_to_phenotype_data>", "<path_to_vcf_file>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
 #' @export
-panvar_pheno_geno_snpeff <- function(phenotype_data_path,vcf_file_path,chrom,bp, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, dynamic_correlation = FALSE){
+panvar_pheno_geno_snpeff <- function(phenotype_data_path,vcf_file_path,chrom,bp, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, dynamic_correlation = FALSE, all.impacts = FALSE){
 
     # Check if the vcf_file has a tbi file
     proper_tbi(vcf_file_path)
@@ -59,7 +61,8 @@ panvar_pheno_geno_snpeff <- function(phenotype_data_path,vcf_file_path,chrom,bp,
         r2_threshold = r2_threshold,
         maf = maf,
         missing_rate = missing_rate,
-        window = window
+        window = window,
+        all.impacts = all.impacts
     )
 
     return(panvar_run)
