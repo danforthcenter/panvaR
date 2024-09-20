@@ -33,7 +33,8 @@ panvar_gwas_tagsnp_snpeff(
   vcf_file_path = "<path/to/vcf/file.gz>",
   chrom = "Chr_05",
   bp = 6857045,
-  r2_threshold = 0.8
+  r2_threshold = 0.8,
+  window = 500000
 )
 ```
 
