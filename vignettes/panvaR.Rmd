@@ -34,7 +34,8 @@ panvar_gwas_tagsnp_snpeff(
   chrom = "Chr_05",
   bp = 6857045,
   r2_threshold = 0.8,
-  window = 500000
+  window = 500000,
+  all.impact = FALSE
 )
 ```
 

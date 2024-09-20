@@ -12,7 +12,8 @@ panvar_gwas_tagsnp_snpeff(
   r2_threshold = 0.6,
   maf = 0.05,
   missing_rate = 0.1,
-  window = 500000
+  window = 500000,
+  all.impacts = FALSE
 )
 }
 \arguments{
@@ -35,6 +36,9 @@ Defaults to 0.1}
 
 \item{window}{The window around the tag snp
 Defaults to 500000}
+
+\item{all_impacts}{(optional) Should all impacts be included in the report?
+Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included}
 }
 \description{
 A function that automates the Panvar analysis when the user supplies a GWAS table, a VCF file and a tag SNP

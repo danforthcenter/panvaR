@@ -15,7 +15,8 @@ panvar_pheno_geno_snpeff(
   window = 500000,
   pc_min = 5,
   pc_max = 5,
-  dynamic_correlation = FALSE
+  dynamic_correlation = FALSE,
+  all.impacts = FALSE
 )
 }
 \arguments{
@@ -42,6 +43,9 @@ Defaults to 5}
 Defaults to 5}
 
 \item{dynamic_correlation}{(optional) Should the PCs, beyond minimum, be calculated dynamically?}
+
+\item{all_impacts}{(optional) Should all impacts be included in the report?
+Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included}
 }
 \description{
 A function that automates the Panvar analysis when supplies genotype data and phenotype data.
