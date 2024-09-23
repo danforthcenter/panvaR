@@ -97,24 +97,10 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf
 	# Make the exclusion index  
 	# Rijan: Reading material clumping and pruning here https://www.biostars.org/p/343818/
 
-	exclusion_index <- snp_indLRLDR(
-	    infos.chr = chromosomes_as_ints, 
-	    infos.pos = the_bp
-	)
-
-	# Rijan: Reading material clumping and pruning here https://www.biostars.org/p/343818/
-	inclusion_index <- snp_clumping(
-	    the_genotypes, 
-	    infos.chr = chromosomes_as_ints, 
-	    exclude = exclusion_index,
-	    ncores = core_count
-	)
-
 	# Apply a PCA using an algorithm optimized for large file backed matrices
 	big_random_pca <- big_randomSVD(
 	    the_genotypes, 
 	    fun.scaling = snp_scaleBinom(),
-	    ind.col = inclusion_index,
 	    ncores = core_count
 	)
 
@@ -189,11 +175,9 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf
     	    ncores = core_count 
     	)
 	
-	gwas_snp_gc_object <- snp_gc(gwas)
-
 	the_order <- order(the_chromosomes, the_chromosomes)
 
-	pvalues <- stats::predict(gwas_snp_gc_object)[the_order]
+	pvalues <- stats::predict(gwas)[the_order]
 
 	pvalues <- -1 * pvalues # To just get the -log10 values
 
