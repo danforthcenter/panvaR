@@ -194,3 +194,35 @@ ld_table_maker <- function(ld_table){
     return(ld_table)
     
 }
+
+
+# Function:- `window_unit_func` 
+# Context:- The user can either supply a numeric and granular window in numbers or bp -
+# or supply a kilobase window as characters "500kb".
+# Goal:- Take an input from the user and return the window value.
+
+window_unit_func <- function(window_value) {
+
+    # Check if the input is of type character
+    if (typeof(window_value) == 'character') {
+
+        # Convert the user-supplied input to numeric and multiply it by 1000
+        kb_numeric = as.numeric(gsub("KB", "", window_value, ignore.case = TRUE))
+
+        # Check if conversion was successful
+        if (is.na(kb_numeric)) {
+            stop("Error: Input could not be converted to numeric.")
+        }
+
+        kb_window = kb_numeric * 1000
+
+        return(kb_window)
+    }
+
+    # If the input is already numeric, return it
+    if (typeof(window_value) == 'double') {
+        return(window_value)
+    }
+
+    stop("Error: Unsupported input type.")
+}

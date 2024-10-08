@@ -10,8 +10,10 @@
 #' Defaults to 0.05
 #' @param missing_rate The missing rate filter for your genotype data
 #' Defaults to 0.1
-#' @param window The window around the tag snp
-#' Defaults to 500000
+#' @param window The window around the tag snp. 
+#' Either supplied with as kilo basese as "#kb" or as bp values.
+#' If you want to supply 250 Kilobases you should supply "250kb" or 250000 - whatever is your preference.
+#' Defaults to "500kb".
 #' @param all_impacts (optional) Should all impacts be included in the report?
 #' Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
 #' @export
@@ -25,8 +27,12 @@
 #'    bp = 54675,
 #'    r2_threshold = 0.6
 #' )
-panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000, all.impacts = FALSE){
+panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = "500kb", all.impacts = FALSE){
 
+  # convert the window into bp values
+  window_bp <- window_unit_func(window)
+
+  # Check if the gwas table has a tbi file
     # Check if the vcf_file has a tbi file
     proper_tbi(vcf_file_path)
 
@@ -46,7 +52,7 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
     cleaned_up <- bed_file_clean_up(in_plink_format$bed, maf = maf, missing_rate = missing_rate)
 
     # subset your genotype data around the tag snp
-    subset_genotype_data <- subset_around_tag(cleaned_up,chrom = chrom, bp = bp, window = window)
+    subset_genotype_data <- subset_around_tag(cleaned_up,chrom = chrom, bp = bp, window = window_bp)
 
     # using ld get the list of bps to keep
     table <- ld_filtered_snp_list(subset_genotype_data,chrom = chrom, bp = bp, r2_threshold = r2_threshold)
