@@ -2,7 +2,7 @@ To have `PanvaR` in your dev environment please use the following steps:-
 
 1. Install [`remotes`](https://cran.r-project.org/web/packages/remotes/index.html)
 
-2. After you have `remotes` installed use:- `remotes::remotes::install_github("VectorFrankenstein/panvaR", build_vignettes = TRUE)`
+2. After you have `remotes` installed use:- `remotes::remotes::install_github("danforthcenter/panvaR", build_vignettes = TRUE)`
 
 After this you should be ready to play around with `PanvaR`.
 
