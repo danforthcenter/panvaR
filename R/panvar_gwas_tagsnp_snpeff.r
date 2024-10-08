@@ -99,7 +99,7 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
         snpsift_table_impacts <- snpsift_table
     } else {
         snpsift_table_impacts <- snpsift_table %>% 
-            filter(IMPACT %in% c("HIGH","MODERATE"))
+            filter(IMPACT %in% c("HIGH","MODERATE") | BP == bp ) # The OR condition lets us retain the tag SNP which might be dropped if the IMPACT factor is not HIGH or MODERATE
     }
 
     # This table should have 
