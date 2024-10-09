@@ -12,7 +12,7 @@ panvar_gwas_tagsnp_snpeff(
   r2_threshold = 0.6,
   maf = 0.05,
   missing_rate = 0.1,
-  window = 500000,
+  window = "500kb",
   all.impacts = FALSE
 )
 }
@@ -34,8 +34,10 @@ Defaults to 0.05}
 \item{missing_rate}{The missing rate filter for your genotype data
 Defaults to 0.1}
 
-\item{window}{The window around the tag snp
-Defaults to 500000}
+\item{window}{The window around the tag snp.
+Either supplied with as kilo basese as "#kb" or as bp values.
+If you want to supply 250 Kilobases you should supply "250kb" or 250000 - whatever is your preference.
+Defaults to "500kb".}
 
 \item{all_impacts}{(optional) Should all impacts be included in the report?
 Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included}

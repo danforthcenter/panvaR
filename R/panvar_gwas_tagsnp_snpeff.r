@@ -101,6 +101,14 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
     # Read the output produced by SnpSift
     snpsift_table <- snpeff_table$table
 
+    # We start the pipeline with a tag_SNP. By the time we reach the "final_table", - 
+    # we might not retain the tag_SNP if its impact factor is not HIGH or MODERATE. -
+    # The potential issue of the tag_SNP being dropped can be fixed by creating an -
+    # exception in the conditional here.
+
+    # For the final table, we create a new field that indicates if a loci is a Tag - 
+    # SNP or a Candidate gene. This will be recorded in TYPE.
+    
     if(all.impacts){
         snpsift_table_impacts <- snpsift_table
     } else {
@@ -119,9 +127,9 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
 
     # Annotate the tag_snp
     pvalues_impact_ld_colors_table <- pvalues_impact_ld_table %>% mutate(
-        IMPACT = case_when(
+        Type = case_when(
             BP == bp ~ "tag_snp",
-            TRUE ~ as.character(IMPACT)
+            BP != bp ~ "Candidate"
         )
     )
 
