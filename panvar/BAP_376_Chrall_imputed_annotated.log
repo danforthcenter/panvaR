@@ -1,0 +1,18 @@
+PLINK v2.00a6LM AVX2 Intel (5 Feb 2024)
+Options in effect:
+  --make-bed
+  --out panvar/BAP_376_Chrall_imputed_annotated
+  --set-all-var-ids Chr_@_BP_#
+  --vcf sorghum/BAP_376_Chrall_imputed_annotated.vcf.gz
+
+Hostname: ip-10-0-247-182.us-east-2.compute.internal
+Working directory: /shares/baxter/users/rdhakal/repos/devel_panvar
+Start time: Sat Oct 19 21:00:57 2024
+
+Random number seed: 1729371657
+7883 MiB RAM detected, ~6858 available; reserving 3941 MiB for main workspace.
+Using 1 compute thread.
+Error: Failed to open sorghum/BAP_376_Chrall_imputed_annotated.vcf.gz : No such
+file or directory.
+
+End time: Sat Oct 19 21:00:57 2024
