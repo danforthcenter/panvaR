@@ -12,12 +12,21 @@
 #' @param (optional) The r2 threshold that you want to work with.
 #' Defaults to 
 #' @return A table with the list of BPs that cross the assigned threshold.
+#' 
+#' @import tidyverse
+#' @import data.table
+#' @import sys
+#' @import parallel
+#' @import bigsnpr
+#' @import modelr
+#'
 #' @export
 #'
 #' @examples
 #' ld_filtered_snp_list("<bed_file_path>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
 
 # A general function to convert bed files to Plink
+
 ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5){
 
 	bed_file_input = base_name_func(path_to_bed_file, super_name = TRUE, include_dir = TRUE) # to more accurately get the bed file path

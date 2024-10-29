@@ -1,6 +1,4 @@
-# A function to apply default missing rates and minor allele frequency filter to bed files using plink2
-
-#' Title
+#' subset_aroung_tag
 #' A function to take a Bed file and make a window around the tag snp.
 #'
 #' @param path_to_bed_file Path to the bed file that should have the tag SNP.
@@ -11,12 +9,20 @@
 #' @param output_prefix (optional) What should be the new basename or prefix for the new file be?
 #' Defaults to {base_name}_windowed
 #' @return The path to the new bed file with the missing rate filter applied.
+#' 
+#' @import tidyverse
+#' @import data.table
+#' @import parallel
+#' @importFrom bigstatsr big_randomSVD
+#' @import modelr
+#' 
 #' @export
 #'
 #' @examples
 #' subset_around_tag('<path_to_your_bed_file>')
 
 # A general function to convert bed files to Plink
+
 subset_around_tag <- function(path_to_bed_file, chrom, bp, window = 500000,output_prefix = NA){
 
 	bed_file_input = base_name_func(path_to_bed_file, super_name = TRUE, include_dir = TRUE)

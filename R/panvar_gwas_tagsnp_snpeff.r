@@ -1,4 +1,4 @@
-#' A function that automates the Panvar analysis when the user supplies a GWAS table, a VCF file and a tag SNP
+#' panvar_gwas_tagsnp_snpeff
 #' 
 #' @param gwas_table_path Path to the GWAS table
 #' @param vcf_file_path Path to the VCF file
@@ -16,6 +16,14 @@
 #' Defaults to "500kb".
 #' @param all_impacts (optional) Should all impacts be included in the report?
 #' Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
+#' 
+#' @import tidyverse
+#' @import data.table
+#' @import sys
+#' @import parallel
+#' @import bigsnpr
+#' @import modelr
+#'
 #' @export
 #' 
 #' @examples
@@ -27,6 +35,7 @@
 #'    bp = 54675,
 #'    r2_threshold = 0.6
 #' )
+
 panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = "500kb", all.impacts = FALSE){
 
   # convert the window into bp values

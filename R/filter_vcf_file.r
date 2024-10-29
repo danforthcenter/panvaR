@@ -12,12 +12,21 @@
 #' @param keep_table The table of BPs to keep, either a table or a tabular object
 #'
 #' @return Path to a vcf file that with only the filtered set of BPs
+#' 
+#' @import tidyverse
+#' @import data.table
+#' @import sys
+#' @import parallel
+#' @import bigsnpr
+#' @import modelr
+#'
 #' @export
 #'
 #' @examples
 #' ld_filtered_snp_list("<vcf_file_path>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
 
 # A general function to convert vcf files to Plink
+
 filter_vcf_file <- function(vcf_file_path, keep_table, output_prefix = NA){
 
 	proper_tbi(vcf_file_path)

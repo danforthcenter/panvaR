@@ -8,7 +8,7 @@
 #' Defaults to 0.05
 #' @param missing_rate The missing rate filter for your genotype data
 #' Defaults to 0.1
-#' @param window The window around the tag snp
+#' @param window PanvaR determines the Linkage Disequilibrium (LD) between the tag Single Nucleotide Polymorphism (SNP) and every other SNP within a genome segment. This segment is centered on the tag SNP, extending up to a specified window size in both directions.
 #' Defaults to 500000
 #' @param pc_min (optional) What is the minimum number of PCs that should be included in GWAS?
 #' Defaults to 5
@@ -19,6 +19,14 @@
 #' Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
 #' @examples
 #' panvar("<path_to_phenotype_data>", "<path_to_vcf_file>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
+#' 
+#' @import tidyverse
+#' @import data.table
+#' @import sys
+#' @import parallel
+#' @import bigsnpr
+#' @import modelr
+#'
 #' @export
 panvar_func <- function(phenotype_data_path,vcf_file_path,chrom = NULL,bp = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, dynamic_correlation = FALSE, all.impacts = FALSE){
 

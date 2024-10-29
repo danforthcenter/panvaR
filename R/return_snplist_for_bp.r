@@ -11,12 +11,19 @@
 #' @param chrom The chromosome of the tag SNP.
 #' @param bp The bp of the snp
 #' @return The names of the SNP at the bp.
+#' 
+#' @import tidyverse
+#' @import data.table
+#' @import parallel
+#' @importFrom bigstatsr big_randomSVD
+#' @import modelr
 #' @export
 #'
 #' @examples
 #' subset_around_tag('<path_to_your_bed_file>')
 
 # A general function to convert bed files to Plink
+
 return_snplist_for_bp <- function(path_to_bed_file, chrom, bp){
 
 	bed_file_input = base_name_func(path_to_bed_file, super_name = TRUE, include_dir = TRUE) # to more accurately get the bed file path

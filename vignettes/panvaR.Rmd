@@ -19,15 +19,20 @@ knitr::opts_chunk$set(
 
 ## When you have tag SNP/s handy
 
-`PanvaR` can be run in multiple ways. These different ways of running `panvaR` come down to the type of input you have. The possible inputs to `panvaR` can be divided into optional and required as follows:-
+Running PanvaR
+`PanvaR` can be executed in multiple ways, depending on the type of input provided. Inputs to PanvaR are categorized into optional and required fields:
 
-1. Annotated-VCF - A `SnpEff` annotated VCF file, crucial for the `IMPACT` information that `SnpEff` adds to the VCF data.
-2. Tag SNP - The chromosome and the BP of the tag SNP. 
-  - (Vocabulary) Tag SNP:- What `panvaR` call a tag SNP is the BP around which `panvaR`'s scientific logic will be applied. Usually just the SNP with the highest score from the GWAS.
-3. GWAS results - In tabular format - the results of the GWAS for the data that you are working with. This supplies the assocation data for each SNP.
+Required Inputs
 
-In this case, you can run `panvaR` as
-```r
+Annotated VCF: A `SnpEff` annotated VCF file, essential for `IMPACT` information added to VCF data.
+Tag SNP: The chromosome and base pair (BP) of the tag SNP, typically the SNP with the highest score from the GWAS.
+GWAS Results: Tabular GWAS results, providing association data for each SNP.
+
+### Running PanvaR with GWAS Results and Annotated VCF
+
+To run PanvaR with GWAS results and an annotated VCF, use the following function:
+
+```R
 panvar_gwas_tagsnp_snpeff(
   gwas_table_path = "<path/to/gwas/table>",
   vcf_file_path = "<path/to/vcf/file.gz>",
@@ -35,9 +40,15 @@ panvar_gwas_tagsnp_snpeff(
   bp = 6857045,
   r2_threshold = 0.8,
   window = 500000,
-  all.impact = FALSE
+  all_impact = FALSE
 )
 ```
+Note:
+- gwas_table_path and vcf_file_path should be replaced with actual file paths.
+- chrom and bp specify the tag SNP's chromosome and base pair.
+- r2_threshold and window are optional parameters for filtering and analysis.
+- all_impact is a logical flag for including all IMPACT categories.
+- `PanvaR` determines the Linkage Disequilibrium (LD) between the tag Single Nucleotide Polymorphism (SNP) and every other SNP within a genome segment. This segment is centered on the tag SNP, extending up to a specified window size in both directions.
 
 Details on the inputs:-
 
