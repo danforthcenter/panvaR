@@ -94,9 +94,10 @@ panvar_func_bulk <- function(phenotype_data_path,vcf_file_path,tag_snps = NULL, 
         
         chrom = denovo_tag_snp$tag_snp_chromosome
 
-        panvar_result <- panvar_func(
+        panvar_result <- panvar_convienience_function( # Visit function body for documentation.
             chrom = chrom,
             bp = bp,
+            cleaned_up = cleaned_up,
             vcf_file_path = vcf_file_path,
             gwas_table = gwas_table,
             in_plink_format = in_plink_format,
@@ -112,9 +113,10 @@ panvar_func_bulk <- function(phenotype_data_path,vcf_file_path,tag_snps = NULL, 
 
         bp = user_tag_snp$bp
 
-        panvar_result <- panvar_func(
+        panvar_result <- panvar_convienience_function( # Visit function body for documentation.
             chrom = chrom,
             bp = bp,
+            cleaned_up = cleaned_up,
             vcf_file_path = vcf_file_path,
             gwas_table = gwas_table,
             in_plink_format = in_plink_format,
@@ -128,9 +130,10 @@ panvar_func_bulk <- function(phenotype_data_path,vcf_file_path,tag_snps = NULL, 
         list_of_tag_snps <- lapply(tag_snps, tag_snp_splitter)
 
         panvar_result <- lapply(list_of_tag_snps, function(x){ # To split the list_of_tag_snps into their constituet parts.
-            panvar_result <- panvar_func(
+            panvar_convienience_function(# Visit function body for documentation.
                 chrom = x$chrom,
-                bp = x$p,
+                bp = x$bp,
+                cleaned_up = cleaned_up,
                 vcf_file_path = vcf_file_path,
                 gwas_table = gwas_table,
                 in_plink_format = in_plink_format,
@@ -157,7 +160,7 @@ panvar_convienience_function <- function(
     gwas_table,
     in_plink_format,
     r2_threshold = 0.6, 
-    window = 500000,
+    window_bp = 500000,
     all.impacts = FALSE 
 )
 {
