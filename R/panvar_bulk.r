@@ -106,7 +106,7 @@ panvar_func_bulk <- function(phenotype_data_path,vcf_file_path,tag_snps = NULL, 
             all.impacts = all.impacts
         )
 
-    } else if(is.character(tag_snps)){
+    } else if(length(tag_snps) == 1){
         user_tag_snp <- tag_snp_splitter(tag_snps)
 
         chrom = user_tag_snp$chrom
@@ -125,7 +125,7 @@ panvar_func_bulk <- function(phenotype_data_path,vcf_file_path,tag_snps = NULL, 
             all.impacts = all.impacts
         )
 
-    } else if(is.vector(tag_snps)){
+    } else if(length(tag_snps) > 1){
 
         list_of_tag_snps <- lapply(tag_snps, tag_snp_splitter)
 
