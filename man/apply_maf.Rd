@@ -2,7 +2,7 @@
 % Please edit documentation in R/apply_maf.r
 \name{apply_maf}
 \alias{apply_maf}
-\title{Title
+\title{apply_maf
 A function to take a vcf file and filter applies a minor allele frequency filter.}
 \usage{
 apply_maf(path_to_vcf_file, maf = 0.05, output_name = NA)
@@ -20,7 +20,7 @@ Defaults to {base_name}\emph{filtered}{maf_rate}.vcf}
 The path to the new vcf file with the missing rate filter applied.
 }
 \description{
-Title
+apply_maf
 A function to take a vcf file and filter applies a minor allele frequency filter.
 }
 \examples{
