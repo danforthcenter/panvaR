@@ -1,22 +1,38 @@
 #' panvar_func
 #' 
 #' @param phenotype_data_path Path to the phenotype data
+#' 
 #' @param vcf_file_path Path to the VCF file
+#' 
+#' @param r2_threshold The r2 threshold
+#' 
+#' @param tag_snps The tag SNPs that you want to pass through panvar - either a single SNP or a list of SNPs.
+#' A single SNP should be formatted as "<Chr>:<BP>" - For example, "Chr_09:12456" or "Chr08:14587".
+#' To supply multiple tag SNPs supply a vector of tag SNPs. For example tag_snps = c("Chr_09:12456","Chr08:14587").
+#' 
 #' @param r2_threshold The r2 threshold
 #' Defaults to 0.6
+#' 
 #' @param maf The minor Allele Frequency
 #' Defaults to 0.05
+#' 
 #' @param missing_rate The missing rate filter for your genotype data
 #' Defaults to 0.1
+#' 
 #' @param window PanvaR determines the Linkage Disequilibrium (LD) between the tag Single Nucleotide Polymorphism (SNP) and every other SNP within a genome segment. This segment is centered on the tag SNP, extending up to a specified window size in both directions.
 #' Defaults to 500000
+#' 
 #' @param pc_min (optional) What is the minimum number of PCs that should be included in GWAS?
 #' Defaults to 5
+#' 
 #' @param pc_max (optional) What is the maximum number of PCs that should be included in GWAS?
 #' Defaults to 5
+#' 
 #' @param dynamic_correlation (optional) Should the PCs, beyond minimum, be calculated dynamically?
+#' 
 #' @param all_impacts (optional) Should all impacts be included in the report?
 #' Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
+#' 
 #' @examples
 #' panvar("<path_to_phenotype_data>", "<path_to_vcf_file>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
 #' 
@@ -28,7 +44,7 @@
 #' @import modelr
 #'
 #' @export
-panvar_func <- function(phenotype_data_path,vcf_file_path,chrom = NULL,bp = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, dynamic_correlation = FALSE, all.impacts = FALSE){
+panvar_func <- function(phenotype_data_path,vcf_file_path,tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, dynamic_correlation = FALSE, all.impacts = FALSE){
 
     # Check if the vcf_file has a tbi file
     proper_tbi(vcf_file_path)
@@ -49,28 +65,6 @@ panvar_func <- function(phenotype_data_path,vcf_file_path,chrom = NULL,bp = NULL
         missing_rate = missing_rate
     )
 
-    gwas_table <- check_gwas_table(gwas_table_denovo)
-
-    # get the tag snp from the gwas results
-    tag_snp <- tag_snp_func(gwas_table_denovo)
-
-	print("The tag snp is")
-
-	print(tag_snp)
-
-    # TODO - this needs some clean up from here
-    # but for now we will just use 
-    if (is.null(chrom) && is.null(bp)){
-        
-        print("Note: you did not specify a tag snp - so the tag SNP will be inferred from the GWAS results")
-        bp = tag_snp$tag_snp_bp
-        chrom = tag_snp$tag_snp_chromosome
-    } else if (is.null(bp) && !is.null(chrom)){
-        print("You supplied a chromosome but not a locus - this is not supported.")
-    } else if (is.null(chrom) && !is.null(bp)){
-        print("You supplied a locus but not a chromosome - this is not supported.")
-    }
-
     # convert the window into bp values
     window_bp <- window_unit_func(window)
 
@@ -85,6 +79,89 @@ panvar_func <- function(phenotype_data_path,vcf_file_path,chrom = NULL,bp = NULL
     # clean up the supplied vcf file
     cleaned_up <- bed_file_clean_up(in_plink_format$bed, maf = maf, missing_rate = missing_rate)
 
+    gwas_table <- check_gwas_table(gwas_table_denovo)
+    # if the user has not supplied a tag SNP -
+    # get the tag snp from the gwas results
+    if(is.null(tag_snps)){
+
+        denovo_tag_snp <- tag_snp_func(gwas_table_denovo)
+
+        print("Note: you did not specify a tag snp - so the tag SNP will be inferred from the GWAS results")
+
+        bp = denovo_tag_snp$tag_snp_bp
+        
+        chrom = denovo_tag_snp$tag_snp_chromosome
+
+        panvar_result <- panvar_convienience_function( # Visit function body for documentation.
+            chrom = chrom,
+            bp = bp,
+            cleaned_up = cleaned_up,
+            vcf_file_path = vcf_file_path,
+            gwas_table = gwas_table,
+            in_plink_format = in_plink_format,
+            r2_threshold = r2_threshold,
+            window_bp = window_bp,
+            all.impacts = all.impacts
+        )
+
+    } else if(length(tag_snps) == 1){
+        user_tag_snp <- tag_snp_splitter(tag_snps)
+
+        chrom = user_tag_snp$chrom
+
+        bp = user_tag_snp$bp
+
+        panvar_result <- panvar_convienience_function( # Visit function body for documentation.
+            chrom = chrom,
+            bp = bp,
+            cleaned_up = cleaned_up,
+            vcf_file_path = vcf_file_path,
+            gwas_table = gwas_table,
+            in_plink_format = in_plink_format,
+            r2_threshold = r2_threshold,
+            window_bp = window_bp,
+            all.impacts = all.impacts
+        )
+
+    } else if(length(tag_snps) > 1){
+
+        list_of_tag_snps <- lapply(tag_snps, tag_snp_splitter)
+
+        panvar_result <- lapply(list_of_tag_snps, function(x){ # To split the list_of_tag_snps into their constituet parts.
+            panvar_convienience_function(# Visit function body for documentation.
+                chrom = x$chrom,
+                bp = x$bp,
+                cleaned_up = cleaned_up,
+                vcf_file_path = vcf_file_path,
+                gwas_table = gwas_table,
+                in_plink_format = in_plink_format,
+                r2_threshold = r2_threshold,
+                window_bp = window_bp,
+                all.impacts = all.impacts
+            )
+        })
+    }
+
+    return(panvar_result)
+}
+
+# panvar_convenience_function is an automation tool for the panvar logic, - 
+# following input verification and atomization. For instance, it can convert - 
+# a phenotype table into a GWAS table. Atomization involves splitting bundled - 
+# parameters, such as multiple tag SNPs, for individual processing.
+
+panvar_convienience_function <- function(
+    chrom,
+    bp,
+    cleaned_up,
+    vcf_file_path,
+    gwas_table,
+    in_plink_format,
+    r2_threshold = 0.6, 
+    window_bp = 500000,
+    all.impacts = FALSE 
+)
+{
     # subset your genotype data around the tag snp
     subset_genotype_data <- subset_around_tag(cleaned_up,chrom = chrom, bp = bp, window = window_bp)
 
