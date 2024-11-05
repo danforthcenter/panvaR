@@ -2,7 +2,7 @@
 % Please edit documentation in R/subset_around_tag_snp.r
 \name{subset_around_tag}
 \alias{subset_around_tag}
-\title{Title
+\title{subset_aroung_tag
 A function to take a Bed file and make a window around the tag snp.}
 \usage{
 subset_around_tag(
@@ -30,7 +30,7 @@ Defaults to 500kb}
 The path to the new bed file with the missing rate filter applied.
 }
 \description{
-Title
+subset_aroung_tag
 A function to take a Bed file and make a window around the tag snp.
 }
 \examples{

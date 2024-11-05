@@ -163,14 +163,24 @@ tag_snp_func <- function(gwas_results){
     return(tag_snp)
 }
 
-# For a tag snp supplied in the format "chrom:bp"
-# We need to be able to split it into chrom and bp
-# This function does that
+# The user might supply the tag snp formatted as - 
+# "<chr>:<bp>". This function provides the convienience -
+# to make the split easily.
+
 tag_snp_splitter <- function(tag_snp){
+    
     tag_snp_items <- strsplit(tag_snp,":")[[1]]
+    
     tag_snp_chrom <- tag_snp_items[1]
-    tag_snp_bp <- tag_snp_items[2]
-    return(list(tag_snp_chrom,tag_snp_bp))
+    
+    tag_snp_bp <- as.double(tag_snp_items[2])
+    
+    return_list <- list(
+        chrom = tag_snp_chrom,
+        bp = tag_snp_bp
+    )
+    
+    return(return_list)
 }
 
 # Make the table of LD that retains the tag SNP
@@ -193,4 +203,36 @@ ld_table_maker <- function(ld_table){
 
     return(ld_table)
     
+}
+
+
+# Function:- `window_unit_func` 
+# Context:- The user can either supply a numeric and granular window in numbers or bp -
+# or supply a kilobase window as characters "500kb".
+# Goal:- Take an input from the user and return the window value.
+
+window_unit_func <- function(window_value) {
+
+    # Check if the input is of type character
+    if (typeof(window_value) == 'character') {
+
+        # Convert the user-supplied input to numeric and multiply it by 1000
+        kb_numeric = as.numeric(gsub("KB", "", window_value, ignore.case = TRUE))
+
+        # Check if conversion was successful
+        if (is.na(kb_numeric)) {
+            stop("Error: Input could not be converted to numeric.")
+        }
+
+        kb_window = kb_numeric * 1000
+
+        return(kb_window)
+    }
+
+    # If the input is already numeric, return it
+    if (typeof(window_value) == 'double') {
+        return(window_value)
+    }
+
+    stop("Error: Unsupported input type.")
 }

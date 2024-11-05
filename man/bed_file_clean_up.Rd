@@ -2,7 +2,7 @@
 % Please edit documentation in R/clean_up_bed_data.r
 \name{bed_file_clean_up}
 \alias{bed_file_clean_up}
-\title{Title
+\title{bed_file_clean_up
 A function to take a Bed file and filter for the missing rate and minor allele frequency.}
 \usage{
 bed_file_clean_up(
@@ -27,7 +27,7 @@ Defaults to {base_name}_filtered{missing_rate}.bed}
 The path to the new bed file with the missing rate filter applied.
 }
 \description{
-Title
+bed_file_clean_up
 A function to take a Bed file and filter for the missing rate and minor allele frequency.
 }
 \examples{

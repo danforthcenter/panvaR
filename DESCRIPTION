@@ -16,6 +16,7 @@ Depends:
 	sys,
 	parallel,
 	bigsnpr,
+	bigstatsr,
 	modelr
 Suggests: 
     knitr,

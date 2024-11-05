@@ -1,6 +1,4 @@
-# A function to apply default missing rates and minor allele frequency filter to bed files using plink2
-
-#' Title
+#' bed_file_clean_up
 #' A function to take a Bed file and filter for the missing rate and minor allele frequency.
 #'
 #' @param path_to_bed_file Path to the bed file.
@@ -11,12 +9,21 @@
 #' @param output_prefix (optional) What should be the new basename or prefix for the new file be?
 #' Defaults to {base_name}_filtered{missing_rate}.bed
 #' @return The path to the new bed file with the missing rate filter applied.
+#' 
+#' @import tidyverse
+#' @import data.table
+#' @import sys
+#' @import parallel
+#' @import bigsnpr
+#' @import modelr
+#'
 #' @export
 #'
 #' @examples
 #' bed_file_clean_up('<path_to_your_bed_file>')
 
 # A general function to convert bed files to Plink
+
 bed_file_clean_up <- function(path_to_bed_file, missing_rate = 0.1, maf = 0.05, output_prefix = NA){
 
 	bed_file_input = base_name_func(path_to_bed_file, super_name = TRUE, include_dir = TRUE)

@@ -11,10 +11,17 @@
 #'
 #' @examples
 #' vcf_window_subset("path/to/your_file.vcf",chrom = "Chr_001", base_snp = 6857045, output_name = "windowed_vcf_file")
-#'
+#' 
+#' @import tidyverse
+#' @import data.table
+#' @import parallel
+#' @importFrom bigstatsr big_randomSVD
+#' @import modelr
+#' 
 #' @export
 
 # A general function to convert vcf files to Plink
+
 vcf_to_plink2 <- function(vcf_file_path, output_prefix = NA){
 
     # make a prefix for output

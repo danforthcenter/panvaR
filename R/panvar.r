@@ -1,47 +1,27 @@
-#' panvar_gwas_tagsnp_snpeff
+#' A function that automates the Panvar analysis when supplies genotype data and phenotype data.
 #' 
-#' @param gwas_table_path Path to the GWAS table
+#' @param phenotype_data_path Path to the phenotype data
 #' @param vcf_file_path Path to the VCF file
-#' @param chrom The chromosome alphanumeric of the tag SNP
-#' @param bp The base pair loci of the tag SNP
 #' @param r2_threshold The r2 threshold
 #' Defaults to 0.6
 #' @param maf The minor Allele Frequency
 #' Defaults to 0.05
 #' @param missing_rate The missing rate filter for your genotype data
 #' Defaults to 0.1
-#' @param window The window around the tag snp. 
-#' Either supplied with as kilo basese as "#kb" or as bp values.
-#' If you want to supply 250 Kilobases you should supply "250kb" or 250000 - whatever is your preference.
-#' Defaults to "500kb".
+#' @param window The window around the tag snp
+#' Defaults to 500000
+#' @param pc_min (optional) What is the minimum number of PCs that should be included in GWAS?
+#' Defaults to 5
+#' @param pc_max (optional) What is the maximum number of PCs that should be included in GWAS?
+#' Defaults to 5
+#' @param dynamic_correlation (optional) Should the PCs, beyond minimum, be calculated dynamically?
 #' @param all_impacts (optional) Should all impacts be included in the report?
 #' Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
-#' 
-#' @import tidyverse
-#' @import data.table
-#' @import sys
-#' @import parallel
-#' @import bigsnpr
-#' @import modelr
-#'
-#' @export
-#' 
 #' @examples
-#' panvar_gwas_tagsnp_snpeff("<path_to_gwas_table>", "<path_to_vcf_file>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
-#' panvar_gwas_tagsnp_snpeff(
-#'    "<path_to_gwas_table>", 
-#'    "<path_to_vcf_file>", 
-#'    chrom = chr_05, 
-#'    bp = 54675,
-#'    r2_threshold = 0.6
-#' )
+#' panvar("<path_to_phenotype_data>", "<path_to_vcf_file>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
+#' @export
+panvar <- function(phenotype_data_path,vcf_file_path,chrom = NULL,bp = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, dynamic_correlation = FALSE, all.impacts = FALSE){
 
-panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = "500kb", all.impacts = FALSE){
-
-  # convert the window into bp values
-  window_bp <- window_unit_func(window)
-
-  # Check if the gwas table has a tbi file
     # Check if the vcf_file has a tbi file
     proper_tbi(vcf_file_path)
 
@@ -50,9 +30,42 @@ panvar_gwas_tagsnp_snpeff <- function(gwas_table_path,vcf_file_path,chrom,bp, r2
     # 2. The report table -
     # The report table should have - Gwas pvalues,
 
-    # Read the gwas table
-    # TODO - This need to go to input verification
-    gwas_table <- check_gwas_table(gwas_table_path)
+    # Run GWAS for the user
+    gwas_table_denovo <- panvar_gwas(
+        phentotype_path = phenotype_data_path,
+        genotype_data = vcf_file_path,
+        pc_min = pc_min,
+        pc_max = pc_max,
+        dynamic_correlation = dynamic_correlation,
+        maf = maf,
+        missing_rate = missing_rate
+    )
+
+    gwas_table <- check_gwas_table(gwas_table_denovo)
+
+    # get the tag snp from the gwas results
+    tag_snp <- tag_snp_func(gwas_table_denovo)
+
+    # TODO - this needs some clean up from here
+    # but for now we will just use 
+    if (is.null(chrom) && is.null(bp)){
+        
+        print("Note: you did not specify a tag snp - so the tag SNP will be inferred from the GWAS results")
+        bp = tag_snp$tag_snp_bp
+        chrom = tag_snp$tag_snp_chromosome
+    } else if (is.null(bp) && !is.null(chrom)){
+        print("You supplied a chromosome but not a locus - this is not supported.")
+    } else if (is.null(chrom) && !is.null(bp)){
+        print("You supplied a locus but not a chromosome - this is not supported.")
+    }
+
+    # convert the window into bp values
+    window_bp <- window_unit_func(window)
+
+    # The end goal of this function is to convieneintly make
+    # 1. The plot from Panvar
+    # 2. The report table -
+    # The report table should have - Gwas pvalues,
 
     # convert the vcf file to plink format
     in_plink_format <- vcf_to_plink2(vcf_file_path)

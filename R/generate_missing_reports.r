@@ -1,5 +1,4 @@
 options(scipen=999) # This makes sure that scientific notation does not supplant natural numbers
-
 # This R script is meant to set the default values for the supplied list of inputs
 
 # function will generate and return two data.tables that hold the missing information for the vcf files that you supply
@@ -12,7 +11,14 @@ options(scipen=999) # This makes sure that scientific notation does not supplant
 #' @return A list containing the following elements:
 #'   \item{table_for_snps}{A table that shows the missing values for the SNPS in the given VCF file.}
 #'   \item{table_for_lines}{A table that shows the missing values for the lines in the given VCF file.}
-
+#' 
+#' @import tidyverse
+#' @import data.table
+#' @import sys
+#' @import parallel
+#' @import bigsnpr
+#' @import modelr
+#'
 #' @export
 #'
 #' @examples

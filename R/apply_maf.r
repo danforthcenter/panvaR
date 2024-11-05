@@ -1,6 +1,4 @@
-# A function to apply default missing values rates to vcf files using plink2
-
-#' Title
+#' apply_maf
 #' A function to take a vcf file and filter applies a minor allele frequency filter.
 #'
 #' @param path_to_vcf_file Path to the vcf file.
@@ -9,12 +7,19 @@
 #' @param new_name (optional) What should be the new basename or prefix for the new file be?
 #' Defaults to {base_name}_filtered_{maf_rate}.vcf
 #' @return The path to the new vcf file with the missing rate filter applied.
+#' 
+#' @import tidyverse
+#' @import data.table
+#' @import sys
+#' @import parallel
+#' @import bigsnpr
+#' @import modelr
+#'
 #' @export
 #' 
 #' @examples
 #' apply_maf("<path_to_vcf_file>", missing_rate = 0.05)
 #' apply_maf <- function(path_to_vcf_file, missing_rate = 0.05, output_name = "new_file")
-
 
 apply_maf <- function(path_to_vcf_file, maf = 0.05, output_name = NA){
 

@@ -15,33 +15,27 @@ panvar_gwas(
 )
 }
 \arguments{
-\item{genotype_data}{Path to the input genotype data.
-Either a vcf file (vcf/gz) or bed file}
+\item{genotype_data}{character. Path to the input genotype data file, either in VCF (vcf/gz) or BED format.}
 
-\item{pc_min}{(optional) What is the minimum number of PCs that should be included in GWAS?
-Defaults to 5}
+\item{pc_min}{integer, optional. Minimum number of principal components (PCs) to include in GWAS. Default is 5.}
 
-\item{pc_max}{(optional) What is the maximum number of PCs that should be included in GWAS?
-Defaults to 5}
+\item{pc_max}{integer, optional. Maximum number of PCs to include in GWAS. Default is 5.}
 
-\item{maf}{(optional) The minor allele frequency that will be applied to the genotype data.
-Defaults to 0.05}
+\item{maf}{numeric, optional. Minor allele frequency filter for the genotype data. Default is 0.05.}
 
-\item{missing_rate}{(optional) The missing_rate filter that will be applied to the genotype data.
-Defaults to 0.1}
+\item{missing_rate}{numeric, optional. Missing rate filter for the genotype data. Default is 0.1.}
 
-\item{dynamic_correlation}{(optional) Should the PCs, beyond minimum, be calculated dynamically?
-Defaults to FALSE}
+\item{dynamic_correlation}{logical, optional. Whether additional PCs beyond the minimum should be calculated dynamically. Default is FALSE.}
 
-\item{phenotype_data}{Path to your genotype data.}
+\item{phenotype_data}{character. Path to the phenotype data file.}
 }
 \value{
-GWAS results in tabular format.
+A data frame containing GWAS results.
 }
 \description{
-This function does gwas on your phenotype and genotype data.
+This function performs genome-wide association studies (GWAS) on provided phenotype and genotype data.
 }
 \examples{
-panvar_gwas("path/to/genotype_data",pc_min = 5,pc_max = 5, maf = 0.05, missing_rate = 0.1)
+panvar_gwas("path/to/genotype_data.vcf", "path/to/phenotype_data.csv", pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1)
 
 }

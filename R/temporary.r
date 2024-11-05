@@ -1,36 +1,48 @@
-# Write an R function that checks if .panvar exits 
-# if it does delete the files in it and return the path
-# if the directory does not exits then create it and return the path
+# R's temporary directory and temp file functions are limited.
+# This is why we will have to write out own.
 
-temporary_directory <- function(delete_files = FALSE) {
-  dir_path <- ".panvar"
+# User have expressed the desire to have the output directory not be -
+# a hidden directory.
+
+# Function to manage the temporary directory
+# Checks if the directory exists; if not, creates it. Deletes contents if specified.
+
+temporary_directory <- function(delete_files = FALSE, working_directory = "panvar") {
   
+  # Use provided working directory or default to "panvar"
+  dir_path <- ifelse(is.null(working_directory), "panvar", working_directory)
+
+  # Delete the contents of the directory if it exists and delete_files is TRUE
   if (dir.exists(dir_path) && delete_files) {
-    # Delete the contents of the directory
     file.remove(list.files(dir_path, full.names = TRUE))
   }
-  
+
+  # Create the directory if it does not exist
   if (!dir.exists(dir_path)) {
     dir.create(dir_path)
   }
-  
+
   return(dir_path)
 }
 
-# A function to roll my own tempfiles 
-# Might as well for the simplicity of it
-# This file just returns a path to a tempfile in 
-# the .panvar directory
+# Function to generate a temporary file path in the specified directory
+# Optionally creates the file
 
-temp_file <- function(create_file = FALSE) {
+temp_file <- function(create_file = FALSE, working_directory = "panvar") {
+  
+  # Use provided working directory or default to "panvar"
+  dir_path <- ifelse(is.null(working_directory), "panvar", working_directory)
+  
+  # Generate a random file name
+  random_name <- paste0(sample(LETTERS, 5, replace = TRUE), collapse = "")
 
-  random_name <- paste(sample(LETTERS, 5, replace = TRUE), collapse = "") # A random letter generator
+  # Create the final path
+  final_path <- file.path(dir_path, random_name)
 
+  # Create the file if specified
   if (create_file) {
-    # Create the file
-    file.create(paste0(".panvar/", random_name))
+    file.create(final_path)
   }
 
-  return(paste0(".panvar", "/", random_name))
-  
+  return(final_path)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/panvar_gwas_tagsnp_snpeff.r
 \name{panvar_gwas_tagsnp_snpeff}
 \alias{panvar_gwas_tagsnp_snpeff}
-\title{A function that automates the Panvar analysis when the user supplies a GWAS table, a VCF file and a tag SNP}
+\title{panvar_gwas_tagsnp_snpeff}
 \usage{
 panvar_gwas_tagsnp_snpeff(
   gwas_table_path,
@@ -12,7 +12,7 @@ panvar_gwas_tagsnp_snpeff(
   r2_threshold = 0.6,
   maf = 0.05,
   missing_rate = 0.1,
-  window = 500000,
+  window = "500kb",
   all.impacts = FALSE
 )
 }
@@ -34,14 +34,16 @@ Defaults to 0.05}
 \item{missing_rate}{The missing rate filter for your genotype data
 Defaults to 0.1}
 
-\item{window}{The window around the tag snp
-Defaults to 500000}
+\item{window}{The window around the tag snp.
+Either supplied with as kilo basese as "#kb" or as bp values.
+If you want to supply 250 Kilobases you should supply "250kb" or 250000 - whatever is your preference.
+Defaults to "500kb".}
 
 \item{all_impacts}{(optional) Should all impacts be included in the report?
 Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included}
 }
 \description{
-A function that automates the Panvar analysis when the user supplies a GWAS table, a VCF file and a tag SNP
+panvar_gwas_tagsnp_snpeff
 }
 \examples{
 panvar_gwas_tagsnp_snpeff("<path_to_gwas_table>", "<path_to_vcf_file>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
