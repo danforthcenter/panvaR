@@ -36,8 +36,7 @@ To run PanvaR with GWAS results and an annotated VCF, use the following function
 panvar_gwas_tagsnp_snpeff(
   gwas_table_path = "<path/to/gwas/table>",
   vcf_file_path = "<path/to/vcf/file.gz>",
-  chrom = "Chr_05",
-  bp = 6857045,
+  chrom = "Chr_05:6857045",
   r2_threshold = 0.8,
   window = 500000,
   all_impact = FALSE
@@ -150,11 +149,23 @@ To run the above data you can:-
 panvar_gwas_tagsnp_snpeff(
   "setaria_gwas_table.tsv", 
   "setaria_annotated_vcf.vcf.gz", 
-  chrom = chr_05, 
-  bp = 54675,
+  tag_snps = "chr_05:54675",
   r2_threshold = 0.6
 )
 ```
+
+If you are looking to run multiple `SNP`s at once you can supply multiple `SNP`s to `tag_snps` in the following manner:-
+
+```R
+bulk_test_run <- panvar_func_bulk(
+    phenotype_data_path = "setaria/shattering.tsv",
+    vcf_file_path = "setaria/setaria_annotated_vcf.vcf.gz",
+    all.impacts = FALSE,
+    r2_threshold = 0.8,
+    tag_snps = c("Chr_05:6857045", "Chr_05:6836247")
+)
+```
+
 Note:- Be sure to run the above example in `R` before downloading the unit test outcome.
 
 Which should produce [this table](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/ETUszsHynbdAnb4WaWbJ8kYBDRhsxsGAaXOrBRzOAE3LbA?e=FoJolr) as outcome.
