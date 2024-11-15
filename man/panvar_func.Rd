@@ -7,8 +7,7 @@
 panvar_func(
   phenotype_data_path,
   vcf_file_path,
-  chrom = NULL,
-  bp = NULL,
+  tag_snps = NULL,
   r2_threshold = 0.6,
   maf = 0.05,
   missing_rate = 0.1,
@@ -23,6 +22,10 @@ panvar_func(
 \item{phenotype_data_path}{Path to the phenotype data}
 
 \item{vcf_file_path}{Path to the VCF file}
+
+\item{tag_snps}{The tag SNPs that you want to pass through panvar - either a single SNP or a list of SNPs.
+A single SNP should be formatted as "\if{html}{\out{<Chr>}}:\if{html}{\out{<BP>}}" - For example, "Chr_09:12456" or "Chr08:14587".
+To supply multiple tag SNPs supply a vector of tag SNPs. For example tag_snps = c("Chr_09:12456","Chr08:14587").}
 
 \item{r2_threshold}{The r2 threshold
 Defaults to 0.6}
