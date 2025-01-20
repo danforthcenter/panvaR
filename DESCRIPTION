@@ -17,7 +17,8 @@ Depends:
 	parallel,
 	bigsnpr,
 	bigstatsr,
-	modelr
+	modelr,
+	shinyFiles
 Suggests: 
     knitr,
     rmarkdown

@@ -97,7 +97,7 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf
 	big_random_pca <- big_randomSVD(
 	    the_genotypes, 
 	    fun.scaling = snp_scaleBinom(),
-	    ncores = core_count
+	    ncores = 1
 	)
 
 	the_PCs <- predict(big_random_pca)
@@ -168,7 +168,7 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf
     	    phenotype_scores[include_in_gwas]), 
     	    ind.train = include_in_gwas,
     	    covar.train = the_PCs[, pcs_to_include][include_in_gwas, ],
-    	    ncores = core_count 
+    	    ncores = 1 
     	)
 	
 	the_order <- order(the_chromosomes, the_chromosomes)

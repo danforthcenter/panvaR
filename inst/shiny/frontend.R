@@ -56,14 +56,17 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       # Section for required inputs
+      # Required inputs section
       div(class = "input-box",
           h4("Required Inputs"),
           div(class = "input-group",
-              fileInput("phenotypeData", "Upload Phenotype Data:", accept = c(".csv", ".tsv", ".txt")),
+              shinyFilesButton("phenotypeDataPath", "Select Phenotype Data File", "Please select a file", multiple = FALSE),
+              textInput("displayPhenotypeDataPath", "Selected Phenotype Data File Path:", value = "", placeholder = "File path will appear here"),
               tags$span("Required", class = "required-tag")
           ),
           div(class = "input-group",
-              fileInput("vcfFile", "Upload VCF File:", accept = c(".vcf", ".vcf.gz")),
+              shinyFilesButton("vcfFilePath", "Select VCF File", "Please select a file", multiple = FALSE),
+              textInput("displayVcfFilePath", "Selected VCF File Path:", value = "", placeholder = "File path will appear here"),
               tags$span("Required", class = "required-tag")
           )
       ),
@@ -106,6 +109,9 @@ ui <- fluidPage(
           div(class = "input-group",
               checkboxInput("allImpacts", "All Impacts:", value = FALSE),
               tags$span("Default: 'FALSE'", class = "default-tag")
+          ),
+          div(class = "input-group",
+              actionButton("kill", "Kill Process") # Add Kill button
           )
       ),
       
@@ -123,26 +129,55 @@ ui <- fluidPage(
 )
 
 # Define server logic
-server <- function(input, output) {
+server <- function(input, output, session) {
+  options(shiny.maxRequestSize = 2000 * 1024^2) # Set limit to 2000 MB
+
+  # Set up file systems
+  volumes <- c(Home = fs::path_home(), "R Installation" = R.home(), shinyFiles::getVolumes()())
+
+  shinyFiles::shinyFileChoose(input, "phenotypeDataPath", roots = volumes, session = session, restrictions = system.file(package = "base"))
+  shinyFiles::shinyFileChoose(input, "vcfFilePath", roots = volumes, session = session, restrictions = system.file(package = "base"))
+
+  # Reactive value to track if the process should be killed
+  stopProcess <- reactiveVal(FALSE)
+
+  observeEvent(input$kill, {
+    stopProcess(TRUE)
+  })
+
+  observeEvent(input$phenotypeDataPath, {
+    selectedFile <- shinyFiles::parseFilePaths(volumes, input$phenotypeDataPath)
+    updateTextInput(session, "displayPhenotypeDataPath", value = as.character(selectedFile$datapath))
+  })
+
+  observeEvent(input$vcfFilePath, {
+    selectedFile <- shinyFiles::parseFilePaths(volumes, input$vcfFilePath)
+    updateTextInput(session, "displayVcfFilePath", value = as.character(selectedFile$datapath))
+  })
+
   observeEvent(input$submit, {
+    # Reset stopProcess to FALSE when a new process starts
+    stopProcess(FALSE)
+
     # Ensure required inputs are provided
-    req(input$phenotypeData, input$vcfFile)
-    
-    # Get the paths to the uploaded files
-    phenotypeDataPath <- input$phenotypeData$datapath
-    vcfFilePath <- input$vcfFile$datapath
-    
-    # Check if the files have been uploaded correctly
-    if (is.null(phenotypeDataPath) || is.null(vcfFilePath)) {
-      showNotification("Please upload both the Phenotype Data and VCF File.", type = "error")
+    req(input$displayPhenotypeDataPath, input$displayVcfFilePath)
+
+    # Get the paths to the files
+    phenotypeDataPath <- input$displayPhenotypeDataPath
+    vcfFilePath <- input$displayVcfFilePath
+
+    # Check if the files exist
+    if (!file.exists(phenotypeDataPath) || !file.exists(vcfFilePath)) {
+      showNotification("Please provide valid file paths for both the Phenotype Data and VCF File.", type = "error")
       return(NULL)
     }
-    
+
     # Convert tag SNPs input to a vector
     tagSnps <- ifelse(nchar(input$tagSnps) == 0, NULL, unlist(strsplit(input$tagSnps, ",")))
-    
-    # Run the panvar function
+
+    # Run the panvar function with process tracking
     result <- tryCatch({
+      # Actual Panvar Analysis Function
       panvar_func(
         phenotype_data_path = phenotypeDataPath,
         vcf_file_path = vcfFilePath,
@@ -160,14 +195,17 @@ server <- function(input, output) {
       showNotification(paste("Error: ", e$message), type = "error")
       return(NULL)
     })
-    
-    # Render plot and table if the result is successful
+
+    # Render outputs if the result is successful
     if (!is.null(result)) {
       output$resultPlot <- renderPlot({ result$plot })
       output$resultTable <- renderTable({ result$table })
+      output$resultText <- renderText({ result$text })  # Assume 'result$text' holds textual output
     }
   })
 }
+
+
 
 # Run the application
 shinyApp(ui = ui, server = server)
