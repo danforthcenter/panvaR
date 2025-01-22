@@ -1,8 +1,8 @@
-panvar_plot <- function(reports_table, nrows){
+panvar_plot <- function(reports_table, nrows_in_gwas) {
 
     # This is the adjusted bonferroni pvalue
     hline_value = -log10(
-        0.05 / nrows
+        0.05 / nrows_in_gwas
     )
 
     # A farily simple plot that the user can adjust
