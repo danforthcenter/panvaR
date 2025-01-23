@@ -5,7 +5,7 @@ library(shiny)
 library(dplyr)
 library(DT)
 
-# Enhanced panvar plot function with gene name tooltips and alpha control
+# So, looks like Plotly itself does not provide a 
 panvar_plot <- function(reports_table, total_rows, pvalue_threshold, point_size = 3, alpha_base = 0.7) {
   hline_value = -log10(pvalue_threshold / total_rows)
   
