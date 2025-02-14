@@ -48,6 +48,7 @@ bed_file_clean_up <- function(path_to_bed_file, missing_rate = 0.1, maf = 0.05, 
     binary_call <- "plink2"
 
 	binary_args <- c(
+        "--allow-extra-chr",
 		"--bfile",bed_file_input,
 		"--geno", missing_rate,
 		"--maf", maf,

@@ -34,7 +34,7 @@
 #' Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
 #' 
 #' @examples
-#' panvar("<path_to_phenotype_data>", "<path_to_vcf_file>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
+#' panvar("<path_to_phenotype_data>", "<path_to_vcf_file>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6)
 #' 
 #' @import tidyverse
 #' @import data.table

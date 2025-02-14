@@ -55,6 +55,7 @@ subset_around_tag <- function(path_to_bed_file, chrom, bp, window = 500000,outpu
     binary_call <- "plink2"
 
 	binary_args <- c(
+        "--allow-extra-chr",
 		"--bfile",bed_file_input,
 		"--chr", chrom,
 		"--from-bp", snp_start_ld,

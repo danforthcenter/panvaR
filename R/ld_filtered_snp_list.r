@@ -49,6 +49,7 @@ ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5
     binary_call <- "plink2"
 	
 	binary_args <- c(
+		"--allow-extra-chr",
 		"--bfile",bed_file_input,
 		"--ld-snp", snp_name,
 		"--r2-phased", "--ld-window-kb",
