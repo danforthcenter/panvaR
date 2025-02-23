@@ -21,6 +21,7 @@
 #' 
 #' @param window PanvaR determines the Linkage Disequilibrium (LD) between the tag Single Nucleotide Polymorphism (SNP) and every other SNP within a genome segment. This segment is centered on the tag SNP, extending up to a specified window size in both directions.
 #' Defaults to 500000
+#' @param specific_pcs Would you rather supply a specific set of PCs instead?
 #' 
 #' @param pc_min (optional) What is the minimum number of PCs that should be included in GWAS?
 #' Defaults to 5
@@ -44,7 +45,7 @@
 #' @import modelr
 #'
 #' @export
-panvar_func <- function(phenotype_data_path,vcf_file_path,tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, dynamic_correlation = FALSE, all.impacts = FALSE){
+panvar_func <- function(phenotype_data_path,vcf_file_path,tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){
 
     # Check if the vcf_file has a tbi file
     proper_tbi(vcf_file_path)
@@ -58,6 +59,7 @@ panvar_func <- function(phenotype_data_path,vcf_file_path,tag_snps = NULL, r2_th
     gwas_table_denovo <- panvar_gwas(
         phentotype_path = phenotype_data_path,
         genotype_data = vcf_file_path,
+		specific_PCs = specific_pcs,
         pc_min = pc_min,
         pc_max = pc_max,
         dynamic_correlation = dynamic_correlation,

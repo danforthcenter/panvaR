@@ -148,12 +148,6 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf
 
 	include_in_gwas <- which(!is.na(phenotype_scores) & complete.cases(the_covariates))
 
-	if (length(specific_PCs) != 0 && (!missing(pc_max) || !missing(pc_min))) {
-		print("You have supplied both the specific PCs and the maximum number of PCs. Both params cannot be used.")
-		stop("Please supply either the specific PCs or the maximum number of PCs")
-	}
-
-
 	if(!is.null(specific_PCs)){
 		pcs_to_include = specific_PCs
 	} else {
