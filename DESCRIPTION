@@ -18,7 +18,12 @@ Depends:
 	bigsnpr,
 	bigstatsr,
 	modelr,
-	shinyFiles
+	shinyFiles,
+	shiny,
+	plotly,
+	DT,
+	shinyBS,
+	shinyjs
 Suggests: 
     knitr,
     rmarkdown
