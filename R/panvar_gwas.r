@@ -9,6 +9,7 @@
 #' @param maf numeric, optional. Minor allele frequency filter for the genotype data. Default is 0.05.
 #' @param missing_rate numeric, optional. Missing rate filter for the genotype data. Default is 0.1.
 #' @param dynamic_correlation logical, optional. Whether additional PCs beyond the minimum should be calculated dynamically. Default is FALSE.
+#' @param specific_pcs Vector, optional. If you want to supply specific PCs instead of calculating them dynamically then use this to supply a vector of PCs.
 #' @return A data frame containing GWAS results.
 #'
 #' @examples
@@ -21,7 +22,7 @@
 #' @import modelr
 #'
 #' @export
-panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf = 0.05, missing_rate = 0.1, dynamic_correlation = FALSE) {
+panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf = 0.05, missing_rate = 0.1, dynamic_correlation = FALSE, specific_PCs = NULL) {
 
 	# Get the core count from the ergonomics set of code
 	core_count = good_core_count()
@@ -147,20 +148,28 @@ panvar_gwas <- function(genotype_data,phentotype_path,pc_min = 5,pc_max = 5, maf
 
 	include_in_gwas <- which(!is.na(phenotype_scores) & complete.cases(the_covariates))
 
-	pcs_to_include = seq(1:pc_min)
+	if(!is.null(specific_PCs)){
+		pcs_to_include = specific_PCs
+	} else {
+		pcs_to_include = seq(1:pc_min)
 
-	# If the dynamic correlation is set to TRUE 
-	# then the more than the minimum number of PC will be included after they 
-	# have been tested for correlation
-	if(dynamic_correlation == TRUE) {
-		if(pc_max > pc_min){
-			for (j in pc_min:pc_max) {
-			  if (cor.test(phenotype_scores, the_covariates[, j])[3] < 0.05) {
-			    pcs_to_include = c(pcs_to_include, j)
-			  }
+		# If the dynamic correlation is set to TRUE 
+		# then the more than the minimum number of PC will be included after they 
+		# have been tested for correlation
+		if(dynamic_correlation == TRUE) {
+			if(pc_max > pc_min){
+				for (j in pc_min:pc_max) {
+				  if (cor.test(phenotype_scores, the_covariates[, j])[3] < 0.05) {
+				    pcs_to_include = c(pcs_to_include, j)
+				  }
+				}
+			} else {
+				print("The maximum number of PCs is less than the minimum number of PCs")
+				stop("Please increase the maximum number of PCs")
 			}
 		}
-	}
+	} 
+	
 		
 	gwas <- big_univLinReg(
     	the_genotypes, 
