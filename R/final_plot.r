@@ -15,14 +15,14 @@ panvar_plot <- function(reports_table,nrows_in_gwas = NULL, pvalue_threshold = 0
   
   # What is the tag df
   
-  tag_df <- panvar_results_table %>% 
+  tag_df <- reports_table %>% 
     filter(Type == "tag_snp")
   
   tag_bp <- tag_df %>%
     pull(BP)
   
   # Initialize the ggplot object with the base aesthetics and data
-  plot <- ggplot(aes(x = BP, y = Pvalues), data = panvar_results_table)
+  plot <- ggplot(aes(x = BP, y = Pvalues), data = reports_table)
   
   # Add points to the plot with shape and fill aesthetics
   plot <- plot +
