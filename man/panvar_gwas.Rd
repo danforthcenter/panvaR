@@ -11,7 +11,8 @@ panvar_gwas(
   pc_max = 5,
   maf = 0.05,
   missing_rate = 0.1,
-  dynamic_correlation = FALSE
+  dynamic_correlation = FALSE,
+  specific_PCs = NULL
 )
 
 panvar_gwas(
@@ -21,7 +22,8 @@ panvar_gwas(
   pc_max = 5,
   maf = 0.05,
   missing_rate = 0.1,
-  dynamic_correlation = FALSE
+  dynamic_correlation = FALSE,
+  specific_PCs = NULL
 )
 }
 \arguments{
@@ -38,6 +40,8 @@ panvar_gwas(
 \item{dynamic_correlation}{logical, optional. Whether additional PCs beyond the minimum should be calculated dynamically. Default is FALSE.}
 
 \item{phenotype_data}{character. Path to the phenotype data file.}
+
+\item{specific_pcs}{Vector, optional. If you want to supply specific PCs instead of calculating them dynamically then use this to supply a vector of PCs.}
 }
 \value{
 GWAS results in tabular format.

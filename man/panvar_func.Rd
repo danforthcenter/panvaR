@@ -14,6 +14,7 @@ panvar_func(
   window = 500000,
   pc_min = 5,
   pc_max = 5,
+  specific_pcs = NULL,
   dynamic_correlation = FALSE,
   all.impacts = FALSE
 )
@@ -45,6 +46,8 @@ Defaults to 5}
 \item{pc_max}{(optional) What is the maximum number of PCs that should be included in GWAS?
 Defaults to 5}
 
+\item{specific_pcs}{Would you rather supply a specific set of PCs instead?}
+
 \item{dynamic_correlation}{(optional) Should the PCs, beyond minimum, be calculated dynamically?}
 
 \item{all_impacts}{(optional) Should all impacts be included in the report?
@@ -54,6 +57,6 @@ Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be in
 panvar_func
 }
 \examples{
-panvar("<path_to_phenotype_data>", "<path_to_vcf_file>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
+panvar("<path_to_phenotype_data>", "<path_to_vcf_file>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6)
 
 }
