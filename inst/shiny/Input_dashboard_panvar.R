@@ -27,6 +27,8 @@ parsePath <- function(input_path) {
 # ---
 
 # module1.R
+# Module UI modifications for input_dashboard_UI function
+
 input_dashboard_UI <- function(id) {
   ns <- NS(id)
   tagList(
@@ -110,12 +112,12 @@ input_dashboard_UI <- function(id) {
               trigger = "hover"
             ),
             # ---
-            # Rijan: The input section for the tag SNPs
+            # Rijan: The input section for the tag SNPs - Modified to make it optional
             div(
               style = "display: flex; align-items: center; gap: 10px;",
               textAreaInput(
                 ns("tagSnps"),
-                "Tag SNPs (one per line):",
+                "Tag SNPs (optional - one per line):",
                 ""
               ),
               span(
@@ -125,7 +127,7 @@ input_dashboard_UI <- function(id) {
             ),
             bsTooltip(
               id = "tagSnps_tooltip",
-              title = "What are the tag SNPs that should be used? Please provide one per line in the format as '{CHR}:{BP}'.",
+              title = "Optional: Specify tag SNPs in the format '{CHR}:{BP}', one per line. If not provided, tag SNPs will be automatically inferred from GWAS results.",
               placement = "right",
               trigger = "hover"
             ),
@@ -332,6 +334,7 @@ input_dashboard_UI <- function(id) {
   
 }
 
+# Module server modifications for input_dashboard_Server function
 
 input_dashboard_Server <- function(id, shared) {
   moduleServer(
@@ -506,11 +509,11 @@ input_dashboard_Server <- function(id, shared) {
         current_values$`Dynamic Correlation` <- if(dynamic_correlation()) "Yes" else "No"
         current_values$`All Impacts` <- if(all_impacts()) "Yes" else "No"
         
-        # Store tag SNPs
+        # Store tag SNPs - CHANGED: now tag SNPs are optional
         if (!is.null(clean_tag_snps())) {
           current_values$`Tag SNPs` <- paste(clean_tag_snps(), collapse = ", ")
         } else {
-          missing_inputs <- c(missing_inputs, "Tag SNPs")
+          current_values$`Tag SNPs` <- "Auto-infer from GWAS results"
         }
         
         # Create the UI
@@ -571,22 +574,21 @@ input_dashboard_Server <- function(id, shared) {
       
       # Observe the run analysis button
       observeEvent(input$run_analysis, {
-        # Validate inputs before running
-        validate_inputs <- reactive({
-          validate(
-            need(Genotype_data_path(), "Please select a genotype data file"),
-            need(Phenotype_data_path(), "Please select a phenotype data file"),
-            need(clean_tag_snps() || !is.null(clean_tag_snps()), "Please enter tag SNPs"),
-            need(R2_threshold() >= 0 && R2_threshold() <= 1, "R² threshold must be between 0 and 1"),
-            need(maf() >= 0 && maf() <= 1, "MAF must be between 0 and 1"),
-            need(missing_rate() >= 0 && missing_rate() <= 1, "Missing rate must be between 0 and 1"),
-            need(window_span() > 0, "Window span must be positive"),
-            need(if(!use_specific_pcs()) PC_min() < PC_max(), "PC min must be less than PC max")
-          )
+        # Validate inputs before running - CHANGED: Removed tag SNP validation
+        all_inputs_valid <- reactive({
+          # Return TRUE only if all conditions are met
+          !is.null(Genotype_data_path()) &&
+            !is.null(Phenotype_data_path()) &&
+            R2_threshold() >= 0 && R2_threshold() <= 1 &&
+            maf() >= 0 && maf() <= 1 &&
+            missing_rate() >= 0 && missing_rate() <= 1 &&
+            window_span() > 0 &&
+            (use_specific_pcs() || PC_min() < PC_max())
         })
         
+        
         # If validation passes, run the analysis
-        if (validate_inputs()) {
+        if (all_inputs_valid()) {
           withProgress(message = 'Running analysis...', value = 0, {
             
             # Prepare inputs for panvar_func
@@ -598,12 +600,12 @@ input_dashboard_Server <- function(id, shared) {
                    pc_max = PC_max())
             }
             
-            # Run panvar_func with user inputs
+            # Run panvar_func with user inputs - pass NULL for tag_snps if not provided
             results <- try({
               panvar_func(
                 phenotype_data_path = Phenotype_data_path(),
                 vcf_file_path = Genotype_data_path(),
-                tag_snps = clean_tag_snps(),
+                tag_snps = clean_tag_snps(),  # This will be NULL if no tag SNPs are provided
                 r2_threshold = R2_threshold(),
                 maf = maf(),
                 missing_rate = missing_rate(),

@@ -28,6 +28,13 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+
+  # We do not want the shiny code to just automatically run in the `app.R` dir -
+  # .So, let's set it to work in the working directory of the R interpreter -
+  # that initiates the GUI
+
+  setwd(getwd())
+  
   # Create shared reactive values
   shared <- reactiveValues(
     analysis_results = NULL
