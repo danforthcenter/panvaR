@@ -213,14 +213,13 @@ input_dashboard_UI <- function(id) {
                       column(6,
                              numericInput(ns("PC_min"),
                                           "PC Min:",
-                                          value = 1,
+                                          value = 5,
                                           min = 0,
-                                          max = 1,
                                           step = 1)),
                       column(6,
                              numericInput(ns("PC_max"),
                                           "PC Max:",
-                                          value = 5,
+                                          value = 6,
                                           min = 1,
                                           step = 1))
                     )
@@ -500,8 +499,8 @@ input_dashboard_Server <- function(id, shared) {
         } else {
           current_values$`PC Selection Method` <- "PC Range"
           current_values$`PC Range` <- sprintf("%d - %d", PC_min(), PC_max())
-          if (PC_min() >= PC_max()) {
-            missing_inputs <- c(missing_inputs, "PC range (min must be less than max)")
+          if (PC_min() > PC_max()) { # > is wrong but = is fine.
+            missing_inputs <- c(missing_inputs, "PC range (min must be less than or equal to max)")
           }
         }
         

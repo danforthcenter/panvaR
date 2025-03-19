@@ -230,7 +230,7 @@ window_unit_func <- function(window_value) {
   }
   
   # If the input is already numeric, return it
-  if (typeof(window_value) == 'double') {
+  if (typeof(window_value) == 'double' || typeof(window_value) == 'integer') {
     return(window_value)
   }
   
