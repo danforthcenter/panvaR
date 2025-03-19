@@ -582,7 +582,7 @@ input_dashboard_Server <- function(id, shared) {
             maf() >= 0 && maf() <= 1 &&
             missing_rate() >= 0 && missing_rate() <= 1 &&
             window_span() > 0 &&
-            (use_specific_pcs() || PC_min() < PC_max())
+            (use_specific_pcs() || PC_min() <= PC_max())
         })
         
         
@@ -627,7 +627,7 @@ input_dashboard_Server <- function(id, shared) {
               
               showNotification(
                 "Analysis completed successfully!",
-                type = "success"
+                type = "message"  # Changed from "success" to "message"
               )
             }
           })
