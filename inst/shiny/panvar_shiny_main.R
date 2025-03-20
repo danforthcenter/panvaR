@@ -20,6 +20,20 @@ ui <- fluidPage(
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
   useShinyjs(),
+  # Add heading with exit button
+  div(
+    class = "app-header",
+    style = "background-color: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #dee2e6; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;",
+    div(
+      style = "display: flex; align-items: center;",
+      tags$h2("PanvaR Analysis Tool", style = "margin: 0;")
+    ),
+    div(
+      actionButton("exit_app", "Exit Application", 
+                   class = "btn-danger",
+                   style = "margin-left: auto;")
+    )
+  ),
   tabsetPanel(
     id = "mainTabs",
     tabPanel("Input", input_dashboard_UI("module1")),
@@ -28,11 +42,11 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-
+  
   # We do not want the shiny code to just automatically run in the `app.R` dir -
   # .So, let's set it to work in the working directory of the R interpreter -
   # that initiates the GUI
-
+  
   setwd(getwd())
   
   # Create shared reactive values
@@ -49,6 +63,24 @@ server <- function(input, output, session) {
     if (!is.null(shared$analysis_results)) {
       updateTabsetPanel(session, "mainTabs", selected = "Output")
     }
+  })
+  
+  # Exit button handler
+  observeEvent(input$exit_app, {
+    showModal(modalDialog(
+      title = "Confirm Exit",
+      "Are you sure you want to exit the application? Any unsaved work will be lost.",
+      footer = tagList(
+        actionButton("confirm_exit", "Yes, Exit", class = "btn-danger"),
+        modalButton("Cancel")
+      ),
+      easyClose = TRUE
+    ))
+  })
+  
+  # Handle confirmed exit
+  observeEvent(input$confirm_exit, {
+    stopApp()
   })
 }
 
