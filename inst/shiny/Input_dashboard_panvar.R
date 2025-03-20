@@ -24,6 +24,13 @@ parsePath <- function(input_path) {
   return(NULL)
 }
 
+# Check if a tbi file exists for the vcf file
+check_tbi_exists <- function(vcf_file_path) {
+  if (is.null(vcf_file_path)) return(FALSE)
+  tbi_file_path <- paste0(vcf_file_path, ".tbi")
+  return(file.exists(tbi_file_path))
+}
+
 # ---
 
 # module1.R
@@ -348,6 +355,88 @@ input_dashboard_Server <- function(id, shared) {
         parsePath(input$Genotype_data_path)
       })
       
+      # Add reactive value to track TBI status
+      tbi_status <- reactiveVal(FALSE)
+      
+      # Function to generate TBI file
+      generate_tbi_file <- function(vcf_path) {
+        # Create a modal to show progress
+        showModal(modalDialog(
+          title = "Generating Index File",
+          "This may take a few minutes depending on file size. Please wait...",
+          footer = NULL,
+          easyClose = FALSE
+        ))
+        
+        # Run the tabix command in the background
+        result <- tryCatch({
+          # Create a system call to tabix
+          system2("tabix", args = c("-p", "vcf", vcf_path), stdout = TRUE, stderr = TRUE)
+          return(TRUE)
+        }, error = function(e) {
+          showNotification(
+            paste("Error generating index file:", e$message),
+            type = "error"
+          )
+          return(FALSE)
+        }, finally = {
+          # Ensure modal is removed in all cases
+          removeModal()
+        })
+        
+        return(result)
+      }
+      
+      # When genotype path changes, check for TBI file
+      observeEvent(Genotype_data_path(), {
+        req(Genotype_data_path())
+        path <- Genotype_data_path()
+        
+        # Check if TBI file exists
+        has_tbi <- check_tbi_exists(path)
+        tbi_status(has_tbi)
+        
+        # If TBI doesn't exist, prompt the user
+        if (!has_tbi) {
+          showModal(modalDialog(
+            title = "Index File (.tbi) Required",
+            "The selected genotype file does not have a corresponding index file (.tbi), which is required for the analysis. Would you like to generate it now?",
+            footer = tagList(
+              actionButton(session$ns("generate_tbi_yes"), "Yes, generate index file", class = "btn-primary"),
+              actionButton(session$ns("exit_program"), "Don't generate - exit program", class = "btn-danger")
+            ),
+            easyClose = FALSE
+          ))
+        }
+      })
+      
+      # Handle the generate TBI button click
+      observeEvent(input$generate_tbi_yes, {
+        req(Genotype_data_path())
+        vcf_path <- Genotype_data_path()
+        
+        # Close the confirmation modal first
+        removeModal()
+        
+        # Generate the TBI file
+        success <- generate_tbi_file(vcf_path)
+        
+        # Update the status
+        if (success) {
+          tbi_status(TRUE)
+          showNotification(
+            "Index file (.tbi) has been successfully generated!",
+            type = "message"
+          )
+        }
+      })
+      
+      # Handle exit program button click
+      observeEvent(input$exit_program, {
+        # Exit the Shiny app
+        stopApp()
+      })
+      
       Phenotype_data_path <- reactive({
         if (is.null(input$Phenotype_data_path)) return(NULL)
         parsePath(input$Phenotype_data_path)
@@ -454,7 +543,6 @@ input_dashboard_Server <- function(id, shared) {
         }
         return(NULL)
       })
-      # In the server function, modify the output$input_status_update:
       
       output$input_status_update <- renderUI({
         # Create status lists for both current values and missing inputs
@@ -464,6 +552,11 @@ input_dashboard_Server <- function(id, shared) {
         # Check and store file paths
         if (!is.null(Genotype_data_path())) {
           current_values$`Genotype Data File` <- Genotype_data_path()
+          
+          # Check TBI status
+          if (!tbi_status()) {
+            missing_inputs <- c(missing_inputs, "Index file (.tbi) for the genotype data")
+          }
         } else {
           missing_inputs <- c(missing_inputs, "Genotype Data File")
         }
@@ -573,10 +666,11 @@ input_dashboard_Server <- function(id, shared) {
       
       # Observe the run analysis button
       observeEvent(input$run_analysis, {
-        # Validate inputs before running - CHANGED: Removed tag SNP validation
+        # Validate inputs before running - CHANGED: Added TBI validation
         all_inputs_valid <- reactive({
           # Return TRUE only if all conditions are met
           !is.null(Genotype_data_path()) &&
+            tbi_status() && # Check TBI status
             !is.null(Phenotype_data_path()) &&
             R2_threshold() >= 0 && R2_threshold() <= 1 &&
             maf() >= 0 && maf() <= 1 &&
@@ -631,6 +725,33 @@ input_dashboard_Server <- function(id, shared) {
               )
             }
           })
+        } else {
+          # Show error if TBI file is missing
+          if (!tbi_status()) {
+            # Check if we have a genotype file but no TBI
+            if (!is.null(Genotype_data_path())) {
+              # Prompt again to generate TBI
+              showModal(modalDialog(
+                title = "Index File (.tbi) Required",
+                "You need to generate or provide an index file (.tbi) before running the analysis. Would you like to generate it now?",
+                footer = tagList(
+                  actionButton(session$ns("generate_tbi_yes"), "Yes, generate index file", class = "btn-primary"),
+                  actionButton(session$ns("exit_program"), "Don't generate - exit program", class = "btn-danger")
+                ),
+                easyClose = FALSE
+              ))
+            } else {
+              showNotification(
+                "Please select a genotype file first.",
+                type = "error"
+              )
+            }
+          } else {
+            showNotification(
+              "Please check all inputs before running the analysis.",
+              type = "error"
+            )
+          }
         }
       })
       
