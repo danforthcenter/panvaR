@@ -2,7 +2,7 @@ bcf_chroms_func <- function(vcf_file_path){
 
 	# make a temporary file to catch the standard output
 
-	std_output_name <- temp_file(create_file=TRUE) # Defined in the file R/temporary.r
+	std_output_name <- temp_file(create_file=TRUE, prefix = "bcf_chroms_function") # Defined in the file R/temporary.r
 	# The shell call that I want to run is:-
 	# `bcftools index -s file.vcf.gz``
 

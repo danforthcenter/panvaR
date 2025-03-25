@@ -33,7 +33,7 @@ temporary_directory <- function(delete_files = FALSE, working_directory = "panva
 # temporary files, but more specifically different intermediate files serve -
 # different purposes. For example, you will have intermediate files 
 
-temp_file <- function(create_file = FALSE, working_directory = "panvar", file_name = NULL) {
+temp_file <- function(create_file = FALSE, working_directory = "panvar", prefix = NULL) {
   
   # Use provided working directory or default to "panvar"
   dir_path <- ifelse(is.null(working_directory), "panvar", working_directory)
@@ -41,8 +41,8 @@ temp_file <- function(create_file = FALSE, working_directory = "panvar", file_na
   # Generate a random letters that you can use for the filename
   random_letters <- paste0(sample(LETTERS, 5, replace = TRUE), collapse = "")
 
-  if(!is.null(file_name)){
-    random_name <- paste0(file_name,"_",random_letters)
+  if(!is.null(prefix)){
+    random_name <- paste0(prefix,"_",random_letters)
   } else{
     random_name <- paste0(random_letters)
   }

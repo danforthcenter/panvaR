@@ -45,7 +45,7 @@ split_vcf_eff <- function(input_file = NULL, output_file = NULL) {
 
   # Handle output
   if (is.null(output_file)) {
-    output_file <- temp_file()
+    output_file <- temp_file(prefix = "oneperline")
   }
   con_out <- file(output_file, "w")
 

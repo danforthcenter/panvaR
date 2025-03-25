@@ -1,7 +1,7 @@
 execute_snpsift <- function(file_path) {
     
     # Create a temporary file for the output
-    snp_eff_table <- temp_file()
+    snp_eff_table <- temp_file(prefix = "snp_eff_table")
 
     # Set up the path to the SnpSift jar file
     jar_path <- system.file("java", "snpSift.jar", package = "panvaR")
@@ -17,7 +17,7 @@ execute_snpsift <- function(file_path) {
     # Try to execute the command and catch any errors
     tryCatch(
         {
-            error_message <- temp_file()  # Create a temporary file for error messages
+            error_message <- temp_file(prefix = "snpsift_error")  # Create a temporary file for error messages
             
             # Execute the system call to run SnpSift
             exec_wait(

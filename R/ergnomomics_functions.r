@@ -112,7 +112,7 @@ snps_to_keep <- function(ld_table){
 # Sanitize the tables to keep
 keep_table_sanitizer <- function(table) {
   
-  keep_table_path <- temp_file()
+  keep_table_path <- temp_file(prefix = "keep_table")
   
   if(is.character(table)){
     
@@ -243,8 +243,8 @@ has.annotations <- function(file_path) {
   jar_path <- system.file("java", "snpSift.jar", package = "panvaR")
   
   # Create temporary files for output and errors
-  output_file <- temp_file()
-  error_file <- temp_file()
+  output_file <- temp_file(prefix = "has.annotations_output_file")
+  error_file <- temp_file(prefix = "has.annotation_error_file")
   
   # Set up the arguments for the Java call - just try to get ANN field
   binary_args <- c(
