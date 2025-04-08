@@ -1,71 +1,72 @@
 #' panvar_func
-#' 
-#' @param phenotype_data_path Path to the phenotype data
-#' 
+#'
+#' @param phenotype_data Path to the phenotype data file (character string) OR a data.table object containing phenotype data. The first column must contain genotype identifiers matching the VCF file.
 #' @param vcf_file_path Path to the VCF file
-#' 
 #' @param r2_threshold The r2 threshold
-#' 
+#' Defaults to 0.6
 #' @param tag_snps The tag SNPs that you want to pass through panvar - either a single SNP or a list of SNPs.
 #' A single SNP should be formatted as "<Chr>:<BP>" - For example, "Chr_09:12456" or "Chr08:14587".
 #' To supply multiple tag SNPs supply a vector of tag SNPs. For example tag_snps = c("Chr_09:12456","Chr08:14587").
-#' 
-#' @param r2_threshold The r2 threshold
-#' Defaults to 0.6
-#' 
 #' @param maf The minor Allele Frequency
 #' Defaults to 0.05
-#' 
 #' @param missing_rate The missing rate filter for your genotype data
 #' Defaults to 0.1
-#' 
 #' @param window PanvaR determines the Linkage Disequilibrium (LD) between the tag Single Nucleotide Polymorphism (SNP) and every other SNP within a genome segment. This segment is centered on the tag SNP, extending up to a specified window size in both directions.
 #' Defaults to 500000
 #' @param specific_pcs Would you rather supply a specific set of PCs instead?
-#' 
 #' @param pc_min (optional) What is the minimum number of PCs that should be included in GWAS?
 #' Defaults to 5
-#' 
 #' @param pc_max (optional) What is the maximum number of PCs that should be included in GWAS?
 #' Defaults to 5
-#' 
 #' @param dynamic_correlation (optional) Should the PCs, beyond minimum, be calculated dynamically?
-#' 
 #' @param all_impacts (optional) Should all impacts be included in the report?
 #' Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
-#' 
+#'
 #' @examples
-#' panvar("<path_to_phenotype_data>", "<path_to_vcf_file>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6)
-#' 
+#' # Using phenotype file path
+#' panvar_func("<path_to_phenotype_data>", "<path_to_vcf_file>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6)
+#' # Using phenotype data.table
+#' pheno_dt <- data.table::fread("<path_to_phenotype_data>")
+#' panvar_func(pheno_dt, "<path_to_vcf_file>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6)
+#'
 #' @import tidyverse
 #' @import data.table
 #' @import sys
 #' @import parallel
 #' @import bigsnpr
 #' @import modelr
+#' @importFrom methods is
 #'
 #' @export
-panvar_func <- function(phenotype_data_path,vcf_file_path,tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){
+panvar_func <- function(phenotype_data, vcf_file_path, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){
   
   if(!file.exists(vcf_file_path)){
     stop("The genotype file path that you provided is not accessible. Either you supplied a wrong path or the file does not exist.")
   }
   
-  if(!file.exists(phenotype_data_path)){
-    stop("The phenotype file that you provided is not accessible. Either you supplied a wrong path or the file does not exist. ")
+  # Check phenotype input type
+  if (is.character(phenotype_data)) {
+    # If it's a path, check if the file exists
+    if (!file.exists(phenotype_data)) {
+      stop("The phenotype file path that you provided is not accessible. Either you supplied a wrong path or the file does not exist: ", phenotype_data)
+    }
+  } else if (!is(phenotype_data, "data.frame")) { # Check if it's at least a data.frame (panvar_gwas handles data.table conversion)
+    stop("The phenotype_data argument must be a file path (character) or a data.frame/data.table object.")
   }
   
   # Check if the vcf_file has a tbi file
   proper_tbi(vcf_file_path)
   
-  # The end goal of this function is to convieneintly make
+  # The end goal of this function is to conveniently make
   # 1. The plot from Panvar
   # 2. The report table -
   # The report table should have - Gwas pvalues,
   
   # Run GWAS for the user
+  # <<< Start Change >>>
+  # Pass the phenotype_data directly to panvar_gwas (which now handles path or object)
   gwas_table_denovo <- panvar_gwas(
-    phentotype_path = phenotype_data_path,
+    phenotype_input = phenotype_data, # Changed argument name
     genotype_data = vcf_file_path,
     specific_PCs = specific_pcs,
     pc_min = pc_min,
@@ -74,14 +75,11 @@ panvar_func <- function(phenotype_data_path,vcf_file_path,tag_snps = NULL, r2_th
     maf = maf,
     missing_rate = missing_rate
   )
+  # <<< End Change >>>
+  
   
   # convert the window into bp values
   window_bp <- window_unit_func(window)
-  
-  # The end goal of this function is to convieneintly make
-  # 1. The plot from Panvar
-  # 2. The report table -
-  # The report table should have - Gwas pvalues,
   
   # convert the vcf file to plink format
   in_plink_format <- vcf_to_plink2(vcf_file_path)
@@ -155,11 +153,8 @@ panvar_func <- function(phenotype_data_path,vcf_file_path,tag_snps = NULL, r2_th
   return(panvar_result)
 }
 
-# panvar_convenience_function is an automation tool for the panvar logic, - 
-# following input verification and atomization. For instance, it can convert - 
-# a phenotype table into a GWAS table. Atomization involves splitting bundled - 
-# parameters, such as multiple tag SNPs, for individual processing.
-
+# panvar_convenience_function (Keep the rest of this function and the file as is)
+# ... (rest of the code remains the same) ...
 panvar_convienience_function <- function(
     chrom,
     bp,
@@ -167,9 +162,9 @@ panvar_convienience_function <- function(
     vcf_file_path,
     gwas_table,
     in_plink_format,
-    r2_threshold = 0.6, 
+    r2_threshold = 0.6,
     window_bp = 500000,
-    all.impacts = FALSE 
+    all.impacts = FALSE
 )
 {
   # subset your genotype data around the tag snp
@@ -187,7 +182,7 @@ panvar_convienience_function <- function(
   # such that BCFtools can filter them out of a the original VCF file
   keep_snp_list <- snps_to_keep(table)
   
-  # The way plink2 converts vcf files may lead to - 
+  # The way plink2 converts vcf files may lead to -
   # a situation where the names in plink2 -
   # and BCFtools have different chromosomes names. -
   # This needs to be accounted for.
@@ -210,7 +205,7 @@ panvar_convienience_function <- function(
     gwas_table_dicted <- gwas_table
   }
   
-  # Sanitize the table 
+  # Sanitize the table
   # TODO:- Which table?
   keep_table_path <- keep_table_sanitizer(snp_keep_list_checked)
   
@@ -228,22 +223,22 @@ panvar_convienience_function <- function(
   # Read the output produced by SnpSift
   snpsift_table <- snpeff_table$table
   
-  # We start the pipeline with a tag_SNP. By the time we reach the "final_table", - 
+  # We start the pipeline with a tag_SNP. By the time we reach the "final_table", -
   # we might not retain the tag_SNP if its impact factor is not HIGH or MODERATE. -
   # The potential issue of the tag_SNP being dropped can be fixed by creating an -
   # exception in the conditional here.
   
-  # For the final table, we create a new field that indicates if a loci is a Tag - 
+  # For the final table, we create a new field that indicates if a loci is a Tag -
   # SNP or a Candidate gene. This will be recorded in TYPE.
   
   if(all.impacts){
     snpsift_table_impacts <- snpsift_table
   } else {
-    snpsift_table_impacts <- snpsift_table %>% 
+    snpsift_table_impacts <- snpsift_table %>%
       filter(IMPACT %in% c("HIGH","MODERATE") | BP == bp ) # The OR condition lets us retain the tag SNP which might be dropped if the IMPACT factor is not HIGH or MODERATE
   }
   
-  # This table should have 
+  # This table should have
   # 1. The impact factor
   # 2. The tag SNP
   # 3. The Pvalues from GWAS
