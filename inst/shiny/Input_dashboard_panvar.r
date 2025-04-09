@@ -109,11 +109,11 @@ input_dashboard_UI <- function(id) {
               ),
               span(
                 icon("question-circle", style = "color: green;"),
-                id = "R2_threshold_tooltip"
+                id = ns("R2_threshold_tooltip")
               )
             ),
             bsTooltip(
-              id = "R2_threshold_tooltip",
+              id = ns("R2_threshold_tooltip"),
               title = "What is the R2 threshold that should be used? This is the value that be used to filter the LD between tag SNPs and other SNPs.",
               placement = "right",
               trigger = "hover"
@@ -129,12 +129,12 @@ input_dashboard_UI <- function(id) {
               ),
               span(
                 icon("question-circle", style = "color: green;"),
-                id = "tagSnps_tooltip"
+                id = ns("tagSnps_tooltip")
               )
             ),
             bsTooltip(
-              id = "tagSnps_tooltip",
-              title = "Optional: Specify tag SNPs in the format '{CHR}:{BP}', one per line. If not provided, tag SNPs will be automatically inferred from GWAS results.",
+              id = ns("tagSnps_tooltip"),
+              title = "Optional: Specify tag SNPs in the format CHR:BP, one per line. If not provided, tag SNPs will be automatically inferred from GWAS results.",
               placement = "right",
               trigger = "hover"
             ),
@@ -236,11 +236,6 @@ input_dashboard_UI <- function(id) {
                     id = "PC_range_tooltip"
                   )
                 )
-              ),
-              span(
-                style = "flex-shrink: 0;",
-                icon("question-circle", style = "color: green;"),
-                id = "PC_range_tooltip"
               )
             ),
             bsTooltip(

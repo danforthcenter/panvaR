@@ -9,8 +9,8 @@ library(shinyBS)
 library(shinyjs)
 
 # Dynamically get the path to the Input_dashboard_panvar.R and Output_dashboard_panvar.R files
-input_dashboard_path <- system.file("shiny", "Input_dashboard_panvar.R", package = "panvaR")
-output_dashboard_path <- system.file("shiny", "Output_dashboard_panvar.R", package = "panvaR")
+input_dashboard_path <- system.file("shiny", "Input_dashboard_panvar.r", package = "panvaR")
+output_dashboard_path <- system.file("shiny", "Output_dashboard_panvar.r", package = "panvaR")
 
 source(input_dashboard_path)
 source(output_dashboard_path)
