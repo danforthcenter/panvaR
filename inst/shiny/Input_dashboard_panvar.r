@@ -77,24 +77,24 @@ input_dashboard_UI <- function(id) {
             div(
               style = "display: flex; align-items: center; gap: 10px;",
               shinyFilesButton(
-                ns("Phenotype_data_path"),
+                ns("phenotype_data"),
                 "Please select a phenotype data file",
                 "Please select a file",
                 multiple = FALSE
               ),
               tags$span(
-                id = ns("Phenotype_data_path_tooltip"),
+                id = ns("phenotype_data_tooltip"),
                 icon("question-circle"),
                 style = "color: green;"
               )
             ),
             bsTooltip(
-              id = ns("Phenotype_data_path_tooltip"),
+              id = ns("phenotype_data_tooltip"),
               title = "Please provide the path to a Phenotype file.",
               placement = "right",
               trigger = "hover"
             ),  
-            textOutput(ns("Phenotype_data_path_results"))
+            textOutput(ns("phenotype_data_results"))
         ),
         div(class = "input-section",
             h4("Default Inputs"),
@@ -432,9 +432,9 @@ input_dashboard_Server <- function(id, shared) {
         stopApp()
       })
       
-      Phenotype_data_path <- reactive({
-        if (is.null(input$Phenotype_data_path)) return(NULL)
-        parsePath(input$Phenotype_data_path)
+      phenotype_data <- reactive({
+        if (is.null(input$phenotype_data)) return(NULL)
+        parsePath(input$phenotype_data)
       })
       
       # For numeric inputs, return the input value directly since they have defaults
@@ -489,14 +489,14 @@ input_dashboard_Server <- function(id, shared) {
       
       shinyFileChoose(
         input,
-        "Phenotype_data_path",
+        "phenotype_data",
         roots = rootDir,
         session = session,
         filetypes = c("csv","txt","tsv")
       )
       
-      output$Phenotype_data_path_results <- renderText({
-        path <- Phenotype_data_path()
+      output$phenotype_data_results <- renderText({
+        path <- phenotype_data()
         if (!is.null(path)) {
           paste("You have entered", path)
         }
@@ -556,8 +556,8 @@ input_dashboard_Server <- function(id, shared) {
           missing_inputs <- c(missing_inputs, "Genotype Data File")
         }
         
-        if (!is.null(Phenotype_data_path())) {
-          current_values$`Phenotype Data File` <- Phenotype_data_path()
+        if (!is.null(phenotype_data())) {
+          current_values$`Phenotype Data File` <- phenotype_data()
         } else {
           missing_inputs <- c(missing_inputs, "Phenotype Data File")
         }
@@ -666,7 +666,7 @@ input_dashboard_Server <- function(id, shared) {
           # Return TRUE only if all conditions are met
           !is.null(Genotype_data_path()) &&
             tbi_status() && # Check TBI status
-            !is.null(Phenotype_data_path()) &&
+            !is.null(phenotype_data()) &&
             R2_threshold() >= 0 && R2_threshold() <= 1 &&
             maf() >= 0 && maf() <= 1 &&
             missing_rate() >= 0 && missing_rate() <= 1 &&
@@ -691,7 +691,7 @@ input_dashboard_Server <- function(id, shared) {
             # Run panvar_func with user inputs - pass NULL for tag_snps if not provided
             results <- try({
               panvar_func(
-                phenotype_data_path = Phenotype_data_path(),
+                phenotype_data = phenotype_data(),
                 vcf_file_path = Genotype_data_path(),
                 tag_snps = clean_tag_snps(),  # This will be NULL if no tag SNPs are provided
                 r2_threshold = R2_threshold(),
