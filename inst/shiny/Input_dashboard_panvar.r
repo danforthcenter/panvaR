@@ -36,6 +36,9 @@ check_tbi_exists <- function(vcf_file_path) {
 # module1.R
 # Module UI modifications for input_dashboard_UI function
 
+# module1.R
+# Module UI modifications for input_dashboard_UI function
+
 input_dashboard_UI <- function(id) {
   ns <- NS(id)
   tagList(
@@ -93,9 +96,36 @@ input_dashboard_UI <- function(id) {
               title = "Please provide the path to a Phenotype file.",
               placement = "right",
               trigger = "hover"
-            ),  
+            ),
             textOutput(ns("phenotype_data_results"))
         ),
+        # <<< Start Change: Add Annotation File Input >>>
+        div(class = "input-section",
+            h4("Optional Inputs"), # Maybe create a new section or add to Default
+            div(
+              style = "display: flex; align-items: center; gap: 10px;",
+              shinyFilesButton(
+                ns("annotation_table_path"), # New ID
+                "Select Annotation Table (Optional)", # New Label
+                "Please select a file",
+                multiple = FALSE
+              ),
+              tags$span(
+                id = ns("annotation_table_path_tooltip"), # New ID
+                icon("question-circle"),
+                style = "color: orange;" # Indicate optional
+              )
+            ),
+            bsTooltip(
+              id = ns("annotation_table_path_tooltip"), # New ID
+              title = "Optional: Provide a table (CSV/TSV) with 'BP' and 'Annotation' columns to join with results.", # New Tooltip
+              placement = "right",
+              trigger = "hover"
+            ),
+            textOutput(ns("annotation_table_path_results")) # New output ID
+        ),
+        # <<< End Change >>>
+        
         div(class = "input-section",
             h4("Default Inputs"),
             div(
@@ -203,7 +233,7 @@ input_dashboard_UI <- function(id) {
               placement = "right",
               trigger = "hover"
             ),
-            #--- 
+            #---
             # Rijan: The PC min and PC max inputs should actually be a fluidRow with two columns
             # and a numericInput for each column.
             div(
@@ -316,8 +346,8 @@ input_dashboard_UI <- function(id) {
               placement = "right",
               trigger = "hover"
             )
-        )
-      ),
+        ) # End div for Default Inputs
+      ), # End sidebarPanel
       
       mainPanel ( # TODO: Can shiny capture the error from the underlying interpreter?
         div(
@@ -329,11 +359,11 @@ input_dashboard_UI <- function(id) {
           class = "btn-primary",
           style = "margin-top: 20px;"
         )
-      )
-    )
-  )
+      ) # End mainPanel
+    ) # End sidebarLayout
+  ) # End tagList
   
-}
+} # End input_dashboard_UI
 
 # Module server modifications for input_dashboard_Server function
 
@@ -437,6 +467,14 @@ input_dashboard_Server <- function(id, shared) {
         parsePath(input$phenotype_data)
       })
       
+      # <<< Start Change: Add Reactive for Annotation Path >>>
+      annotation_table_path <- reactive({
+        if (is.null(input$annotation_table_path)) return(NULL)
+        parsePath(input$annotation_table_path) # Use existing helper
+      })
+      # <<< End Change >>>
+      
+      
       # For numeric inputs, return the input value directly since they have defaults
       R2_threshold <- reactive({
         input$R2_threshold
@@ -502,6 +540,26 @@ input_dashboard_Server <- function(id, shared) {
         }
       })
       
+      # <<< Start Change: Add File Chooser for Annotation >>>
+      shinyFileChoose(
+        input,
+        "annotation_table_path", # Match the UI ID
+        roots = rootDir,
+        session = session,
+        filetypes = c("csv", "txt", "tsv") # Allow common table formats
+      )
+      
+      output$annotation_table_path_results <- renderText({ # Match the UI ID
+        path <- annotation_table_path()
+        if (!is.null(path)) {
+          paste("Annotation table selected:", path)
+        } else {
+          "No annotation table selected."
+        }
+      })
+      # <<< End Change >>>
+      
+      
       clean_tag_snps <- reactive({
         if (is.null(input$tagSnps) || input$tagSnps == "") return(NULL)
         clean_snp_tags(input$tagSnps)
@@ -539,6 +597,7 @@ input_dashboard_Server <- function(id, shared) {
         return(NULL)
       })
       
+      # --- Modify the input status update ---
       output$input_status_update <- renderUI({
         # Create status lists for both current values and missing inputs
         missing_inputs <- character(0)
@@ -561,6 +620,19 @@ input_dashboard_Server <- function(id, shared) {
         } else {
           missing_inputs <- c(missing_inputs, "Phenotype Data File")
         }
+        
+        # <<< Start Change: Add Annotation File to Status >>>
+        if (!is.null(annotation_table_path())) {
+          current_values$`Annotation Table File` <- annotation_table_path()
+          # Basic check if file exists (more robust validation happens in panvar_func)
+          if (!file.exists(annotation_table_path())) {
+            missing_inputs <- c(missing_inputs, "Annotation Table File (path invalid or file not found)")
+          }
+        } else {
+          current_values$`Annotation Table File` <- "Not Provided (Optional)"
+        }
+        # <<< End Change >>>
+        
         
         # Store numeric inputs with their current values
         current_values$`R² Threshold` <- sprintf("%.3f", R2_threshold())
@@ -654,37 +726,45 @@ input_dashboard_Server <- function(id, shared) {
             }
           )
         )
-      })
+      }) # End renderUI input_status_update
       
       # Create reactive values to store analysis results
       analysis_results <- reactiveVal(NULL)
       
-      # Observe the run analysis button
+      # --- Modify the run analysis observer ---
       observeEvent(input$run_analysis, {
-        # Validate inputs before running - CHANGED: Added TBI validation
+        # --- Modify the input validation ---
         all_inputs_valid <- reactive({
-          # Return TRUE only if all conditions are met
-          !is.null(Genotype_data_path()) &&
-            tbi_status() && # Check TBI status
+          # Basic required inputs
+          valid <- !is.null(Genotype_data_path()) &&
+            tbi_status() &&
             !is.null(phenotype_data()) &&
             R2_threshold() >= 0 && R2_threshold() <= 1 &&
             maf() >= 0 && maf() <= 1 &&
             missing_rate() >= 0 && missing_rate() <= 1 &&
             window_span() > 0 &&
             (use_specific_pcs() || PC_min() <= PC_max())
+          
+          # <<< Start Change: Add optional annotation file existence check >>>
+          annot_path <- annotation_table_path()
+          if (!is.null(annot_path) && !file.exists(annot_path)) {
+            valid <- FALSE # Mark as invalid if path provided but file doesn't exist
+          }
+          # <<< End Change >>>
+          
+          return(valid)
         })
         
         
-        # If validation passes, run the analysis
         if (all_inputs_valid()) {
           withProgress(message = 'Running analysis...', value = 0, {
             
             # Prepare inputs for panvar_func
             pc_params <- if(use_specific_pcs()) {
-              list(pc_min = min(specific_pcs()), 
+              list(pc_min = min(specific_pcs()),
                    pc_max = max(specific_pcs()))
             } else {
-              list(pc_min = PC_min(), 
+              list(pc_min = PC_min(),
                    pc_max = PC_max())
             }
             
@@ -693,6 +773,7 @@ input_dashboard_Server <- function(id, shared) {
               panvar_func(
                 phenotype_data = phenotype_data(),
                 vcf_file_path = Genotype_data_path(),
+                annotation_table_path = annotation_table_path(), # <<< PASS PATH
                 tag_snps = clean_tag_snps(),  # This will be NULL if no tag SNPs are provided
                 r2_threshold = R2_threshold(),
                 maf = maf(),
@@ -710,6 +791,7 @@ input_dashboard_Server <- function(id, shared) {
                 "Error in analysis. Please check your inputs and try again.",
                 type = "error"
               )
+              shared$analysis_results <- NULL # Clear previous results on error
             } else {
               # Store results in shared reactive values for access by output dashboard
               shared$analysis_results <- results
@@ -719,11 +801,17 @@ input_dashboard_Server <- function(id, shared) {
                 type = "message"  # Changed from "success" to "message"
               )
             }
-          })
+          }) # End withProgress
         } else {
-          # Show error if TBI file is missing
-          if (!tbi_status()) {
-            # Check if we have a genotype file but no TBI
+          # Show specific error if annotation file path is invalid
+          annot_path <- annotation_table_path()
+          if (!is.null(annot_path) && !file.exists(annot_path)) {
+            showNotification(
+              "The specified annotation table file does not exist. Please check the path.",
+              type = "error"
+            )
+          } else if (!tbi_status()) {
+            # Handle missing TBI as before
             if (!is.null(Genotype_data_path())) {
               # Prompt again to generate TBI
               showModal(modalDialog(
@@ -742,19 +830,20 @@ input_dashboard_Server <- function(id, shared) {
               )
             }
           } else {
+            # General validation error
             showNotification(
-              "Please check all inputs before running the analysis.",
+              "Please check all required inputs and ensure file paths are valid before running the analysis.",
               type = "error"
             )
           }
         }
-      })
+      }) # End observeEvent run_analysis
       
-      # Return reactive values for use in output dashboard
-      return(list(
-        analysis_results = analysis_results
-      ))
+      # Return reactive values for use in output dashboard (if needed, though direct shared access is used here)
+      # return(list(
+      #  analysis_results = analysis_results
+      #))
       
-    }
-  )
-}
+    } # End function(input, output, session)
+  ) # End moduleServer
+} # End input_dashboard_Server

@@ -2,30 +2,15 @@
 #'
 #' @param phenotype_data Path to the phenotype data file (character string) OR a data.table object containing phenotype data. The first column must contain genotype identifiers matching the VCF file.
 #' @param vcf_file_path Path to the VCF file
-#' @param r2_threshold The r2 threshold
-#' Defaults to 0.6
-#' @param tag_snps The tag SNPs that you want to pass through panvar - either a single SNP or a list of SNPs.
-#' A single SNP should be formatted as "<Chr>:<BP>" - For example, "Chr_09:12456" or "Chr08:14587".
-#' To supply multiple tag SNPs supply a vector of tag SNPs. For example tag_snps = c("Chr_09:12456","Chr08:14587").
-#' @param maf The minor Allele Frequency
-#' Defaults to 0.05
-#' @param missing_rate The missing rate filter for your genotype data
-#' Defaults to 0.1
-#' @param window PanvaR determines the Linkage Disequilibrium (LD) between the tag Single Nucleotide Polymorphism (SNP) and every other SNP within a genome segment. This segment is centered on the tag SNP, extending up to a specified window size in both directions.
-#' Defaults to 500000
-#' @param specific_pcs Would you rather supply a specific set of PCs instead?
-#' @param pc_min (optional) What is the minimum number of PCs that should be included in GWAS?
-#' Defaults to 5
-#' @param pc_max (optional) What is the maximum number of PCs that should be included in GWAS?
-#' Defaults to 5
-#' @param dynamic_correlation (optional) Should the PCs, beyond minimum, be calculated dynamically?
-#' @param all_impacts (optional) Should all impacts be included in the report?
-#' Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
+#' @param annotation_table_path (Optional) Path to the annotation table file (TSV/CSV). Must contain 'BP' and 'Annotation' columns. Defaults to NULL. # <<< NEW ARGUMENT ADDED
+#' @param r2_threshold The r2 threshold Defaults to 0.6
+# ... [rest of the parameters remain the same] ...
+#' @param all.impacts (optional) Should all impacts be included in the report? Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
 #'
 #' @examples
-#' # Using phenotype file path
-#' panvar_func("<path_to_phenotype_data>", "<path_to_vcf_file>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6)
-#' # Using phenotype data.table
+#' # Using phenotype file path and annotation table
+#' panvar_func("<path_to_phenotype_data>", "<path_to_vcf_file>", annotation_table_path = "<path_to_annotation_table>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6) # <<< EXAMPLE UPDATED
+#' # Using phenotype data.table without annotation
 #' pheno_dt <- data.table::fread("<path_to_phenotype_data>")
 #' panvar_func(pheno_dt, "<path_to_vcf_file>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6)
 #'
@@ -38,35 +23,61 @@
 #' @importFrom methods is
 #'
 #' @export
-panvar_func <- function(phenotype_data, vcf_file_path, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){
+panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = NULL, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){ # <<< ARGUMENT ADDED TO SIGNATURE
   
+  # --- Start: Input Validation ---
   if(!file.exists(vcf_file_path)){
     stop("The genotype file path that you provided is not accessible. Either you supplied a wrong path or the file does not exist.")
   }
   
   # Check phenotype input type
   if (is.character(phenotype_data)) {
-    # If it's a path, check if the file exists
     if (!file.exists(phenotype_data)) {
       stop("The phenotype file path that you provided is not accessible. Either you supplied a wrong path or the file does not exist: ", phenotype_data)
     }
-  } else if (!is(phenotype_data, "data.frame")) { # Check if it's at least a data.frame (panvar_gwas handles data.table conversion)
+  } else if (!is(phenotype_data, "data.frame")) {
     stop("The phenotype_data argument must be a file path (character) or a data.frame/data.table object.")
   }
+  
+  # <<< Start Change: Annotation Table Reading and Validation >>>
+  annotation_table <- NULL # Initialize as NULL
+  if (!is.null(annotation_table_path)) {
+    if (!file.exists(annotation_table_path)) {
+      warning("Annotation table path provided but file not found: ", annotation_table_path, ". Proceeding without annotation.")
+    } else {
+      tryCatch({
+        annotation_table <- data.table::fread(annotation_table_path)
+        required_annot_cols <- c("BP", "Annotation")
+        if (!all(required_annot_cols %in% names(annotation_table))) {
+          missing_cols <- setdiff(required_annot_cols, names(annotation_table))
+          warning("Annotation table is missing required columns: ", paste(missing_cols, collapse=", "), ". Proceeding without annotation.")
+          annotation_table <- NULL # Reset to NULL if columns are missing
+        } else {
+          # Ensure BP is numeric for joining
+          if (!is.numeric(annotation_table$BP)) {
+            # Attempt coercion, warn on failure
+            annotation_table[, BP := suppressWarnings(as.numeric(BP))]
+            if(any(is.na(annotation_table$BP))) {
+              warning("Could not reliably convert 'BP' column in annotation table to numeric. Joining might fail or produce unexpected results.")
+            }
+          }
+          print("Annotation table loaded successfully.")
+        }
+      }, error = function(e) {
+        warning("Error reading annotation table: ", e$message, ". Proceeding without annotation.")
+        annotation_table <- NULL # Ensure it's NULL on error
+      })
+    }
+  }
+  # <<< End Change >>>
+  
   
   # Check if the vcf_file has a tbi file
   proper_tbi(vcf_file_path)
   
-  # The end goal of this function is to conveniently make
-  # 1. The plot from Panvar
-  # 2. The report table -
-  # The report table should have - Gwas pvalues,
-  
   # Run GWAS for the user
-  # <<< Start Change >>>
-  # Pass the phenotype_data directly to panvar_gwas (which now handles path or object)
   gwas_table_denovo <- panvar_gwas(
-    phenotype_input = phenotype_data, # Changed argument name
+    phenotype_input = phenotype_data,
     genotype_data = vcf_file_path,
     specific_PCs = specific_pcs,
     pc_min = pc_min,
@@ -75,8 +86,6 @@ panvar_func <- function(phenotype_data, vcf_file_path, tag_snps = NULL, r2_thres
     maf = maf,
     missing_rate = missing_rate
   )
-  # <<< End Change >>>
-  
   
   # convert the window into bp values
   window_bp <- window_unit_func(window)
@@ -88,19 +97,15 @@ panvar_func <- function(phenotype_data, vcf_file_path, tag_snps = NULL, r2_thres
   cleaned_up <- bed_file_clean_up(in_plink_format$bed, maf = maf, missing_rate = missing_rate)
   
   gwas_table <- check_gwas_table(gwas_table_denovo)
-  # if the user has not supplied a tag SNP -
-  # get the tag snp from the gwas results
+  
+  # Determine tag SNPs and call convenience function
   if(is.null(tag_snps)){
-    
     denovo_tag_snp <- tag_snp_func(gwas_table_denovo)
-    
     print("Note: you did not specify a tag snp - so the tag SNP will be inferred from the GWAS results")
-    
     bp = denovo_tag_snp$tag_snp_bp
-    
     chrom = denovo_tag_snp$tag_snp_chromosome
     
-    panvar_result <- panvar_convienience_function( # Visit function body for documentation.
+    panvar_result <- panvar_convienience_function(
       chrom = chrom,
       bp = bp,
       cleaned_up = cleaned_up,
@@ -109,17 +114,16 @@ panvar_func <- function(phenotype_data, vcf_file_path, tag_snps = NULL, r2_thres
       in_plink_format = in_plink_format,
       r2_threshold = r2_threshold,
       window_bp = window_bp,
-      all.impacts = all.impacts
+      all.impacts = all.impacts,
+      annotation_table = annotation_table # <<< PASS ANNOTATION TABLE
     )
     
   } else if(length(tag_snps) == 1){
     user_tag_snp <- tag_snp_splitter(tag_snps)
-    
     chrom = user_tag_snp$chrom
-    
     bp = user_tag_snp$bp
     
-    panvar_result <- panvar_convienience_function( # Visit function body for documentation.
+    panvar_result <- panvar_convienience_function(
       chrom = chrom,
       bp = bp,
       cleaned_up = cleaned_up,
@@ -128,15 +132,15 @@ panvar_func <- function(phenotype_data, vcf_file_path, tag_snps = NULL, r2_thres
       in_plink_format = in_plink_format,
       r2_threshold = r2_threshold,
       window_bp = window_bp,
-      all.impacts = all.impacts
+      all.impacts = all.impacts,
+      annotation_table = annotation_table # <<< PASS ANNOTATION TABLE
     )
     
   } else if(length(tag_snps) > 1){
-    
     list_of_tag_snps <- lapply(tag_snps, tag_snp_splitter)
     
-    panvar_result <- lapply(list_of_tag_snps, function(x){ # To split the list_of_tag_snps into their constituet parts.
-      panvar_convienience_function(# Visit function body for documentation.
+    panvar_result <- lapply(list_of_tag_snps, function(x){
+      panvar_convienience_function(
         chrom = x$chrom,
         bp = x$bp,
         cleaned_up = cleaned_up,
@@ -145,7 +149,8 @@ panvar_func <- function(phenotype_data, vcf_file_path, tag_snps = NULL, r2_thres
         in_plink_format = in_plink_format,
         r2_threshold = r2_threshold,
         window_bp = window_bp,
-        all.impacts = all.impacts
+        all.impacts = all.impacts,
+        annotation_table = annotation_table # <<< PASS ANNOTATION TABLE
       )
     })
   }
@@ -153,8 +158,8 @@ panvar_func <- function(phenotype_data, vcf_file_path, tag_snps = NULL, r2_thres
   return(panvar_result)
 }
 
-# panvar_convenience_function (Keep the rest of this function and the file as is)
-# ... (rest of the code remains the same) ...
+# --- Modify panvar_convienience_function ---
+
 panvar_convienience_function <- function(
     chrom,
     bp,
@@ -164,7 +169,8 @@ panvar_convienience_function <- function(
     in_plink_format,
     r2_threshold = 0.6,
     window_bp = 500000,
-    all.impacts = FALSE
+    all.impacts = FALSE,
+    annotation_table = NULL # <<< NEW ARGUMENT ADDED
 )
 {
   # subset your genotype data around the tag snp
@@ -174,80 +180,51 @@ panvar_convienience_function <- function(
   table <- ld_filtered_snp_list(subset_genotype_data,chrom = chrom, bp = bp, r2_threshold = r2_threshold)
   
   # Make the LD table
-  # This table has the CHROM, BP and LD values and re-adds the tag SNP
-  # This is one of the tables that will be left_joined later
   ld_table <- ld_table_maker(table)
   
   # Convert the table into the list of SNPs to keep
-  # such that BCFtools can filter them out of a the original VCF file
   keep_snp_list <- snps_to_keep(table)
   
-  # The way plink2 converts vcf files may lead to -
-  # a situation where the names in plink2 -
-  # and BCFtools have different chromosomes names. -
-  # This needs to be accounted for.
-  
+  # Handle chromosome name differences
   plink2_bcf_dictionary <- plink2_bcftools_chroms_dictionary(vcf_file_path,in_plink_format$bim)
   
-  # If the dictionary is not empty then use it.
   if(!is.null(plink2_bcf_dictionary)){
     ld_table_checked <- apply_dict(plink2_bcf_dictionary, ld_table)
-    
     snp_keep_list_checked <- apply_dict(plink2_bcf_dictionary, keep_snp_list)
-    
     gwas_table_dicted <- apply_dict(plink2_bcf_dictionary, gwas_table)
-  } else{
-    
+  } else {
     ld_table_checked <-  ld_table
-    
     snp_keep_list_checked <- keep_snp_list
-    
     gwas_table_dicted <- gwas_table
   }
   
-  # Sanitize the table
-  # TODO:- Which table?
+  # Sanitize the keep table
   keep_table_path <- keep_table_sanitizer(snp_keep_list_checked)
   
-  # Send the keep table to bcftools
+  # Filter VCF
   filtered_vcf_table <- filter_vcf_file(vcf_file_path = vcf_file_path, keep_table_path)
   
-  # split the SNP such that they have one annotation per line
+  # Split annotations
   split_table_path <- split_vcf_eff(filtered_vcf_table)
   
-  # Send the split table to SnpSift
-  # This returns a list that has a $path and -
-  # a $table
+  # Run SnpSift
   snpeff_table <- execute_snpsift(split_table_path)
-  
-  # Read the output produced by SnpSift
   snpsift_table <- snpeff_table$table
   
-  # We start the pipeline with a tag_SNP. By the time we reach the "final_table", -
-  # we might not retain the tag_SNP if its impact factor is not HIGH or MODERATE. -
-  # The potential issue of the tag_SNP being dropped can be fixed by creating an -
-  # exception in the conditional here.
-  
-  # For the final table, we create a new field that indicates if a loci is a Tag -
-  # SNP or a Candidate gene. This will be recorded in TYPE.
-  
+  # Filter by impact
   if(all.impacts){
     snpsift_table_impacts <- snpsift_table
   } else {
     snpsift_table_impacts <- snpsift_table %>%
-      filter(IMPACT %in% c("HIGH","MODERATE") | BP == bp ) # The OR condition lets us retain the tag SNP which might be dropped if the IMPACT factor is not HIGH or MODERATE
+      filter(IMPACT %in% c("HIGH","MODERATE") | BP == bp )
   }
   
-  # This table should have
-  # 1. The impact factor
-  # 2. The tag SNP
-  # 3. The Pvalues from GWAS
-  # 4. The LD with the tag_snp included
+  # Join GWAS and LD results
   pvalues_impact_ld_table <- snpsift_table_impacts %>%
     left_join(gwas_table_dicted, by = c("CHROM","BP")) %>%
     left_join(ld_table_checked, by = c("CHROM","BP"))
   
-  # Annotate the tag_snp
+  # Annotate tag vs candidate
   pvalues_impact_ld_colors_table <- pvalues_impact_ld_table %>% mutate(
     Type = case_when(
       BP == bp ~ "tag_snp",
@@ -255,9 +232,26 @@ panvar_convienience_function <- function(
     )
   )
   
-  # Call the weight function
+  # Calculate weights
   final_reports_table <- overall_weight_func(pvalues_impact_ld_colors_table, bp = bp)
   
+  # <<< Start Change: Optional Annotation Join >>>
+  if (!is.null(annotation_table)) {
+    # Ensure BP columns have compatible types before joining
+    # final_reports_table$BP is likely numeric from overall_weight_func
+    # annotation_table$BP was coerced earlier
+    if (is.numeric(final_reports_table$BP) && is.numeric(annotation_table$BP)) {
+      print("Joining with annotation table...")
+      # Perform the left join
+      final_reports_table <- final_reports_table %>%
+        left_join(annotation_table %>% select(BP, Annotation), by = "BP")
+    } else {
+      warning("Cannot join annotation table because BP column types are incompatible.")
+    }
+  }
+  # <<< End Change >>>
+  
+  # Generate plot
   plot <- panvar_plot(final_reports_table, nrow(gwas_table))
   
   return(list(plot = plot, table = final_reports_table))
