@@ -113,12 +113,12 @@ input_dashboard_UI <- function(id) {
               tags$span(
                 id = ns("annotation_table_path_tooltip"), # New ID
                 icon("question-circle"),
-                style = "color: orange;" # Indicate optional
+                style = "color: green;" # Indicate optional
               )
             ),
             bsTooltip(
               id = ns("annotation_table_path_tooltip"), # New ID
-              title = "Optional: Provide a table (CSV/TSV) with 'BP' and 'Annotation' columns to join with results.", # New Tooltip
+              title = "This is an optional input but if you do decide to supply it please supply a delimited table where the first column is BP and the second column is Annotation. This can be used to supply arbritary functional annotations tied to BP.", # New Tooltip
               placement = "right",
               trigger = "hover"
             ),
@@ -133,9 +133,10 @@ input_dashboard_UI <- function(id) {
               numericInput(
                 ns("R2_threshold"),
                 "R2 threshold:",
-                value = 0.8,
-                min = 0,
-                max = 1
+                value = 0.6,
+                min = 0.01,
+                max = 0.99,
+                step = 0.05
               ),
               span(
                 icon("question-circle", style = "color: green;"),
