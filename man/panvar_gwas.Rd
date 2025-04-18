@@ -6,7 +6,7 @@
 \usage{
 panvar_gwas(
   genotype_data,
-  phentotype_path,
+  phenotype_input,
   pc_min = 5,
   pc_max = 5,
   maf = 0.05,
@@ -18,6 +18,8 @@ panvar_gwas(
 \arguments{
 \item{genotype_data}{character. Path to the input genotype data file, either in VCF (vcf/gz) or BED format.}
 
+\item{phenotype_input}{character or data.table. Path to the phenotype data file OR a data.table object containing phenotype data. The first column must contain genotype identifiers.}
+
 \item{pc_min}{integer, optional. Minimum number of principal components (PCs) to include in GWAS. Default is 5.}
 
 \item{pc_max}{integer, optional. Maximum number of PCs to include in GWAS. Default is 5.}
@@ -28,8 +30,6 @@ panvar_gwas(
 
 \item{dynamic_correlation}{logical, optional. Whether additional PCs beyond the minimum should be calculated dynamically. Default is FALSE.}
 
-\item{phenotype_data}{character. Path to the phenotype data file.}
-
 \item{specific_pcs}{Vector, optional. If you want to supply specific PCs instead of calculating them dynamically then use this to supply a vector of PCs.}
 }
 \value{
@@ -39,6 +39,10 @@ A data frame containing GWAS results.
 This function performs genome-wide association studies (GWAS) on provided phenotype and genotype data.
 }
 \examples{
+# Using file path
 panvar_gwas("path/to/genotype_data.vcf", "path/to/phenotype_data.csv", pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1)
+# Using data.table object
+pheno_dt <- data.table::fread("path/to/phenotype_data.csv")
+panvar_gwas("path/to/genotype_data.vcf", pheno_dt, pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1)
 
 }
