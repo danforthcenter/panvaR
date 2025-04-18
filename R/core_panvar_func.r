@@ -2,7 +2,7 @@
 #'
 #' @param phenotype_data Path to the phenotype data file (character string) OR a data.table object containing phenotype data. The first column must contain genotype identifiers matching the VCF file.
 #' @param vcf_file_path Path to the VCF file
-#' @param annotation_table_path (Optional) Path to the annotation table file (TSV/CSV). Must contain 'BP' and 'Annotation' columns. Defaults to NULL. # <<< NEW ARGUMENT ADDED
+#' @param annotation_table_path (Optional) Path to the annotation table file (TSV/CSV). Must contain 'GENE' and 'Annotation' columns. Defaults to NULL. # <<< MODIFIED DESCRIPTION
 #' @param r2_threshold The r2 threshold Defaults to 0.6
 # ... [rest of the parameters remain the same] ...
 #' @param all.impacts (optional) Should all impacts be included in the report? Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
@@ -47,19 +47,19 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
     } else {
       tryCatch({
         annotation_table <- data.table::fread(annotation_table_path)
-        required_annot_cols <- c("BP", "Annotation")
+        # --- MODIFIED: Check for GENE and Annotation columns ---
+        required_annot_cols <- c("GENE", "Annotation")
         if (!all(required_annot_cols %in% names(annotation_table))) {
           missing_cols <- setdiff(required_annot_cols, names(annotation_table))
-          warning("Annotation table is missing required columns: ", paste(missing_cols, collapse=", "), ". Proceeding without annotation.")
+          # --- MODIFIED: Updated warning message ---
+          warning("Annotation table is missing required columns: ", paste(missing_cols, collapse=", "), ". It must contain 'GENE' and 'Annotation'. Proceeding without annotation.")
           annotation_table <- NULL # Reset to NULL if columns are missing
         } else {
-          # Ensure BP is numeric for joining
-          if (!is.numeric(annotation_table$BP)) {
-            # Attempt coercion, warn on failure
-            annotation_table[, BP := suppressWarnings(as.numeric(BP))]
-            if(any(is.na(annotation_table$BP))) {
-              warning("Could not reliably convert 'BP' column in annotation table to numeric. Joining might fail or produce unexpected results.")
-            }
+          # --- REMOVED: BP numeric check is no longer needed for joining ---
+          # Ensure GENE is character for joining robustness (optional, depends on data)
+          if (!is.character(annotation_table$GENE)) {
+            annotation_table[, GENE := as.character(GENE)]
+            warning("Coerced 'GENE' column in annotation table to character type for joining.")
           }
           print("Annotation table loaded successfully.")
         }
@@ -215,6 +215,10 @@ panvar_convienience_function <- function(
   if(all.impacts){
     snpsift_table_impacts <- snpsift_table
   } else {
+    # Ensure GENE column exists before filtering (it should from snpsift)
+    if (!"GENE" %in% names(snpsift_table)) {
+      stop("SnpSift output table is missing the required 'GENE' column.")
+    }
     snpsift_table_impacts <- snpsift_table %>%
       filter(IMPACT %in% c("HIGH","MODERATE") | BP == bp )
   }
@@ -235,18 +239,26 @@ panvar_convienience_function <- function(
   # Calculate weights
   final_reports_table <- overall_weight_func(pvalues_impact_ld_colors_table, bp = bp)
   
-  # <<< Start Change: Optional Annotation Join >>>
+  # <<< Start Change: Optional Annotation Join by GENE >>>
   if (!is.null(annotation_table)) {
-    # Ensure BP columns have compatible types before joining
-    # final_reports_table$BP is likely numeric from overall_weight_func
-    # annotation_table$BP was coerced earlier
-    if (is.numeric(final_reports_table$BP) && is.numeric(annotation_table$BP)) {
-      print("Joining with annotation table...")
-      # Perform the left join
+    # Ensure GENE columns have compatible types before joining
+    # final_reports_table$GENE comes from snpsift
+    # annotation_table$GENE was coerced to character earlier if necessary
+    if ("GENE" %in% names(final_reports_table) && "GENE" %in% names(annotation_table)) {
+      # Coerce final_reports_table$GENE to character just in case for safety
+      if (!is.character(final_reports_table$GENE)) {
+        final_reports_table <- final_reports_table %>% mutate(GENE = as.character(GENE))
+      }
+      
+      print("Joining with annotation table by GENE...")
+      # Perform the left join using GENE
+      # Select only GENE and Annotation from the annotation table to avoid duplicate columns
       final_reports_table <- final_reports_table %>%
-        left_join(annotation_table %>% select(BP, Annotation), by = "BP")
+        left_join(annotation_table %>% select(GENE, Annotation), by = "GENE") # <<< MODIFIED JOIN CONDITION
+      
     } else {
-      warning("Cannot join annotation table because BP column types are incompatible.")
+      # --- MODIFIED: Update warning message ---
+      warning("Cannot join annotation table because 'GENE' column is missing in either the main results or the annotation table.")
     }
   }
   # <<< End Change >>>

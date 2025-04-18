@@ -118,7 +118,7 @@ input_dashboard_UI <- function(id) {
             ),
             bsTooltip(
               id = ns("annotation_table_path_tooltip"), # New ID
-              title = "This is an optional input but if you do decide to supply it please supply a delimited table where the first column is BP and the second column is Annotation. This can be used to supply arbritary functional annotations tied to BP.", # New Tooltip
+              title = "This is an optional input but if you do decide to supply it please supply a delimited table where the first column is GENE and the second column is Annotation. This can be used to supply arbritary functional annotations tied to the GENE.", # New Tooltip
               placement = "right",
               trigger = "hover"
             ),
