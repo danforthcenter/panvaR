@@ -95,7 +95,7 @@ load_and_filter_module <- function(my_data, input) {
 }
 
 
-# Rijan: Plotly object generator - now handles empty input and missing columns
+# Rijan: Plotly object generator - handles NA LD, uses correct color scale application
 panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, pvalue_threshold = 0.05, point_size = 3, alpha_base = 0.7){
   
   # Handle NULL or empty input table gracefully
@@ -111,11 +111,10 @@ panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, p
   }
   
   # Check if essential columns exist before plotting
-  required_plot_cols <- c("BP", "Pvalues", "IMPACT", "LD", "GENE", "Type") # Added Type
+  required_plot_cols <- c("BP", "Pvalues", "IMPACT", "LD", "GENE", "Type")
   missing_plot_cols <- setdiff(required_plot_cols, names(panvar_results_table))
   if (length(missing_plot_cols) > 0) {
     warning(paste("Plotting function is missing required columns:", paste(missing_plot_cols, collapse=", ")))
-    # Return a placeholder plot indicating missing data
     return(
       plot_ly() %>%
         layout(title = "Plotting Error", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
@@ -126,111 +125,106 @@ panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, p
     )
   }
   
-  # Ensure required columns are of the correct type (basic check)
-  if (!is.numeric(panvar_results_table$BP) || !is.numeric(panvar_results_table$Pvalues) || !is.numeric(panvar_results_table$LD)) {
-    warning("One or more required numeric columns (BP, Pvalues, LD) are not numeric.")
-    # Return placeholder plot
+  # Ensure required numeric columns exist and are numeric
+  if (!is.numeric(panvar_results_table$BP) || !is.numeric(panvar_results_table$Pvalues) || !("LD" %in% names(panvar_results_table)) || !is.numeric(panvar_results_table$LD)) {
+    warning("One or more required numeric columns (BP, Pvalues, LD) are missing or not numeric.")
     return(
       plot_ly() %>%
         layout(title = "Plotting Error", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
         add_annotations(
-          text = "Cannot generate plot. BP, Pvalues, or LD column is not numeric.",
+          text = "Cannot generate plot. BP, Pvalues, or LD column is missing or not numeric.",
           x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14)
         )
     )
   }
   
   
+  # --- Check for valid LD values for color mapping ---
+  has_valid_ld <- any(!is.na(panvar_results_table$LD))
+  # --- End Check ---
+  
   # Rijan: What is the tag_snp
   tag_df <- panvar_results_table %>%
     filter(Type == 'tag_snp')
-  
-  # Handle cases where tag_df might be empty after filtering
-  if(nrow(tag_df) > 0) {
-    tag_snp <- tag_df %>%
-      pull(BP) %>%
-      unique() %>%
-      head(1) # Ensure only one value if multiple rows match
-  } else {
-    tag_snp <- NULL # Set to NULL if no tag SNP found
-  }
+  tag_snp <- if(nrow(tag_df) > 0) tag_df %>% pull(BP) %>% unique() %>% head(1) else NULL
   
   
-  # Rijan: Did the user supply a default value for the bonforoni correction?
+  # Rijan: Bonferroni correction setup
   if(is.null(nrows_in_gwas)){
     print("You did not supply a value for the number of tests that were in the GWAS - a place holder value will be used. This is not ideal.")
     nrows_in_gwas <- 5e6 # Use a default if not provided
   }
-  
-  # Rijan: What is the Bonferroni correction
   bonf.cor <- -log10(pvalue_threshold / nrows_in_gwas)
   
-  # Rijan: The main Object that we will gradually add to.
-  panvar_plotly <- plot_ly(
-    panvar_results_table,
-    x = ~BP,
-    y = ~Pvalues,
-    color = ~LD, # Color points by LD value
-    colors = "YlOrRd", # Use a sequential color scale (adjust as needed)
-    type = 'scatter',
-    mode = 'markers',
-    symbol = ~IMPACT,
-    marker = list(
-      size = 10, # Adjusted size for better visibility
-      colorbar = list(title = "LD (R²)") # Add color bar title
-    ),
-    # Add hover text for more info
-    hoverinfo = 'text',
-    text = ~paste('BP:', BP, '<br>P-value:', round(Pvalues, 2), '<br>LD:', round(LD, 2), '<br>Impact:', IMPACT, '<br>Gene:', GENE),
-    showlegend = TRUE,
-    name = ~IMPACT # Group points by IMPACT in legend
-  )
   
-  # Add layout details
+  # --- Create Plotly object conditionally based on LD values ---
+  if (has_valid_ld) {
+    # CASE 1: Valid LD values exist, map color to LD and use colorscale in marker
+    panvar_plotly <- plot_ly(
+      panvar_results_table,
+      x = ~BP,
+      y = ~Pvalues,
+      color = ~LD,        # Map color variable
+      # colors argument removed from here
+      type = 'scatter',
+      mode = 'markers',
+      symbol = ~IMPACT,
+      marker = list(
+        size = 10,
+        colorscale = "Viridis", # <<< MODIFIED: Specify colorscale within marker
+        colorbar = list(title = "LD (R²)") # Include color bar
+      ),
+      hoverinfo = 'text',
+      text = ~paste('BP:', BP, '<br>P-value:', round(Pvalues, 2), '<br>LD:', round(LD, 2), '<br>Impact:', IMPACT, '<br>Gene:', GENE),
+      showlegend = TRUE,
+      name = ~IMPACT
+    )
+  } else {
+    # CASE 2: No valid LD values (all NA or empty), do not map color to LD
+    panvar_plotly <- plot_ly(
+      panvar_results_table,
+      x = ~BP,
+      y = ~Pvalues,
+      # NO 'color' mapping argument here
+      type = 'scatter',
+      mode = 'markers',
+      symbol = ~IMPACT,
+      marker = list(
+        size = 10,
+        color = 'gray' # Assign a default fixed color
+        # NO 'colorscale' or 'colorbar' here
+      ),
+      hoverinfo = 'text',
+      text = ~paste('BP:', BP, '<br>P-value:', round(Pvalues, 2), '<br>LD: NA', '<br>Impact:', IMPACT, '<br>Gene:', GENE), # Indicate LD is NA
+      showlegend = TRUE,
+      name = ~IMPACT
+    )
+  }
+  # --- End Conditional Plot Creation ---
+  
+  
+  # --- Add common layout elements and shapes ---
   panvar_plotly <- layout(panvar_plotly, title = "Interactive PanvaR Plot",
                           xaxis = list(title = "Position (BP)", titlefont = list(size = 14)),
-                          yaxis = list(title = "-log<sub>10</sub>(P-value)", titlefont = list(size = 14)), # Use subscript
-                          legend = list(title = list(text = '<b>Impact</b>'), orientation = "h", y = -0.2) # Bold title, horizontal legend below
+                          yaxis = list(title = "-log<sub>10</sub>(P-value)", titlefont = list(size = 14)),
+                          legend = list(title = list(text = '<b>Impact</b>'), orientation = "h", y = -0.2)
   )
   
+  # Functions for lines
+  hline <- function(y = 0, color = "blue") list(type = "line", x0 = 0, x1 = 1, xref = "paper", y0 = y, y1 = y, yref = "y", line = list(color = color, dash = "dash"))
+  vline <- function(x = 0, color = "red") list(type = "line", y0 = 0, y1 = 1, yref = "paper", x0 = x, x1 = x, xref = "x", line = list(color = color, dash = "dot"))
   
-  # --- Functions for lines ---
-  hline <- function(y = 0, color = "blue") {
-    list(
-      type = "line",
-      x0 = 0, x1 = 1, xref = "paper", # Stretches across plot width
-      y0 = y, y1 = y, yref = "y",    # Position based on y-axis value
-      line = list(color = color, dash = "dash"),
-      name = "Bonferroni Threshold" # Name for potential hover/legend
-    )
-  }
-  
-  vline <- function(x = 0, color = "red") {
-    list(
-      type = "line",
-      y0 = 0, y1 = 1, yref = "paper", # Stretches across plot height
-      x0 = x, x1 = x, xref = "x",    # Position based on x-axis value
-      line = list(color = color, dash = "dot"),
-      name = "Tag SNP" # Name for potential hover/legend
-    )
-  }
-  # --- End Functions for lines ---
-  
-  # List to hold shapes
-  shapes_list <- list(hline(bonf.cor)) # Start with Bonferroni line
-  
-  # Add vertical line for tag SNP only if tag_snp is not NULL and is finite
+  # Add shapes
+  shapes_list <- list(hline(bonf.cor))
   if (!is.null(tag_snp) && is.finite(tag_snp)) {
     shapes_list <- c(shapes_list, list(vline(tag_snp)))
   }
-  
-  # Add shapes to the layout
   panvar_plotly <- layout(panvar_plotly, shapes = shapes_list)
+  # --- End Common Layout ---
   
   return(panvar_plotly)
   
 }
-# ---
 
 # --- UI Modification ---
 output_dashboard_UI <- function(id) {
@@ -1028,17 +1022,21 @@ output_dashboard_Server <- function(id, shared) {
       
       
       # --- Render Outputs Dynamically ---
+      # --- Render Outputs Dynamically ---
       observe({
         results <- raw_results()
+        names_res <- result_names() # Get the potential names (tag SNPs)
         req(results) # Need results to proceed
         
         # Determine number of results/tabs
         num_results <- 0
         is_multiple <- is.list(results) && !is.data.frame(results) && !all(c("plot", "table") %in% names(results))
+        is_single_list <- is.list(results) && all(c("plot", "table") %in% names(results))
+        
         if(is_multiple) {
           num_results <- length(results)
-        } else if (is.list(results) && all(c("plot", "table") %in% names(results))){
-          num_results <- 1 # Single result structure
+        } else if (is_single_list){
+          num_results <- 1 # Single result structure counts as 1
         }
         
         if (num_results == 0) return() # No valid results
@@ -1050,55 +1048,61 @@ output_dashboard_Server <- function(id, shared) {
             plot_output_id <- paste0("plot_", current_index)
             table_output_id <- paste0("table_", current_index)
             
-            # Render Plot for this index
+            # --- Determine a safe filename base for the current tab ---
+            tab_name <- "single_result" # Default
+            if (!is.null(names_res) && length(names_res) >= current_index) {
+              tab_name <- names_res[[current_index]]
+            }
+            # Sanitize the name for use in filename (remove spaces, colons, etc.)
+            safe_filename_base <- gsub("[^A-Za-z0-9_-]", "_", tab_name)
+            dynamic_filename <- paste0("panvar_data_", safe_filename_base)
+            # --- End filename determination ---
+            
+            
+            # Render Plot for this index (code unchanged from previous version)
             output[[plot_output_id]] <- renderPlotly({
-              # This plot should only be generated if the corresponding tab is active
               req(input$resultTabs == ns(paste0("tab_", current_index)))
-              
-              data_to_plot <- filtered_active_data() # Uses the reactive holding filtered data for the *active* tab
-              
-              # Option 1: Regenerate plot from filtered data
+              data_to_plot <- filtered_active_data()
               plot_obj <- panvar_plotly_function(
                 panvar_results_table = data_to_plot,
                 nrows_in_gwas = input$total_rows,
                 pvalue_threshold = input$pvalue_threshold
               )
-              
-              # Option 2: Use pre-generated plot object if available (e.g., from RDS)
-              # pregen_plot <- active_tab_plot_object()
-              # if (!is.null(pregen_plot)) {
-              #    # Potentially modify pregen_plot based on filtered data if needed
-              #    # e.g., highlight points, change axis limits? Complex.
-              #    plot_obj <- pregen_plot
-              # } else {
-              #     # Fallback to regenerating if plot object is missing
-              #    plot_obj <- panvar_plotly_function(...)
-              # }
-              
-              # Return the plot object
-              # Add event handling for clicks if needed later
-              # plot_obj <- event_register(plot_obj, 'plotly_click')
               plot_obj
-              
             }) # End renderPlotly
             
-            # Render Table for this index
+            
+            # Render Table for this index with customized export filenames
             output[[table_output_id]] <- renderDT({
               req(input$resultTabs == ns(paste0("tab_", current_index)))
               data_to_display <- filtered_active_data()
               
               if (is.null(data_to_display) || nrow(data_to_display) == 0) {
-                # Return a simple DT message if no data after filtering
                 return(datatable(data.frame(Message = "No data available based on current filters for this tag SNP."),
-                                 options = list(dom = 't', searching = FALSE, paging = FALSE), # Minimal options
+                                 options = list(dom = 't', searching = FALSE, paging = FALSE),
                                  rownames = FALSE))
               }
               
-              # Standard DT rendering
+              # Standard DT rendering with modified buttons option
               datatable(data_to_display,
-                        options = list(pageLength = 10, scrollX = TRUE, scrollY = "350px",
-                                       deferRender = TRUE, scrollCollapse = TRUE, dom = 'Bfrtip', # Ensure Buttons (B) is included
-                                       buttons = c('copy', 'csv', 'excel') # Add export buttons
+                        options = list(
+                          pageLength = 10, scrollX = TRUE, scrollY = "350px",
+                          deferRender = TRUE, scrollCollapse = TRUE,
+                          dom = 'Bfrtip', # Ensure Buttons (B) is included
+                          # --- MODIFICATION START: Button configuration ---
+                          buttons = list(
+                            list(extend = 'copy', text = 'Copy'), # Standard copy
+                            list(
+                              extend = 'csv', # CSV export
+                              filename = dynamic_filename # Use dynamic filename
+                            ),
+                            list(
+                              extend = 'excel', # Excel export
+                              filename = dynamic_filename, # Use dynamic filename
+                              text = 'Excel' # Optional: Change button text
+                            )
+                          )
+                          # --- MODIFICATION END ---
                         ),
                         filter = 'top', # Enable column filters
                         rownames = FALSE,

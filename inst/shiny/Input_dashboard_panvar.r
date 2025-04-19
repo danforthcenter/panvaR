@@ -734,52 +734,72 @@ input_dashboard_Server <- function(id, shared) {
       
       # --- Modify the run analysis observer ---
       observeEvent(input$run_analysis, {
-        # --- Modify the input validation ---
+        # --- Get the namespace ---
+        ns <- session$ns # Make sure ns is available
+        
+        # --- Ensure button is re-enabled when the observer exits ---
+        # This is a robust way to handle re-enabling, even if errors occur
+        on.exit(shinyjs::enable("run_analysis"))
+        
+        # --- Input Validation ---
+        # (Assuming all_inputs_valid reactive is defined as before)
+        # Basic required inputs check
         all_inputs_valid <- reactive({
-          # Basic required inputs
           valid <- !is.null(Genotype_data_path()) &&
-            tbi_status() &&
+            tbi_status() && # Assuming tbi_status reactiveVal exists
             !is.null(phenotype_data()) &&
-            R2_threshold() >= 0 && R2_threshold() <= 1 &&
-            maf() >= 0 && maf() <= 1 &&
-            missing_rate() >= 0 && missing_rate() <= 1 &&
-            window_span() > 0 &&
-            (use_specific_pcs() || PC_min() <= PC_max())
+            !is.null(R2_threshold()) && R2_threshold() >= 0 && R2_threshold() <= 1 &&
+            !is.null(maf()) && maf() >= 0 && maf() <= 1 &&
+            !is.null(missing_rate()) && missing_rate() >= 0 && missing_rate() <= 1 &&
+            !is.null(window_span()) && window_span() >= 0
           
-          # <<< Start Change: Add optional annotation file existence check >>>
+          # Validate PC inputs based on mode
+          if (use_specific_pcs()) {
+            valid <- valid && !is.null(specific_pcs()) && length(specific_pcs()) > 0
+          } else {
+            valid <- valid && !is.null(PC_min()) && !is.null(PC_max()) && PC_min() <= PC_max()
+          }
+          
+          # Add optional annotation file existence check
           annot_path <- annotation_table_path()
           if (!is.null(annot_path) && !file.exists(annot_path)) {
-            valid <- FALSE # Mark as invalid if path provided but file doesn't exist
+            valid <- FALSE
           }
-          # <<< End Change >>>
-          
           return(valid)
         })
         
         
         if (all_inputs_valid()) {
+          # --- Disable button immediately ---
+          shinyjs::disable("run_analysis")
+          
           withProgress(message = 'Running analysis...', value = 0, {
             
             # Prepare inputs for panvar_func
-            pc_params <- if(use_specific_pcs()) {
-              list(pc_min = min(specific_pcs()),
-                   pc_max = max(specific_pcs()))
+            # Use specific PCs if selected, otherwise use range
+            pc_params <- if(use_specific_pcs() && !is.null(specific_pcs())) {
+              list(specific_PCs = specific_pcs(), pc_min = NULL, pc_max = NULL) # Pass specific_PCs
             } else {
-              list(pc_min = PC_min(),
-                   pc_max = PC_max())
+              list(specific_PCs = NULL, pc_min = PC_min(), pc_max = PC_max()) # Pass range
             }
             
-            # Run panvar_func with user inputs - pass NULL for tag_snps if not provided
+            # Increment progress (optional)
+            incProgress(0.1, detail = "Starting PanvaR function...")
+            
+            # Run panvar_func with user inputs
             results <- try({
+              # Make sure to pass the correct PC parameters based on the mode
               panvar_func(
                 phenotype_data = phenotype_data(),
                 vcf_file_path = Genotype_data_path(),
-                annotation_table_path = annotation_table_path(), # <<< PASS PATH
-                tag_snps = clean_tag_snps(),  # This will be NULL if no tag SNPs are provided
+                annotation_table_path = annotation_table_path(),
+                tag_snps = clean_tag_snps(),
                 r2_threshold = R2_threshold(),
                 maf = maf(),
                 missing_rate = missing_rate(),
                 window = window_span(),
+                # Pass either specific_pcs OR pc_min/pc_max
+                specific_pcs = pc_params$specific_PCs,
                 pc_min = pc_params$pc_min,
                 pc_max = pc_params$pc_max,
                 dynamic_correlation = dynamic_correlation(),
@@ -787,22 +807,30 @@ input_dashboard_Server <- function(id, shared) {
               )
             })
             
+            # Increment progress (optional)
+            incProgress(0.8, detail = "Processing results...")
+            
             if (inherits(results, "try-error")) {
               showNotification(
-                "Error in analysis. Please check your inputs and try again.",
-                type = "error"
+                paste("Error during analysis:", as.character(results)), # Show actual error
+                type = "error",
+                duration = 10 # Show longer
               )
               shared$analysis_results <- NULL # Clear previous results on error
             } else {
-              # Store results in shared reactive values for access by output dashboard
+              # Store results in shared reactive values
               shared$analysis_results <- results
               
               showNotification(
                 "Analysis completed successfully!",
-                type = "message"  # Changed from "success" to "message"
+                type = "message"
               )
             }
+            # Increment progress (optional)
+            incProgress(1, detail = "Finished.")
           }) # End withProgress
+          
+          # Button will be re-enabled by on.exit() handler
         } else {
           # Show specific error if annotation file path is invalid
           annot_path <- annotation_table_path()
@@ -812,23 +840,19 @@ input_dashboard_Server <- function(id, shared) {
               type = "error"
             )
           } else if (!tbi_status()) {
-            # Handle missing TBI as before
+            # Handle missing TBI as before (prompting user)
             if (!is.null(Genotype_data_path())) {
-              # Prompt again to generate TBI
               showModal(modalDialog(
                 title = "Index File (.tbi) Required",
                 "You need to generate or provide an index file (.tbi) before running the analysis. Would you like to generate it now?",
                 footer = tagList(
-                  actionButton(session$ns("generate_tbi_yes"), "Yes, generate index file", class = "btn-primary"),
-                  actionButton(session$ns("exit_program"), "Don't generate - exit program", class = "btn-danger")
+                  actionButton(ns("generate_tbi_yes"), "Yes, generate index file", class = "btn-primary"),
+                  modalButton("Cancel") # Changed from exit program
                 ),
-                easyClose = FALSE
+                easyClose = TRUE # Allow easy closing
               ))
             } else {
-              showNotification(
-                "Please select a genotype file first.",
-                type = "error"
-              )
+              showNotification("Please select a genotype file first.", type = "error")
             }
           } else {
             # General validation error
@@ -837,8 +861,9 @@ input_dashboard_Server <- function(id, shared) {
               type = "error"
             )
           }
+          # Button remains enabled if validation fails (handled by on.exit)
         }
-      }) # End observeEvent run_analysis
+      }) # End observeEvent run_analysis # End observeEvent run_analysis
       
       # Return reactive values for use in output dashboard (if needed, though direct shared access is used here)
       # return(list(
