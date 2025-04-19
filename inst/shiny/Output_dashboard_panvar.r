@@ -808,32 +808,54 @@ output_dashboard_Server <- function(id, shared) {
       })
       
       # --- Reactive for Currently Selected Tab Data Table ---
+      # --- Reactive for Currently Selected Tab Data Table ---
       active_tab_data <- reactive({
         results <- raw_results()
-        # Use input$resultTabs which now exists for both single and multiple tabs
-        selected_tab_value <- input$resultTabs
+        selected_tab_value <- input$resultTabs # Value like ns("tab_1")
         
-        req(results) # Need results to proceed
-        req(selected_tab_value) # Need a selected tab value
+        # Directly require results, but handle NULL input$resultTabs later
+        req(results)
         
-        # Extract index from tab value (e.g., "module2-tab_1" -> 1)
-        match_val <- regmatches(selected_tab_value, regexpr("\\d+$", selected_tab_value))
-        if(length(match_val) == 0) return(NULL)
-        selected_tab_index <- as.integer(match_val)
+        selected_tab_index <- 1 # Default to the first tab initially
         
+        # If input$resultTabs is not NULL, parse the index from its value
+        if (!is.null(selected_tab_value)) {
+          # Extract index from tab value (e.g., "module2-tab_1" -> 1)
+          match_val <- regmatches(selected_tab_value, regexpr("\\d+$", selected_tab_value))
+          if(length(match_val) > 0) {
+            selected_tab_index <- as.integer(match_val)
+          } else {
+            # Fallback if parsing fails, though unlikely with ns()
+            warning("Could not parse index from tab value: ", selected_tab_value)
+            return(NULL)
+          }
+        }
+        # Now selected_tab_index is either 1 (default) or parsed value
         
         # Determine if results represent multiple entries or a single one
-        is_multiple_results <- is.list(results) && !is.data.frame(results) && length(results) > 1 &&
-          !all(c("plot", "table") %in% names(results))
+        # Check if it's a list BUT not a data.frame and not the single result structure
+        is_multiple_results <- is.list(results) &&
+          !is.data.frame(results) &&
+          !all(c("plot", "table") %in% names(results)) &&
+          length(results) > 0 # Added length check
         
         current_item <- NULL
         if (is_multiple_results) {
           # Select the item from the list based on index
           if (selected_tab_index > 0 && selected_tab_index <= length(results)) {
             current_item <- results[[selected_tab_index]]
+          } else {
+            warning(paste("Selected tab index", selected_tab_index, "out of bounds for results list."))
+            return(NULL) # Index out of bounds
           }
         } else {
-          # It's a single result (either direct or list of 1)
+          # It's potentially a single result (either direct or list of 1)
+          # We still use index 1 because the UI renders it as ns("tab_1")
+          if(selected_tab_index != 1) {
+            # This shouldn't happen if it's truly a single result UI
+            warning("Unexpected tab index for single result view.")
+            return(NULL)
+          }
           if (is.list(results) && !is.data.frame(results) && length(results) == 1) {
             current_item <- results[[1]]
           } else if (is.list(results) && all(c("plot", "table") %in% names(results))) {
@@ -845,10 +867,11 @@ output_dashboard_Server <- function(id, shared) {
         if(is.list(current_item) && "table" %in% names(current_item) && is.data.frame(current_item$table)){
           return(current_item$table)
         } else {
-          warning(paste("Result item for selected tab", selected_tab_value, "has invalid structure or no table."))
-          return(NULL)
+          # This might be normal if a result item is invalid
+          # warning(paste("Result item for selected tab index", selected_tab_index, "has invalid structure or no table."))
+          return(NULL) # Return NULL if structure is wrong or table missing
         }
-      })
+      }) # End active_tab_data reactive
       
       # --- Reactive for Currently Selected Tab Plot Object ---
       # Needed if loading plot from file is not supported/desired
