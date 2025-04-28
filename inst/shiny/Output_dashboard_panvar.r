@@ -83,354 +83,170 @@ load_and_filter_module <- function(my_data, input) {
   return(filtered_data)
 }
 
-
-# Rijan: Plotly object generator - handles NA LD, uses correct color scale application
-panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, pvalue_threshold = 0.05, point_size = 3, alpha_base = 0.7){
+# Rijan: Plotly object generator - Modified for DISCRETE LD Color Scale
+panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, pvalue_threshold = 0.05, point_size = 10, alpha_base = 0.7){
   
-  # Handle NULL or empty input table gracefully
+  # --- 1. Input Validation and Graceful Handling ---
   if (is.null(panvar_results_table) || nrow(panvar_results_table) == 0) {
+    # Return message plot
     return(
       plot_ly() %>%
         layout(title = "No Data to Display", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
-        add_annotations(
-          text = "No data available based on current filters for this tag SNP.",
-          x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14)
-        )
+        add_annotations(text = "No data available based on current filters.", x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14))
     )
   }
   
-  # Check if essential columns exist before plotting
-  required_plot_cols <- c("BP", "Pvalues", "IMPACT", "LD", "GENE", "Type")
+  required_plot_cols <- c("BP", "Pvalues", "IMPACT", "LD", "GENE", "Type") # LD is still required for binning
   missing_plot_cols <- setdiff(required_plot_cols, names(panvar_results_table))
   if (length(missing_plot_cols) > 0) {
     warning(paste("Plotting function is missing required columns:", paste(missing_plot_cols, collapse=", ")))
+    # Return error plot
     return(
       plot_ly() %>%
         layout(title = "Plotting Error", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
-        add_annotations(
-          text = paste("Cannot generate plot. Missing columns:", paste(missing_plot_cols, collapse=", ")),
-          x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14)
-        )
+        add_annotations(text = paste("Cannot generate plot. Missing columns:", paste(missing_plot_cols, collapse=", ")), x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14))
     )
   }
   
-  # Ensure required numeric columns exist and are numeric
-  if (!is.numeric(panvar_results_table$BP) || !is.numeric(panvar_results_table$Pvalues) || !("LD" %in% names(panvar_results_table)) || !is.numeric(panvar_results_table$LD)) {
-    warning("One or more required numeric columns (BP, Pvalues, LD) are missing or not numeric.")
-    return(
-      plot_ly() %>%
-        layout(title = "Plotting Error", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
-        add_annotations(
-          text = "Cannot generate plot. BP, Pvalues, or LD column is missing or not numeric.",
-          x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14)
-        )
-    )
-  }
-  
-  
-  # --- Check for valid LD values for color mapping ---
-  has_valid_ld <- any(!is.na(panvar_results_table$LD))
-  # --- End Check ---
-  
-  # Rijan: What is the tag_snp
-  tag_df <- panvar_results_table %>%
-    filter(Type == 'tag_snp')
-  tag_snp <- if(nrow(tag_df) > 0) tag_df %>% pull(BP) %>% unique() %>% head(1) else NULL
-  
-  
-  # Rijan: Bonferroni correction setup
-  if(is.null(nrows_in_gwas)){
-    print("You did not supply a value for the number of tests that were in the GWAS - a place holder value will be used. This is not ideal.")
-    nrows_in_gwas <- 5e6 # Use a default if not provided
-  }
-  bonf.cor <- -log10(pvalue_threshold / nrows_in_gwas)
-  
-  
-  # --- Create Plotly object conditionally based on LD values ---
-  if (has_valid_ld) {
-    # CASE 1: Valid LD values exist, map color to LD and use colorscale in marker
-    panvar_plotly <- plot_ly(
-      panvar_results_table,
-      x = ~BP,
-      y = ~Pvalues,
-      color = ~LD,        # Map color variable
-      # colors argument removed from here
-      type = 'scatter',
-      mode = 'markers',
-      symbol = ~IMPACT,
-      marker = list(
-        size = 10,
-        colorscale = "Viridis", # <<< MODIFIED: Specify colorscale within marker
-        colorbar = list(title = "LD (R²)") # Include color bar
-      ),
-      hoverinfo = 'text',
-      text = ~paste('BP:', BP, '<br>P-value:', round(Pvalues, 2), '<br>LD:', round(LD, 2), '<br>Impact:', IMPACT, '<br>Gene:', GENE),
-      showlegend = TRUE,
-      name = ~IMPACT
-    )
-  } else {
-    # CASE 2: No valid LD values (all NA or empty), do not map color to LD
-    panvar_plotly <- plot_ly(
-      panvar_results_table,
-      x = ~BP,
-      y = ~Pvalues,
-      # NO 'color' mapping argument here
-      type = 'scatter',
-      mode = 'markers',
-      symbol = ~IMPACT,
-      marker = list(
-        size = 10,
-        color = 'gray' # Assign a default fixed color
-        # NO 'colorscale' or 'colorbar' here
-      ),
-      hoverinfo = 'text',
-      text = ~paste('BP:', BP, '<br>P-value:', round(Pvalues, 2), '<br>LD: NA', '<br>Impact:', IMPACT, '<br>Gene:', GENE), # Indicate LD is NA
-      showlegend = TRUE,
-      name = ~IMPACT
-    )
-  }
-  # --- End Conditional Plot Creation ---
-  
-  
-  # --- Add common layout elements and shapes ---
-  panvar_plotly <- layout(panvar_plotly, title = "Interactive PanvaR Plot",
-                          xaxis = list(title = "Position (BP)", titlefont = list(size = 14)),
-                          yaxis = list(title = "-log<sub>10</sub>(P-value)", titlefont = list(size = 14)),
-                          legend = list(title = list(text = '<b>Impact</b>'), orientation = "h", y = -0.2)
-  )
-  
-  # Functions for lines
-  hline <- function(y = 0, color = "blue") list(type = "line", x0 = 0, x1 = 1, xref = "paper", y0 = y, y1 = y, yref = "y", line = list(color = color, dash = "dash"))
-  vline <- function(x = 0, color = "red") list(type = "line", y0 = 0, y1 = 1, yref = "paper", x0 = x, x1 = x, xref = "x", line = list(color = color, dash = "dot"))
-  
-  # Add shapes
-  shapes_list <- list(hline(bonf.cor))
-  if (!is.null(tag_snp) && is.finite(tag_snp)) {
-    shapes_list <- c(shapes_list, list(vline(tag_snp)))
-  }
-  panvar_plotly <- layout(panvar_plotly, shapes = shapes_list)
-  # --- End Common Layout ---
-  
-  return(panvar_plotly)
-  
-}
-
-
-# Enhanced load and filter module with NULL handling and specific tag SNP BP logic
-load_and_filter_module <- function(my_data, input) {
-  # Check if data is NULL or empty
-  if (is.null(my_data) || nrow(my_data) == 0) {
-    return(NULL)
-  }
-  
-  # Safely get tag_snp BP from the *current* data subset
-  tag_snp_row <- my_data %>% filter(Type == "tag_snp") %>% head(1) # Get the first tag snp row for this subset
-  tag_snp_bp <- if(nrow(tag_snp_row) > 0) as.numeric(tag_snp_row$BP) else NULL
-  
-  # If no tag_snp found in this specific dataset, warn and disable BP filter for it
-  if (is.null(tag_snp_bp)) {
-    # This warning might be noisy if the tag SNP itself was filtered out
-    # warning("No tag_snp BP found in the current data subset, BP range filtering disabled for this tab.")
-  }
-  
-  # Safely apply filters with error handling
-  filtered_data <- tryCatch({
-    result <- my_data
-    
-    # Apply numeric filters if input exists
-    if (!is.null(input$LD_min) && !is.null(input$LD_max)) {
-      # Handle potential NA in LD column during filtering
-      result <- result %>%
-        filter(is.na(LD) | (LD >= as.numeric(input$LD_min) & LD <= as.numeric(input$LD_max)))
-    }
-    
-    # Apply BP filter only if tag_snp_bp was successfully found FOR THIS SUBSET
-    if (!is.null(tag_snp_bp) && !is.null(input$BP_LHS) && !is.null(input$BP_RHS)) {
-      # Ensure BP is numeric before filtering
-      if(is.numeric(result$BP)){
-        result <- result %>%
-          filter(BP >= as.numeric(tag_snp_bp - input$BP_LHS) &
-                   BP <= as.numeric(tag_snp_bp + input$BP_RHS))
-      } else {
-        warning("BP column is not numeric, cannot apply BP range filter.")
-      }
-    }
-    
-    
-    if (!is.null(input$pvalue_min) && !is.null(input$pvalue_max)) {
-      # Ensure Pvalues is numeric before filtering
-      if(is.numeric(result$Pvalues)){
-        result <- result %>%
-          filter(Pvalues >= as.numeric(input$pvalue_min) &
-                   Pvalues <= as.numeric(input$pvalue_max))
-      } else {
-        warning("Pvalues column is not numeric, cannot apply P-value range filter.")
-      }
-    }
-    
-    # Apply categorical filters only if selections exist
-    if (!is.null(input$selected_genes) && length(input$selected_genes) > 0) {
-      result <- result %>% filter(GENE %in% input$selected_genes)
-    }
-    
-    if (!is.null(input$selected_effect_types) && length(input$selected_effect_types) > 0) {
-      result <- result %>% filter(EFFECT %in% input$selected_effect_types)
-    }
-    
-    if (!is.null(input$selected_amino_acid) && length(input$selected_amino_acid) > 0) {
-      result <- result %>% filter(AA %in% input$selected_amino_acid)
-    }
-    
-    if (!is.null(input$selected_REF_types) && length(input$selected_REF_types) > 0) {
-      result <- result %>% filter(REF %in% input$selected_REF_types)
-    }
-    
-    if (!is.null(input$selected_ALT_types) && length(input$selected_ALT_types) > 0) {
-      result <- result %>% filter(ALT %in% input$selected_ALT_types)
-    }
-    
-    result
-    
+  # --- 2. Data Preparation & Type Safety ---
+  plot_data <- tryCatch({
+    as.data.frame(panvar_results_table) %>%
+      dplyr::mutate(
+        BP = as.numeric(BP),
+        Pvalues = as.numeric(Pvalues),
+        LD = as.numeric(LD),
+        negLog10P = -log10(Pvalues)
+      ) %>%
+      dplyr::mutate(negLog10P = ifelse(is.infinite(negLog10P), max(negLog10P[is.finite(negLog10P)], 0, na.rm = TRUE) + 1, negLog10P)) %>%
+      # --- *** START: Bin LD into Categories *** ---
+      dplyr::mutate(
+        LD_Category = cut(
+          LD,
+          breaks = c(-Inf, 0.2, 0.4, 0.6, 0.8, 1.0), # Bins: (-Inf, 0.2], (0.2, 0.4], ..., (0.8, 1.0]
+          labels = c("0.0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1.0"),
+          right = TRUE, # Intervals are closed on the right (e.g., 0.2 falls in first bin)
+          include.lowest = TRUE # Include 0 in the first bin
+        ),
+        # Explicitly handle NAs - convert factor NA to a specific level
+        LD_Category = factor(ifelse(is.na(LD), "NA", as.character(LD_Category)),
+                             levels = c("0.0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1.0", "NA")) # Ensure correct level order + NA
+      )
+    # --- *** END: Bin LD into Categories *** ---
   }, error = function(e) {
-    warning("Error filtering data: ", e$message)
-    return(NULL) # Return NULL if filtering fails
+    warning("Error during data preparation for plotting: ", e$message)
+    return(NULL)
   })
   
-  return(filtered_data)
-}
-
-
-# Rijan: Plotly object generator - handles NA LD, uses correct color scale application
-panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, pvalue_threshold = 0.05, point_size = 3, alpha_base = 0.7){
-  
-  # Handle NULL or empty input table gracefully
-  if (is.null(panvar_results_table) || nrow(panvar_results_table) == 0) {
-    return(
-      plot_ly() %>%
-        layout(title = "No Data to Display", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
-        add_annotations(
-          text = "No data available based on current filters for this tag SNP.",
-          x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14)
-        )
-    )
-  }
-  
-  # Check if essential columns exist before plotting
-  required_plot_cols <- c("BP", "Pvalues", "IMPACT", "LD", "GENE", "Type")
-  missing_plot_cols <- setdiff(required_plot_cols, names(panvar_results_table))
-  if (length(missing_plot_cols) > 0) {
-    warning(paste("Plotting function is missing required columns:", paste(missing_plot_cols, collapse=", ")))
+  if (is.null(plot_data) || !is.numeric(plot_data$BP) || !is.numeric(plot_data$negLog10P)) {
+    warning("One or more required columns (BP, Pvalues) could not be coerced to numeric.")
+    # Return error plot
     return(
       plot_ly() %>%
         layout(title = "Plotting Error", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
-        add_annotations(
-          text = paste("Cannot generate plot. Missing columns:", paste(missing_plot_cols, collapse=", ")),
-          x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14)
-        )
-    )
-  }
-  
-  # Ensure required numeric columns exist and are numeric
-  if (!is.numeric(panvar_results_table$BP) || !is.numeric(panvar_results_table$Pvalues) || !("LD" %in% names(panvar_results_table)) || !is.numeric(panvar_results_table$LD)) {
-    warning("One or more required numeric columns (BP, Pvalues, LD) are missing or not numeric.")
-    return(
-      plot_ly() %>%
-        layout(title = "Plotting Error", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
-        add_annotations(
-          text = "Cannot generate plot. BP, Pvalues, or LD column is missing or not numeric.",
-          x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14)
-        )
+        add_annotations(text = "Cannot generate plot. BP or Pvalues column is not numeric.", x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14))
     )
   }
   
   
-  # --- Check for valid LD values for color mapping ---
-  has_valid_ld <- any(!is.na(panvar_results_table$LD))
-  # --- End Check ---
+  # --- 3. Plot Specific Calculations ---
+  tag_df <- plot_data %>% dplyr::filter(Type == 'tag_snp')
+  tag_snp_bp <- if(nrow(tag_df) > 0) tag_df %>% dplyr::pull(BP) %>% unique() %>% head(1) else NULL
   
-  # Rijan: What is the tag_snp
-  tag_df <- panvar_results_table %>%
-    filter(Type == 'tag_snp')
-  tag_snp <- if(nrow(tag_df) > 0) tag_df %>% pull(BP) %>% unique() %>% head(1) else NULL
-  
-  
-  # Rijan: Bonferroni correction setup
-  if(is.null(nrows_in_gwas)){
-    print("You did not supply a value for the number of tests that were in the GWAS - a place holder value will be used. This is not ideal.")
-    nrows_in_gwas <- 5e6 # Use a default if not provided
-  }
+  if(is.null(nrows_in_gwas)) nrows_in_gwas <- 1e6
+  if(is.null(pvalue_threshold)) pvalue_threshold <- 0.05
   bonf.cor <- -log10(pvalue_threshold / nrows_in_gwas)
   
+  # --- 4. Define Discrete Colors ---
+  # Define 5 colors for the bins + 1 color for NA
+  # Example using viridis colors (adjust as needed)
+  # install.packages("viridisLite") # If not installed
+  ld_bin_colors <- viridisLite::viridis(5) # Get 5 colors from the viridis scale
+  na_color <- "#808080" # Grey for NA
+  # Combine colors in the order of the factor levels defined above
+  discrete_colors <- c(ld_bin_colors, na_color)
   
-  # --- Create Plotly object conditionally based on LD values ---
-  if (has_valid_ld) {
-    # CASE 1: Valid LD values exist, map color to LD and use colorscale in marker
-    panvar_plotly <- plot_ly(
-      panvar_results_table,
-      x = ~BP,
-      y = ~Pvalues,
-      color = ~LD,        # Map color variable
-      # colors argument removed from here
-      type = 'scatter',
-      mode = 'markers',
-      symbol = ~IMPACT,
-      marker = list(
-        size = 10,
-        colorscale = "Viridis", # <<< MODIFIED: Specify colorscale within marker
-        colorbar = list(title = "LD (R²)") # Include color bar
-      ),
-      hoverinfo = 'text',
-      text = ~paste('BP:', BP, '<br>P-value:', round(Pvalues, 2), '<br>LD:', round(LD, 2), '<br>Impact:', IMPACT, '<br>Gene:', GENE),
-      showlegend = TRUE,
-      name = ~IMPACT
+  
+  # --- 5. Build Plotly Object using Discrete Color Mapping ---
+  p <- plot_ly(
+    data = plot_data,
+    x = ~BP,
+    y = ~negLog10P,
+    # --- *** Map color to the CATEGORICAL variable *** ---
+    color = ~LD_Category,
+    # --- *** Provide the DISCRETE color palette *** ---
+    colors = discrete_colors,
+    type = 'scatter',
+    mode = 'markers',
+    symbol = ~IMPACT,      # Symbol still mapped to IMPACT
+    marker = list(
+      size = point_size,
+      opacity = alpha_base
+      # NO colorbar needed here
+    ),
+    hoverinfo = 'text',
+    # --- Update hover text to show LD category ---
+    text = ~paste(
+      'BP:', BP,
+      '<br>P-value:', Pvalues,
+      '<br>-log10(P):', round(negLog10P, 2),
+      '<br>LD Cat.:', LD_Category, # Show category
+      '<br>LD Val:', round(LD, 2),   # Optionally show original LD value too
+      '<br>Impact:', IMPACT,
+      '<br>Gene:', GENE
     )
-  } else {
-    # CASE 2: No valid LD values (all NA or empty), do not map color to LD
-    panvar_plotly <- plot_ly(
-      panvar_results_table,
-      x = ~BP,
-      y = ~Pvalues,
-      # NO 'color' mapping argument here
-      type = 'scatter',
-      mode = 'markers',
-      symbol = ~IMPACT,
-      marker = list(
-        size = 10,
-        color = 'gray' # Assign a default fixed color
-        # NO 'colorscale' or 'colorbar' here
-      ),
-      hoverinfo = 'text',
-      text = ~paste('BP:', BP, '<br>P-value:', round(Pvalues, 2), '<br>LD: NA', '<br>Impact:', IMPACT, '<br>Gene:', GENE), # Indicate LD is NA
-      showlegend = TRUE,
-      name = ~IMPACT
-    )
-  }
-  # --- End Conditional Plot Creation ---
-  
-  
-  # --- Add common layout elements and shapes ---
-  panvar_plotly <- layout(panvar_plotly, title = "Interactive PanvaR Plot",
-                          xaxis = list(title = "Position (BP)", titlefont = list(size = 14)),
-                          yaxis = list(title = "-log<sub>10</sub>(P-value)", titlefont = list(size = 14)),
-                          legend = list(title = list(text = '<b>Impact</b>'), orientation = "h", y = -0.2)
+    # Legend definition handled in layout
   )
   
-  # Functions for lines
-  hline <- function(y = 0, color = "blue") list(type = "line", x0 = 0, x1 = 1, xref = "paper", y0 = y, y1 = y, yref = "y", line = list(color = color, dash = "dash"))
-  vline <- function(x = 0, color = "red") list(type = "line", y0 = 0, y1 = 1, yref = "paper", x0 = x, x1 = x, xref = "x", line = list(color = color, dash = "dot"))
+  # --- 6. Define and Apply Layout (Adjusted for Discrete Legends) ---
+  hline <- function(y = 0, color = "grey") list(type = "line", x0 = 0, x1 = 1, xref = "paper", y0 = y, y1 = y, yref = "y", line = list(color = color, dash = "dash"))
+  vline <- function(x = 0, color = "red") list(type = "line", y0 = 0, y1 = 1, yref = "paper", x0 = x, x1 = x, xref = "x", line = list(color = color, dash = "dot", width=1.5))
   
-  # Add shapes
   shapes_list <- list(hline(bonf.cor))
-  if (!is.null(tag_snp) && is.finite(tag_snp)) {
-    shapes_list <- c(shapes_list, list(vline(tag_snp)))
+  if (!is.null(tag_snp_bp) && is.finite(tag_snp_bp)) {
+    shapes_list <- c(shapes_list, list(vline(tag_snp_bp)))
   }
-  panvar_plotly <- layout(panvar_plotly, shapes = shapes_list)
-  # --- End Common Layout ---
   
-  return(panvar_plotly)
+  # Define the consolidated layout list
+  final_layout <- list(
+    title = "Interactive PanvaR Plot (Discrete LD Scale)",
+    xaxis = list(title = "Position (BP)", titlefont = list(size = 14)),
+    yaxis = list(title = "-log<sub>10</sub>(P-value)", titlefont = list(size = 14)),
+    shapes = shapes_list,
+    # --- *** Define Legend(s) *** ---
+    # Plotly should automatically create legends for 'color' and 'symbol'
+    # We primarily control their appearance and position here.
+    legend = list(
+      title = list(text = '<b>Legend</b>'), # Generic title or specific if only one shows clearly
+      x = 1.02, # Position horizontally (right of plot)
+      y = 1.0,  # Position vertically (top of plot)
+      xanchor = 'left', # Anchor legend from its left
+      yanchor = 'top',  # Anchor legend from its top
+      traceorder = 'grouped', # Group items by trace (color first, then symbol)
+      tracegroupgap = 10, # Gap between the color group and symbol group
+      bgcolor = 'rgba(255,255,255,0.7)', # Semi-transparent background
+      borderwidth = 1,
+      bordercolor = '#CCCCCC'
+    ),
+    # --- *** REMOVE coloraxis *** ---
+    # coloraxis = NULL, # Not needed for discrete colors mapped via 'colors'
+    margin = list(r = 180) # Keep or adjust right margin as needed
+  )
   
+  
+  # Apply the final layout
+  p <- layout(p,
+              title = final_layout$title,
+              xaxis = final_layout$xaxis,
+              yaxis = final_layout$yaxis,
+              shapes = final_layout$shapes,
+              legend = final_layout$legend,
+              margin = final_layout$margin
+              # No coloraxis argument here
+  )
+  
+  # --- 7. Return Plotly Object ---
+  return(p)
 }
-
 # --- UI Modification ---
 output_dashboard_UI <- function(id) {
   ns <- NS(id)

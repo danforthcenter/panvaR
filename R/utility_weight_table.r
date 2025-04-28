@@ -4,7 +4,7 @@
 #' to a specified tag SNP. Handles the edge case where only the tag SNP is present.
 #'
 #' @param current_table A data frame containing SNP data. Must include columns:
-#'   'CHROM', 'BP' (numeric), 'Pvalues' (numeric), 'LD' (numeric).
+#'   'CHROM', 'BP' (numeric), 'Pvalues' (numeric), 'LD' (numeric or coercible).
 #' @param bp The base pair position (numeric) of the tag SNP.
 #'
 #' @return A data frame with original columns plus calculated columns:
@@ -13,8 +13,9 @@
 #'   If only the tag SNP exists in the input, the added columns will contain NA,
 #'   and a warning will be issued.
 #'
-#' @importFrom dplyr %>% filter mutate select arrange bind_rows if_else row_number all_of n
-#' @importFrom stats na.omit
+#' @importFrom dplyr %>% filter mutate select arrange bind_rows if_else rowwise ungroup case_when any_of across
+#' @importFrom stats na.omit setNames
+#' @importFrom methods is
 #'
 overall_weight_func <- function(current_table, bp) {
   
@@ -25,11 +26,17 @@ overall_weight_func <- function(current_table, bp) {
     stop("Input table `current_table` is missing required columns: ",
          paste(missing_cols, collapse = ", "))
   }
-  if (!is.numeric(current_table$BP) ||
-      !is.numeric(current_table$Pvalues) ||
-      !is.numeric(current_table$LD)) {
-    stop("Columns BP, Pvalues, and LD must be numeric.")
+  # Coerce BP and Pvalues early, LD will be handled specifically later
+  if (!is.numeric(current_table$BP)) {
+    current_table <- current_table %>% mutate(BP = as.numeric(BP))
+    warning("Coerced BP column to numeric.")
   }
+  if (!is.numeric(current_table$Pvalues)) {
+    current_table <- current_table %>% mutate(Pvalues = as.numeric(Pvalues))
+    warning("Coerced Pvalues column to numeric.")
+  }
+  # We'll check LD numeric property *after* handling empty strings
+  
   if (!is.numeric(bp) || length(bp) != 1) {
     stop("Input `bp` must be a single numeric value.")
   }
@@ -39,7 +46,6 @@ overall_weight_func <- function(current_table, bp) {
     expected_names <- c(names(current_table), "abs_dist", "normalized_dist",
                         "normalized_LD", "normalized_Pvalues", "final_weight")
     # Create an empty tibble with these names and appropriate types (guessing types)
-    # A more robust approach might involve defining types explicitly
     out_tbl <- dplyr::tibble(
       !!!stats::setNames(lapply(expected_names, function(x) logical()), expected_names),
       .rows = 0 # Ensure it's zero rows
@@ -51,6 +57,23 @@ overall_weight_func <- function(current_table, bp) {
     
     return(out_tbl)
   }
+  
+  # --- FIX: Ensure LD column is numeric and empty strings become NA BEFORE calculations ---
+  if ("LD" %in% names(current_table)) {
+    # Coerce to numeric. This will turn "" into NA with a likely warning.
+    # Suppress warnings temporarily during coercion.
+    current_table <- current_table %>%
+      mutate(LD = suppressWarnings(as.numeric(as.character(LD))))
+    
+    # Now check if LD column is actually numeric after coercion attempt
+    if (!is.numeric(current_table$LD)) {
+      stop("LD column could not be coerced to numeric. Check for non-numeric values other than empty strings.")
+    }
+  } else {
+    stop("Input table `current_table` is missing required column: LD") # Should have been caught earlier, but safety check
+  }
+  # --- END LD FIX ---
+  
   
   # --- Check for Unique BP Values ---
   # Use na.omit to handle potential NAs in BP column before checking uniqueness
@@ -85,8 +108,17 @@ overall_weight_func <- function(current_table, bp) {
     # --- Standard Logic: Calculate Weights ---
     
     # Separate tag SNP data (could be multiple rows if input has duplicates)
+    # Ensure tag_snp_data has the same columns as subject_snps will have after calculations
     tag_snp_data <- current_table %>%
-      filter(BP == bp)
+      filter(BP == bp) %>%
+      mutate(
+        abs_dist = NA_real_,
+        normalized_dist = NA_real_,
+        normalized_LD = NA_real_,
+        normalized_Pvalues = NA_real_,
+        final_weight = NA_real_
+      )
+    
     
     # Filter out tag SNP and calculate weights for subject SNPs
     subject_snps <- current_table %>%
@@ -98,15 +130,8 @@ overall_weight_func <- function(current_table, bp) {
       # This condition might seem redundant given the initial check, but serves as a safeguard
       warning("Filtered data contains no SNPs other than the tag SNP. Cannot calculate relative weights.")
       
-      # Return the tag SNP data with NA weights
-      weight_table <- tag_snp_data %>%
-        mutate(
-          abs_dist = NA_real_,
-          normalized_dist = NA_real_,
-          normalized_LD = NA_real_,
-          normalized_Pvalues = NA_real_,
-          final_weight = NA_real_
-        )
+      # Return the tag SNP data (already has NA weights added)
+      weight_table <- tag_snp_data
       
     } else {
       # Proceed with calculations as there are other SNPs
@@ -127,7 +152,7 @@ overall_weight_func <- function(current_table, bp) {
           # Check for division by zero (abs_dist == 0)
           # Check for min_dist being Inf (if abs_dist had no non-NA values)
           normalized_dist = case_when(
-            is.infinite(min_dist) ~ NA_real_, # No valid distances found
+            is.infinite(min_dist) | is.na(min_dist) ~ NA_real_, # No valid distances found or min() returned NA
             abs_dist == 0 ~ NA_real_, # Avoid division by zero (should not happen due to filter)
             is.na(abs_dist) ~ NA_real_, # Propagate NAs
             TRUE ~ min_dist / abs_dist # Standard case
@@ -141,29 +166,24 @@ overall_weight_func <- function(current_table, bp) {
       subject_snps <- subject_snps %>%
         mutate(
           normalized_LD = case_when(
-            is.infinite(min_ld) | is.infinite(max_ld) ~ NA_real_, # No valid LD values
+            is.infinite(min_ld) | is.infinite(max_ld) | is.na(min_ld) | is.na(max_ld) ~ NA_real_, # No valid LD values or min/max returned NA/Inf
             is.na(LD) ~ NA_real_, # Propagate NAs
-            ld_range == 0 ~ 0.5, # All non-NA LD values are the same; assign neutral middle score? Or NA? User choice. Let's use 0.5 as a placeholder. Could also use NA_real_.
+            ld_range == 0 ~ 0.5, # All non-NA LD values are the same; assign neutral middle score. Could also use NA_real_.
             TRUE ~ (LD - min_ld) / ld_range
           )
         )
       
       # P-value normalization (Min-Max Scaling: (x - min) / (max - min))
-      # ** CRITICAL NOTE:** This formula gives HIGHER scores to HIGHER P-values.
-      # Usually, LOWER p-values (more significant) are desired to have higher weight.
-      # Consider INVERTING this logic if appropriate for your analysis, e.g., using:
-      # (max_pval - Pvalues) / pval_range
-      # OR transforming P-values first, e.g., -log10(Pvalues), and then normalizing.
-      # Sticking to the original formula as requested for now.
+      # This formula gives HIGHER scores to HIGHER P-values (-log10 scale)
       min_pval <- min(subject_snps$Pvalues, na.rm = TRUE)
       max_pval <- max(subject_snps$Pvalues, na.rm = TRUE)
       pval_range <- max_pval - min_pval
       subject_snps <- subject_snps %>%
         mutate(
           normalized_Pvalues = case_when(
-            is.infinite(min_pval) | is.infinite(max_pval) ~ NA_real_, # No valid P-values
+            is.infinite(min_pval) | is.infinite(max_pval) | is.na(min_pval) | is.na(max_pval) ~ NA_real_, # No valid P-values or min/max returned NA/Inf
             is.na(Pvalues) ~ NA_real_, # Propagate NAs
-            pval_range == 0 ~ 0.5, # All non-NA P-values are the same; assign neutral middle score? Or NA? Let's use 0.5. Could also use NA_real_.
+            pval_range == 0 ~ 0.5, # All non-NA P-values are the same; assign neutral middle score. Could also use NA_real_.
             TRUE ~ (Pvalues - min_pval) / pval_range
           )
         )
@@ -183,20 +203,15 @@ overall_weight_func <- function(current_table, bp) {
       
       # --- Combine and Sort ---
       # Use dplyr::bind_rows for robust combining. Handles column mismatches by filling with NA.
-      # This correctly adds NAs for the calculated columns in the tag_snp_data rows.
       weight_table <- bind_rows(subject_snps, tag_snp_data)
       
       # Arrange by final_weight descending. NAs are typically sorted last.
-      # Using arrange(desc(final_weight)) correctly places rows with NA weights at the bottom.
       weight_table <- weight_table %>%
         arrange(desc(final_weight))
       
     } # End else block for nrow(subject_snps) > 0
   } # End main if/else block (is_only_tag or all_rows_are_tag)
   
-  # Ensure consistent column order if desired (optional)
-  # final_cols <- c(required_cols, "abs_dist", "normalized_dist", "normalized_LD", "normalized_Pvalues", "final_weight")
-  # weight_table <- weight_table %>% select(any_of(final_cols), everything())
   
   return(weight_table)
 }
