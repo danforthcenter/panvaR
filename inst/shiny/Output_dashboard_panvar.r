@@ -211,7 +211,7 @@ panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, p
   
   # Define the consolidated layout list
   final_layout <- list(
-    title = "Interactive PanvaR Plot (Discrete LD Scale)",
+    title = "Interactive PanvaR Plot",
     xaxis = list(title = "Position (BP)", titlefont = list(size = 14)),
     yaxis = list(title = "-log<sub>10</sub>(P-value)", titlefont = list(size = 14)),
     shapes = shapes_list,
