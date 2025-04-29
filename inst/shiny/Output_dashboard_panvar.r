@@ -83,7 +83,7 @@ load_and_filter_module <- function(my_data, input) {
   return(filtered_data)
 }
 
-# Rijan: Plotly object generator - Modified for DISCRETE LD Color Scale
+# Rijan: Plotly object generator - Modified for DISCRETE LD Color Scale (Manual Palette)
 panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, pvalue_threshold = 0.05, point_size = 10, alpha_base = 0.7){
   
   # --- 1. Input Validation and Graceful Handling ---
@@ -158,10 +158,13 @@ panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, p
   
   # --- 4. Define Discrete Colors ---
   # Define 5 colors for the bins + 1 color for NA
-  # Example using viridis colors (adjust as needed)
-  # install.packages("viridisLite") # If not installed
-  ld_bin_colors <- viridisLite::viridis(5) # Get 5 colors from the viridis scale
-  na_color <- "#808080" # Grey for NA
+  
+  # --- !!! MANUALLY DEFINED COLORS !!! ---
+  # Replace these 5 hex codes with your desired palette, ordered from low LD to high LD bin
+  ld_bin_colors <- c("#005f73", "#5e548e", "#9d0208", "#ae4a24", "#606c38") # Dark Teal, Dark Purple, Dark Red, Dark Orange/Brown, Dark Olive
+  # --- !!! END MANUAL DEFINITION !!! ---
+  
+  na_color <- "#808080" # Grey for NA (can also be changed)
   # Combine colors in the order of the factor levels defined above
   discrete_colors <- c(ld_bin_colors, na_color)
   
@@ -174,10 +177,10 @@ panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, p
     # --- *** Map color to the CATEGORICAL variable *** ---
     color = ~LD_Category,
     # --- *** Provide the DISCRETE color palette *** ---
-    colors = discrete_colors,
+    colors = discrete_colors, # Use the manually defined colors
     type = 'scatter',
     mode = 'markers',
-    symbol = ~IMPACT,      # Symbol still mapped to IMPACT
+    symbol = ~IMPACT,     # Symbol still mapped to IMPACT
     marker = list(
       size = point_size,
       opacity = alpha_base
@@ -246,7 +249,9 @@ panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, p
   
   # --- 7. Return Plotly Object ---
   return(p)
+  
 }
+
 # --- UI Modification ---
 output_dashboard_UI <- function(id) {
   ns <- NS(id)
