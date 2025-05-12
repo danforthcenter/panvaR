@@ -218,7 +218,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   
   # Convert stats to p-values if predict doesn't return p-values directly
   # Assuming predict returns log10(p) or similar stat that needs conversion
-  pvalues <- 10^(-pvalues) # Example conversion if predict gives -log10(p)
+  pvalues <- -1 * pvalues # Example conversion if predict gives -log10(p)
   
   # Create the GWAS results table using ordered map data
   the_gwas <- data.table(
