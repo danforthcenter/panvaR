@@ -11,10 +11,13 @@
 #' Defaults to 0.05
 #' @param missing_rate (optional) The missing_rate filter that will be applied to the genotype data.
 #' Defaults to 0.1
+#' @param auto_generate_tbi (Optional) If the input is a VCF, automatically generates the .tbi index file if it is missing. Defaults to FALSE.
 #' @return A matrix with your principle components.
 #'
 #' @examples
-#' pca_matrix_generator("path/to/genotype_data",pc_count = 5, maf = 0.05, missing_rate = 0.1)
+#' # \dontrun{
+#' # pca_matrix_generator("path/to/genotype_data.vcf.gz", pc_count = 5, auto_generate_tbi = TRUE)
+#' # }
 #' 
 #' @import tidyverse
 #' @import data.table
@@ -27,7 +30,7 @@
 
 # A function to make PCAs for your genotype data.
 
-pca_matrix_generator <- function(genotype_data,pc_count = 5, maf = 0.05, missing_rate = 0.1) {
+pca_matrix_generator <- function(genotype_data, pc_count = 5, maf = 0.05, missing_rate = 0.1, auto_generate_tbi = FALSE) {
 
 	# Get the core count from the ergonomics set of code
 	core_count = good_core_count()
@@ -37,15 +40,8 @@ pca_matrix_generator <- function(genotype_data,pc_count = 5, maf = 0.05, missing
 
 	# if the format is gz or vcf send to plink2
 	# else send the genotype data to be filtered for maf and missing rate filter
-	if(genotype_data_format == "gz"){
-		genotype_data_right_format_base <- vcf_to_plink2(genotype_data) # This returns a list of bed and bim file
-		genotype_data_right_format <- genotype_data_right_format_base$bed
-		genotype_data_right_format <- genotype_data_right_format_base$bed
-
-		# Now clean up the data
-		cleaned_up_bed_file <- bed_file_clean_up(genotype_data_right_format,maf = maf, missing_rate = missing_rate)
-	} else if (genotype_data_format == "vcf"){
-		genotype_data_right_format_base <- vcf_to_plink2(genotype_data) # This returns a list of bed and bim file
+	if(genotype_data_format %in% c("gz", "vcf")){
+		genotype_data_right_format_base <- vcf_to_plink2(genotype_data, auto_generate_tbi = auto_generate_tbi) # Pass the parameter
 		genotype_data_right_format <- genotype_data_right_format_base$bed
 
 		# Now clean up the data

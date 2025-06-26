@@ -3,14 +3,17 @@
 #' @description 
 #' This is a function that takes a vcf file and converts it to Plink format.
 #'
-#' @param vcf_file Path to the input VCF file.
-#' @param output The path where the Plink file should be written.
+#' @param vcf_file_path Path to the input VCF file.
+#' @param output_prefix The path where the Plink file should be written.
 #' Defaults to writing the output file in a `tempdir`. If you want the file to be kept around longer supply an accessible path.
+#' @param auto_generate_tbi (Optional) If TRUE, automatically generates the .tbi index file for the VCF if it is missing. Defaults to FALSE.
 #' 
-#' @return The path to the new Bed file.
+#' @return A list containing the paths to the new bed and bim files.
 #'
 #' @examples
-#' vcf_window_subset("path/to/your_file.vcf",chrom = "Chr_001", base_snp = 6857045, output_name = "windowed_vcf_file")
+#' # \dontrun{
+#' # vcf_to_plink2("path/to/your_file.vcf.gz", auto_generate_tbi = TRUE)
+#' # }
 #' 
 #' @import tidyverse
 #' @import data.table
@@ -22,7 +25,10 @@
 
 # A general function to convert vcf files to Plink
 
-vcf_to_plink2 <- function(vcf_file_path, output_prefix = NA){
+vcf_to_plink2 <- function(vcf_file_path, output_prefix = NA, auto_generate_tbi = FALSE){
+  
+  # Check for and handle missing .tbi file before proceeding
+  proper_tbi(vcf_file_path, auto_generate_tbi = auto_generate_tbi)
   
   # make a prefix for output
   if(is.na(output_prefix)){
