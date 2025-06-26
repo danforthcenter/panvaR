@@ -10,14 +10,15 @@
 #' @param missing_rate numeric, optional. Missing rate filter for the genotype data. Default is 0.1.
 #' @param dynamic_correlation logical, optional. Whether additional PCs beyond the minimum should be calculated dynamically. Default is FALSE.
 #' @param specific_pcs Vector, optional. If you want to supply specific PCs instead of calculating them dynamically then use this to supply a vector of PCs.
+#' @param auto_generate_tbi (Optional) If TRUE, automatically generates the .tbi index file for the VCF if it is missing. Defaults to FALSE.
 #' @return A data frame containing GWAS results.
 #'
 #' @examples
 #' # Using file path
-#' panvar_gwas("path/to/genotype_data.vcf", "path/to/phenotype_data.csv", pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1)
+#' # panvar_gwas("path/to/genotype_data.vcf", "path/to/phenotype_data.csv", pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1, auto_generate_tbi = TRUE)
 #' # Using data.table object
-#' pheno_dt <- data.table::fread("path/to/phenotype_data.csv")
-#' panvar_gwas("path/to/genotype_data.vcf", pheno_dt, pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1)
+#' # pheno_dt <- data.table::fread("path/to/phenotype_data.csv")
+#' # panvar_gwas("path/to/genotype_data.vcf", pheno_dt, pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1)
 #'
 #' @import tidyverse
 #' @import data.table
@@ -27,13 +28,18 @@
 #' @importFrom methods is
 #'
 #' @export
-panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1, dynamic_correlation = FALSE, specific_PCs = NULL) {
+panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1, dynamic_correlation = FALSE, specific_PCs = NULL, auto_generate_tbi = FALSE) {
   
   # Get the core count from the ergonomics set of code
   core_count = good_core_count()
   
   # get the extention of the genotype_data file
   genotype_data_format <- extention_func(genotype_data)
+
+  # If the input is a VCF file, check for the .tbi index file.
+  if(genotype_data_format %in% c("gz", "vcf")){
+    proper_tbi(genotype_data, auto_generate_tbi = auto_generate_tbi)
+  }
   
   # if the format is gz or vcf send to plink2
   # else send the genotype data to be filtered for maf and missing rate filter
@@ -52,7 +58,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
     
     # if the data is already in plink2 format
     # Clean up for the missing rate and the maf
-    cleaned_up_bed_file <- bed_file_clean_up(genotype_data_right_format,maf = maf, missing_rate = missing_rate)
+    cleaned_up_bed_file <- bed_file_clean_up(genotype_data, maf = maf, missing_rate = missing_rate)
   }
   
   # make the path to the fam file for the genotype data
