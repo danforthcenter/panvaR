@@ -334,6 +334,8 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
 
 # --- Modify panvar_convienience_function ---
 
+# --- Modify panvar_convienience_function ---
+
 panvar_convienience_function <- function(
     chrom,
     bp,
@@ -348,6 +350,157 @@ panvar_convienience_function <- function(
     cores_available_for_profiling = 1, # New argument for profiling consistency
     auto_generate_tbi = FALSE
 )
+{
+  # --- Profiling Init for convenience function ---
+  internal_profiling_records <- list()
+  
+  # --- Profile: subset_around_tag ---
+  sat_start_time <- Sys.time()
+  subset_genotype_data <- subset_around_tag(cleaned_up,chrom = chrom, bp = bp, window = window_bp)
+  sat_end_time <- Sys.time()
+  internal_profiling_records[[length(internal_profiling_records) + 1]] <- list(
+    event_name = "subset_around_tag",
+    start_time = as.character(sat_start_time),
+    end_time = as.character(sat_end_time),
+    duration_seconds = as.numeric(difftime(sat_end_time, sat_start_time, units = "secs")),
+    cores_available = cores_available_for_profiling
+  )
+  # --- End Profile ---
+  
+  # --- Profile: ld_filtered_snp_list ---
+  ldfilt_start_time <- Sys.time()
+  table <- ld_filtered_snp_list(subset_genotype_data,chrom = chrom, bp = bp, r2_threshold = r2_threshold)
+  ldfilt_end_time <- Sys.time()
+  internal_profiling_records[[length(internal_profiling_records) + 1]] <- list(
+    event_name = "ld_filtered_snp_list",
+    start_time = as.character(ldfilt_start_time),
+    end_time = as.character(ldfilt_end_time),
+    duration_seconds = as.numeric(difftime(ldfilt_end_time, ldfilt_start_time, units = "secs")),
+    cores_available = cores_available_for_profiling
+  )
+  # --- End Profile ---
+  
+  ld_table <- ld_table_maker(table)
+  keep_snp_list <- snps_to_keep(table)
+  
+  plink2_bcf_dictionary <- plink2_bcftools_chroms_dictionary(vcf_file_path, in_plink_format$bim, auto_generate_tbi = auto_generate_tbi)
+  
+  if(!is.null(plink2_bcf_dictionary)){
+    ld_table_checked <- apply_dict(plink2_bcf_dictionary, ld_table)
+    snp_keep_list_checked <- apply_dict(plink2_bcf_dictionary, keep_snp_list)
+    gwas_table_dicted <- apply_dict(plink2_bcf_dictionary, gwas_table)
+  } else {
+    ld_table_checked <-  ld_table
+    snp_keep_list_checked <- keep_snp_list
+    gwas_table_dicted <- gwas_table
+  }
+  
+  keep_table_path <- keep_table_sanitizer(snp_keep_list_checked)
+  
+  # --- Profile: filter_vcf_file ---
+  fvcf_start_time <- Sys.time()
+  filtered_vcf_table <- filter_vcf_file(vcf_file_path = vcf_file_path, keep_table_path, auto_generate_tbi = auto_generate_tbi)
+  fvcf_end_time <- Sys.time()
+  internal_profiling_records[[length(internal_profiling_records) + 1]] <- list(
+    event_name = "filter_vcf_file",
+    start_time = as.character(fvcf_start_time),
+    end_time = as.character(fvcf_end_time),
+    duration_seconds = as.numeric(difftime(fvcf_end_time, fvcf_start_time, units = "secs")),
+    cores_available = cores_available_for_profiling
+  )
+  # --- End Profile ---
+  
+  # --- Profile: split_vcf_eff ---
+  sve_start_time <- Sys.time()
+  split_table_path <- split_vcf_eff(filtered_vcf_table)
+  sve_end_time <- Sys.time()
+  internal_profiling_records[[length(internal_profiling_records) + 1]] <- list(
+    event_name = "split_vcf_eff",
+    start_time = as.character(sve_start_time),
+    end_time = as.character(sve_end_time),
+    duration_seconds = as.numeric(difftime(sve_end_time, sve_start_time, units = "secs")),
+    cores_available = cores_available_for_profiling
+  )
+  # --- End Profile ---
+  
+  # --- Profile: execute_snpsift ---
+  ess_start_time <- Sys.time()
+  snpeff_table <- execute_snpsift(split_table_path)
+  ess_end_time <- Sys.time()
+  internal_profiling_records[[length(internal_profiling_records) + 1]] <- list(
+    event_name = "execute_snpsift",
+    start_time = as.character(ess_start_time),
+    end_time = as.character(ess_end_time),
+    duration_seconds = as.numeric(difftime(ess_end_time, ess_start_time, units = "secs")),
+    cores_available = cores_available_for_profiling
+  )
+  # --- End Profile ---
+  snpsift_table <- snpeff_table$table
+  
+  if(all.impacts){
+    snpsift_table_impacts <- snpsift_table
+  } else {
+    if (!"GENE" %in% names(snpsift_table)) {
+      stop("SnpSift output table is missing the required 'GENE' column.")
+    }
+    snpsift_table_impacts <- snpsift_table %>%
+      filter(IMPACT %in% c("HIGH","MODERATE") | BP == bp )
+  }
+  
+  pvalues_impact_ld_table <- snpsift_table_impacts %>%
+    left_join(gwas_table_dicted, by = c("CHROM","BP")) %>%
+    left_join(ld_table_checked, by = c("CHROM","BP"))
+  
+  pvalues_impact_ld_colors_table <- pvalues_impact_ld_table %>% mutate(
+    Type = case_when(
+      BP == bp ~ "tag_snp",
+      BP != bp ~ "Candidate"
+    )
+  )
+  
+  # --- Profile: overall_weight_func ---
+  owf_start_time <- Sys.time()
+  final_reports_table <- overall_weight_func(pvalues_impact_ld_colors_table, bp = bp)
+  owf_end_time <- Sys.time()
+  internal_profiling_records[[length(internal_profiling_records) + 1]] <- list(
+    event_name = "overall_weight_func",
+    start_time = as.character(owf_start_time),
+    end_time = as.character(owf_end_time),
+    duration_seconds = as.numeric(difftime(owf_end_time, owf_start_time, units = "secs")),
+    cores_available = cores_available_for_profiling
+  )
+  # --- End Profile ---
+  
+  if (!is.null(annotation_table)) {
+    if ("GENE" %in% names(final_reports_table) && "GENE" %in% names(annotation_table)) {
+      if (!is.character(final_reports_table$GENE)) {
+        final_reports_table <- final_reports_table %>% mutate(GENE = as.character(GENE))
+      }
+      print("Joining with annotation table by GENE...")
+      final_reports_table <- final_reports_table %>%
+        left_join(annotation_table %>% select(GENE, Annotation), by = "GENE")
+    } else {
+      warning("Cannot join annotation table because 'GENE' column is missing in either the main results or the annotation table.")
+    }
+  }
+  
+  # --- Profile: panvar_plot (can be skipped if plotting is not a performance concern) ---
+  pp_start_time <- Sys.time()
+  plot <- panvar_plot(final_reports_table, nrow(gwas_table))
+  pp_end_time <- Sys.time()
+  internal_profiling_records[[length(internal_profiling_records) + 1]] <- list(
+    event_name = "panvar_plot",
+    start_time = as.character(pp_start_time),
+    end_time = as.character(pp_end_time),
+    duration_seconds = as.numeric(difftime(pp_end_time, pp_start_time, units = "secs")),
+    cores_available = cores_available_for_profiling
+  )
+  # --- End Profile ---
+  
+  # Return main results and profiling data
+  return(list(plot = plot, table = final_reports_table, profiling = internal_profiling_records))
+}
+
 {
   # --- Profiling Init for convenience function ---
   internal_profiling_records <- list()

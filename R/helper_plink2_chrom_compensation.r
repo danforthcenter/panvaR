@@ -1,4 +1,7 @@
-plink2_bcftools_chroms_dictionary <- function(vcf_file_path,bim_file_path) {
+plink2_bcftools_chroms_dictionary <- function(vcf_file_path, bim_file_path, auto_generate_tbi = FALSE) {
+
+    # Add the check here, as bcf_chroms_func requires an indexed file.
+    proper_tbi(vcf_file_path, auto_generate_tbi = auto_generate_tbi)
 
     # Function to extract integers
     extract_integers <- function(x) {
