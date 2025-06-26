@@ -6,10 +6,11 @@
 #' @param r2_threshold The r2 threshold Defaults to 0.6
 # ... [rest of the parameters remain the same] ...
 #' @param all.impacts (optional) Should all impacts be included in the report? Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
+#' @param auto_generate_tbi (Optional) If TRUE, automatically generates the .tbi index file for the VCF if it is missing. This is useful for non-interactive scripts. Defaults to FALSE.
 #'
 #' @examples
 #' # Using phenotype file path and annotation table
-#' # panvar_func("<path_to_phenotype_data>", "<path_to_vcf_file>", annotation_table_path = "<path_to_annotation_table>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6)
+#' # panvar_func("<path_to_phenotype_data>", "<path_to_vcf_file>", annotation_table_path = "<path_to_annotation_table>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6, auto_generate_tbi = TRUE)
 #' # Using phenotype data.table without annotation
 #' # pheno_dt <- data.table::fread("<path_to_phenotype_data>")
 #' # panvar_func(pheno_dt, "<path_to_vcf_file>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6)
@@ -23,7 +24,7 @@
 #' @importFrom methods is
 #'
 #' @export
-panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = NULL, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){
+panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = NULL, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE, auto_generate_tbi = FALSE){
 
   # --- Start: Profiling Initialization ---
   run_timestamp_start_overall <- Sys.time()
@@ -105,7 +106,7 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
 
   # --- Profile: proper_tbi ---
   pt_start_time <- Sys.time()
-  proper_tbi(vcf_file_path)
+  proper_tbi(vcf_file_path, auto_generate_tbi = auto_generate_tbi)
   pt_end_time <- Sys.time()
   profiling_records[[length(profiling_records) + 1]] <- list(
     event_name = "proper_tbi",
@@ -126,7 +127,8 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
     pc_max = pc_max,
     dynamic_correlation = dynamic_correlation,
     maf = maf,
-    missing_rate = missing_rate
+    missing_rate = missing_rate,
+    auto_generate_tbi = auto_generate_tbi
   )
   gwas_end_time <- Sys.time()
   profiling_records[[length(profiling_records) + 1]] <- list(
@@ -142,7 +144,7 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
 
   # --- Profile: vcf_to_plink2 ---
   vcf2plink_start_time <- Sys.time()
-  in_plink_format <- vcf_to_plink2(vcf_file_path)
+  in_plink_format <- vcf_to_plink2(vcf_file_path, auto_generate_tbi = auto_generate_tbi)
   vcf2plink_end_time <- Sys.time()
   profiling_records[[length(profiling_records) + 1]] <- list(
     event_name = "vcf_to_plink2",
@@ -182,7 +184,8 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
       chrom = chrom, bp = bp, cleaned_up = cleaned_up, vcf_file_path = vcf_file_path,
       gwas_table = gwas_table, in_plink_format = in_plink_format, r2_threshold = r2_threshold,
       window_bp = window_bp, all.impacts = all.impacts, annotation_table = annotation_table,
-      cores_available_for_profiling = cores_available # Pass cores for internal records
+      cores_available_for_profiling = cores_available, # Pass cores for internal records
+      auto_generate_tbi = auto_generate_tbi
     )
     conv_end_time <- Sys.time()
     
@@ -211,7 +214,8 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
       chrom = chrom, bp = bp, cleaned_up = cleaned_up, vcf_file_path = vcf_file_path,
       gwas_table = gwas_table, in_plink_format = in_plink_format, r2_threshold = r2_threshold,
       window_bp = window_bp, all.impacts = all.impacts, annotation_table = annotation_table,
-      cores_available_for_profiling = cores_available
+      cores_available_for_profiling = cores_available,
+      auto_generate_tbi = auto_generate_tbi
     )
     conv_end_time <- Sys.time()
 
@@ -240,7 +244,8 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
         chrom = x$chrom, bp = x$bp, cleaned_up = cleaned_up, vcf_file_path = vcf_file_path,
         gwas_table = gwas_table, in_plink_format = in_plink_format, r2_threshold = r2_threshold,
         window_bp = window_bp, all.impacts = all.impacts, annotation_table = annotation_table,
-        cores_available_for_profiling = cores_available
+        cores_available_for_profiling = cores_available,
+        auto_generate_tbi = auto_generate_tbi
       )
       iter_end_time <- Sys.time()
       
@@ -340,7 +345,8 @@ panvar_convienience_function <- function(
     window_bp = 500000,
     all.impacts = FALSE,
     annotation_table = NULL,
-    cores_available_for_profiling = 1 # New argument for profiling consistency
+    cores_available_for_profiling = 1, # New argument for profiling consistency
+    auto_generate_tbi = FALSE
 )
 {
   # --- Profiling Init for convenience function ---
@@ -375,7 +381,7 @@ panvar_convienience_function <- function(
   ld_table <- ld_table_maker(table)
   keep_snp_list <- snps_to_keep(table)
   
-  plink2_bcf_dictionary <- plink2_bcftools_chroms_dictionary(vcf_file_path,in_plink_format$bim)
+  plink2_bcf_dictionary <- plink2_bcftools_chroms_dictionary(vcf_file_path,in_plink_format$bim, auto_generate_tbi = auto_generate_tbi)
   
   if(!is.null(plink2_bcf_dictionary)){
     ld_table_checked <- apply_dict(plink2_bcf_dictionary, ld_table)
@@ -391,7 +397,7 @@ panvar_convienience_function <- function(
   
   # --- Profile: filter_vcf_file ---
   fvcf_start_time <- Sys.time()
-  filtered_vcf_table <- filter_vcf_file(vcf_file_path = vcf_file_path, keep_table_path)
+  filtered_vcf_table <- filter_vcf_file(vcf_file_path = vcf_file_path, keep_table_path, auto_generate_tbi = auto_generate_tbi)
   fvcf_end_time <- Sys.time()
   internal_profiling_records[[length(internal_profiling_records) + 1]] <- list(
     event_name = "filter_vcf_file",

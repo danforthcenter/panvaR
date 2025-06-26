@@ -1,5 +1,5 @@
 # Improved tbi file check function that works in both Shiny and CLI modes
-proper_tbi <- function(vcf_file, shiny_mode = FALSE) {
+proper_tbi <- function(vcf_file, shiny_mode = FALSE, auto_generate_tbi = FALSE) {
   # get the extension of the supplied vcf file
   vcf_file_extenion <- extention_func(path_to_file = vcf_file)
   
@@ -12,12 +12,14 @@ proper_tbi <- function(vcf_file, shiny_mode = FALSE) {
   }
   
   if (!file.exists(paste0(vcf_file, ".tbi"))) {
-    # Handle prompt differently based on environment
-    if (shiny_mode) {
-      # Return FALSE - in Shiny mode we'll trigger a modal dialog later
+    if (auto_generate_tbi) {
+      message("The .tbi file is missing, generating automatically as requested.")
+      return(generate_tbi_file(vcf_file))
+    } else if (shiny_mode) {
+      # Return FALSE - in Shiny mode we'll trigger a modal dialog later. The shiny app will handle the prompt.
       return(FALSE)
-    } else {
-      # CLI mode - use the terminal prompt
+    } else if (interactive()) {
+      # Interactive CLI mode - use the terminal prompt
       message("The .tbi file for the given vcf file does not exist - a .tbi file is needed for panvaR to function. Would you like to generate it? (y/n) ")
       answer <- tolower(readline())
       if (answer == "y") {
@@ -25,6 +27,9 @@ proper_tbi <- function(vcf_file, shiny_mode = FALSE) {
       } else {
         stop("The .tbi file for the given vcf file does not have a tabix index. Please generate it and try again.")
       }
+    } else {
+      # Non-interactive CLI mode and auto_generate_tbi is FALSE
+      stop("The .tbi file is missing. To generate it automatically in a non-interactive session, set 'auto_generate_tbi = TRUE' in the function call.")
     }
   } else {
     return(TRUE)

@@ -10,6 +10,7 @@
 #'
 #' @param vcf_file_path Path to the vcf file that should have the tag SNP.
 #' @param keep_table The table of BPs to keep, either a table or a tabular object
+#' @param auto_generate_tbi (Optional) If TRUE, automatically generates the .tbi index file for the VCF if it is missing. Defaults to FALSE.
 #'
 #' @return Path to a vcf file that with only the filtered set of BPs
 #' 
@@ -23,13 +24,13 @@
 #' @export
 #'
 #' @examples
-#' ld_filtered_snp_list("<vcf_file_path>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
+#' # ld_filtered_snp_list("<vcf_file_path>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
 
 # A general function to convert vcf files to Plink
 
-filter_vcf_file <- function(vcf_file_path, keep_table, output_prefix = NA){
+filter_vcf_file <- function(vcf_file_path, keep_table, output_prefix = NA, auto_generate_tbi = FALSE){
 
-	proper_tbi(vcf_file_path)
+	proper_tbi(vcf_file_path, auto_generate_tbi = auto_generate_tbi)
 
 	 # make a prefix for output
     if(is.na(output_prefix)){
