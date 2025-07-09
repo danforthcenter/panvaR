@@ -10,12 +10,15 @@ Ensure remotes package is installed.
 install.packages("remotes")
 ```
 
-Install panvaR
+Install panvaR:
 ``` r
 remotes::install_github("danforthcenter/panvaR", build_vignettes = TRUE)
 ```
 
-To get started view the vignette using `browseVignettes("panvaR")`. 
+To get started view the vignette:
+```r
+browseVignettes("panvaR")`.
+```
 
 To use the GUI use:
 ```r
