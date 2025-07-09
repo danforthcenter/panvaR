@@ -17,10 +17,10 @@ remotes::install_github("danforthcenter/panvaR", build_vignettes = TRUE)
 
 To get started view the vignette:
 ```r
-browseVignettes("panvaR")`.
+browseVignettes("panvaR")
 ```
 
-To use the GUI use:
+To use the GUI:
 ```r
 panvar_gui()
 ```
