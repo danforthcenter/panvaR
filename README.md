@@ -15,7 +15,7 @@ Install panvaR:
 remotes::install_github("danforthcenter/panvaR", build_vignettes = TRUE)
 ```
 
-To get started view the vignette:
+To get started, view the vignette:
 ```r
 browseVignettes("panvaR")
 ```
