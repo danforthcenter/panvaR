@@ -81,7 +81,7 @@ input_dashboard_UI <- function(id) {
               style = "display: flex; align-items: center; gap: 10px;",
               shinyFilesButton(
                 ns("phenotype_data"),
-                "Please select a phenotype data file",
+                "Please select a Phenotype data file",
                 "Please select a file",
                 multiple = FALSE
               ),
@@ -145,7 +145,7 @@ input_dashboard_UI <- function(id) {
             ),
             bsTooltip(
               id = ns("R2_threshold_tooltip"),
-              title = "What is the R2 threshold that should be used? This is the value that be used to filter the LD between tag SNPs and other SNPs.",
+              title = "What is the R2 threshold that should be used? This is the value that will be used to filter the LD between tag SNPs and other SNPs.",
               placement = "right",
               trigger = "hover"
             ),
@@ -187,7 +187,7 @@ input_dashboard_UI <- function(id) {
             ),
             bsTooltip(
               id = "maf_tooltip",
-              title = "What is the Minor Allele Frequency that should be used? This is the value that be used to filter the LD between tag SNPs and other SNPs.",
+              title = "What is the Minor Allele Frequency that should be used? SNP’s removed with missing rates greater than this threshold.",
               placement = "right",
               trigger = "hover"
             ),
@@ -230,7 +230,7 @@ input_dashboard_UI <- function(id) {
             ),
             bsTooltip(
               id = "window_span_tooltip",
-              title = "What is the window that should be used? This is the value that be used to filter the LD between tag SNPs and other SNPs.",
+              title = "Panvar works with the SNPs in a window around the tag_SNP. The Window span is the value that is added to and subtracted from the the BP of the tag_SNP to create the window boundaries.",
               placement = "right",
               trigger = "hover"
             ),
@@ -323,7 +323,7 @@ input_dashboard_UI <- function(id) {
             ),
             bsTooltip(
               id = "dynamic_correlation_tooltip",
-              title = "Should the correlation among PCs be dynamic?",
+              title = "Should PC’s above PC Max also be included if they are correlated with the phenotype at the alpha < .005 significance level?",
               placement = "right",
               trigger = "hover"
             ),
@@ -333,7 +333,7 @@ input_dashboard_UI <- function(id) {
               style = "display: flex; align-items: center; gap: 10px;",
               checkboxInput(
                 ns("all_impacts"),
-                "All Inputs:",
+                "All Impacts:",
                 value = FALSE
               ),
               span(
@@ -343,7 +343,7 @@ input_dashboard_UI <- function(id) {
             ),
             bsTooltip(
               id = "all_impacts_tooltip",
-              title = "Should all inputs be used?",
+              title = "Should all impacts be used? SnpEff provides 3 impacts factors of concern: HIGH, MODERATE and LOW. By default LOW impacts are not inlcuded but ticking this will include them in the final output.",
               placement = "right",
               trigger = "hover"
             )
