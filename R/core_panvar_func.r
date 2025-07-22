@@ -23,7 +23,7 @@
 #' @importFrom methods is
 #'
 #' @export
-panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = NULL, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){ # <<< ARGUMENT ADDED TO SIGNATURE
+panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = NULL, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){ 
   
   # --- Start: Input Validation ---
   if(!file.exists(vcf_file_path)){
@@ -170,7 +170,7 @@ panvar_convienience_function <- function(
     r2_threshold = 0.6,
     window_bp = 500000,
     all.impacts = FALSE,
-    annotation_table = NULL # <<< NEW ARGUMENT ADDED
+    annotation_table = NULL
 )
 {
   # subset your genotype data around the tag snp

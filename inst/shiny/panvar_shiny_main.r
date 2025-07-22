@@ -8,25 +8,34 @@ library(DT)
 library(shinyBS)
 library(shinyjs) # Ensure shinyjs is loaded
 
-# Dynamically get the path to the Input_dashboard_panvar.R and Output_dashboard_panvar.R files
-# Adjust these paths if they are not correctly resolved by system.file in your environment
-# For example, if running directly from the script's location:
-# input_dashboard_path <- file.path("..", "shiny", "Input_dashboard_panvar.r") # Example adjustment
-# output_dashboard_path <- file.path("..", "shiny", "Output_dashboard_panvar.r") # Example adjustment
-input_dashboard_path <- tryCatch(system.file("shiny", "Input_dashboard_panvar.r", package = "panvaR"), error = function(e) "Input_dashboard_panvar.r") # Fallback if package structure isn't standard
-output_dashboard_path <- tryCatch(system.file("shiny", "Output_dashboard_panvar.r", package = "panvaR"), error = function(e) "Output_dashboard_panvar.r") # Fallback
+# --- Source all module files ---
+# A more robust helper function to source module files
+source_module <- function(file_name) {
+  # Path for development environment (e.g., running app from project root)
+  dev_path <- file.path("inst", "shiny", file_name)
+  
+  # Path for installed package environment
+  pkg_path <- system.file("shiny", file_name, package = "panvaR")
+  
+  if (file.exists(dev_path)) {
+    # Use development path if it exists
+    source(dev_path)
+    message("Sourced from dev path: ", dev_path)
+  } else if (nzchar(pkg_path)) { # nzchar checks if the string is non-empty
+    # Use package path if found
+    source(pkg_path)
+    message("Sourced from package path: ", pkg_path)
+  } else {
+    # If neither path works, stop with an informative error
+    stop(paste("Could not find module file:", file_name,
+               ". Looked in:", dev_path, "and in the installed package."))
+  }
+}
 
-# Check if files exist before sourcing
-if (file.exists(input_dashboard_path)) {
-  source(input_dashboard_path)
-} else {
-  stop("Could not find Input_dashboard_panvar.r at path: ", input_dashboard_path)
-}
-if (file.exists(output_dashboard_path)) {
-  source(output_dashboard_path)
-} else {
-  stop("Could not find Output_dashboard_panvar.r at path: ", output_dashboard_path)
-}
+
+source_module("Input_dashboard_panvar.r")
+source_module("Output_dashboard_panvar.r")
+source_module("Gwas_input_dashboard_panvar.r")
 
 
 ui <- fluidPage(
@@ -35,7 +44,6 @@ ui <- fluidPage(
     # tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
   useShinyjs(), # Initialize shinyjs
-  # Add heading with exit and restart buttons
   div(
     class = "app-header",
     style = "background-color: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #dee2e6; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;",
@@ -43,70 +51,41 @@ ui <- fluidPage(
       style = "display: flex; align-items: center;",
       tags$h2("PanvaR Analysis Tool", style = "margin: 0;")
     ),
-    # --- START MODIFICATION: Add Restart Button ---
     div(
-      # Restart Button (Green)
-      actionButton("restart_app", "Restart Analysis",
-                   class = "btn-success", # Green color
-                   style = "margin-right: 10px;"), # Add space between buttons
-      
-      # Exit Button (Red)
-      actionButton("exit_app", "Exit Application",
-                   class = "btn-danger")
+      actionButton("restart_app", "Restart Analysis", class = "btn-success", style = "margin-right: 10px;"),
+      actionButton("exit_app", "Exit Application", class = "btn-danger")
     )
-    # --- END MODIFICATION ---
   ),
   tabsetPanel(
     id = "mainTabs",
-    tabPanel("Input", input_dashboard_UI("module1")),
-    tabPanel("Output", output_dashboard_UI("module2"))
+    tabPanel("De Novo Analysis", input_dashboard_UI("module1")),
+    tabPanel("Analysis from GWAS", Gwas_input_dashboard_UI("module3")), # New Tab
+    tabPanel("Results", output_dashboard_UI("module2"))
   )
 )
 
 server <- function(input, output, session) {
   
-  # Set working directory (optional, consider if needed)
-  # setwd(getwd())
-  
-  # --- START MODIFICATION: Add Restart Logic ---
+  # Exit and Restart logic
   observeEvent(input$restart_app, {
-    # 1. Reset inputs in the Input module (module1)
-    #    Use shinyjs::reset for inputs with default values.
-    #    Note: Resetting shinyFilesButton might require different handling
-    #    if you need to clear the selection display text. For now, we reset standard inputs.
+    # Reset inputs in both input modules
     shinyjs::reset("module1-R2_threshold")
     shinyjs::reset("module1-tagSnps")
-    shinyjs::reset("module1-maf")
-    shinyjs::reset("module1-missing_rate")
-    shinyjs::reset("module1-window_span")
-    shinyjs::reset("module1-PC_min")
-    shinyjs::reset("module1-PC_max")
-    shinyjs::reset("module1-use_specific_pcs")
-    shinyjs::reset("module1-specific_pcs")
-    shinyjs::reset("module1-dynamic_correlation")
-    shinyjs::reset("module1-all_impacts")
-    # Resetting file inputs visually is harder; this clears the reactive value holding the path
-    # You might need custom JS or observeEvent logic in the module if full visual reset is needed.
-    # For now, clearing the results and switching tab is the main goal.
+    # Add resets for other inputs in module1 as needed
     
+    shinyjs::reset("module3-gwas_table_path") 
+    shinyjs::reset("module3-vcf_file_path")
+    shinyjs::reset("module3-tag_snps")
     
-    # 2. Clear the shared analysis results
     shared$analysis_results <- NULL
-    
-    # 3. Switch back to the Input tab
-    updateTabsetPanel(session, "mainTabs", selected = "Input")
-    
-    # 4. Optionally, show a notification
-    showNotification("Inputs reset. Ready for a new analysis.", type = "message")
+    updateTabsetPanel(session, "mainTabs", selected = "De Novo Analysis")
+    showNotification("Inputs and results have been cleared.", type = "message")
   })
-  # --- END MODIFICATION ---
   
-  
-  # Exit button handler (Confirmation Modal)
   observeEvent(input$exit_app, {
     showModal(modalDialog(
       title = "Confirm Exit",
-      "Are you sure you want to exit the application? Any unsaved work will be lost.",
+      "Are you sure you want to exit the application?",
       footer = tagList(
         actionButton("confirm_exit", "Yes, Exit", class = "btn-danger"),
         modalButton("Cancel")
@@ -115,7 +94,6 @@ server <- function(input, output, session) {
     ))
   })
   
-  # Handle confirmed exit
   observeEvent(input$confirm_exit, {
     stopApp()
   })
@@ -125,21 +103,17 @@ server <- function(input, output, session) {
     analysis_results = NULL
   )
   
-  # Initialize modules
-  # Pass the shared reactive values to the modules
-  input_dashboard_Server("module1", shared) # Input module server
-  output_dashboard_Server("module2", shared) # Output module server
+  # Initialize all three modules
+  input_dashboard_Server("module1", shared) # De Novo Analysis module
+  output_dashboard_Server("module2", shared) # Results module
+  Gwas_input_dashboard_Server("module3", shared) # Analysis from GWAS module
   
-  # Observe successful analysis completion and switch tabs
+  # Observe successful analysis completion and switch to the Results tab
   observeEvent(shared$analysis_results, {
-    # Check if results are not NULL (analysis finished)
     if (!is.null(shared$analysis_results)) {
-      # Check if results indicate an error (e.g., if panvar_func returns specific error structure)
-      # Example: if (!inherits(shared$analysis_results, "try-error")) { ... }
-      # Assuming successful completion for now:
-      updateTabsetPanel(session, "mainTabs", selected = "Output")
+      updateTabsetPanel(session, "mainTabs", selected = "Results")
     }
-  }, ignoreNULL = TRUE) # ignoreNULL = TRUE prevents triggering when results are cleared by restart
+  }, ignoreNULL = TRUE)
   
 }
 
