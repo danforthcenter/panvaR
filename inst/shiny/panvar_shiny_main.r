@@ -18,17 +18,15 @@ source_module <- function(file_name) {
   pkg_path <- system.file("shiny", file_name, package = "panvaR")
   
   if (file.exists(dev_path)) {
-    # Use development path if it exists
+    # Use development path if it exists.
+    # The `local` argument is removed to source into the global environment.
     source(dev_path)
-    message("Sourced from dev path: ", dev_path)
   } else if (nzchar(pkg_path)) { # nzchar checks if the string is non-empty
-    # Use package path if found
+    # Use package path if found.
     source(pkg_path)
-    message("Sourced from package path: ", pkg_path)
   } else {
     # If neither path works, stop with an informative error
-    stop(paste("Could not find module file:", file_name,
-               ". Looked in:", dev_path, "and in the installed package."))
+    stop(paste("Could not find module file:", file_name))
   }
 }
 
@@ -69,13 +67,9 @@ server <- function(input, output, session) {
   # Exit and Restart logic
   observeEvent(input$restart_app, {
     # Reset inputs in both input modules
-    shinyjs::reset("module1-R2_threshold")
-    shinyjs::reset("module1-tagSnps")
-    # Add resets for other inputs in module1 as needed
-    
-    shinyjs::reset("module3-gwas_table_path") 
-    shinyjs::reset("module3-vcf_file_path")
-    shinyjs::reset("module3-tag_snps")
+    # This might need more specific resets based on module implementation
+    shinyjs::reset("module1")
+    shinyjs::reset("module3")
     
     shared$analysis_results <- NULL
     updateTabsetPanel(session, "mainTabs", selected = "De Novo Analysis")
@@ -105,15 +99,15 @@ server <- function(input, output, session) {
   
   # Initialize all three modules
   input_dashboard_Server("module1", shared) # De Novo Analysis module
-  output_dashboard_Server("module2", shared) # Results module
   Gwas_input_dashboard_Server("module3", shared) # Analysis from GWAS module
+  output_dashboard_Server("module2", shared) # Results module
   
   # Observe successful analysis completion and switch to the Results tab
   observeEvent(shared$analysis_results, {
     if (!is.null(shared$analysis_results)) {
       updateTabsetPanel(session, "mainTabs", selected = "Results")
     }
-  }, ignoreNULL = TRUE)
+  }, ignoreNULL = TRUE, ignoreInit = TRUE) # ignoreInit prevents firing on startup
   
 }
 

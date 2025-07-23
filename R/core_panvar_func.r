@@ -1,18 +1,19 @@
 #' panvar_func
 #'
-#' @param phenotype_data Path to the phenotype data file (character string) OR a data.table object containing phenotype data. The first column must contain genotype identifiers matching the VCF file.
-#' @param vcf_file_path Path to the VCF file
-#' @param annotation_table_path (Optional) Path to the annotation table file (TSV/CSV). Must contain 'GENE' and 'Annotation' columns. Defaults to NULL. # <<< MODIFIED DESCRIPTION
-#' @param r2_threshold The r2 threshold Defaults to 0.6
+#' @param vcf_file_path Path to the VCF file.
+#' @param phenotype_data (Optional) Path to the phenotype data file (character string) OR a data.table object. Required unless `gwas_table_path` is provided. The first column must contain genotype identifiers.
+#' @param gwas_table_path (Optional) Path to a pre-computed GWAS results file. If provided, `phenotype_data` and PC-related arguments are ignored. Must contain 'CHROM', 'BP', and 'Pvalues' columns.
+#' @param annotation_table_path (Optional) Path to the annotation table file (TSV/CSV). Must contain 'GENE' and 'Annotation' columns. Defaults to NULL.
+#' @param r2_threshold The r2 threshold. Defaults to 0.6.
 # ... [rest of the parameters remain the same] ...
 #' @param all.impacts (optional) Should all impacts be included in the report? Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
 #'
 #' @examples
-#' # Using phenotype file path and annotation table
-#' panvar_func("<path_to_phenotype_data>", "<path_to_vcf_file>", annotation_table_path = "<path_to_annotation_table>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6) # <<< EXAMPLE UPDATED
-#' # Using phenotype data.table without annotation
-#' pheno_dt <- data.table::fread("<path_to_phenotype_data>")
-#' panvar_func(pheno_dt, "<path_to_vcf_file>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6)
+#' # Using a pre-computed GWAS table
+#' panvar_func(vcf_file_path = "<path_to_vcf_file>", gwas_table_path = "<path_to_gwas_table>", tag_snps = c("Chr_09:12456"))
+#' 
+#' # Using phenotype file path for de-novo GWAS
+#' panvar_func(vcf_file_path = "<path_to_vcf_file>", phenotype_data = "<path_to_phenotype_data>", tag_snps = c("Chr_09:12456"))
 #'
 #' @import tidyverse
 #' @import data.table
@@ -23,23 +24,20 @@
 #' @importFrom methods is
 #'
 #' @export
-panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = NULL, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){ 
+panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_table_path = NULL, annotation_table_path = NULL, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){ 
   
   # --- Start: Input Validation ---
+  if (!is.null(gwas_table_path) && !is.null(phenotype_data)) {
+    stop("Conflict: Please provide either 'phenotype_data' for de-novo GWAS or 'gwas_table_path' for pre-computed results, but not both.")
+  }
+  if (is.null(gwas_table_path) && is.null(phenotype_data)) {
+    stop("Input needed: Please provide either 'phenotype_data' for de-novo GWAS or 'gwas_table_path'.")
+  }
+
   if(!file.exists(vcf_file_path)){
     stop("The genotype file path that you provided is not accessible. Either you supplied a wrong path or the file does not exist.")
   }
   
-  # Check phenotype input type
-  if (is.character(phenotype_data)) {
-    if (!file.exists(phenotype_data)) {
-      stop("The phenotype file path that you provided is not accessible. Either you supplied a wrong path or the file does not exist: ", phenotype_data)
-    }
-  } else if (!is(phenotype_data, "data.frame")) {
-    stop("The phenotype_data argument must be a file path (character) or a data.frame/data.table object.")
-  }
-  
-  # <<< Start Change: Annotation Table Reading and Validation >>>
   annotation_table <- NULL # Initialize as NULL
   if (!is.null(annotation_table_path)) {
     if (!file.exists(annotation_table_path)) {
@@ -47,16 +45,12 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
     } else {
       tryCatch({
         annotation_table <- data.table::fread(annotation_table_path)
-        # --- MODIFIED: Check for GENE and Annotation columns ---
         required_annot_cols <- c("GENE", "Annotation")
         if (!all(required_annot_cols %in% names(annotation_table))) {
           missing_cols <- setdiff(required_annot_cols, names(annotation_table))
-          # --- MODIFIED: Updated warning message ---
           warning("Annotation table is missing required columns: ", paste(missing_cols, collapse=", "), ". It must contain 'GENE' and 'Annotation'. Proceeding without annotation.")
-          annotation_table <- NULL # Reset to NULL if columns are missing
+          annotation_table <- NULL
         } else {
-          # --- REMOVED: BP numeric check is no longer needed for joining ---
-          # Ensure GENE is character for joining robustness (optional, depends on data)
           if (!is.character(annotation_table$GENE)) {
             annotation_table[, GENE := as.character(GENE)]
             warning("Coerced 'GENE' column in annotation table to character type for joining.")
@@ -65,27 +59,41 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
         }
       }, error = function(e) {
         warning("Error reading annotation table: ", e$message, ". Proceeding without annotation.")
-        annotation_table <- NULL # Ensure it's NULL on error
+        annotation_table <- NULL
       })
     }
   }
-  # <<< End Change >>>
-  
-  
+
   # Check if the vcf_file has a tbi file
   proper_tbi(vcf_file_path)
-  
-  # Run GWAS for the user
-  gwas_table_denovo <- panvar_gwas(
-    phenotype_input = phenotype_data,
-    genotype_data = vcf_file_path,
-    specific_PCs = specific_pcs,
-    pc_min = pc_min,
-    pc_max = pc_max,
-    dynamic_correlation = dynamic_correlation,
-    maf = maf,
-    missing_rate = missing_rate
-  )
+
+  # --- GWAS Step: Either load pre-computed or run de-novo ---
+  gwas_table_denovo <- NULL
+  if (!is.null(gwas_table_path)) {
+    message("Loading pre-computed GWAS results from: ", gwas_table_path)
+    gwas_table_denovo <- data.table::fread(gwas_table_path)
+  } else {
+    message("No GWAS table provided, running de-novo GWAS analysis.")
+    # Check phenotype input type
+    if (is.character(phenotype_data)) {
+      if (!file.exists(phenotype_data)) {
+        stop("The phenotype file path that you provided is not accessible: ", phenotype_data)
+      }
+    } else if (!is(phenotype_data, "data.frame")) {
+      stop("The phenotype_data argument must be a file path (character) or a data.frame/data.table object.")
+    }
+    
+    gwas_table_denovo <- panvar_gwas(
+      phenotype_input = phenotype_data,
+      genotype_data = vcf_file_path,
+      specific_PCs = specific_pcs,
+      pc_min = pc_min,
+      pc_max = pc_max,
+      dynamic_correlation = dynamic_correlation,
+      maf = maf,
+      missing_rate = missing_rate
+    )
+  }
   
   # convert the window into bp values
   window_bp <- window_unit_func(window)
@@ -96,11 +104,12 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
   # clean up the supplied vcf file
   cleaned_up <- bed_file_clean_up(in_plink_format$bed, maf = maf, missing_rate = missing_rate)
   
+  # Validate the final GWAS table
   gwas_table <- check_gwas_table(gwas_table_denovo)
   
   # Determine tag SNPs and call convenience function
   if(is.null(tag_snps)){
-    denovo_tag_snp <- tag_snp_func(gwas_table_denovo)
+    denovo_tag_snp <- tag_snp_func(gwas_table)
     print("Note: you did not specify a tag snp - so the tag SNP will be inferred from the GWAS results")
     bp = denovo_tag_snp$tag_snp_bp
     chrom = denovo_tag_snp$tag_snp_chromosome
@@ -115,7 +124,7 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
       r2_threshold = r2_threshold,
       window_bp = window_bp,
       all.impacts = all.impacts,
-      annotation_table = annotation_table # <<< PASS ANNOTATION TABLE
+      annotation_table = annotation_table
     )
     
   } else if(length(tag_snps) == 1){
@@ -133,7 +142,7 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
       r2_threshold = r2_threshold,
       window_bp = window_bp,
       all.impacts = all.impacts,
-      annotation_table = annotation_table # <<< PASS ANNOTATION TABLE
+      annotation_table = annotation_table
     )
     
   } else if(length(tag_snps) > 1){
@@ -150,7 +159,7 @@ panvar_func <- function(phenotype_data, vcf_file_path, annotation_table_path = N
         r2_threshold = r2_threshold,
         window_bp = window_bp,
         all.impacts = all.impacts,
-        annotation_table = annotation_table # <<< PASS ANNOTATION TABLE
+        annotation_table = annotation_table
       )
     })
   }

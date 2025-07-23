@@ -156,17 +156,15 @@ Gwas_input_dashboard_Server <- function(id, shared) {
         tbi_status(FALSE)
         return()
       }
-      # Check if the file is a .gz file before checking for .tbi
       if (!endsWith(path, ".gz")) {
         showNotification("Warning: The selected VCF file is not gzipped (.gz). Indexing is required and only works on bgzip-compressed files.", type = "warning", duration=8)
-        tbi_status(FALSE) # Cannot have a tbi if not gzipped
+        tbi_status(FALSE)
         return()
       }
       
       has_tbi <- file.exists(paste0(path, ".tbi"))
       tbi_status(has_tbi)
       if (!has_tbi) {
-        # Use a modal dialog to ask the user if they want to create the index
         showModal(modalDialog(
           title = "VCF Index File (.tbi) Missing",
           "The selected VCF file is missing its index (.tbi), which is required. Would you like to create it now? This may take a moment.",
@@ -180,23 +178,17 @@ Gwas_input_dashboard_Server <- function(id, shared) {
     
     # --- Handle TBI Generation ---
     observeEvent(input$generate_tbi_yes, {
-      removeModal() # Close the confirmation modal
+      removeModal()
       vcf_path <- vcf_file_path()
       req(vcf_path)
       
       withProgress(message = 'Generating VCF index...', value = 0.5, {
         tryCatch({
-          # bcftools index is generally more robust
-          system2("bcftools", args = c("index", "-t", vcf_path))
-          # Verify that the index was created
-          if (file.exists(paste0(vcf_path, ".tbi"))) {
-            tbi_status(TRUE)
-            showNotification("VCF index file (.tbi) created successfully!", type = "message")
-          } else {
-            stop("bcftools ran but the index file was not created.")
-          }
+          generate_tbi_file(vcf_path) # Assumes generate_tbi_file is available from the package
+          tbi_status(TRUE)
+          showNotification("VCF index file (.tbi) created successfully!", type = "message")
         }, error = function(e) {
-          showNotification(paste("Error creating index:", e$message, ". Please ensure bcftools is installed and in your system's PATH."), type = "error", duration = 10)
+          showNotification(paste("Error creating index:", e$message, ". Please ensure bcftools/tabix is installed and in your PATH."), type = "error", duration = 10)
           tbi_status(FALSE)
         })
       })
@@ -206,19 +198,18 @@ Gwas_input_dashboard_Server <- function(id, shared) {
     all_inputs_valid <- reactive({
       !is.null(vcf_file_path()) && !is.null(gwas_table_path()) &&
         file.exists(vcf_file_path()) && file.exists(gwas_table_path()) &&
-        tbi_status() == TRUE && # Explicitly check for TRUE
+        tbi_status() == TRUE &&
         is.numeric(input$r2_threshold) && input$r2_threshold >= 0 && input$r2_threshold <= 1 &&
         is.numeric(input$maf) && input$maf >= 0 && input$maf <= 1 &&
         is.numeric(input$missing_rate) && input$missing_rate >= 0 && input$missing_rate <= 1 &&
         is.numeric(input$window_span) && input$window_span >= 0
     })
     
-    # --- <<< START CHANGE: UI for Input Status >>> ---
+    # --- UI for Input Status ---
     output$input_status_update <- renderUI({
       missing_inputs <- character(0)
       current_values <- list()
       
-      # Check VCF File
       if (!is.null(vcf_file_path()) && file.exists(vcf_file_path())) {
         current_values$`VCF File` <- basename(vcf_file_path())
         if(!tbi_status()) {
@@ -228,29 +219,21 @@ Gwas_input_dashboard_Server <- function(id, shared) {
         missing_inputs <- c(missing_inputs, "A valid VCF file (.vcf.gz)")
       }
       
-      # Check GWAS Table
       if (!is.null(gwas_table_path()) && file.exists(gwas_table_path())) {
         current_values$`GWAS Table` <- basename(gwas_table_path())
       } else {
         missing_inputs <- c(missing_inputs, "A valid GWAS results file")
       }
       
-      # Check Tag SNPs
       tag_snps <- clean_snp_tags_gwas(input$tag_snps)
-      if (!is.null(tag_snps)) {
-        current_values$`Tag SNPs` <- paste(tag_snps, collapse = ", ")
-      } else {
-        current_values$`Tag SNPs` <- "Auto-infer from GWAS results"
-      }
+      current_values$`Tag SNPs` <- if (!is.null(tag_snps)) paste(tag_snps, collapse = ", ") else "Auto-infer from GWAS results"
       
-      # Check Numeric Parameters
       current_values$`R² Threshold` <- input$r2_threshold
       current_values$`Minor Allele Frequency` <- input$maf
       current_values$`Missing Rate` <- input$missing_rate
       current_values$`Window Span (bp)` <- format(input$window_span, big.mark = ",")
       current_values$`Include All Impacts` <- if(input$all_impacts) "Yes" else "No"
       
-      # --- UI Rendering ---
       tagList(
         div(
           class = "panel panel-default", style = "margin-top: 20px;",
@@ -272,17 +255,13 @@ Gwas_input_dashboard_Server <- function(id, shared) {
           class = if(length(missing_inputs) > 0) "alert alert-warning" else "alert alert-success",
           style = "margin-top: 20px;",
           if(length(missing_inputs) > 0) {
-            tagList(
-              h4("Please provide or correct the following:"),
-              tags$ul(lapply(missing_inputs, function(x) tags$li(x)))
-            )
+            tagList(h4("Please provide or correct the following:"), tags$ul(lapply(missing_inputs, tags$li)))
           } else {
             tagList(h4("All inputs are valid!"), p("You can proceed with the analysis."))
           }
         )
       )
     })
-    # --- <<< END CHANGE >>> ---
     
     # --- Run Analysis Observer ---
     observeEvent(input$run_analysis, {
@@ -291,66 +270,31 @@ Gwas_input_dashboard_Server <- function(id, shared) {
       if (all_inputs_valid()) {
         shinyjs::disable("run_analysis")
         
-        withProgress(message = 'Running direct analysis...', value = 0, {
+        withProgress(message = 'Running analysis from GWAS table...', value = 0, {
           results <- tryCatch({
-            incProgress(0.1, detail = "Reading and validating inputs...")
+            incProgress(0.1, detail = "Initializing analysis...")
             
-            # Load and check GWAS table
-            gwas_table_denovo <- data.table::fread(gwas_table_path())
-            gwas_table <- check_gwas_table(gwas_table_denovo)
-            
-            # Get other params
-            vcf_path <- vcf_file_path()
-            tag_snps <- clean_snp_tags_gwas(input$tag_snps)
-            
-            # --- Replicate core logic from panvar_func ---
-            incProgress(0.3, detail = "Processing genotype data...")
-            window_bp <- window_unit_func(input$window_span)
-            in_plink_format <- vcf_to_plink2(vcf_path)
-            cleaned_up <- bed_file_clean_up(in_plink_format$bed, maf = input$maf, missing_rate = input$missing_rate)
-            
-            panvar_result <- NULL
-            
-            incProgress(0.5, detail = "Analyzing tag SNPs...")
-            if (is.null(tag_snps)) {
-              denovo_tag_snp <- tag_snp_func(gwas_table)
-              showNotification("No tag SNP specified. Using top hit from GWAS.", type="message")
-              panvar_result <- panvar_convienience_function(
-                chrom = denovo_tag_snp$tag_snp_chromosome,
-                bp = denovo_tag_snp$tag_snp_bp,
-                cleaned_up = cleaned_up, vcf_file_path = vcf_path, gwas_table = gwas_table,
-                in_plink_format = in_plink_format, r2_threshold = input$r2_threshold,
-                window_bp = window_bp, all.impacts = input$all_impacts, annotation_table = NULL # Annotation table not in this UI, passing NULL
-              )
-            } else {
-              list_of_tag_snps <- lapply(tag_snps, tag_snp_splitter)
-              
-              # Use a named list to preserve tag SNP identifier
-              panvar_result <- lapply(list_of_tag_snps, function(x) {
-                panvar_convienience_function(
-                  chrom = x$chrom, bp = x$bp,
-                  cleaned_up = cleaned_up, vcf_file_path = vcf_path, gwas_table = gwas_table,
-                  in_plink_format = in_plink_format, r2_threshold = input$r2_threshold,
-                  window_bp = window_bp, all.impacts = input$all_impacts, annotation_table = NULL
-                )
-              })
-              names(panvar_result) <- tag_snps
-              # If only one tag snp was provided, unlist the result but keep it in a list structure for consistency
-              if(length(panvar_result) == 1) {
-                # The output module expects a list, so keep it as a list of one
-              }
-            }
-            incProgress(0.9, detail = "Finalizing...")
-            panvar_result
+            # Call the modified panvar_func
+            panvar_func(
+                vcf_file_path = vcf_file_path(),
+                gwas_table_path = gwas_table_path(),
+                phenotype_data = NULL, # Explicitly pass NULL for phenotype
+                tag_snps = clean_snp_tags_gwas(input$tag_snps),
+                r2_threshold = input$r2_threshold,
+                maf = input$maf,
+                missing_rate = input$missing_rate,
+                window = input$window_span,
+                all.impacts = input$all_impacts
+            )
             
           }, error = function(e) {
             showNotification(paste("Error during analysis:", e$message), type = "error", duration = 10)
-            NULL # Return NULL on error
+            NULL
           })
           
           if (!is.null(results)) {
             shared$analysis_results <- results
-            showNotification("Direct analysis completed successfully!", type = "message")
+            showNotification("Analysis completed successfully!", type = "message")
           } else {
             shared$analysis_results <- NULL
           }
@@ -358,6 +302,6 @@ Gwas_input_dashboard_Server <- function(id, shared) {
       } else {
         showNotification("Please provide all required and valid inputs before running the analysis.", type = "error")
       }
-    }) # End observeEvent
-  }) # End moduleServer
+    })
+  })
 }
