@@ -2,15 +2,30 @@
 #'
 #' @param vcf_file_path Path to the VCF file.
 #' @param phenotype_data (Optional) Path to the phenotype data file (character string) OR a data.table object. Required unless `gwas_table_path` is provided. The first column must contain genotype identifiers.
-#' @param gwas_table_path (Optional) Path to a pre-computed GWAS results file. If provided, `phenotype_data` and PC-related arguments are ignored. Must contain 'CHROM', 'BP', and 'Pvalues' columns.
+#' @param gwas_table_input (Optional) Path to a pre-computed GWAS results file (character string) OR a data.table/data.frame object. If provided, `phenotype_data` and PC-related arguments are ignored. Must contain 'CHROM', 'BP', and 'Pvalues' columns.
 #' @param annotation_table_path (Optional) Path to the annotation table file (TSV/CSV). Must contain 'GENE' and 'Annotation' columns. Defaults to NULL.
 #' @param r2_threshold The r2 threshold. Defaults to 0.6.
-# ... [rest of the parameters remain the same] ...
+#' Defaults to 0.6
+#' @param tag_snps The tag SNPs that you want to pass through panvar - either a single SNP or a list of SNPs.
+#' A single SNP should be formatted as "<Chr>:<BP>" - For example, "Chr_09:12456" or "Chr08:14587".
+#' To supply multiple tag SNPs supply a vector of tag SNPs. For example tag_snps = c("Chr_09:12456","Chr08:14587").
+#' @param maf The minor Allele Frequency
+#' Defaults to 0.05
+#' @param missing_rate The missing rate filter for your genotype data
+#' Defaults to 0.1
+#' @param window PanvaR determines the Linkage Disequilibrium (LD) between the tag Single Nucleotide Polymorphism (SNP) and every other SNP within a genome segment. This segment is centered on the tag SNP, extending up to a specified window size in both directions.
+#' Defaults to 500000
+#' @param specific_pcs Would you rather supply a specific set of PCs instead?
+#' @param pc_min (optional) What is the minimum number of PCs that should be included in GWAS?
+#' Defaults to 5
+#' @param pc_max (optional) What is the maximum number of PCs that should be included in GWAS?
+#' Defaults to 5
+#' @param dynamic_correlation (optional) Should the PCs, beyond minimum, be calculated dynamically?
 #' @param all.impacts (optional) Should all impacts be included in the report? Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
 #'
 #' @examples
-#' # Using a pre-computed GWAS table
-#' panvar_func(vcf_file_path = "<path_to_vcf_file>", gwas_table_path = "<path_to_gwas_table>", tag_snps = c("Chr_09:12456"))
+#' # Using a pre-computed GWAS table from a file
+#' panvar_func(vcf_file_path = "<path_to_vcf_file>", gwas_table_input = "<path_to_gwas_table>", tag_snps = c("Chr_09:12456"))
 #' 
 #' # Using phenotype file path for de-novo GWAS
 #' panvar_func(vcf_file_path = "<path_to_vcf_file>", phenotype_data = "<path_to_phenotype_data>", tag_snps = c("Chr_09:12456"))
@@ -24,14 +39,14 @@
 #' @importFrom methods is
 #'
 #' @export
-panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_table_path = NULL, annotation_table_path = NULL, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){ 
+panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_table_input = NULL, annotation_table_path = NULL, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){ 
   
   # --- Start: Input Validation ---
-  if (!is.null(gwas_table_path) && !is.null(phenotype_data)) {
-    stop("Conflict: Please provide either 'phenotype_data' for de-novo GWAS or 'gwas_table_path' for pre-computed results, but not both.")
+  if (!is.null(gwas_table_input) && !is.null(phenotype_data)) {
+    stop("Conflict: Please provide either 'phenotype_data' for de-novo GWAS or 'gwas_table_input' for pre-computed results, but not both.")
   }
-  if (is.null(gwas_table_path) && is.null(phenotype_data)) {
-    stop("Input needed: Please provide either 'phenotype_data' for de-novo GWAS or 'gwas_table_path'.")
+  if (is.null(gwas_table_input) && is.null(phenotype_data)) {
+    stop("Input needed: Please provide either 'phenotype_data' for de-novo GWAS or 'gwas_table_input'.")
   }
 
   if(!file.exists(vcf_file_path)){
@@ -69,9 +84,23 @@ panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_table_path = 
 
   # --- GWAS Step: Either load pre-computed or run de-novo ---
   gwas_table_denovo <- NULL
-  if (!is.null(gwas_table_path)) {
-    message("Loading pre-computed GWAS results from: ", gwas_table_path)
-    gwas_table_denovo <- data.table::fread(gwas_table_path)
+  if (!is.null(gwas_table_input)) {
+    if (is.character(gwas_table_input)) {
+      if (!file.exists(gwas_table_input)) {
+        stop("The GWAS table file path provided does not exist: ", gwas_table_input)
+      }
+      message("Loading pre-computed GWAS results from: ", gwas_table_input)
+      gwas_table_denovo <- data.table::fread(gwas_table_input)
+    } else if (is(gwas_table_input, "data.frame")) {
+      message("Using pre-computed GWAS results from provided data.frame/data.table object.")
+      if (!is(gwas_table_input, "data.table")) {
+        gwas_table_denovo <- data.table::as.data.table(gwas_table_input)
+      } else {
+        gwas_table_denovo <- gwas_table_input
+      }
+    } else {
+      stop("'gwas_table_input' must be a file path (character string) or a data.frame/data.table object.")
+    }
   } else {
     message("No GWAS table provided, running de-novo GWAS analysis.")
     # Check phenotype input type

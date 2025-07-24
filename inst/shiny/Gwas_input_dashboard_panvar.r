@@ -277,7 +277,7 @@ Gwas_input_dashboard_Server <- function(id, shared) {
             # Call the modified panvar_func
             panvar_func(
                 vcf_file_path = vcf_file_path(),
-                gwas_table_path = gwas_table_path(),
+                gwas_table_input = gwas_table_path(),
                 phenotype_data = NULL, # Explicitly pass NULL for phenotype
                 tag_snps = clean_snp_tags_gwas(input$tag_snps),
                 r2_threshold = input$r2_threshold,
