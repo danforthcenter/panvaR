@@ -20,10 +20,14 @@ To get started, view the vignette:
 browseVignettes("panvaR")
 ```
 
-To use the GUI:
+We have also implemented a GUI with the intention of having it be intuitive to use.  To use the GUI:
 ```r
 panvar_gui()
 ```
+# Reproduction
+
+Please visit the following Zenodo repository for result reproduction: {Placeholder for Collin to add Zenodo link}
+
 # Dependencies
 
 ## Non-R Dependencies
