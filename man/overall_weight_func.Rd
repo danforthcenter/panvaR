@@ -8,7 +8,7 @@ overall_weight_func(current_table, bp)
 }
 \arguments{
 \item{current_table}{A data frame containing SNP data. Must include columns:
-'CHROM', 'BP' (numeric), 'Pvalues' (numeric), 'LD' (numeric).}
+'CHROM', 'BP' (numeric), 'Pvalues' (numeric), 'LD' (numeric or coercible).}
 
 \item{bp}{The base pair position (numeric) of the tag SNP.}
 }

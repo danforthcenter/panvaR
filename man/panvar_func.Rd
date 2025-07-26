@@ -5,8 +5,9 @@
 \title{panvar_func}
 \usage{
 panvar_func(
-  phenotype_data,
   vcf_file_path,
+  phenotype_data = NULL,
+  gwas_table_path = NULL,
   annotation_table_path = NULL,
   tag_snps = NULL,
   r2_threshold = 0.6,
@@ -21,13 +22,15 @@ panvar_func(
 )
 }
 \arguments{
-\item{phenotype_data}{Path to the phenotype data file (character string) OR a data.table object containing phenotype data. The first column must contain genotype identifiers matching the VCF file.}
+\item{vcf_file_path}{Path to the VCF file.}
 
-\item{vcf_file_path}{Path to the VCF file}
+\item{phenotype_data}{(Optional) Path to the phenotype data file (character string) OR a data.table object. Required unless \code{gwas_table_path} is provided. The first column must contain genotype identifiers.}
 
-\item{annotation_table_path}{(Optional) Path to the annotation table file (TSV/CSV). Must contain 'BP' and 'Annotation' columns. Defaults to NULL. # <<< NEW ARGUMENT ADDED}
+\item{gwas_table_path}{(Optional) Path to a pre-computed GWAS results file. If provided, \code{phenotype_data} and PC-related arguments are ignored. Must contain 'CHROM', 'BP', and 'Pvalues' columns.}
 
-\item{r2_threshold}{The r2 threshold Defaults to 0.6}
+\item{annotation_table_path}{(Optional) Path to the annotation table file (TSV/CSV). Must contain 'GENE' and 'Annotation' columns. Defaults to NULL.}
+
+\item{r2_threshold}{The r2 threshold. Defaults to 0.6.}
 
 \item{all.impacts}{(optional) Should all impacts be included in the report? Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included}
 }
@@ -35,10 +38,10 @@ panvar_func(
 panvar_func
 }
 \examples{
-# Using phenotype file path and annotation table
-panvar_func("<path_to_phenotype_data>", "<path_to_vcf_file>", annotation_table_path = "<path_to_annotation_table>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6) # <<< EXAMPLE UPDATED
-# Using phenotype data.table without annotation
-pheno_dt <- data.table::fread("<path_to_phenotype_data>")
-panvar_func(pheno_dt, "<path_to_vcf_file>", tag_snps = c("Chr_09:12456","Chr08:14587"), r2_threshold = 0.6)
+# Using a pre-computed GWAS table
+panvar_func(vcf_file_path = "<path_to_vcf_file>", gwas_table_path = "<path_to_gwas_table>", tag_snps = c("Chr_09:12456"))
+
+# Using phenotype file path for de-novo GWAS
+panvar_func(vcf_file_path = "<path_to_vcf_file>", phenotype_data = "<path_to_phenotype_data>", tag_snps = c("Chr_09:12456"))
 
 }
