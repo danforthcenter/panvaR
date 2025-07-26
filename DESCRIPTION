@@ -1,8 +1,8 @@
 Package: panvaR
-Title: What the Package Does (One Line, Title Case)
+Title: An R package for prioritizing candidate genes from GWA studies.
 Version: 0.0.0.9000
 Authors@R: 
-    person("Rijan", "Dhakal", , "rijan_dhakal2055+panvaR@protonmail.com", role = c("aut", "cre"),
+    person("Rijan", "Dhakal", , "rijandhakal2055@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-9625-3584"))
 Description: What the package does (one paragraph).
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
