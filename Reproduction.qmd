@@ -1,0 +1,138 @@
+---
+title: "Reproducible Analysis with panvaR"
+format: html
+editor: visual
+---
+
+## Introduction
+
+`panvaR` is an R package designed to prioritize candidate genes from Genome-Wide Association Studies (GWAS). It integrates genetic data, GWAS results, and functional annotations to identify and rank potential causal genes associated with a phenotype of interest. A key feature of the workflow is its reliance on several external bioinformatics tools, making a reproducible setup crucial for consistent results.
+
+This document outlines the steps for reproducible analysis using `panvaR`, emphasizing the verification of input files through cryptographic hashing and showcasing its successful application to published datasets.
+
+## System Dependencies
+
+For `panvaR` to function correctly, the following external command-line tools must be installed and accessible in your system's `PATH`:
+
+-   **PLINK 2 (`plink2`):** Used for genetic data manipulation, quality control, LD calculations, and data filtering
+-   **BCFtools (`bcftools`):** Used for indexing and retrieving data from compressed VCF files
+-   **VCFtools (`vcftools`):** Used for filtering and manipulating VCF files based on SNP lists
+-   **tabix:** A tool for indexing and accessing data from tab-delimited files, particularly compressed VCFs
+-   **Java Runtime Environment (JRE):** Required to execute the SnpSift tool for annotation parsing
+-   **SnpSift:** Part of the SnpEff suite, used to extract functional annotation information from VCF files. A `snpSift.jar` file is included within the `panvaR` package
+
+## Installation
+
+First, ensure the `remotes` package is installed in R:
+
+``` r
+install.packages("remotes")
+```
+
+Then, install `panvaR` directly from the Danforth Center's GitHub repository:
+
+``` r
+remotes::install_github("danforthcenter/panvaR", build_vignettes = TRUE)
+```
+
+## Reproducible Validation Workflow
+
+To validate the performance and accuracy of `panvaR`, we applied it to two well-characterized biological systems where the causal genes for specific agronomic traits have been previously identified and published. The integrity of the input files is confirmed by their SHA512 hashes.
+
+## Validation Case Studies
+
+### Case 1: Nonstructural Carbohydrates in *Sorghum bicolor*
+
+This analysis uses data from **Brenton et al. (2020)**, "Species-Specific Duplication Event Associated with Elevated Levels of Nonstructural Carbohydrates in *Sorghum bicolor*," published in *G3: Genes, Genomes, Genetics*. The paper identified `Sobic.004G301500`, a vacuolar iron transporter, as a key gene influencing carbohydrate levels.
+
+We initiated a `panvaR` analysis using a significant tag SNP (`Chr04:66529675`) from a GWAS for water-soluble carbohydrates (WSC).
+
+#### Analysis Code
+
+``` r
+library(panvaR)
+
+# Run the analysis for Sorghum
+sorghum_data <- panvaR::panvar_func(
+  vcf_file_path = "/path/to/your/BAP_376_Chrall_imputed_annotated.vcf.gz",
+  phenotype_data = "/path/to/your/BAP_WSC_pheno.tsv",
+  tag_snps = "Chr04:66529675"
+)
+```
+
+#### Input File Verification (SHA512 Hashes)
+
+-   **Genotype File (`BAP_376_Chrall_imputed_annotated.vcf.gz`):**\
+    `651c749df12654cf94de5697b923a7c9d581609f4ab56d1b0e55473525d788f1261de4aafa14cee77199c46ccf90358185266975c7c127846cd370e9b0b23485`
+
+-   **Phenotype File (`BAP_WSC_pheno.tsv`):**\
+    `b33a969da5e8d4bf776b778042a44b871369d6eb45f3184019d4ea561ca2469038bdaf3dbaec15030bff75ac3d6af1720db61926d61388847f352663e53372fc`
+
+#### Results
+
+The `panvaR` output successfully identified the target gene, `Sobic.004G301500`, among the list of high-priority candidates. Several missense variants within `Sobic.004G301500` were returned, all classified with a MODERATE functional impact. These variants received a final weight score of approximately 0.61, positioning them as strong candidates based on their combination of statistical significance (P-value), linkage to the tag SNP, and predicted functional consequence.
+
+While another gene, `Sobic.004G301100`, received the highest weight due to its closer proximity and stronger LD with this specific tag SNP, the successful identification of the known causal gene demonstrates `panvaR`'s ability to capture relevant biological signals within a short, prioritized list of candidates.
+
+**Table 1: Top `panvaR` candidates for Sorghum WSC** (known causal gene highlighted in bold)
+
+| CHROM | BP       | GENE                   | IMPACT   | final_weight |
+|-------|----------|------------------------|----------|--------------|
+| Chr04 | 66523501 | Sobic.004G301100.1     | MODERATE | 0.994        |
+| Chr04 | 66569620 | **Sobic.004G301500.2** | MODERATE | **0.608**    |
+| Chr04 | 66569641 | **Sobic.004G301500.2** | MODERATE | **0.608**    |
+| Chr04 | 66569771 | **Sobic.004G301500.2** | MODERATE | **0.608**    |
+
+### Case 2: Seed Shattering in *Setaria viridis*
+
+Our second validation uses data from **Mamidi et al. (2020)**, "A genome resource for green millet *Setaria viridis* enables discovery of agronomically valuable loci," published in *Nature Biotechnology*. This study cloned `SvLes1` (`Sevir.5G085400`) as the causal gene for the loss-of-shattering trait.
+
+The `panvaR` analysis was performed *de novo*. The tool first ran an internal GWAS and automatically selected the most significant SNP (`Chr_05:6857045`) as the tag SNP.
+
+#### Analysis Code
+
+``` r
+library(panvaR)
+
+# Run the de novo analysis for Setaria
+setaria_data <- panvaR::panvar_func(
+  vcf_file_path = "/path/to/your/setaria_annotated_vcf.vcf.gz", 
+  phenotype_data = "/path/to/your/shattering.tsv"
+)
+```
+
+#### Input File Verification (SHA512 Hashes)
+
+-   **Genotype File (`setaria_annotated_vcf.vcf.gz`):**\
+    `ff019601bfcd2d2a6ea2d26d749ad1656ce6237b1d0045eb9a014d04bbefce622a8a0d88e6d0d49e88e7a3c65731d48ae7fc9b01a537fb432f328022e823ac17`
+
+-   **Phenotype File (`shattering.tsv`):**\
+    `883c1a0104ac4c1cbf9c041b9ebd67ad1c1b8fa8c83ab4bd09b8a71963e4509974fb3aa3437080a33eb957976515fa45b69328525fe5862cf66603df2f9c56c5`
+
+#### Results
+
+The results from this analysis provide clear and compelling validation of the `panvaR` workflow. The known causal gene `Sevir.5G085400` was identified as a top-ranked candidate. A missense variant within this gene (`Chr_05:6849363`) ranked third overall with an exceptionally high final weight score of 0.85.
+
+This result highlights the core strength of `panvaR`: even when a tag SNP is not the causal variant itself, the workflow effectively uses LD and functional information to pinpoint the true causal gene within the same linkage block. By integrating multiple layers of genomic data, `panvaR` successfully distilled a complex genomic region down to a short, interpretable, and accurate list of candidate genes, directly implicating the validated gene.
+
+**Table 2: Top `panvaR` candidates for Setaria shattering** (known causal gene highlighted in bold)
+
+| CHROM  | BP      | GENE                 | IMPACT   | final_weight |
+|--------|---------|----------------------|----------|--------------|
+| Chr_05 | 6861180 | Sevir.5G085500.1     | MODERATE | 1.000        |
+| Chr_05 | 6849363 | **Sevir.5G085400.1** | MODERATE | **0.846**    |
+| Chr_05 | 6830896 | Sevir.5G085300.1     | MODERATE | 0.710        |
+
+## Graphical User Interface (GUI)
+
+For users who prefer a graphical interface, `panvaR` includes a Shiny-based GUI. This interface provides an interactive way to set parameters, select files, and run the analysis without writing R code.
+
+To launch the GUI, run the following command in your R console:
+
+``` r
+panvaR::panvar_gui()
+```
+
+## Summary
+
+The validation of `panvaR` using two independent datasets demonstrates its effectiveness in identifying causal genes from GWAS data. In both test cases, the known causal genes were successfully identified among the top-ranked candidates, validating the approach's biological relevance and statistical power. The integration of linkage disequilibrium information, functional annotations, and statistical significance provides a robust framework for gene prioritization in agricultural genomics research.
