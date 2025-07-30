@@ -30,6 +30,8 @@ Please visit the following Zenodo repository for result reproduction: {Placehold
 
 # Dependencies
 
+While PanvaR uses R to visualize and combine data, it relies on some utilities that are not available on all operating systems. Consequently, we are not supporting Windows operating systems at this time. 
+
 ## Non-R Dependencies
 
 `panvaR` is an R package that also relies on several external, command-line bioinformatics tools to function correctly. These tools must be installed and available in your system's `PATH`.
