@@ -19,10 +19,8 @@
 #'
 #' @returns 
 #' A named list
-#' \itemize{
-#'    \item{plot}{plot of the results of panvar.}
-#'    \item{table}{table of the plotted results.}
-#'    }
+#' - `plot`, a plot of the results of panvar.
+#' - `table`, a table of the output. 
 #'
 #' @examples
 #' # Using a pre-computed GWAS table

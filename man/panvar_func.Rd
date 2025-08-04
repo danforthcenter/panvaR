@@ -53,8 +53,8 @@ panvar_func(
 \value{
 A named list
 \itemize{
-\item{plot}{plot of the results of panvar.}
-\item{table}{table of the plotted results.}
+\item \code{plot}, a plot of the results of panvar.
+\item \code{table}, a table of the output.
 }
 }
 \description{
