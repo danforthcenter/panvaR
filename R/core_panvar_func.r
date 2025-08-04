@@ -1,12 +1,20 @@
 #' panvar_func
 #'
-#' @param vcf_file_path Path to the VCF file.
-#' @param phenotype_data (Optional) Path to the phenotype data file (character string) OR a data.table object. Required unless `gwas_table_path` is provided. The first column must contain genotype identifiers.
-#' @param gwas_table_path (Optional) Path to a pre-computed GWAS results file. If provided, `phenotype_data` and PC-related arguments are ignored. Must contain 'CHROM', 'BP', and 'Pvalues' columns.
+#' The main panvar function, runs the panvar program and optionally runs gwas if the user does not provide their own gwas output. 
+#'
+#' @param vcf_file_path Path to VCF file as a character string.
+#' @param phenotype_data (Optional) Path (character string) to the phenotype table (TSV/CSV)  OR a data.table object. Required unless `gwas_table_path` is provided. The first column must contain genotype identifiers.
+#' @param gwas_table_path (Optional) Path (character string) to a pre-computed GWAS results table (TSV/CSV). If provided, `phenotype_data` and PC-related arguments are ignored. Must contain 'CHROM', 'BP', and 'Pvalues' columns.
 #' @param annotation_table_path (Optional) Path to the annotation table file (TSV/CSV). Must contain 'GENE' and 'Annotation' columns. Defaults to NULL.
-#' @param r2_threshold The r2 threshold. Defaults to 0.6.
-# ... [rest of the parameters remain the same] ...
-#' @param all.impacts (optional) Should all impacts be included in the report? Defaults to FALSE - in which case only "MODERATES" and "HIGH" impacts will be included
+#' @param tag_snps SNP or SNP's as character string or vector respectively
+#' @param r2_threshold LD threshold, SNP's in LD with tag SNP below this threshold are excluded
+#' @param maf Minor allele frequency to filter VCF before conducting GWAS. default = .05.
+#' @param missing_rate SNP's with missing rate above this threshold will be removed before GWAS. default = .1.
+#' @param window Number of base-pairs to add and subtract to create a region of physical space around the tag snp. Can be supplied as an integer of base pairs or as a charcter string with the suffix "kb" denoting kilobases e.g. "500kb".
+#' @param pc_min Minimum number of principal components for use in the GWAS model. Integer. 
+#' @param pc_max Maximum number of principal components for use in the GWAS model. Integer. 
+#' @param specific_pcs Specific prinicipal component numbers to include in the GWAS model. Numeric vector. 
+#' @param dynamic_correlation Should dynamic correlation of PC's be used? If true, PC's between the minimum and maximum number of PC's are included in the GWAS model if they are siginificantly correlated with the phenotype at the \alpha = .001 level.
 #'
 #' @examples
 #' # Using a pre-computed GWAS table
