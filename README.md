@@ -20,7 +20,7 @@ To get started, view the vignette:
 browseVignettes("panvaR")
 ```
 
-We have also implemented a GUI with the intention of having it be intuitive to use.  To use the GUI:
+We have also implemented a GUI for visualizing results. To use the GUI:
 ```r
 panvar_gui()
 ```
