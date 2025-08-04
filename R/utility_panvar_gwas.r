@@ -181,7 +181,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
         for (j in pc_min:pc_max) {
           # Check correlation and handle potential errors/warnings in cor.test
           cor_result <- tryCatch(cor.test(phenotype_scores[include_in_gwas], the_covariates[include_in_gwas, j]), warning = function(w) w, error = function(e) e)
-          if (!inherits(cor_result, "warning") && !inherits(cor_result, "error") && cor_result$p.value < 0.05) {
+          if (!inherits(cor_result, "warning") && !inherits(cor_result, "error") && cor_result$p.value < 0.001) {
             pcs_to_include = c(pcs_to_include, j)
           } else if (inherits(cor_result, "warning") || inherits(cor_result, "error")) {
             warning(paste("Correlation test for PC", j, "failed or produced a warning. Skipping PC."))
