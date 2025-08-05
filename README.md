@@ -89,7 +89,7 @@ The requested R package information is as follows:
 | usethis | 3.1.0 (2024-11-26) CRAN (R 4.4.3) |
 | parallel | Base R package (not listed in session info as separate entry) |
 
-# Operating systems support
+# Windows support
 
 For now, `panvaR` has been tested and runs successfully on POSIX compliant operating systems (MacOS, various Linux distributions). We have **not** been able to test the package on WSL2 or WSL1 - while the WSL2 and WSL1 are POSIX compliant, because we have not been able to test the package properly in the said environments we cannot yet comment on whether the package will work there.
 
