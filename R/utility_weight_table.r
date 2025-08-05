@@ -144,9 +144,12 @@ overall_weight_func <- function(current_table, bp) {
       # Note: Calculations involving min/max ignore NAs by default if na.rm=TRUE (implied in dplyr's min/max)
       # However, the normalization itself might produce NaN if the range is zero.
       
-      # Distance normalization: (min_dist / abs_dist) -> higher score for closer SNPs
+      # Distance normalization: make distance negative first, then do min-max norm
+      # neg_dist - min(neg_dist, na.rm = T)) / (max(neg_dist, na.rm = T) - min(neg_dist, na.rm = T))
+
       min_dist <- min(subject_snps$abs_dist, na.rm = TRUE)
       subject_snps <- subject_snps %>%
+        mutate(neg_dist = -abs_dist) %>% 
         mutate(
           # Check for Inf/NaN resulting from min() on empty or all-NA data
           # Check for division by zero (abs_dist == 0)
@@ -155,9 +158,8 @@ overall_weight_func <- function(current_table, bp) {
             is.infinite(min_dist) | is.na(min_dist) ~ NA_real_, # No valid distances found or min() returned NA
             abs_dist == 0 ~ NA_real_, # Avoid division by zero (should not happen due to filter)
             is.na(abs_dist) ~ NA_real_, # Propagate NAs
-            TRUE ~ min_dist / abs_dist # Standard case
-          )
-        )
+            TRUE ~  (neg_dist - min(neg_dist, na.rm = T)) / (max(neg_dist, na.rm = T) - min(neg_dist, na.rm = T)))) %>% # Standard case
+        select(-neg_dist)
       
       # LD normalization (Min-Max Scaling: (x - min) / (max - min))
       min_ld <- min(subject_snps$LD, na.rm = TRUE)
