@@ -1,4 +1,4 @@
-# PanvaR
+# panvaR
 
 An R package for prioritizing candidate genes from GWA studies. 
 
