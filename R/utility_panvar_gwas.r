@@ -29,7 +29,7 @@
 #' @export
 panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1, dynamic_correlation = FALSE, specific_PCs = NULL) {
   
-  print("Beginning GWAS!")
+  print("~~~~~~~~~~~~~~~ Beginning GWAS! ~~~~~~~~~~~~~~~")
   
   # Get the core count from the ergonomics set of code
   core_count = good_core_count()
