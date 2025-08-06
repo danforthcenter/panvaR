@@ -34,7 +34,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   # Get the core count from the ergonomics set of code
   core_count = good_core_count()
   
-  # get the extention of the genotype_data file
+  # get the extension of the genotype_data file
   genotype_data_format <- extention_func(genotype_data)
   
   # if the format is gz or vcf send to plink2
