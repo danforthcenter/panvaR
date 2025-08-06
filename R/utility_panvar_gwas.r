@@ -29,6 +29,8 @@
 #' @export
 panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1, dynamic_correlation = FALSE, specific_PCs = NULL) {
   
+  print("Beginning GWAS!")
+  
   # Get the core count from the ergonomics set of code
   core_count = good_core_count()
   
@@ -199,6 +201,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
     }
   }
   
+  print(paste("GWAS model will include the following PC's: ", pcs_to_include))
   
   gwas <- big_univLinReg(
     the_genotypes,
@@ -234,6 +237,8 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   # return the gwas table in descending order per pvalues
   return_gwas <- the_gwas %>%
     arrange(Pvalues) # Typically arrange by ascending P-value
+  
+  print("GWAS completed!")
   
   return(return_gwas)
 }
