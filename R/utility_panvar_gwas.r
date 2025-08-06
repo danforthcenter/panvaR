@@ -201,7 +201,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
     }
   }
   
-  print(paste("GWAS model will include the following PC's: ", pcs_to_include))
+  print(paste("GWAS model will include the following PC's: ", paste(pcs_to_include, collapse = ","))
   
   gwas <- big_univLinReg(
     the_genotypes,
