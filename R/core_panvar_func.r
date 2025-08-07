@@ -20,7 +20,7 @@
 #' @returns 
 #' A named list
 #' - `plot`, a plot of the results of panvar.
-#' - `table`, a table of the output. 
+#' - `table`, a table of the output. P-values returned are -log10(pvalues).
 #'
 #' @examples
 #' # Using a pre-computed GWAS table
