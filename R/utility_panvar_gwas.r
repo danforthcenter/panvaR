@@ -102,10 +102,11 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   # Rijan: Reading material clumping and pruning here https://www.biostars.org/p/343818/
   
   # Apply a PCA using an algorithm optimized for large file backed matrices
-  big_random_pca <- bigsnpr::snp_autoSVD(the_genotypes,
-                                         infos.chr = chromosomes_as_ints,
-                                         infos.pos = the_bp,
-                                         fun.scaling = snp_scaleBinom())
+  big_random_pca <- big_randomSVD(
+    the_genotypes,
+    fun.scaling = snp_scaleBinom(),
+    ncores = 1
+  )
   
   the_PCs <- predict(big_random_pca)
   
