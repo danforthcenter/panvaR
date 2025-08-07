@@ -54,7 +54,7 @@ panvar_func(
 A named list
 \itemize{
 \item \code{plot}, a plot of the results of panvar.
-\item \code{table}, a table of the output.
+\item \code{table}, a table of the output. P-values returned are -log10(pvalues).
 }
 }
 \description{

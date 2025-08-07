@@ -33,7 +33,7 @@ panvar_gwas(
 \item{specific_pcs}{Vector, optional. If you want to supply specific PCs instead of calculating them dynamically then use this to supply a vector of PCs.}
 }
 \value{
-A data frame containing GWAS results.
+A data frame containing GWAS results. Pvalues represented as -log10(pvalue).
 }
 \description{
 This function performs genome-wide association studies (GWAS) on provided phenotype and genotype data.
