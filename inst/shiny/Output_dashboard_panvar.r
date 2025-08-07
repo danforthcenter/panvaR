@@ -173,7 +173,7 @@ panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, p
   p <- plot_ly(
     data = plot_data,
     x = ~BP,
-    y = ~negLog10P,
+    y = ~Pvalues,
     # --- *** Map color to the CATEGORICAL variable *** ---
     color = ~LD_Category,
     # --- *** Provide the DISCRETE color palette *** ---
@@ -190,8 +190,7 @@ panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, p
     # --- Update hover text to show LD category ---
     text = ~paste(
       'BP:', BP,
-      '<br>P-value:', Pvalues,
-      '<br>-log10(P):', round(negLog10P, 2),
+      '<br>-log10(P):', round(Pvalues, 2),
       '<br>LD Cat.:', LD_Category, # Show category
       '<br>LD Val:', round(LD, 2),   # Optionally show original LD value too
       '<br>Impact:', IMPACT,
