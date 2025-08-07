@@ -104,6 +104,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   # Apply a PCA using an algorithm optimized for large file backed matrices
   big_random_pca <- snp_autoSVD(
     the_genotypes,
+    infos.chr = the_chromosomes,
     fun.scaling = snp_scaleBinom(),
     ncores = 1
   )
@@ -204,7 +205,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   print(paste("GWAS model will include the following PC's: ", paste(pcs_to_include, collapse = ",")))
   print(paste("Running model with", length(include_in_gwas), "genotypes and", nrow(genotype_rds_data$map), "snps."))
   
-  ind_u <- matrix(PC[genoLineIndx,pcs_to_include], ncol = length(pcs_to_include))
+  # ind_u <- matrix(PC[genoLineIndx,pcs_to_include], ncol = length(pcs_to_include))
   
   gwas <- big_univLinReg(
     the_genotypes,
