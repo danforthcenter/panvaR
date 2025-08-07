@@ -220,7 +220,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   the_order <- order(map_data$chromosome, map_data$physical.pos) # Order by chromosome then position
   
   
-  pvalues <- predict(gwas) # Raw scores/stats from regression
+  pvalues <- predict(gwas, log10 = TRUE) # Raw scores/stats from regression
   
   # Convert stats to p-values if predict doesn't return p-values directly
   # Assuming predict returns log10(p) or similar stat that needs conversion
@@ -239,7 +239,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   
   # return the gwas table in descending order per pvalues
   return_gwas <- the_gwas %>%
-    arrange(Pvalues) # Typically arrange by ascending P-value
+    arrange(CHROM, BP) 
   
   print("GWAS completed!")
   
