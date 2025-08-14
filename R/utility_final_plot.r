@@ -126,13 +126,6 @@ panvar_plot <- function(reports_table,
   plot <- plot +
     shapeScale
 
-  plot <- plot +
-    ggplot2::scale_shape_manual(
-        values = shape_values,
-        name = "IMPACT", # Legend title for shape
-        na.translate = FALSE # Don't show NA in shape legend
-        )
-
   # Set the fill scale for LD (R2)
   plot <- plot +
     viridis::scale_fill_viridis(name = bquote(R^2))
