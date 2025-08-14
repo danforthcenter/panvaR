@@ -113,13 +113,7 @@ panvar_plot <- function(reports_table,
 
   # Set the fill scale for LD (R2)
   plot <- plot +
-    ggplot2::scale_fill_gradient(
-        low = "#0000FF", # Blue for low R2
-        high = "#FF0000", # Red for high R2
-        name = expression(R^2), # Legend title for fill (R-squared)
-        na.value = "grey50", # Color for points with NA LD values
-        limits = c(0, 1) # Ensure legend spans 0 to 1 if possible
-        )
+    viridis::scale_fill_viridis(name = bquote(R^2))
 
   # Add vertical line for tag SNP position (if found)
   if(!is.null(tag_bp)) {
