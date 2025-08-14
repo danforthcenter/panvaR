@@ -1,3 +1,21 @@
+#' plot panvar
+#' a function to make a manhattan type plot of panvar results
+#'
+#' @param reports_table data.frame, a results table from panvar
+#' @param nrows_in_gwas number of snps from gwas, used to draw bonferroni line
+#' @param pvalue_threshold alpha significance threshold for calculating bonferroni line
+#' @param point_size size of points in scatter plot
+#' @param alpha_base transparency of points in scatter plot
+#' @param total_snps optionally provide number of snps in window, added to title
+#' @param total_genes optionally provide number of genes in window, added to title
+#' @param export_file filename to export, if not provided plotted to device
+#' @param export_format format of export either svg (default), png or pdf
+#'
+#' @returns plot of panvar results
+#' @export
+#'
+#' @examples
+#' panvar_plot(panvar_results_dataframe)
 panvar_plot <- function(reports_table,
                         nrows_in_gwas = NULL,
                         pvalue_threshold = 0.05, # Currently unused, but kept for potential future use
