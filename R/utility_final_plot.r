@@ -117,10 +117,14 @@ panvar_plot <- function(reports_table,
     )
 
   # Manually set the shape scale (using fillable shapes)
-  unique_impacts <- unique(stats::na.omit(reports_table$IMPACT)) # Get unique non-NA impact levels
-  # Cycle through fillable shapes 21-25
-  shape_values <- rep(c(21, 22, 23, 24, 25), length.out = length(unique_impacts))
-  names(shape_values) <- unique_impacts
+  shapes.to.use <- c(24, 22, 25, 23)
+  names(shapes.to.use) <- c("HIGH", "MODERATE", "LOW", "MODIFIER")
+  shapeScale <- scale_shape_manual(name = "Impact", values = shapes.to.use,
+                                   drop = F, na.translate = F)
+  reports_table$IMPACT <- factor(reports_table$IMPACT, levels = c("HIGH", "MODERATE", "LOW", "MODIFIER"))
+  
+  plot <- plot +
+    shapeScale
 
   plot <- plot +
     ggplot2::scale_shape_manual(
