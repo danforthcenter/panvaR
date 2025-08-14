@@ -181,7 +181,8 @@ panvar_plot <- function(reports_table,
   plot <- plot +
     ggplot2::labs(
       x = "Position (bp)",
-      y = expression(-log[10](italic(P)-value)),
+      #y = expression(-log[10](italic(P)-value)),
+      y = "-log(p-value)",
       title = paste0("Total SNPs: ", format(total_snps, big.mark=","),
                      " | Total Genes: ", format(total_genes, big.mark=",")),
       subtitle = chrom_subtitle # Use the subtitle for chromosome info
