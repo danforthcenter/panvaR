@@ -101,6 +101,8 @@ panvar_plot <- function(reports_table,
 
   # --- Build Plot ---
 
+  reports_table$IMPACT <- factor(reports_table$IMPACT, levels = c("HIGH", "MODERATE", "LOW", "MODIFIER"))
+  
   # Initialize the ggplot object
   plot <- ggplot2::ggplot(ggplot2::aes(x = BP, y = Pvalues), data = reports_table)
 
@@ -121,7 +123,6 @@ panvar_plot <- function(reports_table,
   names(shapes.to.use) <- c("HIGH", "MODERATE", "LOW", "MODIFIER")
   shapeScale <- scale_shape_manual(name = "Impact", values = shapes.to.use,
                                    drop = F, na.translate = F)
-  reports_table$IMPACT <- factor(reports_table$IMPACT, levels = c("HIGH", "MODERATE", "LOW", "MODIFIER"))
   
   plot <- plot +
     shapeScale
