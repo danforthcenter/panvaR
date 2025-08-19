@@ -21,6 +21,7 @@ panvar_plot <- function(reports_table,
                         pvalue_threshold = 0.05, # Currently unused, but kept for potential future use
                         point_size = 3,
                         alpha_base = 0.7,
+                        window.size = 500000,
                         total_snps = NULL,
                         total_genes = NULL,
                         export_file = NULL, # New: Base filename for export (e.g., "myplot")
@@ -158,8 +159,13 @@ panvar_plot <- function(reports_table,
     )
 
   # Customize the x-axis labels and limits
-  x_min <- min(reports_table$BP, na.rm = TRUE)
-  x_max <- max(reports_table$BP, na.rm = TRUE)
+  if(nrow(tag_df) > 0) {
+    x_min <- tag_bp - window.size
+    x_max <- tag_bp + window.size
+  } else {
+    x_min <- min(reports_table$BP, na.rm = TRUE)
+    x_max <- max(reports_table$BP, na.rm = TRUE)
+  }
   x_padding <- (x_max - x_min) * 0.03 # 3% padding
 
   plot <- plot +
