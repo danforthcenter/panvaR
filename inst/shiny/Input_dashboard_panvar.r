@@ -219,7 +219,7 @@ input_dashboard_UI <- function(id) {
               style = "display: flex; align-items: center; gap: 10px;",
               numericInput(
                 ns("window_span"),
-                "Window span around the tag_SNP:",
+                "Window size around the tag_SNP:",
                 value = 500000,
                 min = 0
               ),
