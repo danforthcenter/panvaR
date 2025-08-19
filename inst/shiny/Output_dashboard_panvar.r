@@ -253,7 +253,7 @@ load_and_filter_module <- function(my_data, input) {
 
 panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, pvalue_threshold = 0.05, point_size = 10, alpha_base = 0.7, window.size = 5e5){
   p <-
-    panvar_plot(res, 
+    panvar_plot(panvar_results_table, 
                 nrows_in_gwas = nrows_in_gwas,
                 pvalue_threshold = pvalue_threshold,
                 point_size = point_size,
