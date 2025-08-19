@@ -1,8 +1,27 @@
+#' plot panvar
+#' a function to make a manhattan type plot of panvar results
+#'
+#' @param reports_table data.frame, a results table from panvar
+#' @param nrows_in_gwas number of snps from gwas, used to draw bonferroni line
+#' @param pvalue_threshold alpha significance threshold for calculating bonferroni line
+#' @param point_size size of points in scatter plot
+#' @param alpha_base transparency of points in scatter plot
+#' @param total_snps optionally provide number of snps in window, added to title
+#' @param total_genes optionally provide number of genes in window, added to title
+#' @param export_file filename to export, if not provided plotted to device
+#' @param export_format format of export either svg (default), png or pdf
+#'
+#' @returns plot of panvar results
+#' @export
+#'
+#' @examples
+#' panvar_plot(panvar_results_dataframe)
 panvar_plot <- function(reports_table,
                         nrows_in_gwas = NULL,
                         pvalue_threshold = 0.05, # Currently unused, but kept for potential future use
                         point_size = 3,
                         alpha_base = 0.7,
+                        window.size = 500000,
                         total_snps = NULL,
                         total_genes = NULL,
                         export_file = NULL, # New: Base filename for export (e.g., "myplot")
@@ -83,6 +102,8 @@ panvar_plot <- function(reports_table,
 
   # --- Build Plot ---
 
+  reports_table$IMPACT <- factor(reports_table$IMPACT, levels = c("HIGH", "MODERATE", "LOW", "MODIFIER"))
+  
   # Initialize the ggplot object
   plot <- ggplot2::ggplot(ggplot2::aes(x = BP, y = Pvalues), data = reports_table)
 
@@ -99,27 +120,17 @@ panvar_plot <- function(reports_table,
     )
 
   # Manually set the shape scale (using fillable shapes)
-  unique_impacts <- unique(stats::na.omit(reports_table$IMPACT)) # Get unique non-NA impact levels
-  # Cycle through fillable shapes 21-25
-  shape_values <- rep(c(21, 22, 23, 24, 25), length.out = length(unique_impacts))
-  names(shape_values) <- unique_impacts
-
+  shapes.to.use <- c(24, 22, 25, 23)
+  names(shapes.to.use) <- c("HIGH", "MODERATE", "LOW", "MODIFIER")
+  shapeScale <- scale_shape_manual(name = "Impact", values = shapes.to.use,
+                                   drop = F, na.translate = F)
+  
   plot <- plot +
-    ggplot2::scale_shape_manual(
-        values = shape_values,
-        name = "IMPACT", # Legend title for shape
-        na.translate = FALSE # Don't show NA in shape legend
-        )
+    shapeScale
 
   # Set the fill scale for LD (R2)
   plot <- plot +
-    ggplot2::scale_fill_gradient(
-        low = "#0000FF", # Blue for low R2
-        high = "#FF0000", # Red for high R2
-        name = expression(R^2), # Legend title for fill (R-squared)
-        na.value = "grey50", # Color for points with NA LD values
-        limits = c(0, 1) # Ensure legend spans 0 to 1 if possible
-        )
+    viridis::scale_fill_viridis(name = bquote(R^2))
 
   # Add vertical line for tag SNP position (if found)
   if(!is.null(tag_bp)) {
@@ -148,8 +159,13 @@ panvar_plot <- function(reports_table,
     )
 
   # Customize the x-axis labels and limits
-  x_min <- min(reports_table$BP, na.rm = TRUE)
-  x_max <- max(reports_table$BP, na.rm = TRUE)
+  if(nrow(tag_df) > 0) {
+    x_min <- tag_bp - window.size
+    x_max <- tag_bp + window.size
+  } else {
+    x_min <- min(reports_table$BP, na.rm = TRUE)
+    x_max <- max(reports_table$BP, na.rm = TRUE)
+  }
   x_padding <- (x_max - x_min) * 0.03 # 3% padding
 
   plot <- plot +
@@ -171,7 +187,8 @@ panvar_plot <- function(reports_table,
   plot <- plot +
     ggplot2::labs(
       x = "Position (bp)",
-      y = expression(-log[10](italic(P)-value)),
+      #y = expression(-log[10](italic(P)-value)),
+      y = "-log(p-value)",
       title = paste0("Total SNPs: ", format(total_snps, big.mark=","),
                      " | Total Genes: ", format(total_genes, big.mark=",")),
       subtitle = chrom_subtitle # Use the subtitle for chromosome info
