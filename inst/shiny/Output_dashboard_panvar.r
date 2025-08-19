@@ -251,7 +251,7 @@ load_and_filter_module <- function(my_data, input) {
 #   
 # }
 
-panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, pvalue_threshold = 0.05, point_size = 10, alpha_base = 0.7, window.size = 5e5){
+panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, pvalue_threshold = 0.05, point_size = 3, alpha_base = 0.7, window.size = 5e5){
   p <-
     panvar_plot(panvar_results_table, 
                 nrows_in_gwas = nrows_in_gwas,
@@ -1202,7 +1202,7 @@ output_dashboard_Server <- function(id, shared) {
                 panvar_results_table = data_to_plot,
                 nrows_in_gwas = input$total_rows,
                 pvalue_threshold = input$pvalue_threshold,
-                window.size = 500000)
+                window.size = input$window_span)
               plot_obj # Return the plotly object
             }) # End renderPlotly
             
