@@ -806,7 +806,7 @@ input_dashboard_Server <- function(id, shared) {
                 all.impacts = all_impacts()
               )
             })
-            
+            shared$window_span <- window_span()
             # Increment progress (optional)
             incProgress(0.8, detail = "Processing results...")
             
