@@ -84,170 +84,186 @@ load_and_filter_module <- function(my_data, input) {
 }
 
 # Rijan: Plotly object generator - Modified for DISCRETE LD Color Scale (Manual Palette)
-panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, pvalue_threshold = 0.05, point_size = 10, alpha_base = 0.7){
+# panvar_plotly_function_old <- function(panvar_results_table, nrows_in_gwas = NULL, pvalue_threshold = 0.05, point_size = 10, alpha_base = 0.7){
+#   
+#   # --- 1. Input Validation and Graceful Handling ---
+#   if (is.null(panvar_results_table) || nrow(panvar_results_table) == 0) {
+#     # Return message plot
+#     return(
+#       plot_ly() %>%
+#         layout(title = "No Data to Display", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
+#         add_annotations(text = "No data available based on current filters.", x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14))
+#     )
+#   }
+#   
+#   required_plot_cols <- c("BP", "Pvalues", "IMPACT", "LD", "GENE", "Type") # LD is still required for binning
+#   missing_plot_cols <- setdiff(required_plot_cols, names(panvar_results_table))
+#   if (length(missing_plot_cols) > 0) {
+#     warning(paste("Plotting function is missing required columns:", paste(missing_plot_cols, collapse=", ")))
+#     # Return error plot
+#     return(
+#       plot_ly() %>%
+#         layout(title = "Plotting Error", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
+#         add_annotations(text = paste("Cannot generate plot. Missing columns:", paste(missing_plot_cols, collapse=", ")), x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14))
+#     )
+#   }
+#   
+#   # --- 2. Data Preparation & Type Safety ---
+#   plot_data <- tryCatch({
+#     as.data.frame(panvar_results_table) %>%
+#       dplyr::mutate(
+#         BP = as.numeric(BP),
+#         Pvalues = as.numeric(Pvalues),
+#         LD = as.numeric(LD),
+#         negLog10P = -log10(Pvalues)
+#       ) %>%
+#       dplyr::mutate(negLog10P = ifelse(is.infinite(negLog10P), max(negLog10P[is.finite(negLog10P)], 0, na.rm = TRUE) + 1, negLog10P)) %>%
+#       # --- *** START: Bin LD into Categories *** ---
+#       dplyr::mutate(
+#         LD_Category = cut(
+#           LD,
+#           breaks = c(-Inf, 0.2, 0.4, 0.6, 0.8, 1.0), # Bins: (-Inf, 0.2], (0.2, 0.4], ..., (0.8, 1.0]
+#           labels = c("0.0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1.0"),
+#           right = TRUE, # Intervals are closed on the right (e.g., 0.2 falls in first bin)
+#           include.lowest = TRUE # Include 0 in the first bin
+#         ),
+#         # Explicitly handle NAs - convert factor NA to a specific level
+#         LD_Category = factor(ifelse(is.na(LD), "NA", as.character(LD_Category)),
+#                              levels = c("0.0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1.0", "NA")) # Ensure correct level order + NA
+#       )
+#     # --- *** END: Bin LD into Categories *** ---
+#   }, error = function(e) {
+#     warning("Error during data preparation for plotting: ", e$message)
+#     return(NULL)
+#   })
+#   
+#   if (is.null(plot_data) || !is.numeric(plot_data$BP) || !is.numeric(plot_data$negLog10P)) {
+#     warning("One or more required columns (BP, Pvalues) could not be coerced to numeric.")
+#     # Return error plot
+#     return(
+#       plot_ly() %>%
+#         layout(title = "Plotting Error", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
+#         add_annotations(text = "Cannot generate plot. BP or Pvalues column is not numeric.", x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14))
+#     )
+#   }
+#   
+#   
+#   # --- 3. Plot Specific Calculations ---
+#   tag_df <- plot_data %>% dplyr::filter(Type == 'tag_snp')
+#   tag_snp_bp <- if(nrow(tag_df) > 0) tag_df %>% dplyr::pull(BP) %>% unique() %>% head(1) else NULL
+#   
+#   if(is.null(nrows_in_gwas)) nrows_in_gwas <- 1e6
+#   if(is.null(pvalue_threshold)) pvalue_threshold <- 0.05
+#   bonf.cor <- -log10(pvalue_threshold / nrows_in_gwas)
+#   
+#   # --- 4. Define Discrete Colors ---
+#   # Define 5 colors for the bins + 1 color for NA
+#   
+#   # --- !!! MANUALLY DEFINED COLORS !!! ---
+#   # Replace these 5 hex codes with your desired palette, ordered from low LD to high LD bin
+#   ld_bin_colors <- c("#005f73", "#5e548e", "#9d0208", "#ae4a24", "#606c38") # Dark Teal, Dark Purple, Dark Red, Dark Orange/Brown, Dark Olive
+#   # --- !!! END MANUAL DEFINITION !!! ---
+#   
+#   na_color <- "#808080" # Grey for NA (can also be changed)
+#   # Combine colors in the order of the factor levels defined above
+#   discrete_colors <- c(ld_bin_colors, na_color)
+#   
+#   
+#   # --- 5. Build Plotly Object using Discrete Color Mapping ---
+#   p <- plot_ly(
+#     data = plot_data,
+#     x = ~BP,
+#     y = ~Pvalues,
+#     # --- *** Map color to the CATEGORICAL variable *** ---
+#     color = ~LD_Category,
+#     # --- *** Provide the DISCRETE color palette *** ---
+#     colors = discrete_colors, # Use the manually defined colors
+#     type = 'scatter',
+#     mode = 'markers',
+#     symbol = ~IMPACT,     # Symbol still mapped to IMPACT
+#     marker = list(
+#       size = point_size,
+#       opacity = alpha_base
+#       # NO colorbar needed here
+#     ),
+#     hoverinfo = 'text',
+#     # --- Update hover text to show LD category ---
+#     text = ~paste(
+#       'BP:', BP,
+#       '<br>-log10(P):', round(Pvalues, 2),
+#       '<br>LD Cat.:', LD_Category, # Show category
+#       '<br>LD Val:', round(LD, 2),   # Optionally show original LD value too
+#       '<br>Impact:', IMPACT,
+#       '<br>Gene:', GENE
+#     )
+#     # Legend definition handled in layout
+#   )
+#   
+#   # --- 6. Define and Apply Layout (Adjusted for Discrete Legends) ---
+#   hline <- function(y = 0, color = "grey") list(type = "line", x0 = 0, x1 = 1, xref = "paper", y0 = y, y1 = y, yref = "y", line = list(color = color, dash = "dash"))
+#   vline <- function(x = 0, color = "red") list(type = "line", y0 = 0, y1 = 1, yref = "paper", x0 = x, x1 = x, xref = "x", line = list(color = color, dash = "dot", width=1.5))
+#   
+#   shapes_list <- list(hline(bonf.cor))
+#   if (!is.null(tag_snp_bp) && is.finite(tag_snp_bp)) {
+#     shapes_list <- c(shapes_list, list(vline(tag_snp_bp)))
+#   }
+#   
+#   # Define the consolidated layout list
+#   final_layout <- list(
+#     title = "Interactive PanvaR Plot",
+#     xaxis = list(title = "Position (BP)", titlefont = list(size = 14)),
+#     yaxis = list(title = "-log<sub>10</sub>(P-value)", titlefont = list(size = 14)),
+#     shapes = shapes_list,
+#     # --- *** Define Legend(s) *** ---
+#     # Plotly should automatically create legends for 'color' and 'symbol'
+#     # We primarily control their appearance and position here.
+#     legend = list(
+#       title = list(text = '<b>Legend</b>'), # Generic title or specific if only one shows clearly
+#       x = 1.02, # Position horizontally (right of plot)
+#       y = 1.0,  # Position vertically (top of plot)
+#       xanchor = 'left', # Anchor legend from its left
+#       yanchor = 'top',  # Anchor legend from its top
+#       traceorder = 'grouped', # Group items by trace (color first, then symbol)
+#       tracegroupgap = 10, # Gap between the color group and symbol group
+#       bgcolor = 'rgba(255,255,255,0.7)', # Semi-transparent background
+#       borderwidth = 1,
+#       bordercolor = '#CCCCCC'
+#     ),
+#     # --- *** REMOVE coloraxis *** ---
+#     # coloraxis = NULL, # Not needed for discrete colors mapped via 'colors'
+#     margin = list(r = 180) # Keep or adjust right margin as needed
+#   )
+#   
+#   
+#   # Apply the final layout
+#   p <- layout(p,
+#               title = final_layout$title,
+#               xaxis = final_layout$xaxis,
+#               yaxis = final_layout$yaxis,
+#               shapes = final_layout$shapes,
+#               legend = final_layout$legend,
+#               margin = final_layout$margin
+#               # No coloraxis argument here
+#   )
+#   
+#   # --- 7. Return Plotly Object ---
+#   return(p)
+#   
+# }
+
+panvar_plotly_function <- function(panvar_results_table, nrows_in_gwas = NULL, pvalue_threshold = 0.05, point_size = 3, alpha_base = 0.7, window.size = 5e5){
+  p <-
+    panvar_plot(panvar_results_table, 
+                nrows_in_gwas = nrows_in_gwas,
+                pvalue_threshold = pvalue_threshold,
+                point_size = point_size,
+                alpha_base = alpha_base,
+                window.size = window.size)
   
-  # --- 1. Input Validation and Graceful Handling ---
-  if (is.null(panvar_results_table) || nrow(panvar_results_table) == 0) {
-    # Return message plot
-    return(
-      plot_ly() %>%
-        layout(title = "No Data to Display", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
-        add_annotations(text = "No data available based on current filters.", x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14))
-    )
-  }
+  gp <- 
+    ggplotly(p)
   
-  required_plot_cols <- c("BP", "Pvalues", "IMPACT", "LD", "GENE", "Type") # LD is still required for binning
-  missing_plot_cols <- setdiff(required_plot_cols, names(panvar_results_table))
-  if (length(missing_plot_cols) > 0) {
-    warning(paste("Plotting function is missing required columns:", paste(missing_plot_cols, collapse=", ")))
-    # Return error plot
-    return(
-      plot_ly() %>%
-        layout(title = "Plotting Error", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
-        add_annotations(text = paste("Cannot generate plot. Missing columns:", paste(missing_plot_cols, collapse=", ")), x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14))
-    )
-  }
-  
-  # --- 2. Data Preparation & Type Safety ---
-  plot_data <- tryCatch({
-    as.data.frame(panvar_results_table) %>%
-      dplyr::mutate(
-        BP = as.numeric(BP),
-        Pvalues = as.numeric(Pvalues),
-        LD = as.numeric(LD),
-        negLog10P = -log10(Pvalues)
-      ) %>%
-      dplyr::mutate(negLog10P = ifelse(is.infinite(negLog10P), max(negLog10P[is.finite(negLog10P)], 0, na.rm = TRUE) + 1, negLog10P)) %>%
-      # --- *** START: Bin LD into Categories *** ---
-      dplyr::mutate(
-        LD_Category = cut(
-          LD,
-          breaks = c(-Inf, 0.2, 0.4, 0.6, 0.8, 1.0), # Bins: (-Inf, 0.2], (0.2, 0.4], ..., (0.8, 1.0]
-          labels = c("0.0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1.0"),
-          right = TRUE, # Intervals are closed on the right (e.g., 0.2 falls in first bin)
-          include.lowest = TRUE # Include 0 in the first bin
-        ),
-        # Explicitly handle NAs - convert factor NA to a specific level
-        LD_Category = factor(ifelse(is.na(LD), "NA", as.character(LD_Category)),
-                             levels = c("0.0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1.0", "NA")) # Ensure correct level order + NA
-      )
-    # --- *** END: Bin LD into Categories *** ---
-  }, error = function(e) {
-    warning("Error during data preparation for plotting: ", e$message)
-    return(NULL)
-  })
-  
-  if (is.null(plot_data) || !is.numeric(plot_data$BP) || !is.numeric(plot_data$negLog10P)) {
-    warning("One or more required columns (BP, Pvalues) could not be coerced to numeric.")
-    # Return error plot
-    return(
-      plot_ly() %>%
-        layout(title = "Plotting Error", xaxis = list(visible = FALSE), yaxis = list(visible = FALSE)) %>%
-        add_annotations(text = "Cannot generate plot. BP or Pvalues column is not numeric.", x = 0.5, y = 0.5, xref = "paper", yref = "paper", showarrow = FALSE, font = list(size=14))
-    )
-  }
-  
-  
-  # --- 3. Plot Specific Calculations ---
-  tag_df <- plot_data %>% dplyr::filter(Type == 'tag_snp')
-  tag_snp_bp <- if(nrow(tag_df) > 0) tag_df %>% dplyr::pull(BP) %>% unique() %>% head(1) else NULL
-  
-  if(is.null(nrows_in_gwas)) nrows_in_gwas <- 1e6
-  if(is.null(pvalue_threshold)) pvalue_threshold <- 0.05
-  bonf.cor <- -log10(pvalue_threshold / nrows_in_gwas)
-  
-  # --- 4. Define Discrete Colors ---
-  # Define 5 colors for the bins + 1 color for NA
-  
-  # --- !!! MANUALLY DEFINED COLORS !!! ---
-  # Replace these 5 hex codes with your desired palette, ordered from low LD to high LD bin
-  ld_bin_colors <- c("#005f73", "#5e548e", "#9d0208", "#ae4a24", "#606c38") # Dark Teal, Dark Purple, Dark Red, Dark Orange/Brown, Dark Olive
-  # --- !!! END MANUAL DEFINITION !!! ---
-  
-  na_color <- "#808080" # Grey for NA (can also be changed)
-  # Combine colors in the order of the factor levels defined above
-  discrete_colors <- c(ld_bin_colors, na_color)
-  
-  
-  # --- 5. Build Plotly Object using Discrete Color Mapping ---
-  p <- plot_ly(
-    data = plot_data,
-    x = ~BP,
-    y = ~Pvalues,
-    # --- *** Map color to the CATEGORICAL variable *** ---
-    color = ~LD_Category,
-    # --- *** Provide the DISCRETE color palette *** ---
-    colors = discrete_colors, # Use the manually defined colors
-    type = 'scatter',
-    mode = 'markers',
-    symbol = ~IMPACT,     # Symbol still mapped to IMPACT
-    marker = list(
-      size = point_size,
-      opacity = alpha_base
-      # NO colorbar needed here
-    ),
-    hoverinfo = 'text',
-    # --- Update hover text to show LD category ---
-    text = ~paste(
-      'BP:', BP,
-      '<br>-log10(P):', round(Pvalues, 2),
-      '<br>LD Cat.:', LD_Category, # Show category
-      '<br>LD Val:', round(LD, 2),   # Optionally show original LD value too
-      '<br>Impact:', IMPACT,
-      '<br>Gene:', GENE
-    )
-    # Legend definition handled in layout
-  )
-  
-  # --- 6. Define and Apply Layout (Adjusted for Discrete Legends) ---
-  hline <- function(y = 0, color = "grey") list(type = "line", x0 = 0, x1 = 1, xref = "paper", y0 = y, y1 = y, yref = "y", line = list(color = color, dash = "dash"))
-  vline <- function(x = 0, color = "red") list(type = "line", y0 = 0, y1 = 1, yref = "paper", x0 = x, x1 = x, xref = "x", line = list(color = color, dash = "dot", width=1.5))
-  
-  shapes_list <- list(hline(bonf.cor))
-  if (!is.null(tag_snp_bp) && is.finite(tag_snp_bp)) {
-    shapes_list <- c(shapes_list, list(vline(tag_snp_bp)))
-  }
-  
-  # Define the consolidated layout list
-  final_layout <- list(
-    title = "Interactive PanvaR Plot",
-    xaxis = list(title = "Position (BP)", titlefont = list(size = 14)),
-    yaxis = list(title = "-log<sub>10</sub>(P-value)", titlefont = list(size = 14)),
-    shapes = shapes_list,
-    # --- *** Define Legend(s) *** ---
-    # Plotly should automatically create legends for 'color' and 'symbol'
-    # We primarily control their appearance and position here.
-    legend = list(
-      title = list(text = '<b>Legend</b>'), # Generic title or specific if only one shows clearly
-      x = 1.02, # Position horizontally (right of plot)
-      y = 1.0,  # Position vertically (top of plot)
-      xanchor = 'left', # Anchor legend from its left
-      yanchor = 'top',  # Anchor legend from its top
-      traceorder = 'grouped', # Group items by trace (color first, then symbol)
-      tracegroupgap = 10, # Gap between the color group and symbol group
-      bgcolor = 'rgba(255,255,255,0.7)', # Semi-transparent background
-      borderwidth = 1,
-      bordercolor = '#CCCCCC'
-    ),
-    # --- *** REMOVE coloraxis *** ---
-    # coloraxis = NULL, # Not needed for discrete colors mapped via 'colors'
-    margin = list(r = 180) # Keep or adjust right margin as needed
-  )
-  
-  
-  # Apply the final layout
-  p <- layout(p,
-              title = final_layout$title,
-              xaxis = final_layout$xaxis,
-              yaxis = final_layout$yaxis,
-              shapes = final_layout$shapes,
-              legend = final_layout$legend,
-              margin = final_layout$margin
-              # No coloraxis argument here
-  )
-  
-  # --- 7. Return Plotly Object ---
-  return(p)
+  return(gp)
   
 }
 
@@ -1185,8 +1201,8 @@ output_dashboard_Server <- function(id, shared) {
               plot_obj <- panvar_plotly_function(
                 panvar_results_table = data_to_plot,
                 nrows_in_gwas = input$total_rows,
-                pvalue_threshold = input$pvalue_threshold
-              )
+                pvalue_threshold = input$pvalue_threshold,
+                window.size = shared$window_span)
               plot_obj # Return the plotly object
             }) # End renderPlotly
             

@@ -219,7 +219,7 @@ input_dashboard_UI <- function(id) {
               style = "display: flex; align-items: center; gap: 10px;",
               numericInput(
                 ns("window_span"),
-                "Window span around the tag_SNP:",
+                "Window size around the tag_SNP:",
                 value = 500000,
                 min = 0
               ),
@@ -323,7 +323,7 @@ input_dashboard_UI <- function(id) {
             ),
             bsTooltip(
               id = "dynamic_correlation_tooltip",
-              title = "Should PC’s above PC Max also be included if they are correlated with the phenotype at the alpha < .005 significance level?",
+              title = "Should PC’s above PC Max also be included if they are correlated with the phenotype at the alpha < .001 significance level?",
               placement = "right",
               trigger = "hover"
             ),
@@ -806,6 +806,9 @@ input_dashboard_Server <- function(id, shared) {
                 all.impacts = all_impacts()
               )
             })
+            
+            # save window span for plotting 
+            shared$window_span <- window_span()
             
             # Increment progress (optional)
             incProgress(0.8, detail = "Processing results...")
