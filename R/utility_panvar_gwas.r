@@ -105,7 +105,8 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   big_random_pca <- big_randomSVD(
     the_genotypes,
     fun.scaling = snp_scaleBinom(),
-    ncores = 1
+    ncores = 1,
+    k = pc_max
   )
   
   the_PCs <- predict(big_random_pca)

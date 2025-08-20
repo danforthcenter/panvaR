@@ -323,7 +323,7 @@ input_dashboard_UI <- function(id) {
             ),
             bsTooltip(
               id = "dynamic_correlation_tooltip",
-              title = "Should PC’s above PC Max also be included if they are correlated with the phenotype at the alpha < .005 significance level?",
+              title = "Should PC’s above PC Max also be included if they are correlated with the phenotype at the alpha < .001 significance level?",
               placement = "right",
               trigger = "hover"
             ),
