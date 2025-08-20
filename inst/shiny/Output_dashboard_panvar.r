@@ -1202,7 +1202,7 @@ output_dashboard_Server <- function(id, shared) {
                 panvar_results_table = data_to_plot,
                 nrows_in_gwas = input$total_rows,
                 pvalue_threshold = input$pvalue_threshold,
-                window.size = max(input$BP_LHS, input$BP_RHS))
+                window.size = shared$window_span)
               plot_obj # Return the plotly object
             }) # End renderPlotly
             
