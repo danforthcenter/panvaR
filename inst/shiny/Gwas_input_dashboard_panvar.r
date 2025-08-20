@@ -301,7 +301,7 @@ Gwas_input_dashboard_Server <- function(id, shared) {
         })
         
         # save window span for plotting 
-        shared$window_span <- window_span()
+        shared$window_span <- input$window_span
         
       } else {
         showNotification("Please provide all required and valid inputs before running the analysis.", type = "error")
