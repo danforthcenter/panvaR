@@ -20,8 +20,9 @@ To get started, view the vignette:
 browseVignettes("panvaR")
 ```
 
-We have also implemented a GUI for visualizing results. To use the GUI:
+We have also implemented a GUI for visualizing results. To use the GUI run:
 ```r
+library(panvaR)
 panvar_gui()
 ```
 # Reproduction
