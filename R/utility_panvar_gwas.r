@@ -5,7 +5,7 @@
 #' @param genotype_data character. Path to the input genotype data file, either in VCF (vcf/gz) or BED format.
 #' @param phenotype_input character or data.table. Path to the phenotype data file OR a data.table object containing phenotype data. The first column must contain genotype identifiers.
 #' @param pc_min integer, optional. Minimum number of principal components (PCs) to include in GWAS. Default is 5.
-#' @param pc_max integer, optional. Maximum number of PCs to include in GWAS. Default is 5.
+#' @param pc_max integer, optional. Maximum number of PCs to include in GWAS. Only used with dynamic correlation. Default is 5.
 #' @param maf numeric, optional. Minor allele frequency filter for the genotype data. Default is 0.05.
 #' @param missing_rate numeric, optional. Missing rate filter for the genotype data. Default is 0.1.
 #' @param dynamic_correlation logical, optional. Whether additional PCs beyond the minimum should be calculated dynamically. Default is FALSE.
