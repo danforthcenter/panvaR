@@ -106,12 +106,12 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
     the_genotypes,
     fun.scaling = snp_scaleBinom(),
     ncores = 1,
-    k = pc_max
+    k = max(pc_min, pc_max)
   )
   
   the_PCs <- predict(big_random_pca)
   
-  the_covariates <- the_PCs[,1:pc_max]
+  the_covariates <- the_PCs[,1:max(pc_min, pc_max)]
   
   # Check if phenotype_input is a path or a data.table
   if (is.character(phenotype_input)) {
