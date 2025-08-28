@@ -28,6 +28,10 @@ panvar_gui()
 
 Please visit the following Zenodo repository for result reproduction: {Placeholder for Collin to add Zenodo link}
 
+# Bugs and feature requests
+
+Please use github issues for reporting bugs and feature requests. Thank you! 
+
 # Dependencies
 
 While PanvaR uses R to visualize and combine data, it relies on some utilities that are not available on all operating systems. Consequently, we are not supporting Windows operating systems at this time. 
