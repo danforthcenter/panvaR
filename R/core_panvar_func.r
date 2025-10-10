@@ -24,10 +24,10 @@
 #'
 #' @examples
 #' # Using a pre-computed GWAS table
-#' panvar_func(vcf_file_path = "<path_to_vcf_file>", gwas_table_path = "<path_to_gwas_table>", tag_snps = c("Chr_09:12456"))
+#' # panvar_func(vcf_file_path = "<path_to_vcf_file>", gwas_table_path = "<path_to_gwas_table>", tag_snps = c("Chr_09:12456"))
 #' 
 #' # Using phenotype file path for de-novo GWAS
-#' panvar_func(vcf_file_path = "<path_to_vcf_file>", phenotype_data = "<path_to_phenotype_data>", tag_snps = c("Chr_09:12456"))
+#' # panvar_func(vcf_file_path = "<path_to_vcf_file>", phenotype_data = "<path_to_phenotype_data>", tag_snps = c("Chr_09:12456"))
 #'
 #' @import tidyverse
 #' @import data.table

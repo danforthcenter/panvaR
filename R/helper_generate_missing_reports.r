@@ -22,7 +22,7 @@ options(scipen=999) # This makes sure that scientific notation does not supplant
 #' @export
 #'
 #' @examples
-#' generate_missing_report("/path/to/your/vcf/file.vcf")
+#' # generate_missing_report("/path/to/your/vcf/file.vcf")
 
 generate_missing_report <- function(path_to_vcf_file){
 

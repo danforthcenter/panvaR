@@ -20,7 +20,7 @@
 #' @export
 #'
 #' @examples
-#' subset_around_tag('<path_to_your_bed_file>')
+#' # subset_around_tag('<path_to_your_bed_file>')
 
 # A general function to convert bed files to Plink
 

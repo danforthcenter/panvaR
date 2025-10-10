@@ -13,18 +13,15 @@ ld_filtered_snp_list(path_to_bed_file, chrom, bp, r2_threshold = 0.5)
 
 \item{bp}{The bp of the snp}
 
-\item{(optional)}{The r2 threshold that you want to work with.
-Defaults to}
+\item{r2_threshold}{The r2 threshold above which to return snps, default = .5}
 }
 \value{
 A table with the list of BPs that cross the assigned threshold.
 }
 \description{
 This function will take a Chrom, a BP, a Bed file, a r2 threshold and return
-for that tag bp/tag SNP, a list of BPs that have are in LD beyond the r2 threshold.
-Title
-A function to return a list of BPs with LD beyond assigned r2 value
+for that tag bp/tag SNP, a list of BPs that are in LD beyond the r2 threshold.
 }
 \examples{
-ld_filtered_snp_list("<bed_file_path>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
+# work in progress
 }

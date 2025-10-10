@@ -11,6 +11,7 @@ panvar_plot(
   pvalue_threshold = 0.05,
   point_size = 3,
   alpha_base = 0.7,
+  window.size = 500000,
   total_snps = NULL,
   total_genes = NULL,
   export_file = NULL,
@@ -44,5 +45,5 @@ plot panvar
 a function to make a manhattan type plot of panvar results
 }
 \examples{
-panvar_plot(panvar_results_dataframe)
+# panvar_plot(panvar_results_dataframe)
 }

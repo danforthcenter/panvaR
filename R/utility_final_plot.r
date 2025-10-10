@@ -15,7 +15,7 @@
 #' @export
 #'
 #' @examples
-#' panvar_plot(panvar_results_dataframe)
+#' # panvar_plot(panvar_results_dataframe)
 panvar_plot <- function(reports_table,
                         nrows_in_gwas = NULL,
                         pvalue_threshold = 0.05, # Currently unused, but kept for potential future use

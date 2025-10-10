@@ -9,6 +9,7 @@
 #' @export
 #'
 #' @examples
+#' # set_plink_path("path_to_executable")
 set_plink_path <- function(plink_path){
   options(plink_path=plink_path)
 }

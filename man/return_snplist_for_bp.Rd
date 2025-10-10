@@ -24,5 +24,5 @@ Title
 A function to return the names of SNPs at specific locations.
 }
 \examples{
-subset_around_tag('<path_to_your_bed_file>')
+# subset_around_tag('<path_to_your_bed_file>')
 }

@@ -20,7 +20,7 @@
 #' @export
 #'
 #' @examples
-#' work in progress
+#' # work in progress
 
 
 ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5){

@@ -10,7 +10,7 @@
 #' @return The path to the new Bed file.
 #'
 #' @examples
-#' vcf_window_subset("path/to/your_file.vcf",chrom = "Chr_001", base_snp = 6857045, output_name = "windowed_vcf_file")
+#' # vcf_window_subset("path/to/your_file.vcf",chrom = "Chr_001", base_snp = 6857045, output_name = "windowed_vcf_file")
 #' 
 #' @import tidyverse
 #' @import data.table

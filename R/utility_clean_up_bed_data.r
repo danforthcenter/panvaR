@@ -20,7 +20,7 @@
 #' @export
 #'
 #' @examples
-#' bed_file_clean_up('<path_to_your_bed_file>')
+#' # bed_file_clean_up('<path_to_your_bed_file>')
 
 # A general function to convert bed files to Plink
 

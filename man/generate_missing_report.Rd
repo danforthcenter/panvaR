@@ -18,5 +18,5 @@ A list containing the following elements:
 This function takes a vcf file and generate the missing reports for both lines and SNPs
 }
 \examples{
-generate_missing_report("/path/to/your/vcf/file.vcf")
+# generate_missing_report("/path/to/your/vcf/file.vcf")
 }
