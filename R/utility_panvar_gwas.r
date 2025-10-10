@@ -10,7 +10,13 @@
 #' @param missing_rate numeric, optional. Missing rate filter for the genotype data. Default is 0.1.
 #' @param dynamic_correlation logical, optional. Whether additional PCs beyond the minimum should be calculated dynamically. Default is FALSE.
 #' @param specific_pcs Vector, optional. If you want to supply specific PCs instead of calculating them dynamically then use this to supply a vector of PCs.
-#' @return A data frame containing GWAS results. Pvalues represented as -log10(pvalue). 
+#' @return A data frame containing GWAS results with columns:
+#' - CHROM: chromosome of snp
+#' - BP: physical position of snp
+#' - Effect: estimated effet size from gwas
+#' - SE: standard error of effect size from gwas
+#' - Pvalues: -log10(p) of pvalues from gwas
+#'  
 #'
 #' @examples
 #' # Using file path
@@ -231,6 +237,8 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   the_gwas <- data.table(
     CHROM = map_data$chromosome[the_order],
     BP = map_data$physical.pos[the_order],
+    Effect = gwas$estim[the_order],
+    SE = gwas$std.err[the_order],
     Pvalues = pvalues[the_order] # Apply order to p-values
   )
   
