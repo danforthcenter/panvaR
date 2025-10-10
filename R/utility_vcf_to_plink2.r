@@ -55,7 +55,12 @@ vcf_to_plink2 <- function(vcf_file_path, output_prefix = NA){
     
     return(list(bed = bed_file_path,bim = bim_file_path))
   }
-  binary_call <- "plink2"
+  
+  if(!is.null(options$plink_path){
+    binary_call <- options()$plink_path
+  } else {
+    binary_call <- "plink2"
+  }
   
   binary_args <- c(
     "--allow-extra-chr",
