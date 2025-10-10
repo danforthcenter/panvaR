@@ -52,7 +52,7 @@ subset_around_tag <- function(path_to_bed_file, chrom, bp, window = 500000,outpu
         snp_start_ld = 0
     }
 	
-    if(!is.null(options$plink_path){
+    if(!is.null(options$plink_path)){
       binary_call <- options()$plink_path
     } else {
       binary_call <- "plink2"

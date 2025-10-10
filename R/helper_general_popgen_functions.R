@@ -9,7 +9,7 @@ vcf_to_bed <- function(vcf_file_path, output_prefix = NA){
         base_name_prefix <- output_prefix
     }
     
-  if(!is.null(options$plink_path){
+  if(!is.null(options$plink_path)){
     binary_call <- options()$plink_path
   } else {
     binary_call <- "plink2"

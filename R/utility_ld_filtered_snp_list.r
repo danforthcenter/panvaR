@@ -2,7 +2,7 @@
 #'
 #' @description 
 #' This function will take a Chrom, a BP, a Bed file, a r2 threshold and return
-#' for that tag bp/tag SNP, a list of BPs that have are in LD beyond the r2 threshold.
+#' for that tag bp/tag SNP, a list of BPs that are in LD beyond the r2 threshold.
 #'
 #' @param path_to_bed_file Path to the bed file that should have the tag SNP.
 #' @param chrom The chromosome of the tag SNP.
@@ -22,7 +22,6 @@
 #' @examples
 #' work in progress
 
-# A general function to convert bed files to Plink
 
 ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5){
 
@@ -43,7 +42,7 @@ ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5
 	print(paste0("snp_name is",snp_name))
 	print(paste0("snp length is", length(snp_name)))
 	
-	if(!is.null(options$plink_path){
+	if(!is.null(options$plink_path)){
 	  binary_call <- options()$plink_path
 	} else {
 	  binary_call <- "plink2"
