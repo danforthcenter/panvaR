@@ -1,11 +1,10 @@
 #' apply_maf
 #' A function to take a vcf file and filter applies a minor allele frequency filter.
 #'
-#' @param path_to_vcf_file Path to the vcf file.
-#' @param missing_rate (optional) What is the Minor Allele frequency that you want apply?
-#' Defaults to 0.05
-#' @param new_name (optional) What should be the new basename or prefix for the new file be?
-#' Defaults to {base_name}_filtered_{maf_rate}.vcf
+#' @param path_to_vcf_file character, path to vcf file 
+#' @param maf minor allele frequency to filter, removes snps with maf less than this value 
+#' @param output_name output file path with file name
+#'
 #' @return The path to the new vcf file with the missing rate filter applied.
 #' 
 #' @import tidyverse

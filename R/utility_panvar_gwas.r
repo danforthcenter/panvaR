@@ -9,7 +9,7 @@
 #' @param maf numeric, optional. Minor allele frequency filter for the genotype data. Default is 0.05.
 #' @param missing_rate numeric, optional. Missing rate filter for the genotype data. Default is 0.1.
 #' @param dynamic_correlation logical, optional. Whether additional PCs beyond the minimum should be calculated dynamically. Default is FALSE.
-#' @param specific_pcs Vector, optional. If you want to supply specific PCs instead of calculating them dynamically then use this to supply a vector of PCs.
+#' @param specific_PCs numeric vector, optional. If you want to supply specific PCs instead of calculating them dynamically then use this to supply a vector of PCs.
 #' @return A data frame containing GWAS results with columns:
 #' - CHROM: chromosome of snp
 #' - BP: physical position of snp

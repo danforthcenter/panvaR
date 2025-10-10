@@ -4,7 +4,7 @@
 #' @param path_to_bed_file Path to the bed file that should have the tag SNP.
 #' @param chrom The chromosome of the tag SNP.
 #' @param bp The bp of the tag snp
-#' @param Window (optional) The radius of the window around the tag SNP
+#' @param window (optional) The radius of the window around the tag SNP
 #' Defaults to 500kb
 #' @param output_prefix (optional) What should be the new basename or prefix for the new file be?
 #' Defaults to {base_name}_windowed
