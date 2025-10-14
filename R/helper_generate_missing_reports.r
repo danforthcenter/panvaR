@@ -30,11 +30,12 @@ generate_missing_report <- function(path_to_vcf_file){
 	proper_tbi(path_to_vcf_file) # This function was defined in `general_functions`
 
 	# The name of the binary that will be passed to the sys package, relevant down the file
-  if(!is.null(options$plink_path)){
+  if(!is.null(options()$plink_path)){
     binary_call <- options()$plink_path
   } else {
     binary_call <- "plink2"
   }
+  
 
 	# varaint file directory
 	missing_reports_directory <- temporary_directory()

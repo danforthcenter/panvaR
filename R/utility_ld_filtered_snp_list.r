@@ -42,7 +42,7 @@ ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5
 	print(paste0("snp_name is",snp_name))
 	print(paste0("snp length is", length(snp_name)))
 	
-	if(!is.null(options$plink_path)){
+	if(!is.null(options()$plink_path)){
 	  binary_call <- options()$plink_path
 	} else {
 	  binary_call <- "plink2"
