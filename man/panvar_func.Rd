@@ -24,7 +24,7 @@ panvar_func(
 \arguments{
 \item{vcf_file_path}{Path to VCF file as a character string.}
 
-\item{phenotype_data}{(Optional) Path (character string) to the phenotype table (TSV/CSV)  OR a data.table object. Required unless \code{gwas_table_path} is provided. The first column must contain genotype identifiers.}
+\item{phenotype_data}{(Optional) Path (character string) to the phenotype table (TSV/CSV)  OR a data.table object. Required unless \code{gwas_table_path} is provided. The first column must contain genotype identifiers, last column should be phenotype to test.}
 
 \item{gwas_table_path}{(Optional) Path (character string) to a pre-computed GWAS results table (TSV/CSV). If provided, \code{phenotype_data} and PC-related arguments are ignored. Must contain 'CHROM', 'BP', and 'Pvalues' columns.}
 

@@ -3,8 +3,8 @@
 #' The main panvar function, runs the panvar program and optionally runs gwas if the user does not provide their own gwas output. 
 #'
 #' @param vcf_file_path Path to VCF file as a character string.
-#' @param phenotype_data (Optional) Path (character string) to the phenotype table (TSV/CSV)  OR a data.table object. Required unless `gwas_table_path` is provided. The first column must contain genotype identifiers.
-#' @param gwas_table_path (Optional) Path (character string) to a pre-computed GWAS results table (TSV/CSV). If provided, `phenotype_data` and PC-related arguments are ignored. Must contain 'CHROM', 'BP', and 'Pvalues' columns.
+#' @param phenotype_data (Optional) Path (character string) to the phenotype table (TSV/CSV)  OR a data.table object. Required unless `gwas_data` is provided. The first column must contain genotype identifiers, last column should be phenotype to test.
+#' @param gwas_data (Optional) Path (character string) to a pre-computed GWAS results table (TSV/CSV). If provided, `phenotype_data` and PC-related arguments are ignored. Must contain 'CHROM', 'BP', and 'Pvalues' columns.
 #' @param annotation_table_path (Optional) Path to the annotation table file (TSV/CSV). Must contain 'GENE' and 'Annotation' columns. Defaults to NULL.
 #' @param tag_snps SNP or SNP's as character string or vector respectively
 #' @param r2_threshold LD threshold, SNP's in LD with tag SNP below this threshold are excluded
@@ -24,7 +24,7 @@
 #'
 #' @examples
 #' # Using a pre-computed GWAS table
-#' # panvar_func(vcf_file_path = "<path_to_vcf_file>", gwas_table_path = "<path_to_gwas_table>", tag_snps = c("Chr_09:12456"))
+#' # panvar_func(vcf_file_path = "<path_to_vcf_file>", gwas_data = "<path_to_gwas_table>", tag_snps = c("Chr_09:12456"))
 #' 
 #' # Using phenotype file path for de-novo GWAS
 #' # panvar_func(vcf_file_path = "<path_to_vcf_file>", phenotype_data = "<path_to_phenotype_data>", tag_snps = c("Chr_09:12456"))
@@ -38,14 +38,14 @@
 #' @importFrom methods is
 #'
 #' @export
-panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_table_path = NULL, annotation_table_path = NULL, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){ 
+panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_data = NULL, annotation_table_path = NULL, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){ 
   
   # --- Start: Input Validation ---
-  if (!is.null(gwas_table_path) && !is.null(phenotype_data)) {
-    stop("Conflict: Please provide either 'phenotype_data' for de-novo GWAS or 'gwas_table_path' for pre-computed results, but not both.")
+  if (!is.null(gwas_data) && !is.null(phenotype_data)) {
+    stop("Conflict: Please provide either 'phenotype_data' for de-novo GWAS or 'gwas_data' for pre-computed results, but not both.")
   }
-  if (is.null(gwas_table_path) && is.null(phenotype_data)) {
-    stop("Input needed: Please provide either 'phenotype_data' for de-novo GWAS or 'gwas_table_path'.")
+  if (is.null(gwas_data) && is.null(phenotype_data)) {
+    stop("Input needed: Please provide either 'phenotype_data' for de-novo GWAS or 'gwas_data'.")
   }
 
   if(!file.exists(vcf_file_path)){
@@ -83,9 +83,9 @@ panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_table_path = 
 
   # --- GWAS Step: Either load pre-computed or run de-novo ---
   gwas_table_denovo <- NULL
-  if (!is.null(gwas_table_path)) {
-    message("Loading pre-computed GWAS results from: ", gwas_table_path)
-    gwas_table_denovo <- data.table::fread(gwas_table_path)
+  if (!is.null(gwas_data)) {
+    message("Loading pre-computed GWAS results from: ", gwas_data)
+    gwas_table_denovo <- data.table::fread(gwas_data)
   } else {
     message("No GWAS table provided, running de-novo GWAS analysis.")
     # Check phenotype input type

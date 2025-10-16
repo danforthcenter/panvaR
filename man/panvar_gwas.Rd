@@ -18,7 +18,7 @@ panvar_gwas(
 \arguments{
 \item{genotype_data}{character. Path to the input genotype data file, either in VCF (vcf/gz) or BED format.}
 
-\item{phenotype_input}{character or data.table. Path to the phenotype data file OR a data.table object containing phenotype data. The first column must contain genotype identifiers.}
+\item{phenotype_input}{character or data.frame. Path to the phenotype data file OR a data.frame object containing phenotype data. First column should contain genotype/line names, last column should be phenotype to test.}
 
 \item{pc_min}{integer, optional. Minimum number of principal components (PCs) to include in GWAS. Default is 5.}
 

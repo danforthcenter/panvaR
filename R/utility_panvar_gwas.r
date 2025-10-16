@@ -3,7 +3,7 @@
 #' This function performs genome-wide association studies (GWAS) on provided phenotype and genotype data.
 #'
 #' @param genotype_data character. Path to the input genotype data file, either in VCF (vcf/gz) or BED format.
-#' @param phenotype_input character or data.table. Path to the phenotype data file OR a data.table object containing phenotype data. The first column must contain genotype identifiers.
+#' @param phenotype_input character or data.frame. Path to the phenotype data file OR a data.frame object containing phenotype data. First column should contain genotype/line names, last column should be phenotype to test.
 #' @param pc_min integer, optional. Minimum number of principal components (PCs) to include in GWAS. Default is 5.
 #' @param pc_max integer, optional. Maximum number of PCs to include in GWAS. Only used with dynamic correlation. Default is 5.
 #' @param maf numeric, optional. Minor allele frequency filter for the genotype data. Default is 0.05.
