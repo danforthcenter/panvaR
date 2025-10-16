@@ -84,17 +84,17 @@ panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_data = NULL, 
   # --- GWAS Step: Either load pre-computed or run de-novo ---
   gwas_table_denovo <- NULL
   if (!is.null(gwas_data)) {
-    message("Loading pre-computed GWAS results from: ", gwas_data)
+    message(">> Loading pre-computed GWAS results from: ", gwas_data)
     gwas_table_denovo <- data.table::fread(gwas_data)
   } else {
-    message("No GWAS table provided, running de-novo GWAS analysis.")
+    message(">> No GWAS table provided, running de-novo GWAS analysis.")
     # Check phenotype input type
     if (is.character(phenotype_data)) {
       if (!file.exists(phenotype_data)) {
-        stop("The phenotype file path that you provided is not accessible: ", phenotype_data)
+        stop(">> The phenotype file path that you provided is not accessible: ", phenotype_data)
       }
     } else if (!is(phenotype_data, "data.frame")) {
-      stop("The phenotype_data argument must be a file path (character) or a data.frame/data.table object.")
+      stop(">> The phenotype_data argument must be a file path (character) or a data.frame/data.table object.")
     }
     
     gwas_table_denovo <- panvar_gwas(
@@ -113,9 +113,11 @@ panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_data = NULL, 
   window_bp <- window_unit_func(window)
   
   # convert the vcf file to plink format
+  message("~~~~~~~~~~~~~~~ Converting VCF to plink format ~~~~~~~~~~~~~~~")
   in_plink_format <- vcf_to_plink2(vcf_file_path)
   
   # clean up the supplied vcf file
+  message("~~~~~~~~~~~~~~~ Applying QC filters to genotype file ~~~~~~~~~~~~~~~")
   cleaned_up <- bed_file_clean_up(in_plink_format$bed, maf = maf, missing_rate = missing_rate)
   
   # Validate the final GWAS table
@@ -124,7 +126,7 @@ panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_data = NULL, 
   # Determine tag SNPs and call convenience function
   if(is.null(tag_snps)){
     denovo_tag_snp <- tag_snp_func(gwas_table)
-    print("Note: you did not specify a tag snp - so the tag SNP will be inferred from the GWAS results")
+    print(">> Note: you did not specify a tag snp - so the tag SNP will be inferred from the GWAS results")
     bp = denovo_tag_snp$tag_snp_bp
     chrom = denovo_tag_snp$tag_snp_chromosome
     
@@ -197,9 +199,11 @@ panvar_convienience_function <- function(
 )
 {
   # subset your genotype data around the tag snp
+  message("~~~~~~~~~~~~~~~ Subsetting around tag snp ~~~~~~~~~~~~~~~")
   subset_genotype_data <- subset_around_tag(cleaned_up,chrom = chrom, bp = bp, window = window_bp)
   
   # using ld get the list of bps to keep
+  message("~~~~~~~~~~~~~~~ Calculating LD ~~~~~~~~~~~~~~~")
   table <- ld_filtered_snp_list(subset_genotype_data,chrom = chrom, bp = bp, r2_threshold = r2_threshold)
   
   # Make the LD table
@@ -231,6 +235,7 @@ panvar_convienience_function <- function(
   split_table_path <- split_vcf_eff(filtered_vcf_table)
   
   # Run SnpSift
+  message("~~~~~~~~~~~~~~~ Extracting SNP impacts ~~~~~~~~~~~~~~~")
   snpeff_table <- execute_snpsift(split_table_path)
   snpsift_table <- snpeff_table$table
   
