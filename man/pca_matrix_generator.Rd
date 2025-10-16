@@ -31,6 +31,6 @@ A matrix with your principle components.
 This function takes either a vcf file or a bed file and generates a PCA matrix.
 }
 \examples{
-pca_matrix_generator("path/to/genotype_data",pc_count = 5, maf = 0.05, missing_rate = 0.1)
+# pca_matrix_generator("path/to/genotype_data",pc_count = 5, maf = 0.05, missing_rate = 0.1)
 
 }

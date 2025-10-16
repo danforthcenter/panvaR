@@ -17,8 +17,8 @@
 #' @export
 #' 
 #' @examples
-#' apply_maf("<path_to_vcf_file>", missing_rate = 0.05)
-#' apply_maf <- function(path_to_vcf_file, missing_rate = 0.05, output_name = "new_file")
+#' # apply_maf("<path_to_vcf_file>", missing_rate = 0.05)
+#' # apply_maf <- function(path_to_vcf_file, missing_rate = 0.05, output_name = "new_file")
 
 apply_maf <- function(path_to_vcf_file, maf = 0.05, output_name = NA){
 
@@ -28,19 +28,19 @@ apply_maf <- function(path_to_vcf_file, maf = 0.05, output_name = NA){
 
     # If the output name is not NA then generate a name for the output file
 
-    if(is.na(output_name)){
-
-		base_name = sub("\\.[^.]*$", "", basename(path_to_vcf_file)) # use this code to get the basename of the vcf file without the extension
-
-		dir_name <- dirname(path_to_vcf_file)
-
-		output_name = paste0(dir_name,"/",base_snp, "_window_",window,".vcf",sep = "") # so the new name will be {base_name}_filtered{missing_rate}.vcf
-
-	} else {
-
-		output_name = output_name
-	}
-
+  if (is.na(output_name)) {
+    # use this code to get the basename of the vcf file without the extension
+    base_name = sub("\\.[^.]*$", "", basename(path_to_vcf_file))
+    
+    dir_name <- dirname(path_to_vcf_file)
+    
+    # so the new name will be {base_name}_filtered{missing_rate}.vcf
+    output_name = paste0(dir_name, "/", base_snp, "_window_", window, ".vcf", sep = "")
+    
+  } else {
+    output_name = output_name
+  }
+  
 	std_output_name = tempfile()
 
     # calculate the start and the stop value of the window 

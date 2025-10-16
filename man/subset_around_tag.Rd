@@ -20,11 +20,11 @@ subset_around_tag(
 
 \item{bp}{The bp of the tag snp}
 
+\item{window}{(optional) The radius of the window around the tag SNP
+Defaults to 500kb}
+
 \item{output_prefix}{(optional) What should be the new basename or prefix for the new file be?
 Defaults to {base_name}_windowed}
-
-\item{Window}{(optional) The radius of the window around the tag SNP
-Defaults to 500kb}
 }
 \value{
 The path to the new bed file with the missing rate filter applied.
@@ -34,5 +34,5 @@ subset_aroung_tag
 A function to take a Bed file and make a window around the tag snp.
 }
 \examples{
-subset_around_tag('<path_to_your_bed_file>')
+# subset_around_tag('<path_to_your_bed_file>')
 }

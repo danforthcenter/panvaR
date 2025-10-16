@@ -14,7 +14,7 @@
 #' @return A matrix with your principle components.
 #'
 #' @examples
-#' pca_matrix_generator("path/to/genotype_data",pc_count = 5, maf = 0.05, missing_rate = 0.1)
+#' # pca_matrix_generator("path/to/genotype_data",pc_count = 5, maf = 0.05, missing_rate = 0.1)
 #' 
 #' @import tidyverse
 #' @import data.table

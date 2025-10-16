@@ -31,5 +31,5 @@ bed_file_clean_up
 A function to take a Bed file and filter for the missing rate and minor allele frequency.
 }
 \examples{
-bed_file_clean_up('<path_to_your_bed_file>')
+# bed_file_clean_up('<path_to_your_bed_file>')
 }

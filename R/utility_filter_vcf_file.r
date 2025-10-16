@@ -23,7 +23,7 @@
 #' @export
 #'
 #' @examples
-#' ld_filtered_snp_list("<vcf_file_path>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
+#' # filter_vcf_file()
 
 # A general function to convert vcf files to Plink
 

@@ -3,7 +3,7 @@
 #' This function performs genome-wide association studies (GWAS) on provided phenotype and genotype data.
 #'
 #' @param genotype_data character. Path to the input genotype data file, either in VCF (vcf/gz) or BED format.
-#' @param phenotype_input character or data.table. Path to the phenotype data file OR a data.table object containing phenotype data. The first column must contain genotype identifiers.
+#' @param phenotype_input character or data.frame. Path to the phenotype data file OR a data.frame object containing phenotype data. First column should contain genotype/line names, last column should be phenotype to test.
 #' @param pc_min integer, optional. Minimum number of principal components (PCs) to include in GWAS. Default is 5.
 #' @param pc_max integer, optional. Maximum number of PCs to include in GWAS. Only used with dynamic correlation. Default is 5.
 #' @param maf numeric, optional. Minor allele frequency filter for the genotype data. Default is 0.05.
@@ -20,10 +20,10 @@
 #'
 #' @examples
 #' # Using file path
-#' panvar_gwas("path/to/genotype_data.vcf", "path/to/phenotype_data.csv", pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1)
+#' # panvar_gwas("path/to/genotype_data.vcf", "path/to/phenotype_data.csv", pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1)
 #' # Using data.table object
-#' pheno_dt <- data.table::fread("path/to/phenotype_data.csv")
-#' panvar_gwas("path/to/genotype_data.vcf", pheno_dt, pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1)
+#' #pheno_dt <- data.table::fread("path/to/phenotype_data.csv")
+#' p#anvar_gwas("path/to/genotype_data.vcf", pheno_dt, pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1)
 #'
 #' @import tidyverse
 #' @import data.table

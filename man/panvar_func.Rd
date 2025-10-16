@@ -24,7 +24,7 @@ panvar_func(
 \arguments{
 \item{vcf_file_path}{Path to VCF file as a character string.}
 
-\item{phenotype_data}{(Optional) Path (character string) to the phenotype table (TSV/CSV)  OR a data.table object. Required unless \code{gwas_table_path} is provided. The first column must contain genotype identifiers.}
+\item{phenotype_data}{(Optional) Path (character string) to the phenotype table (TSV/CSV)  OR a data.table object. Required unless \code{gwas_table_path} is provided. The first column must contain genotype identifiers, last column should be phenotype to test.}
 
 \item{gwas_table_path}{(Optional) Path (character string) to a pre-computed GWAS results table (TSV/CSV). If provided, \code{phenotype_data} and PC-related arguments are ignored. Must contain 'CHROM', 'BP', and 'Pvalues' columns.}
 
@@ -62,9 +62,9 @@ The main panvar function, runs the panvar program and optionally runs gwas if th
 }
 \examples{
 # Using a pre-computed GWAS table
-panvar_func(vcf_file_path = "<path_to_vcf_file>", gwas_table_path = "<path_to_gwas_table>", tag_snps = c("Chr_09:12456"))
+# panvar_func(vcf_file_path = "<path_to_vcf_file>", gwas_table_path = "<path_to_gwas_table>", tag_snps = c("Chr_09:12456"))
 
 # Using phenotype file path for de-novo GWAS
-panvar_func(vcf_file_path = "<path_to_vcf_file>", phenotype_data = "<path_to_phenotype_data>", tag_snps = c("Chr_09:12456"))
+# panvar_func(vcf_file_path = "<path_to_vcf_file>", phenotype_data = "<path_to_phenotype_data>", tag_snps = c("Chr_09:12456"))
 
 }

@@ -23,5 +23,5 @@ Title
 A function to return a list of BPs with LD beyond assigned r2 value
 }
 \examples{
-ld_filtered_snp_list("<vcf_file_path>", chrom = "<chorm>", bp = <bp_value>, r2_threshold = 0.6)
+# filter_vcf_file()
 }

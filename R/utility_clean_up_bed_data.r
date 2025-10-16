@@ -20,7 +20,7 @@
 #' @export
 #'
 #' @examples
-#' bed_file_clean_up('<path_to_your_bed_file>')
+#' # bed_file_clean_up('<path_to_your_bed_file>')
 
 # A general function to convert bed files to Plink
 
@@ -45,7 +45,12 @@ bed_file_clean_up <- function(path_to_bed_file, missing_rate = 0.1, maf = 0.05, 
     }
 	# TODO :- If the user supplies a name copy the bed file from scratch to  
 	# create a temporary directory 
-    binary_call <- "plink2"
+	if(!is.null(options()$plink_path)){
+	  binary_call <- options()$plink_path
+	} else {
+	  binary_call <- "plink2"
+	}
+	
 
 	binary_args <- c(
         "--allow-extra-chr",

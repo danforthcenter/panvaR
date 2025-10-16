@@ -8,13 +8,11 @@ A function to take a vcf file and filter applies a minor allele frequency filter
 apply_maf(path_to_vcf_file, maf = 0.05, output_name = NA)
 }
 \arguments{
-\item{path_to_vcf_file}{Path to the vcf file.}
+\item{path_to_vcf_file}{character, path to vcf file}
 
-\item{missing_rate}{(optional) What is the Minor Allele frequency that you want apply?
-Defaults to 0.05}
+\item{maf}{minor allele frequency to filter, removes snps with maf less than this value}
 
-\item{new_name}{(optional) What should be the new basename or prefix for the new file be?
-Defaults to {base_name}\emph{filtered}{maf_rate}.vcf}
+\item{output_name}{output file path with file name}
 }
 \value{
 The path to the new vcf file with the missing rate filter applied.
@@ -24,6 +22,6 @@ apply_maf
 A function to take a vcf file and filter applies a minor allele frequency filter.
 }
 \examples{
-apply_maf("<path_to_vcf_file>", missing_rate = 0.05)
-apply_maf <- function(path_to_vcf_file, missing_rate = 0.05, output_name = "new_file")
+# apply_maf("<path_to_vcf_file>", missing_rate = 0.05)
+# apply_maf <- function(path_to_vcf_file, missing_rate = 0.05, output_name = "new_file")
 }
