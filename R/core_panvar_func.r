@@ -203,10 +203,10 @@ panvar_convienience_function <- function(
   # using ld get the list of bps to keep
   table <- ld_filtered_snp_list(subset_genotype_data,chrom = chrom, bp = bp, r2_threshold = r2_threshold)
   
-  # Make the LD table
+  # clean up ld table a little
   ld_table <- ld_table_maker(table)
   
-  # Convert the table into the list of SNPs to keep
+  # extract vector of snp names returned from ld filtering
   keep_snp_list <- snps_to_keep(table)
   
   # Handle chromosome name differences
@@ -225,7 +225,7 @@ panvar_convienience_function <- function(
   # Sanitize the keep table
   keep_table_path <- keep_table_sanitizer(snp_keep_list_checked)
   
-  # Filter VCF
+  # Filter VCF for just these snps
   filtered_vcf_table <- filter_vcf_file(vcf_file_path = vcf_file_path, keep_table_path)
   
   # Split annotations
