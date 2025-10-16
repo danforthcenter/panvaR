@@ -24,6 +24,7 @@
 # A general function to convert bed files to Plink
 
 subset_around_tag <- function(path_to_bed_file, chrom, bp, window = 500000,output_prefix = NA){
+  message("~~~~~~~~~~~~~~~ Subsetting around tag snp ~~~~~~~~~~~~~~~")
 
 	bed_file_input = base_name_func(path_to_bed_file, super_name = TRUE, include_dir = TRUE)
 	

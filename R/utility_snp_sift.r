@@ -1,5 +1,5 @@
 execute_snpsift <- function(file_path) {
-    
+  message("~~~~~~~~~~~~~~~ Extracting SNP impacts ~~~~~~~~~~~~~~~")
     # Create a temporary file for the output
     snp_eff_table <- temp_file(prefix = "snp_eff_table")
 

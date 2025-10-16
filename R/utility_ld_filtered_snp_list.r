@@ -24,6 +24,7 @@
 
 
 ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5){
+  message("~~~~~~~~~~~~~~~ Calculating LD ~~~~~~~~~~~~~~~")
 
 	bed_file_input = base_name_func(path_to_bed_file, super_name = TRUE, include_dir = TRUE) # to more accurately get the bed file path
     
@@ -39,8 +40,8 @@ ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5
 	
 	snp_name <- return_snplist_for_bp(path_to_bed_file=path_to_bed_file, chrom = chrom, bp = bp)
 
-	print(paste0("snp_name is",snp_name))
-	print(paste0("snp length is", length(snp_name)))
+	print(paste0(">> snp_name is",snp_name))
+	print(paste0(">> snp length is", length(snp_name)))
 	
 	if(!is.null(options()$plink_path)){
 	  binary_call <- options()$plink_path

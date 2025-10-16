@@ -113,7 +113,6 @@ panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_data = NULL, 
   window_bp <- window_unit_func(window)
   
   # convert the vcf file to plink format
-  message("~~~~~~~~~~~~~~~ Converting VCF to plink format ~~~~~~~~~~~~~~~")
   in_plink_format <- vcf_to_plink2(vcf_file_path)
   
   # clean up the supplied vcf file
@@ -199,11 +198,9 @@ panvar_convienience_function <- function(
 )
 {
   # subset your genotype data around the tag snp
-  message("~~~~~~~~~~~~~~~ Subsetting around tag snp ~~~~~~~~~~~~~~~")
   subset_genotype_data <- subset_around_tag(cleaned_up,chrom = chrom, bp = bp, window = window_bp)
   
   # using ld get the list of bps to keep
-  message("~~~~~~~~~~~~~~~ Calculating LD ~~~~~~~~~~~~~~~")
   table <- ld_filtered_snp_list(subset_genotype_data,chrom = chrom, bp = bp, r2_threshold = r2_threshold)
   
   # Make the LD table
@@ -235,7 +232,6 @@ panvar_convienience_function <- function(
   split_table_path <- split_vcf_eff(filtered_vcf_table)
   
   # Run SnpSift
-  message("~~~~~~~~~~~~~~~ Extracting SNP impacts ~~~~~~~~~~~~~~~")
   snpeff_table <- execute_snpsift(split_table_path)
   snpsift_table <- snpeff_table$table
   

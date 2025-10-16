@@ -23,7 +23,7 @@
 # A general function to convert vcf files to Plink
 
 vcf_to_plink2 <- function(vcf_file_path, output_prefix = NA){
-  
+  message("~~~~~~~~~~~~~~~ Converting VCF to plink format ~~~~~~~~~~~~~~~")
   # make a prefix for output
   if(is.na(output_prefix)){
     
@@ -49,9 +49,9 @@ vcf_to_plink2 <- function(vcf_file_path, output_prefix = NA){
   
   if(file.exists(bim_file_path) && file.exists(bed_file_path)){
     # return the path to the bed file
-    print("It looks like your bed and bim files already exist. This was done with heuristics and regex.")
+    print(">> It looks like your bed and bim files already exist. This was done with heuristics and regex.")
     
-    print("The heuristics could be wrong, if that's the case please delete them and try again.")
+    print(">> The heuristics could be wrong, if that's the case please delete them and try again.")
     
     return(list(bed = bed_file_path,bim = bim_file_path))
   }
@@ -101,13 +101,13 @@ vcf_to_plink2 <- function(vcf_file_path, output_prefix = NA){
     bim_file_path = paste0(output_path,".bim")
     
     print(
-      paste("The Plink files are available in",bed_file_path)
+      paste(">> The Plink files are available in",bed_file_path)
     )
     return(list(bed = bed_file_path,bim = bim_file_path))
   } else{
     
-    print("Your VCF file could not be converted to Plink2's native format.")
-    print("Please read the error message and re-try")
+    print(">> Your VCF file could not be converted to Plink2's native format.")
+    print(">> Please read the error message and re-try")
     return(readLines(error_message))
   }
 }

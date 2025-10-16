@@ -35,7 +35,7 @@
 #' @export
 panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1, dynamic_correlation = FALSE, specific_PCs = NULL) {
   
-  print("~~~~~~~~~~~~~~~ Beginning GWAS! ~~~~~~~~~~~~~~~")
+  message("~~~~~~~~~~~~~~~ Beginning GWAS! ~~~~~~~~~~~~~~~")
   
   # Get the core count from the ergonomics set of code
   core_count = good_core_count()
@@ -108,6 +108,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   # Rijan: Reading material clumping and pruning here https://www.biostars.org/p/343818/
   
   # Apply a PCA using an algorithm optimized for large file backed matrices
+  message(">> Calculating principal components")
   big_random_pca <- big_randomSVD(
     the_genotypes,
     fun.scaling = snp_scaleBinom(),
@@ -250,7 +251,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   return_gwas <- the_gwas %>%
     arrange(CHROM, BP) 
   
-  print("GWAS completed!")
+  print("~~~~~~~~~~~~~~~ GWAS completed! ~~~~~~~~~~~~~~~")
   
   return(return_gwas)
 }
