@@ -19,6 +19,11 @@ The path to the new Bed file.
 This is a function that takes a vcf file and converts it to Plink format.
 }
 \examples{
-# vcf_window_subset("path/to/your_file.vcf",chrom = "Chr_001", base_snp = 6857045, output_name = "windowed_vcf_file")
+\dontrun{
+vcf_window_subset("path/to/your_file.vcf",
+                    chrom = "Chr_001", 
+                    base_snp = 6857045, 
+                    output_name = "windowed_vcf_file")
+}
 
 }

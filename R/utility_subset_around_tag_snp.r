@@ -7,7 +7,7 @@
 #' @param window (optional) The radius of the window around the tag SNP
 #' Defaults to 500kb
 #' @param output_prefix (optional) What should be the new basename or prefix for the new file be?
-#' Defaults to {base_name}_windowed
+#' Defaults to `base_name`_windowed
 #' @return The path to the new bed file with the missing rate filter applied.
 #' 
 #' @import tidyverse

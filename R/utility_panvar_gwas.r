@@ -20,10 +20,23 @@
 #'
 #' @examples
 #' # Using file path
-#' # panvar_gwas("path/to/genotype_data.vcf", "path/to/phenotype_data.csv", pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1)
+#' \dontrun{
+#'  panvar_gwas("path/to/genotype_data.vcf", 
+#'               "path/to/phenotype_data.csv", 
+#'               pc_min = 5, 
+#'               pc_max = 5, 
+#'               maf = 0.05, 
+#'               missing_rate = 0.1)
+#' 
 #' # Using data.table object
-#' #pheno_dt <- data.table::fread("path/to/phenotype_data.csv")
-#' p#anvar_gwas("path/to/genotype_data.vcf", pheno_dt, pc_min = 5, pc_max = 5, maf = 0.05, missing_rate = 0.1)
+#' pheno_dt <- data.table::fread("path/to/phenotype_data.csv")
+#' panvar_gwas("path/to/genotype_data.vcf", 
+#'               pheno_dt, 
+#'               pc_min = 5, 
+#'               pc_max = 5, 
+#'               maf = 0.05, 
+#'               missing_rate = 0.1)
+#' }
 #'
 #' @import tidyverse
 #' @import data.table

@@ -24,7 +24,7 @@ subset_around_tag(
 Defaults to 500kb}
 
 \item{output_prefix}{(optional) What should be the new basename or prefix for the new file be?
-Defaults to {base_name}_windowed}
+Defaults to \code{base_name}_windowed}
 }
 \value{
 The path to the new bed file with the missing rate filter applied.

@@ -7,7 +7,7 @@
 #' @param maf (optional) What is the minor allele frequncy to filter for?
 #' 
 #' @param output_prefix (optional) What should be the new basename or prefix for the new file be?
-#' Defaults to {base_name}_filtered{missing_rate}.bed
+#' Defaults to `base_name`_filtered`missing_rate`.bed
 #' @return The path to the new bed file with the missing rate filter applied.
 #' 
 #' @import tidyverse
