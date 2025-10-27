@@ -128,7 +128,7 @@ keep_table_sanitizer <- function(table) {
     keep_table <- as.data.table(table,col.names=TRUE)
     
     keep_table <- keep_table %>%
-      select(CHROM,BP)
+      select(.data[[CHROM]], .data[[BP]])
     
     keep_table %>%
       fwrite(keep_table_path,sep = "\t",col.names = FALSE)
