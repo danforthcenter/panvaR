@@ -35,7 +35,7 @@ apply_maf <- function(path_to_vcf_file, maf = 0.05, output_name = NA){
     dir_name <- dirname(path_to_vcf_file)
     
     # so the new name will be {base_name}_filtered{missing_rate}.vcf
-    output_name = paste0(dir_name, "/", base_snp, "_window_", window, ".vcf", sep = "")
+    output_name = paste0(dir_name, "/", base_name, "_Filtered_MAF_", maf, ".vcf", sep = "")
     
   } else {
     output_name = output_name

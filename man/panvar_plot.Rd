@@ -29,6 +29,8 @@ panvar_plot(
 
 \item{alpha_base}{transparency of points in scatter plot}
 
+\item{window.size}{Size of window on either side of snp, in base pairs}
+
 \item{total_snps}{optionally provide number of snps in window, added to title}
 
 \item{total_genes}{optionally provide number of genes in window, added to title}

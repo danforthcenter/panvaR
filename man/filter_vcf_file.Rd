@@ -10,6 +10,8 @@ filter_vcf_file(vcf_file_path, keep_table, output_prefix = NA)
 \item{vcf_file_path}{Path to the vcf file that should have the tag SNP.}
 
 \item{keep_table}{The table of BPs to keep, either a table or a tabular object}
+
+\item{output_prefix}{Prefix of output file}
 }
 \value{
 Path to a vcf file that with only the filtered set of BPs

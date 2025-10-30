@@ -7,10 +7,10 @@
 vcf_to_plink2(vcf_file_path, output_prefix = NA)
 }
 \arguments{
+\item{vcf_file_path}{Path to the input VCF file.}
+
 \item{output_prefix}{The path where the Plink file should be written.
 Defaults to writing the output file in a \code{tempdir}. If you want the file to be kept around longer supply an accessible path.}
-
-\item{vcf_file}{Path to the input VCF file.}
 }
 \value{
 The path to the new Bed file.
