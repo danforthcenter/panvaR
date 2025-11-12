@@ -44,7 +44,12 @@ subset_around_tag <- function(path_to_bed_file, chrom, bp, window = 500000,outpu
         output_path <- output_prefix
     }
 
-	# calculate the start and the stop value of the window 
+	# calculate the start and the stop value of the window
+    if(is.na(bp) || is.null(bp)){
+        stop(paste0("Invalid bp value: ", bp, ". The tag SNP position is missing or NULL. ",
+                    "This likely means the tag SNP was not found in the genotype data."))
+    }
+    
     snp_start_ld = bp - window
     snp_stop_ld = bp + window
     
