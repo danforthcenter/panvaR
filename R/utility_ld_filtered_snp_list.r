@@ -109,9 +109,21 @@ ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5
 		
 		return(confirmed_final_ld_table)
     } else{
-
-		print("There were errors when calculating ld for this set of inputs.")
-		print("Please read the error message and re-try")
-		return(readLines(error_message))
+		message("\n!!! PLINK2 LD calculation failed !!!")
+		message(">> Check the log file for details: ", output_path, ".log")
+		
+		# Try to read and display the error
+		if(file.exists(error_message)){
+			error_lines <- readLines(error_message, warn = FALSE)
+			if(length(error_lines) > 0){
+				message(">> PLINK2 error output:")
+				for(line in error_lines){
+					message("   ", line)
+				}
+			}
+		}
+		
+		# Return NA to trigger better error handling upstream
+		return(NA)
 	}
 }

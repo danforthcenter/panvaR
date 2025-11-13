@@ -114,8 +114,8 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   # This saves us the trouble chars causing issues
   chromosomes_as_ints <- the_chromosomes %>%
     enframe(name = NULL, value = "chromosome") %>%
-    mutate(chr_int = dense_rank(chromosome)) %>%
-    pull(chr_int)
+    mutate(chr_int = dense_rank(.data$chromosome)) %>%
+    pull(.data$chr_int)
   
   # Make the exclusion index
   # Rijan: Reading material clumping and pruning here https://www.biostars.org/p/343818/
@@ -171,11 +171,13 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   )
   
   fam_data <- fam_data %>%
-    rename(genotype = 2)
+    rename(genotype = 2) %>%
+    mutate(genotype = as.character(.data$genotype))
   
   # Stringently assumes that the line names are the first field of data
   phenotype_data <- phenotype_data %>%
-    rename(genotype = 1)
+    rename(genotype = 1) %>%
+    mutate(genotype = as.character(.data$genotype))
   
   pheno_data_for_gwas <- left_join(fam_data, phenotype_data, by = "genotype")
   
@@ -257,12 +259,12 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
   )
   
   # Ensure correct types
-  the_gwas[, `:=`(BP = as.integer(BP), Pvalues = as.numeric(Pvalues))]
+  the_gwas[, c("BP", "Pvalues") := list(as.integer(get("BP")), as.numeric(get("Pvalues")))]
   
   
   # return the gwas table in descending order per pvalues
   return_gwas <- the_gwas %>%
-    arrange(CHROM, BP) 
+    arrange(.data$CHROM, .data$BP)
   
   print("~~~~~~~~~~~~~~~ GWAS completed! ~~~~~~~~~~~~~~~")
   

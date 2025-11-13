@@ -227,11 +227,27 @@ panvar_convienience_function <- function(
   
   # Validate LD table is not empty
   if(is.null(table) || length(table) == 0 || all(is.na(table)) || (!is.data.frame(table)) || (is.data.frame(table) && nrow(table) == 0)){
-    stop(paste0("LD filtering returned no SNPs. This could mean:\n",
-                "  1. No SNPs in LD with the tag SNP at r2 > ", r2_threshold, "\n",
-                "  2. The tag SNP (chr=", chrom, ", bp=", bp, ") was not found in the genotype data\n",
-                "  3. Chromosome naming mismatch (PLINK format: '", chrom_for_plink, "')\n",
-                "Try lowering the r2_threshold or check that the tag SNP exists in your VCF file."))
+    error_msg <- paste0(
+      "\n========================================\n",
+      "ERROR: No SNPs found in LD with tag SNP\n",
+      "========================================\n",
+      "Tag SNP: chr=", chrom, ", bp=", bp, "\n",
+      "PLINK format: chr=", chrom_for_plink, "\n",
+      "Current r² threshold: ", r2_threshold, "\n",
+      "Current window size: ", format(window_bp, big.mark=","), " bp\n",
+      "\nPossible causes:\n",
+      "  1. r² threshold too high - no SNPs meet the linkage threshold\n",
+      "  2. Window size too small - try increasing to 1,000,000 bp or more\n",
+      "  3. Tag SNP not found in genotype data\n",
+      "  4. Chromosome naming mismatch between GWAS and VCF\n",
+      "\nRecommended solutions:\n",
+      "  • LOWER r² threshold to 0.3 or 0.4 (currently: ", r2_threshold, ")\n",
+      "  • INCREASE window size to 1000000 or larger (currently: ", format(window_bp, big.mark=","), ")\n",
+      "  • VERIFY tag SNP exists in your VCF file using: bcftools view -H ", vcf_file_path, " | grep '", bp, "'\n",
+      "  • CHECK chromosome naming: GWAS uses '", chrom, "', PLINK uses '", chrom_for_plink, "'\n",
+      "========================================\n"
+    )
+    stop(error_msg)
   }
   
   message(paste0(">> Found ", nrow(table), " SNPs in LD with tag SNP"))
