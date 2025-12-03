@@ -95,14 +95,14 @@ snps_to_keep <- function(ld_table){
   
   # Get other snps
   other_snps <- ld_table %>%
-    select(Subject_snp_chrom,Subject_snp_bp)  %>%
-    rename(CHROM = Subject_snp_chrom,BP = Subject_snp_bp)
+    select(.data$Subject_snp_chrom, .data$Subject_snp_bp)  %>%
+    rename(CHROM = .data$Subject_snp_chrom, BP = .data$Subject_snp_bp)
   
   # Get tag snps
   tag_snp <- ld_table %>%
-    select(Tag_snp_chrom, Tag_snp_bp) %>%
+    select(.data$Tag_snp_chrom, .data$Tag_snp_bp) %>%
     distinct() %>%
-    rename(CHROM = Tag_snp_chrom,BP = Tag_snp_bp)
+    rename(CHROM = .data$Tag_snp_chrom, BP = .data$Tag_snp_bp)
   
   keep_list <- rbind(other_snps,tag_snp)
   
@@ -128,7 +128,7 @@ keep_table_sanitizer <- function(table) {
     keep_table <- as.data.table(table,col.names=TRUE)
     
     keep_table <- keep_table %>%
-      select(CHROM,BP)
+      select(.data$CHROM, .data$BP)
     
     keep_table %>%
       fwrite(keep_table_path,sep = "\t",col.names = FALSE)
@@ -149,7 +149,7 @@ tag_snp_func <- function(gwas_results){
   # Just double checking to make sure that the table is arranged properly
   
   current_table <- gwas_results %>% 
-    arrange(desc(as.numeric(Pvalues)))
+    arrange(desc(as.numeric(.data$Pvalues)))
   
   tag_snp_row <- current_table %>%
     slice(1)
@@ -188,16 +188,16 @@ ld_table_maker <- function(ld_table){
   
   ld_table_subject <- ld_table %>% 
     select(
-      Subject_snp_chrom,
-      Subject_snp_bp,
-      Phased_r2
+      .data$Subject_snp_chrom,
+      .data$Subject_snp_bp,
+      .data$PHASED_R2
     ) %>%
-    rename(CHROM = Subject_snp_chrom,BP = Subject_snp_bp, LD = Phased_r2)
+    rename(CHROM = .data$Subject_snp_chrom, BP = .data$Subject_snp_bp, LD = .data$PHASED_R2)
   
   ld_table_tag <- ld_table %>%
-    select(Tag_snp_chrom, Tag_snp_bp) %>%
+    select(.data$Tag_snp_chrom, .data$Tag_snp_bp) %>%
     distinct() %>%
-    rename(CHROM = Tag_snp_chrom, BP = Tag_snp_bp)
+    rename(CHROM = .data$Tag_snp_chrom, BP = .data$Tag_snp_bp)
   
   ld_table <- rbind(ld_table_subject,ld_table_tag, fill = TRUE)
   

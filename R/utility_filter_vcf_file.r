@@ -10,6 +10,7 @@
 #'
 #' @param vcf_file_path Path to the vcf file that should have the tag SNP.
 #' @param keep_table The table of BPs to keep, either a table or a tabular object
+#' @param output_prefix Prefix of output file
 #'
 #' @return Path to a vcf file that with only the filtered set of BPs
 #' 
@@ -34,7 +35,7 @@ filter_vcf_file <- function(vcf_file_path, keep_table, output_prefix = NA){
 	 # make a prefix for output
     if(is.na(output_prefix)){
 
-		# tempoarary directory to store the files
+		# temporary directory to store the files
 
 		vcf_file_dir <- temporary_directory()
 		

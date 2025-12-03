@@ -6,6 +6,7 @@
 #' @param pvalue_threshold alpha significance threshold for calculating bonferroni line
 #' @param point_size size of points in scatter plot
 #' @param alpha_base transparency of points in scatter plot
+#' @param window.size Size of window on either side of snp, in base pairs
 #' @param total_snps optionally provide number of snps in window, added to title
 #' @param total_genes optionally provide number of genes in window, added to title
 #' @param export_file filename to export, if not provided plotted to device

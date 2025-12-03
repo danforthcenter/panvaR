@@ -277,7 +277,7 @@ Gwas_input_dashboard_Server <- function(id, shared) {
             # Call the modified panvar_func
             panvar_func(
                 vcf_file_path = vcf_file_path(),
-                gwas_table_path = gwas_table_path(),
+                gwas_data = gwas_table_path(),
                 phenotype_data = NULL, # Explicitly pass NULL for phenotype
                 tag_snps = clean_snp_tags_gwas(input$tag_snps),
                 r2_threshold = input$r2_threshold,
@@ -288,7 +288,44 @@ Gwas_input_dashboard_Server <- function(id, shared) {
             )
             
           }, error = function(e) {
-            showNotification(paste("Error during analysis:", e$message), type = "error", duration = 10)
+            # Check if this is an LD filtering error
+            error_message <- e$message
+            if (grepl("No SNPs found in LD", error_message, ignore.case = TRUE)) {
+              showModal(modalDialog(
+                title = tags$div(icon("exclamation-triangle"), " No SNPs Found in LD"),
+                tags$div(
+                  tags$h4("Analysis failed: No SNPs in linkage disequilibrium with the tag SNP"),
+                  tags$hr(),
+                  tags$p(tags$strong("Current settings:")),
+                  tags$ul(
+                    tags$li("R² threshold: ", tags$code(input$r2_threshold)),
+                    tags$li("Window size: ", tags$code(format(input$window_span, big.mark=",")), " bp")
+                  ),
+                  tags$hr(),
+                  tags$p(tags$strong("This usually means:")),
+                  tags$ol(
+                    tags$li("The r² threshold is too high - no SNPs meet the linkage threshold"),
+                    tags$li("The window size is too small"),
+                    tags$li("The tag SNP doesn't exist in your genotype data")
+                  ),
+                  tags$hr(),
+                  tags$p(tags$strong(style="color: #d9534f;", "Try these solutions:")),
+                  tags$ul(
+                    tags$li(tags$strong("Lower the R² threshold"), " to 0.3 or 0.4 (currently: ", input$r2_threshold, ")"),
+                    tags$li(tags$strong("Increase the window size"), " to 1,000,000 bp or larger (currently: ", format(input$window_span, big.mark=","), " bp)"),
+                    tags$li(tags$strong("Verify your tag SNP"), " exists in the VCF file")
+                  ),
+                  tags$hr(),
+                  tags$p(style="font-size: 12px; color: #666;", "Full error message:"),
+                  tags$pre(style="font-size: 11px; background-color: #f5f5f5; padding: 10px; max-height: 200px; overflow-y: auto;", error_message)
+                ),
+                easyClose = TRUE,
+                footer = modalButton("Close")
+              ))
+            } else {
+              # Generic error notification for other errors
+              showNotification(paste("Error during analysis:", error_message), type = "error", duration = 15)
+            }
             NULL
           })
           

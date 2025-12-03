@@ -7,7 +7,7 @@
 #' @param window (optional) The radius of the window around the tag SNP
 #' Defaults to 500kb
 #' @param output_prefix (optional) What should be the new basename or prefix for the new file be?
-#' Defaults to {base_name}_windowed
+#' Defaults to `base_name`_windowed
 #' @return The path to the new bed file with the missing rate filter applied.
 #' 
 #' @import tidyverse
@@ -44,7 +44,12 @@ subset_around_tag <- function(path_to_bed_file, chrom, bp, window = 500000,outpu
         output_path <- output_prefix
     }
 
-	# calculate the start and the stop value of the window 
+	# calculate the start and the stop value of the window
+    if(is.na(bp) || is.null(bp)){
+        stop(paste0("Invalid bp value: ", bp, ". The tag SNP position is missing or NULL. ",
+                    "This likely means the tag SNP was not found in the genotype data."))
+    }
+    
     snp_start_ld = bp - window
     snp_stop_ld = bp + window
     

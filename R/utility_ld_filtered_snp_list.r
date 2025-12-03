@@ -24,7 +24,6 @@
 
 
 ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5){
-  message("~~~~~~~~~~~~~~~ Calculating LD ~~~~~~~~~~~~~~~")
 
 	bed_file_input = base_name_func(path_to_bed_file, super_name = TRUE, include_dir = TRUE) # to more accurately get the bed file path
     
@@ -40,8 +39,8 @@ ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5
 	
 	snp_name <- return_snplist_for_bp(path_to_bed_file=path_to_bed_file, chrom = chrom, bp = bp)
 
-	print(paste0(">> snp_name is",snp_name))
-	print(paste0(">> snp length is", length(snp_name)))
+	print(paste0(">> snp_name is ",snp_name))
+	print(paste0(">> snp length is ", length(snp_name)))
 	
 	if(!is.null(options()$plink_path)){
 	  binary_call <- options()$plink_path
@@ -54,10 +53,13 @@ ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5
 		"--bfile",bed_file_input,
 		"--ld-snp", snp_name,
 		"--r2-phased", "--ld-window-kb",
-		9999999, "--ld-window-r2", 
+		"9999999", "--ld-window-r2", 
 		r2_threshold, "--out",
 		output_path
 	)
+	 message("~~~~~~~~~~~~~~~ Calculating LD ~~~~~~~~~~~~~~~")	
+	message(paste0(">> Running PLINK2 LD: ", binary_call, " ", paste(binary_args, collapse=" ")))
+	message(paste0(">> PLINK2 log will be at: ", output_path, ".log"))
 
 	# Rijan: Given how legible Plink2's error messages are
 	# Rijan: I think a simple STDOUT catch is good enough
@@ -86,6 +88,8 @@ ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5
     if(try == 0){
 
 		final_ld_table = fread(paste0(output_path,".vcor"))
+		
+		message(paste0(">> PLINK2 LD calculation returned ", nrow(final_ld_table), " rows"))
 
 		colnames(final_ld_table) = c(
 			"Tag_snp_chrom",
@@ -94,18 +98,32 @@ ld_filtered_snp_list <- function(path_to_bed_file, chrom, bp, r2_threshold = 0.5
 			"Subject_snp_chrom",
 			"Subject_snp_bp",
 			"Subset_snp_id",
-			"Phased_r2"
+			"PHASED_R2"
 		)
 
 		# Just to safe-guard against being bombarded with all the snps
 		confirmed_final_ld_table <- final_ld_table %>% 
-			filter(Tag_snp_bp == bp)
+			filter(.data$Tag_snp_bp == bp)
+		
+		message(paste0(">> After filtering for tag SNP bp, ", nrow(confirmed_final_ld_table), " rows remain"))
 		
 		return(confirmed_final_ld_table)
     } else{
-
-		print("There were errors when calculating ld for this set of inputs.")
-		print("Please read the error message and re-try")
-		return(readLines(error_message))
+		message("\n!!! PLINK2 LD calculation failed !!!")
+		message(">> Check the log file for details: ", output_path, ".log")
+		
+		# Try to read and display the error
+		if(file.exists(error_message)){
+			error_lines <- readLines(error_message, warn = FALSE)
+			if(length(error_lines) > 0){
+				message(">> PLINK2 error output:")
+				for(line in error_lines){
+					message("   ", line)
+				}
+			}
+		}
+		
+		# Return NA to trigger better error handling upstream
+		return(NA)
 	}
 }

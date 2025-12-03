@@ -3,14 +3,19 @@
 #' @description 
 #' This is a function that takes a vcf file and converts it to Plink format.
 #'
-#' @param vcf_file Path to the input VCF file.
+#' @param vcf_file_path Path to the input VCF file.
 #' @param output_prefix The path where the Plink file should be written.
 #' Defaults to writing the output file in a `tempdir`. If you want the file to be kept around longer supply an accessible path.
 #' 
 #' @return The path to the new Bed file.
 #'
 #' @examples
-#' # vcf_window_subset("path/to/your_file.vcf",chrom = "Chr_001", base_snp = 6857045, output_name = "windowed_vcf_file")
+#' \dontrun{
+#' vcf_window_subset("path/to/your_file.vcf",
+#'                     chrom = "Chr_001", 
+#'                     base_snp = 6857045, 
+#'                     output_name = "windowed_vcf_file")
+#' }
 #' 
 #' @import tidyverse
 #' @import data.table

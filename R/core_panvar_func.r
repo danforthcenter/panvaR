@@ -24,10 +24,17 @@
 #'
 #' @examples
 #' # Using a pre-computed GWAS table
-#' # panvar_func(vcf_file_path = "<path_to_vcf_file>", gwas_data = "<path_to_gwas_table>", tag_snps = c("Chr_09:12456"))
+#' \dontrun{
+#' # panvar_func(vcf_file_path = "<path_to_vcf_file>", 
+#'               gwas_data = "<path_to_gwas_table>", 
+#'               tag_snps = c("Chr_09:12456"))
 #' 
 #' # Using phenotype file path for de-novo GWAS
-#' # panvar_func(vcf_file_path = "<path_to_vcf_file>", phenotype_data = "<path_to_phenotype_data>", tag_snps = c("Chr_09:12456"))
+#' # panvar_func(vcf_file_path = "<path_to_vcf_file>", 
+#'               phenotype_data = "<path_to_phenotype_data>", 
+#'               tag_snps = c("Chr_09:12456"))
+#'  }     
+#'          
 #'
 #' @import tidyverse
 #' @import data.table
@@ -66,7 +73,8 @@ panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_data = NULL, 
           annotation_table <- NULL
         } else {
           if (!is.character(annotation_table$GENE)) {
-            annotation_table[, GENE := as.character(GENE)]
+            annotation_table <- annotation_table %>% 
+              mutate(GENE = as.character(.data$GENE))
             warning("Coerced 'GENE' column in annotation table to character type for joining.")
           }
           print("Annotation table loaded successfully.")
@@ -197,20 +205,58 @@ panvar_convienience_function <- function(
     annotation_table = NULL
 )
 {
+  # Handle chromosome name differences BEFORE LD filtering
+  plink2_bcf_dictionary <- plink2_bcftools_chroms_dictionary(vcf_file_path,in_plink_format$bim)
+  
+  # Convert chrom to PLINK format if dictionary exists
+  chrom_for_plink <- chrom
+  if(!is.null(plink2_bcf_dictionary)){
+    # Convert VCF chromosome name to PLINK format
+    chrom_match <- plink2_bcf_dictionary %>% filter(.data$vcf == chrom)
+    if(nrow(chrom_match) > 0){
+      chrom_for_plink <- chrom_match$plink2[1]
+      message(paste0(">> Converting chromosome name from '", chrom, "' to '", chrom_for_plink, "' for PLINK compatibility"))
+    }
+  }
+  
   # subset your genotype data around the tag snp
-  subset_genotype_data <- subset_around_tag(cleaned_up,chrom = chrom, bp = bp, window = window_bp)
+  subset_genotype_data <- subset_around_tag(cleaned_up,chrom = chrom_for_plink, bp = bp, window = window_bp)
   
   # using ld get the list of bps to keep
-  table <- ld_filtered_snp_list(subset_genotype_data,chrom = chrom, bp = bp, r2_threshold = r2_threshold)
+  table <- ld_filtered_snp_list(subset_genotype_data,chrom = chrom_for_plink, bp = bp, r2_threshold = r2_threshold)
+  
+  # Validate LD table is not empty
+  if(is.null(table) || length(table) == 0 || all(is.na(table)) || (!is.data.frame(table)) || (is.data.frame(table) && nrow(table) == 0)){
+    error_msg <- paste0(
+      "\n========================================\n",
+      "ERROR: No SNPs found in LD with tag SNP\n",
+      "========================================\n",
+      "Tag SNP: chr=", chrom, ", bp=", bp, "\n",
+      "PLINK format: chr=", chrom_for_plink, "\n",
+      "Current r² threshold: ", r2_threshold, "\n",
+      "Current window size: ", format(window_bp, big.mark=","), " bp\n",
+      "\nPossible causes:\n",
+      "  1. r² threshold too high - no SNPs meet the linkage threshold\n",
+      "  2. Window size too small - try increasing to 1,000,000 bp or more\n",
+      "  3. Tag SNP not found in genotype data\n",
+      "  4. Chromosome naming mismatch between GWAS and VCF\n",
+      "\nRecommended solutions:\n",
+      "  • LOWER r² threshold to 0.3 or 0.4 (currently: ", r2_threshold, ")\n",
+      "  • INCREASE window size to 1000000 or larger (currently: ", format(window_bp, big.mark=","), ")\n",
+      "  • VERIFY tag SNP exists in your VCF file using: bcftools view -H ", vcf_file_path, " | grep '", bp, "'\n",
+      "  • CHECK chromosome naming: GWAS uses '", chrom, "', PLINK uses '", chrom_for_plink, "'\n",
+      "========================================\n"
+    )
+    stop(error_msg)
+  }
+  
+  message(paste0(">> Found ", nrow(table), " SNPs in LD with tag SNP"))
   
   # clean up ld table a little
   ld_table <- ld_table_maker(table)
   
   # extract vector of snp names returned from ld filtering
   keep_snp_list <- snps_to_keep(table)
-  
-  # Handle chromosome name differences
-  plink2_bcf_dictionary <- plink2_bcftools_chroms_dictionary(vcf_file_path,in_plink_format$bim)
   
   if(!is.null(plink2_bcf_dictionary)){
     ld_table_checked <- apply_dict(plink2_bcf_dictionary, ld_table)
@@ -225,6 +271,9 @@ panvar_convienience_function <- function(
   # Sanitize the keep table
   keep_table_path <- keep_table_sanitizer(snp_keep_list_checked)
   
+  # Debug: check keep table
+  message(paste0(">> Number of SNPs to keep: ", nrow(snp_keep_list_checked)))
+  
   # Filter VCF for just these snps
   filtered_vcf_table <- filter_vcf_file(vcf_file_path = vcf_file_path, keep_table_path)
   
@@ -235,6 +284,13 @@ panvar_convienience_function <- function(
   snpeff_table <- execute_snpsift(split_table_path)
   snpsift_table <- snpeff_table$table
   
+  # Validate SnpSift output
+  if(nrow(snpsift_table) == 0){
+    stop("SnpSift returned an empty table. This likely means no SNPs were found in the filtered VCF file. Check chromosome naming compatibility.")
+  }
+  
+  message(paste0(">> SnpSift extracted ", nrow(snpsift_table), " SNP annotations"))
+  
   # Filter by impact
   if(all.impacts){
     snpsift_table_impacts <- snpsift_table
@@ -244,7 +300,7 @@ panvar_convienience_function <- function(
       stop("SnpSift output table is missing the required 'GENE' column.")
     }
     snpsift_table_impacts <- snpsift_table %>%
-      filter(IMPACT %in% c("HIGH","MODERATE") | BP == bp )
+      filter(.data$IMPACT %in% c("HIGH","MODERATE") | .data$BP == bp )
   }
   
   # Join GWAS and LD results
@@ -255,8 +311,8 @@ panvar_convienience_function <- function(
   # Annotate tag vs candidate
   pvalues_impact_ld_colors_table <- pvalues_impact_ld_table %>% mutate(
     Type = case_when(
-      BP == bp ~ "tag_snp",
-      BP != bp ~ "Candidate"
+      .data$BP == bp ~ "tag_snp",
+      .data$BP != bp ~ "Candidate"
     )
   )
   
@@ -271,14 +327,14 @@ panvar_convienience_function <- function(
     if ("GENE" %in% names(final_reports_table) && "GENE" %in% names(annotation_table)) {
       # Coerce final_reports_table$GENE to character just in case for safety
       if (!is.character(final_reports_table$GENE)) {
-        final_reports_table <- final_reports_table %>% mutate(GENE = as.character(GENE))
+        final_reports_table <- final_reports_table %>% mutate(GENE = as.character(.data$GENE))
       }
       
       print("Joining with annotation table by GENE...")
       # Perform the left join using GENE
       # Select only GENE and Annotation from the annotation table to avoid duplicate columns
       final_reports_table <- final_reports_table %>%
-        left_join(annotation_table %>% select(GENE, Annotation), by = "GENE") # <<< MODIFIED JOIN CONDITION
+        left_join(annotation_table %>% select(.data$GENE, .data$Annotation), by = "GENE") # <<< MODIFIED JOIN CONDITION
       
     } else {
       # --- MODIFIED: Update warning message ---

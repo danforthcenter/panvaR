@@ -1,5 +1,5 @@
 Package: panvaR
-Title: An R package for prioritizing candidate genes from GWA studies.
+Title: An R package for prioritizing candidate genes from GWA studies
 Version: 0.0.0.9000
 Authors@R: c(
     person("Rijan", "Dhakal", , "rijandhakal2055@gmail.com", role = c("aut"),
@@ -13,21 +13,11 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Depends:
-	tidyverse,
-	data.table,
-	sys,
-	parallel,
-	bigsnpr,
-	bigstatsr,
-	modelr,
-	shinyFiles,
-	shiny,
-	plotly,
-	DT,
-	shinyBS,
-	shinyjs,
-	dplyr,
-	methods
+    DT,
+  	shinyBS,
+  	plotly,
+    shinyFiles,
+  	shinyjs
 Suggests: 
     knitr,
     rmarkdown
@@ -35,4 +25,15 @@ VignetteBuilder: knitr
 Imports: 
     ggplot2,
     scales,
-    viridis
+    viridis,
+    tidyverse,
+  	data.table,
+  	sys,
+  	parallel,
+  	bigsnpr,
+  	bigstatsr,
+  	modelr,
+  	shiny,
+  	dplyr,
+  	methods,
+  	svglite
