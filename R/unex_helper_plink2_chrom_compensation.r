@@ -49,8 +49,8 @@ apply_dict <- function(dictionary, table){
 
     fixed_table <- table %>% 
         left_join(dictionary, by = c("CHROM"="plink2")) %>% # fix the CHROM's by matching them to plink2 names
-        select(-CHROM) %>%
-        rename(CHROM = vcf) # rename vcf column to CHROMs
+        select(-"CHROM") %>%
+        rename("CHROM" = "vcf") # rename vcf column to CHROMs
     
     return(fixed_table)
 }
