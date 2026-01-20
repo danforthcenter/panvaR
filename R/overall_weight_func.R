@@ -16,7 +16,11 @@
 #' @importFrom dplyr %>% filter mutate select arrange bind_rows if_else rowwise ungroup case_when any_of across
 #' @importFrom stats na.omit setNames
 #' @importFrom methods is
+#' @export
 #'
+#' @examples
+#' # overall_weight_func('<table>', 'tagsnp')
+
 overall_weight_func <- function(current_table, bp) {
   
   # --- Input Validation (Recommended) ---
