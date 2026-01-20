@@ -300,8 +300,16 @@ panvar_convienience_function <- function(
       stop("SnpSift output table is missing the required 'GENE' column.")
     }
     snpsift_table_impacts <- snpsift_table %>%
-      filter(.data$IMPACT %in% c("HIGH","MODERATE") | .data$BP == bp )
+      filter(.data$IMPACT %in% c("HIGH","MODERATE") | .data$BP == bp ) 
   }
+  
+  # make chromosome column a character so we can join
+  snpsift_table_impacts <- snpsift_table_impacts %>% 
+    mutate(CHROM = as.character(.data$CHROM))
+  
+  ld_table_checked <- ld_table_checked %>% 
+    mutate(CHROM = as.character(.data$CHROM))
+    
   
   # Join GWAS and LD results
   pvalues_impact_ld_table <- snpsift_table_impacts %>%
