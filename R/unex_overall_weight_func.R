@@ -28,11 +28,11 @@ overall_weight_func <- function(current_table, bp) {
   }
   # Coerce BP and Pvalues early, LD will be handled specifically later
   if (!is.numeric(current_table$BP)) {
-    current_table <- current_table %>% mutate(BP = as.numeric(BP))
+    current_table <- current_table %>% mutate(BP = as.numeric(.data$BP))
     warning("Coerced BP column to numeric.")
   }
   if (!is.numeric(current_table$Pvalues)) {
-    current_table <- current_table %>% mutate(Pvalues = as.numeric(Pvalues))
+    current_table <- current_table %>% mutate(Pvalues = as.numeric(.data$Pvalues))
     warning("Coerced Pvalues column to numeric.")
   }
   # We'll check LD numeric property *after* handling empty strings
@@ -63,7 +63,7 @@ overall_weight_func <- function(current_table, bp) {
     # Coerce to numeric. This will turn "" into NA with a likely warning.
     # Suppress warnings temporarily during coercion.
     current_table <- current_table %>%
-      mutate(LD = suppressWarnings(as.numeric(as.character(LD))))
+      mutate(LD = suppressWarnings(as.numeric(as.character(.data$LD))))
     
     # Now check if LD column is actually numeric after coercion attempt
     if (!is.numeric(current_table$LD)) {
@@ -110,7 +110,7 @@ overall_weight_func <- function(current_table, bp) {
     # Separate tag SNP data (could be multiple rows if input has duplicates)
     # Ensure tag_snp_data has the same columns as subject_snps will have after calculations
     tag_snp_data <- current_table %>%
-      filter(BP == bp) %>%
+      filter(.data$BP == bp) %>%
       mutate(
         abs_dist = NA_real_,
         normalized_dist = NA_real_,
@@ -122,7 +122,7 @@ overall_weight_func <- function(current_table, bp) {
     
     # Filter out tag SNP and calculate weights for subject SNPs
     subject_snps <- current_table %>%
-      filter(BP != bp | is.na(BP)) # Keep SNPs not matching BP, and also keep NAs if any
+      filter(.data$BP != bp | is.na(.data$BP)) # Keep SNPs not matching BP, and also keep NAs if any
     
     # Check if subject_snps became empty after filtering
     # This covers cases where the table had only the tag SNP and potentially NAs
@@ -138,7 +138,7 @@ overall_weight_func <- function(current_table, bp) {
       
       # Calculate absolute distance from the tag SNP
       subject_snps <- subject_snps %>%
-        mutate(abs_dist = abs(BP - bp)) # abs() handles NA in BP gracefully (returns NA)
+        mutate(abs_dist = abs(.data$BP - bp)) # abs() handles NA in BP gracefully (returns NA)
       
       # --- Normalization ---
       # Note: Calculations involving min/max ignore NAs by default if na.rm=TRUE (implied in dplyr's min/max)
@@ -149,17 +149,17 @@ overall_weight_func <- function(current_table, bp) {
 
       min_dist <- min(subject_snps$abs_dist, na.rm = TRUE)
       subject_snps <- subject_snps %>%
-        mutate(neg_dist = -abs_dist) %>% 
+        mutate(neg_dist = -.data$abs_dist) %>% 
         mutate(
           # Check for Inf/NaN resulting from min() on empty or all-NA data
           # Check for division by zero (abs_dist == 0)
           # Check for min_dist being Inf (if abs_dist had no non-NA values)
           normalized_dist = case_when(
             is.infinite(min_dist) | is.na(min_dist) ~ NA_real_, # No valid distances found or min() returned NA
-            abs_dist == 0 ~ NA_real_, # Avoid division by zero (should not happen due to filter)
-            is.na(abs_dist) ~ NA_real_, # Propagate NAs
-            TRUE ~  (neg_dist - min(neg_dist, na.rm = T)) / (max(neg_dist, na.rm = T) - min(neg_dist, na.rm = T)))) %>% # Standard case
-        select(-neg_dist)
+            .data$abs_dist == 0 ~ NA_real_, # Avoid division by zero (should not happen due to filter)
+            is.na(.data$abs_dist) ~ NA_real_, # Propagate NAs
+            TRUE ~  (.data$neg_dist - min(.data$neg_dist, na.rm = T)) / (max(.data$neg_dist, na.rm = T) - min(.data$neg_dist, na.rm = T)))) %>% # Standard case
+        select(-"neg_dist")
       
       # LD normalization (Min-Max Scaling: (x - min) / (max - min))
       min_ld <- min(subject_snps$LD, na.rm = TRUE)
@@ -169,9 +169,9 @@ overall_weight_func <- function(current_table, bp) {
         mutate(
           normalized_LD = case_when(
             is.infinite(min_ld) | is.infinite(max_ld) | is.na(min_ld) | is.na(max_ld) ~ NA_real_, # No valid LD values or min/max returned NA/Inf
-            is.na(LD) ~ NA_real_, # Propagate NAs
+            is.na(.data$LD) ~ NA_real_, # Propagate NAs
             ld_range == 0 ~ 0.5, # All non-NA LD values are the same; assign neutral middle score. Could also use NA_real_.
-            TRUE ~ (LD - min_ld) / ld_range
+            TRUE ~ (.data$LD - min_ld) / ld_range
           )
         )
       
@@ -184,9 +184,9 @@ overall_weight_func <- function(current_table, bp) {
         mutate(
           normalized_Pvalues = case_when(
             is.infinite(min_pval) | is.infinite(max_pval) | is.na(min_pval) | is.na(max_pval) ~ NA_real_, # No valid P-values or min/max returned NA/Inf
-            is.na(Pvalues) ~ NA_real_, # Propagate NAs
+            is.na(.data$Pvalues) ~ NA_real_, # Propagate NAs
             pval_range == 0 ~ 0.5, # All non-NA P-values are the same; assign neutral middle score. Could also use NA_real_.
-            TRUE ~ (Pvalues - min_pval) / pval_range
+            TRUE ~ (.data$Pvalues - min_pval) / pval_range
           )
         )
       
@@ -196,11 +196,11 @@ overall_weight_func <- function(current_table, bp) {
       subject_snps <- subject_snps %>%
         rowwise() %>% # Process row by row for robust NA handling in average
         mutate(
-          final_weight = mean(c(normalized_dist, normalized_LD, normalized_Pvalues), na.rm = TRUE)
+          final_weight = mean(c(.data$normalized_dist, .data$normalized_LD, .data$normalized_Pvalues), na.rm = TRUE)
         ) %>%
         ungroup() %>% # Important to ungroup after rowwise operation
         # Replace NaN with NA (mean of zero non-NA values is NaN)
-        mutate(final_weight = if_else(is.nan(final_weight), NA_real_, final_weight))
+        mutate(final_weight = if_else(is.nan(.data$final_weight), NA_real_, .data$final_weight))
       
       
       # --- Combine and Sort ---
@@ -209,7 +209,7 @@ overall_weight_func <- function(current_table, bp) {
       
       # Arrange by final_weight descending. NAs are typically sorted last.
       weight_table <- weight_table %>%
-        arrange(desc(final_weight))
+        arrange(desc(.data$final_weight))
       
     } # End else block for nrow(subject_snps) > 0
   } # End main if/else block (is_only_tag or all_rows_are_tag)
