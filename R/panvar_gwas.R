@@ -73,7 +73,7 @@ panvar_gwas <- function(genotype_data, phenotype_input, pc_min = 5, pc_max = 5, 
     
     # if the data is already in plink2 format
     # Clean up for the missing rate and the maf
-    cleaned_up_bed_file <- bed_file_clean_up(genotype_data_right_format,maf = maf, missing_rate = missing_rate)
+    cleaned_up_bed_file <- bed_file_clean_up(genotype_data,maf = maf, missing_rate = missing_rate)
   }
   
   # make the path to the fam file for the genotype data

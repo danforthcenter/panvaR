@@ -228,24 +228,24 @@ panvar_convienience_function <- function(
   # Validate LD table is not empty
   if(is.null(table) || length(table) == 0 || all(is.na(table)) || (!is.data.frame(table)) || (is.data.frame(table) && nrow(table) == 0)){
     error_msg <- paste0(
-      "\\n========================================\\n",
-      "ERROR: No SNPs found in LD with tag SNP\\n",
-      "========================================\\n",
-      "Tag SNP: chr=", chrom, ", bp=", bp, "\\n",
-      "PLINK format: chr=", chrom_for_plink, "\\n",
-      "Current r\\u00b2 threshold: ", r2_threshold, "\\n",
-      "Current window size: ", format(window_bp, big.mark=","), " bp\\n",
-      "\\nPossible causes:\\n",
-      "  1. r\\u00b2 threshold too high - no SNPs meet the linkage threshold\\n",
-      "  2. Window size too small - try increasing to 1,000,000 bp or more\\n",
-      "  3. Tag SNP not found in genotype data\\n",
-      "  4. Chromosome naming mismatch between GWAS and VCF\\n",
-      "\\nRecommended solutions:\\n",
-      "  \\u2022 LOWER r² threshold to 0.3 or 0.4 (currently: ", r2_threshold, ")\\n",
-      "  \\u2022 INCREASE window size to 1000000 or larger (currently: ", format(window_bp, big.mark=","), ")\\n",
-      "  \\u2022 VERIFY tag SNP exists in your VCF file using: bcftools view -H ", vcf_file_path, " | grep '", bp, "'\\n",
-      "  \\u2022 CHECK chromosome naming: GWAS uses '", chrom, "', PLINK uses '", chrom_for_plink, "'\\n",
-      "========================================\\n"
+      "\n ======================================== \n",
+      "ERROR: No SNPs found in LD with tag SNP \n",
+      "======================================== \n",
+      "Tag SNP: chr=", chrom, ", bp=", bp, " \n",
+      "PLINK format: chr=", chrom_for_plink, " \n",
+      "Current r\\u00b2 threshold: ", r2_threshold, " \n",
+      "Current window size: ", format(window_bp, big.mark=","), " bp \n",
+      " \n Possible causes: \n",
+      "  1. r\u00b2 threshold too high - no SNPs meet the linkage threshold \n",
+      "  2. Window size too small - try increasing to 1,000,000 bp or more \n",
+      "  3. Tag SNP not found in genotype data \n",
+      "  4. Chromosome naming mismatch between GWAS and VCF \n",
+      " \n Recommended solutions: \n",
+      "  \\u2022 LOWER r\\u00b2 threshold to 0.3 or 0.4 (currently: ", r2_threshold, ") \n",
+      "  \\u2022 INCREASE window size to 1000000 or larger (currently: ", format(window_bp, big.mark=","), ") \n",
+      "  \\u2022 VERIFY tag SNP exists in your VCF file using: bcftools view -H ", vcf_file_path, " | grep '", bp, "' \n",
+      "  \\u2022 CHECK chromosome naming: GWAS uses '", chrom, "', PLINK uses '", chrom_for_plink, "' \n",
+      "======================================== \n"
     )
     stop(error_msg)
   }

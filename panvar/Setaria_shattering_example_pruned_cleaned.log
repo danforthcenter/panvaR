@@ -1,0 +1,27 @@
+PLINK v2.0.0-a.7LM AVX2 AMD (10 Jan 2026)
+Options in effect:
+  --allow-extra-chr
+  --bfile inst/extdata/Setaria_shattering_example_pruned
+  --geno 1
+  --maf 0
+  --make-bed
+  --out panvar/Setaria_shattering_example_pruned_cleaned
+
+Hostname: cluebbert-Virtual-Machine
+Working directory: /home/cluebbert/Projects/panvaR
+Start time: Tue Jan 20 10:32:12 2026
+
+Random number seed: 1768926732
+15943 MiB RAM detected, ~12390 available; reserving 7971 MiB for main
+workspace.
+Using up to 4 compute threads.
+598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
+inst/extdata/Setaria_shattering_example_pruned.fam.
+Note: 1 nonstandard chromosome code present.
+7715 variants loaded from inst/extdata/Setaria_shattering_example_pruned.bim.
+Note: No phenotype data present.
+Writing panvar/Setaria_shattering_example_pruned_cleaned.fam ... done.
+Writing panvar/Setaria_shattering_example_pruned_cleaned.bim ... done.
+Writing panvar/Setaria_shattering_example_pruned_cleaned.bed ... done.
+
+End time: Tue Jan 20 10:32:12 2026
