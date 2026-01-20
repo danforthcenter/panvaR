@@ -720,8 +720,14 @@ tag_snp_splitter <- function(tag_snp){
 
 temp_file <- function(create_file = FALSE, working_directory = NULL, prefix = NULL) {
   
-  # Use provided working directory or default to "panvar"
-  dir_path <- ifelse(is.null(working_directory), tempdir(), working_directory)
+  if(!is.null(options()$panvar_outdir)){
+    dir_path <- options()$panvar_outdir
+  } else if(is.null(working_directory)){
+    dir_path <- tempdir()
+  } else {
+    dir_path <- working_directory
+  }
+  # dir_path <- ifelse(is.null(working_directory), tempdir(), working_directory)
   
   # Generate a random letters that you can use for the filename
   random_letters <- paste0(sample(LETTERS, 5, replace = TRUE), collapse = "")
@@ -748,8 +754,16 @@ temp_file <- function(create_file = FALSE, working_directory = NULL, prefix = NU
 
 temporary_directory <- function(delete_files = FALSE, working_directory = NULL) {
   
+  if(!is.null(options()$panvar_outdir)){
+    dir_path <- options()$panvar_outdir
+  } else if(is.null(working_directory)){
+    dir_path <- tempdir()
+  } else {
+    dir_path <- working_directory
+  }
+  
   # Use provided working directory or default to "panvar"
-  dir_path <- ifelse(is.null(working_directory), tempdir(), working_directory)
+  # dir_path <- ifelse(is.null(working_directory), tempdir(), working_directory)
   
   # Delete the contents of the directory if it exists and delete_files is TRUE
   if (dir.exists(dir_path) && delete_files) {

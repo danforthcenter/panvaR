@@ -5,6 +5,10 @@
 #               missing_rate = 1,
 #               pc_min = 1)
 # 
+# test setting out dir
+# works with either trailing slash or not, need full path though (doesn't expand "~/")
+# set_out_dir("/home/cluebbert/scratch/")
+
 out <-
 panvar_func(vcf_file_path = "/home/cluebbert/scratch/setaria_annotated_chrsnumeric.vcf.gz",
             phenotype_data = "inst/extdata/Setaria_shattering_example_phenotype.tsv",
