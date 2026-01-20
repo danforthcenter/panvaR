@@ -84,8 +84,8 @@ pca_matrix_generator <- function(genotype_data,pc_count = 5, maf = 0.05, missing
 	# This saves us the trouble chars causing issues
 	chromosomes_as_ints <- the_chromosomes %>%
 	  enframe(name = NULL, value = "chromosome") %>%
-	  mutate(chr_int = dense_rank(chromosome)) %>%
-	  pull(chr_int)
+	  mutate(chr_int = dense_rank(.data$chromosome)) %>%
+	  pull(.data$chr_int)
 
 	# Make the exclusion index  
 	# Rijan: Reading material clumping and pruning here https://www.biostars.org/p/343818/
