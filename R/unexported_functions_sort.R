@@ -718,10 +718,10 @@ tag_snp_splitter <- function(tag_snp){
 # temporary files, but more specifically different intermediate files serve -
 # different purposes. For example, you will have intermediate files 
 
-temp_file <- function(create_file = FALSE, working_directory = "panvar", prefix = NULL) {
+temp_file <- function(create_file = FALSE, working_directory = NULL, prefix = NULL) {
   
   # Use provided working directory or default to "panvar"
-  dir_path <- ifelse(is.null(working_directory), "panvar", working_directory)
+  dir_path <- ifelse(is.null(working_directory), tempdir(), working_directory)
   
   # Generate a random letters that you can use for the filename
   random_letters <- paste0(sample(LETTERS, 5, replace = TRUE), collapse = "")
@@ -746,10 +746,10 @@ temp_file <- function(create_file = FALSE, working_directory = "panvar", prefix 
 # Function to manage the temporary directory
 # Checks if the directory exists; if not, creates it. Deletes contents if specified.
 
-temporary_directory <- function(delete_files = FALSE, working_directory = "panvar") {
+temporary_directory <- function(delete_files = FALSE, working_directory = NULL) {
   
   # Use provided working directory or default to "panvar"
-  dir_path <- ifelse(is.null(working_directory), "panvar", working_directory)
+  dir_path <- ifelse(is.null(working_directory), tempdir(), working_directory)
   
   # Delete the contents of the directory if it exists and delete_files is TRUE
   if (dir.exists(dir_path) && delete_files) {

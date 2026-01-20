@@ -5,10 +5,10 @@
 #               missing_rate = 1,
 #               pc_min = 1)
 # 
-# out <- 
-# panvar_func(vcf_file_path = "/home/cluebbert/scratch/setaria_annotated_chrsnumeric.vcf.gz",
-#             phenotype_data = "inst/extdata/Setaria_shattering_example_phenotype.tsv",
-#             tag_snps = "5:6857045")
-# 
-# 
-# out$plot
+out <-
+panvar_func(vcf_file_path = "/home/cluebbert/scratch/setaria_annotated_chrsnumeric.vcf.gz",
+            phenotype_data = "inst/extdata/Setaria_shattering_example_phenotype.tsv",
+            tag_snps = "5:6857045")
+
+
+out$plot
