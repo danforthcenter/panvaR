@@ -69,7 +69,7 @@ panvar_plot <- function(reports_table,
 
   # --- Extract Tag SNP Information ---
   tag_df <- reports_table %>%
-    dplyr::filter(Type == "tag_snp")
+    dplyr::filter(.data$Type == "tag_snp")
 
   tag_bp <- NULL
   tag_chrom <- NULL
@@ -106,14 +106,14 @@ panvar_plot <- function(reports_table,
   reports_table$IMPACT <- factor(reports_table$IMPACT, levels = c("HIGH", "MODERATE", "LOW", "MODIFIER"))
   
   # Initialize the ggplot object
-  plot <- ggplot2::ggplot(ggplot2::aes(x = BP, y = Pvalues), data = reports_table)
+  plot <- ggplot2::ggplot(ggplot2::aes(x = .data$BP, y = .data$Pvalues), data = reports_table)
 
   # Add points
   # Using pch values that have separate fill and color: 21-25
   # Map IMPACT to shape, LD to fill color
   plot <- plot +
     ggplot2::geom_point(
-      ggplot2::aes(shape = IMPACT, fill = LD),
+      ggplot2::aes(shape = .data$IMPACT, fill = .data$LD),
       size = point_size,
       color = "black", # Outline color
       alpha = alpha_base,
