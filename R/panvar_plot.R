@@ -259,7 +259,7 @@ panvar_plot <- function(reports_table,
       # Export as PDF
        tryCatch({
             # Ensure device is explicitly set for potentially missing fonts etc.
-            ggplot2::ggsave(filename = filename, plot = plot, device = cairo_pdf, width = 10, height = 6)
+            ggplot2::ggsave(filename = filename, plot = plot, device = "pdf", width = 10, height = 6)
             message("Successfully saved plot as PDF: ", filename)
         }, error = function(e){
              warning("PDF export failed. Error: ", e$message,

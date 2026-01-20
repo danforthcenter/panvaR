@@ -26,8 +26,8 @@ plink2_bcftools_chroms_dictionary <- function(vcf_file_path,bim_file_path) {
           bcf_chroms_table, 
           by = c( "bim_file_chroms" = "chrom_ints" )
       ) %>% rename(
-          plink2 = bim_file_chroms,
-          vcf = chrom_names
+          "plink2" = "bim_file_chroms",
+          "vcf" = "chrom_names"
       )
 
       return(vcf_plink2_dictionary_table)
