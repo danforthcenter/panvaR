@@ -112,6 +112,10 @@ panvar_gwas <- function(genotype_data,
   # The genotypes
   the_genotypes <- genotype_rds_data$genotypes
   
+  # genotype info 
+  genotype_info <- genotype_rds_data$fam
+  geno.order <- genotype_info$sample.ID
+  
   # The vector of chromosomes
   the_chromosomes <- genotype_rds_data$map$chromosome
   
@@ -130,7 +134,7 @@ panvar_gwas <- function(genotype_data,
   # Rijan: Reading material clumping and pruning here https://www.biostars.org/p/343818/
   
   # Apply a PCA using an algorithm optimized for large file backed matrices
-  if(!is.null(pc_rds)){
+  if(is.null(pc_rds)){
     message(">> Calculating principal components")
     big_random_pca <- big_randomSVD(
       the_genotypes,
@@ -144,7 +148,17 @@ panvar_gwas <- function(genotype_data,
     the_covariates <- the_PCs[,1:max(pc_min, pc_max)]
   } else {
     the_PCs <- readRDS(pc_rds)
-    the_covariates <- the_PCs[,1:max(pc_min, pc_max)]
+    if(is.null(rownames(the_PCs))){
+      stop("User supplied PC file must have rownames corresponding to sample (line) names.")
+    }
+    if(any(is.na(the_PCs))){
+      stop("User supplied PC file must not have NA's")
+    }
+    # message(paste("PC matrix rownumber ", nrow(the_PCs)))
+    # message(paste("geno.order length ", length(geno.order)))
+    # message(paste("PC rownames length ", length(rownames(the_PCs))))
+    # the_PCs <- the_PCs[match(rownames(the_PCs), geno.order),] 
+    the_covariates <- the_PCs[ ,1:max(pc_min, pc_max)]
   }
   
   # Check if phenotype_input is a path or a data.table
@@ -202,10 +216,22 @@ panvar_gwas <- function(genotype_data,
   
   # This assumes that the last column
   # of the supplied table is phenotype data
-  phenotype_scores <- genotype_rds_data$fam %>%
+  phenotype_scores <- genotype_rds_data$fam %>% 
     pull(ncol(genotype_rds_data$fam))
   
-  include_in_gwas <- which(!is.na(phenotype_scores) & complete.cases(the_covariates))
+  # print(tail(genotype_rds_data$fam))
+  
+  # get order of the pcs and phenotypes so they match
+  if(is.null(pc_rds)){
+    include_in_gwas_pheno <- which(!is.na(phenotype_scores) & complete.cases(the_covariates))
+    include_in_gwas_PC <- which(!is.na(phenotype_scores) & complete.cases(the_covariates))
+  } else {
+    genos.with.pheno <- genotype_rds_data$fam$sample.ID[which(!is.na(phenotype_scores))] 
+    genos.with.pc <- rownames(the_covariates)
+    shared_genos <- sort(intersect(genos.with.pheno, genos.with.pc))
+    include_in_gwas_pheno <- match(shared_genos, genotype_rds_data$fam$sample.ID)
+    include_in_gwas_PC <- match(shared_genos, rownames(the_covariates))
+  }
   
   if(!is.null(specific_PCs)){
     pcs_to_include = specific_PCs
@@ -219,7 +245,7 @@ panvar_gwas <- function(genotype_data,
       if(pc_max > pc_min){
         for (j in pc_min:pc_max) {
           # Check correlation and handle potential errors/warnings in cor.test
-          cor_result <- tryCatch(cor.test(phenotype_scores[include_in_gwas], the_covariates[include_in_gwas, j]), warning = function(w) w, error = function(e) e)
+          cor_result <- tryCatch(cor.test(phenotype_scores[include_in_gwas_pheno], the_covariates[include_in_gwas_PC, j]), warning = function(w) w, error = function(e) e)
           if (!inherits(cor_result, "warning") && !inherits(cor_result, "error") && cor_result$p.value < 0.001) {
             pcs_to_include = c(pcs_to_include, j)
           } else if (inherits(cor_result, "warning") || inherits(cor_result, "error")) {
@@ -238,17 +264,17 @@ panvar_gwas <- function(genotype_data,
     }
   }
   
-  print(paste("GWAS model will include the following PC's: ", paste(pcs_to_include, collapse = ",")))
-  print(paste("Running model with", length(include_in_gwas), "genotypes and", nrow(genotype_rds_data$map), "snps."))
+  message(paste("GWAS model will include the following PC's: ", paste(pcs_to_include, collapse = ",")))
+  message(paste("Running model with", length(include_in_gwas_pheno), "genotypes and", nrow(genotype_rds_data$map), "snps."))
   
   # ind_u <- matrix(PC[genoLineIndx,pcs_to_include], ncol = length(pcs_to_include))
   
   gwas <- big_univLinReg(
     the_genotypes,
     scale(
-      phenotype_scores[include_in_gwas]),
-    ind.train = include_in_gwas,
-    covar.train = the_PCs[, pcs_to_include, drop = FALSE][include_in_gwas, , drop = FALSE], # Added drop=FALSE for robustness
+      phenotype_scores[include_in_gwas_pheno]),
+    ind.train = include_in_gwas_pheno,
+    covar.train = the_PCs[, pcs_to_include, drop = FALSE][include_in_gwas_PC, , drop = FALSE], # Added drop=FALSE for robustness
     ncores = 1
   )
   
