@@ -11,5 +11,6 @@
 #' @examples
 #' # set_out_dir("/home/user/output_directory")
 set_out_dir <- function(out_dir){
-  options(panvar_outdir=out_dir)
+  full.path <- path.expand(out_dir)
+  options(panvar_outdir=full.path)
 }
