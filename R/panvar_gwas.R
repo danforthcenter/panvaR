@@ -53,7 +53,8 @@ panvar_gwas <- function(genotype_data,
                         maf = 0.05,
                         missing_rate = 0.1,
                         dynamic_correlation = FALSE,
-                        specific_PCs = NULL) {
+                        specific_PCs = NULL,
+                        pc_rds = NULL) {
   
   
   message("~~~~~~~~~~~~~~~ Beginning GWAS! ~~~~~~~~~~~~~~~")
@@ -129,17 +130,22 @@ panvar_gwas <- function(genotype_data,
   # Rijan: Reading material clumping and pruning here https://www.biostars.org/p/343818/
   
   # Apply a PCA using an algorithm optimized for large file backed matrices
-  message(">> Calculating principal components")
-  big_random_pca <- big_randomSVD(
-    the_genotypes,
-    fun.scaling = snp_scaleBinom(),
-    ncores = 1,
-    k = max(pc_min, pc_max)
-  )
-  
-  the_PCs <- predict(big_random_pca)
-  
-  the_covariates <- the_PCs[,1:max(pc_min, pc_max)]
+  if(!is.null(pc_rds)){
+    message(">> Calculating principal components")
+    big_random_pca <- big_randomSVD(
+      the_genotypes,
+      fun.scaling = snp_scaleBinom(),
+      ncores = 1,
+      k = max(pc_min, pc_max)
+    )
+    
+    the_PCs <- predict(big_random_pca)
+    
+    the_covariates <- the_PCs[,1:max(pc_min, pc_max)]
+  } else {
+    the_PCs <- readRDS(pc_rds)
+    the_covariates <- the_PCs[,1:max(pc_min, pc_max)]
+  }
   
   # Check if phenotype_input is a path or a data.table
   if (is.character(phenotype_input)) {

@@ -45,7 +45,21 @@
 #' @importFrom methods is
 #'
 #' @export
-panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_data = NULL, annotation_table_path = NULL, tag_snps = NULL, r2_threshold = 0.6, maf = 0.05, missing_rate = 0.10, window = 500000,pc_min = 5,pc_max = 5, specific_pcs = NULL,dynamic_correlation = FALSE, all.impacts = FALSE){ 
+panvar_func <- function(vcf_file_path,
+                        phenotype_data = NULL,
+                        gwas_data = NULL,
+                        annotation_table_path = NULL,
+                        tag_snps = NULL,
+                        r2_threshold = 0.6,
+                        maf = 0.05,
+                        missing_rate = 0.10,
+                        window = 500000,
+                        pc_min = 5,
+                        pc_max = 5,
+                        specific_pcs = NULL,
+                        pc_rds = NULL,
+                        dynamic_correlation = FALSE,
+                        all.impacts = FALSE) {
   
   # --- Start: Input Validation ---
   if (!is.null(gwas_data) && !is.null(phenotype_data)) {
@@ -113,7 +127,8 @@ panvar_func <- function(vcf_file_path, phenotype_data = NULL, gwas_data = NULL, 
       pc_max = pc_max,
       dynamic_correlation = dynamic_correlation,
       maf = maf,
-      missing_rate = missing_rate
+      missing_rate = missing_rate,
+      pc_rds = pc_rds
     )
   }
   
