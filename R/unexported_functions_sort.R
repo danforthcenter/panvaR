@@ -752,14 +752,14 @@ temp_file <- function(create_file = FALSE, working_directory = NULL, prefix = NU
 # Function to manage the temporary directory
 # Checks if the directory exists; if not, creates it. Deletes contents if specified.
 
-temporary_directory <- function(delete_files = FALSE, working_directory = NULL) {
+temporary_directory <- function(dir = NULL, delete_files = FALSE) {
   
   if(!is.null(options()$panvar_outdir)){
     dir_path <- options()$panvar_outdir
-  } else if(is.null(working_directory)){
+  } else if(is.null(dir)){
     dir_path <- tempdir()
   } else {
-    dir_path <- working_directory
+    dir_path <- dir
   }
   
   # Use provided working directory or default to "panvar"

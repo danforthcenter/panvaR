@@ -39,4 +39,6 @@ Imports:
     svglite,
     stats,
     tibble,
-    rlang
+    rlang,
+    stringr,
+    rMVP
