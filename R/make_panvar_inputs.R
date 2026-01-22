@@ -1,3 +1,26 @@
+#' Make standard inputs for panvaR
+#' 
+#' Does some filtering of the genotype file for samples that have a phenotype and also minor allele frequency and snps with high missing rates. 
+#' Will also calculate prinicpal components and optionally kinship matrix of the genotype file for use downstream in gwas. 
+#'
+#' @param genotype.path character, path to genotype file, supported types: '.bed', .'vcf', '.vcf.gz'.
+#' @param phenotype.table data.frame, table of phenotype to test. Expects samples (lines) in column 1 and phenotype in column 2. 
+#' This is used to determine the set of samples (lines) to use in the analysis. 
+#' To avoid removing lines from analysis can supply a dummy data.frame with all genotypes in column 1 and any non-NA value in column 2. 
+#' @param min.maf numeric, filtering cutoff for minor allele frequency, snps are removed if they have maf less than this value. To ignore set to 0.
+#' @param max.missing.snp numeric, filtering cutoff for missing rate of snps, snps are removed if they have a missing rate higher than this. To ignore set to 1.
+#' @param calc.kinship boolean, optional, if TRUE, the kinship matrix will be calculated for use in mixed linear model gwas. 
+#' @param plink.path character, optional, path to plink2 executable. Will overide option set by [panvaR::set_plink_path].
+#' @param out.dir character, optional, path to store output. Will overide option set by [panvaR::set_out_dir].
+#' @param out.name character, optional, a prefix for output files.
+#'
+#' @returns
+#' Input files to be used for downstream panvaR functions. Stored in `out.dir` or the option set in [panvaR::set_out_dir]
+#' 
+#' @export
+#'
+#' @examples
+#' # work in progress
 make_panvar_inputs <- function(genotype.path,
                                phenotype.table, # two columns, 1: linenames 2: phenotype
                                min.maf = .05,

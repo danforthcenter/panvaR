@@ -19,5 +19,6 @@
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_replace
 #' @importFrom tibble enframe
+#' @importFrom utils write.table
 ## usethis namespace: end
 NULL
