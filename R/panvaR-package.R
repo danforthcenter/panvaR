@@ -2,7 +2,6 @@
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @importFrom bigsnpr big_univLinReg
 #' @importFrom bigstatsr big_univLinReg
 #' @importFrom dplyr all_of
 #' @importFrom dplyr dense_rank
@@ -16,6 +15,8 @@
 #' @importFrom stats complete.cases
 #' @importFrom stats cor.test
 #' @importFrom stats predict
+#' @importFrom stringr str_detect
+#' @importFrom stringr str_replace
 #' @importFrom tibble enframe
 ## usethis namespace: end
 NULL
