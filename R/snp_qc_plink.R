@@ -118,7 +118,9 @@ snp_qc_plink <- function(genotype.path,
   
   if(try == 0){
     
-    final_output_path <- paste0(out_fullpath,".bed")
+    # downstream expecting no suffix, output without for now
+    # final_output_path <- paste0(out_fullpath,".bed")
+    final_output_path <- out_fullpath
     
     message(
       paste("QC was successful, output stored at",final_output_path)

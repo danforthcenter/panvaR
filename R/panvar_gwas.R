@@ -10,6 +10,8 @@
 #' @param missing_rate numeric, optional. Missing rate filter for the genotype data. Default is 0.1.
 #' @param dynamic_correlation logical, optional. Whether additional PCs beyond the minimum should be calculated dynamically. Default is FALSE.
 #' @param specific_PCs numeric vector, optional. If you want to supply specific PCs instead of calculating them dynamically then use this to supply a vector of PCs.
+#' @param pc_rds character, optional, path to RDS file of a pre-computed PCA matrix. Rownames of matrix should be genotype/line names. 
+#'
 #' @return A data frame containing GWAS results with columns:
 #' - CHROM: chromosome of snp
 #' - BP: physical position of snp

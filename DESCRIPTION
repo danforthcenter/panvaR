@@ -40,4 +40,5 @@ Imports:
     stats,
     tibble,
     rlang,
-    stringr
+    stringr,
+    rMVP

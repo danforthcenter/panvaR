@@ -32,6 +32,8 @@ panvar_gwas(
 \item{dynamic_correlation}{logical, optional. Whether additional PCs beyond the minimum should be calculated dynamically. Default is FALSE.}
 
 \item{specific_PCs}{numeric vector, optional. If you want to supply specific PCs instead of calculating them dynamically then use this to supply a vector of PCs.}
+
+\item{pc_rds}{character, optional, path to RDS file of a pre-computed PCA matrix. Rownames of matrix should be genotype/line names.}
 }
 \value{
 A data frame containing GWAS results with columns:

@@ -12,6 +12,7 @@
 #' @importFrom dplyr slice
 #' @importFrom ggplot2 scale_shape_manual
 #' @importFrom rlang .data
+#' @importFrom rMVP MVP.Data
 #' @importFrom stats complete.cases
 #' @importFrom stats cor.test
 #' @importFrom stats predict

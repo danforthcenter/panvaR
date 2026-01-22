@@ -47,6 +47,8 @@ panvar_func(
 
 \item{specific_pcs}{Specific prinicipal component numbers to include in the GWAS model. Numeric vector.}
 
+\item{pc_rds}{character, optional, path to RDS file of a pre-computed PCA matrix. Rownames of matrix should be genotype/line names.}
+
 \item{dynamic_correlation}{Should dynamic correlation of PC's be used? If true, PC's between the minimum and maximum number of PC's are included in the GWAS model if they are siginificantly correlated with the phenotype at the \eqn{\alpha} = .001 level.}
 
 \item{all.impacts}{Low impact snp's are omitted for better visualization by default. If all impacts is true, low impact snp's are included in the output.}
