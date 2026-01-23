@@ -7,7 +7,7 @@
 #' Samples in file will be included. Sample filtering happens before other filtering per plink's order of operations.
 #' @param plink.path character, optional, path to plink2 executable. If not provided, will default to option set by [panvaR::set_plink_path].
 #' @param out.dir character, optional, path to output files. If not provided, will default to option set by [panvaR::set_out_dir]
-#' @param out.name character, optional, prefix for files output. 
+#' @param out.prefix character, optional, prefix for files output. 
 #'
 #' @returns
 #' filtered bed/bim/bam files stored in out.dir. 
@@ -23,12 +23,14 @@ snp_qc_plink <- function(genotype.path,
                          sample.list.path = NULL,
                          plink.path = NULL,
                          out.dir = NULL,
-                         out.name = NULL){
+                         out.prefix = NULL){
   
   # ~~~~ Initialize ~~~~
   
   # check plink.path
-  if (!is.null(options()$plink_path)) {
+  if(!is.null(plink.path)){
+    plink.exec <- plink.path
+  } else if(!is.null(options()$plink_path)){
     plink.exec <- options()$plink_path
   } else {
     plink.exec <- "plink2"
@@ -43,13 +45,22 @@ snp_qc_plink <- function(genotype.path,
   # make wellformed path
   genotype.path <- normalizePath(genotype.path)
   
+  # check prefix
+  if(!is.null(out.prefix)){
+    out.prefix <- out.prefix
+  } else if(!is.null(options()$panvar_prefix)){
+    out.prefix <- options()$panvar_prefix
+  } else {
+    out.prefix <- NULL
+  }
+  
   # name output files
   maflabel <- paste0("maf", min.maf)
   missinglabel <- paste0("missing",max.missing.snp)
-  if(is.null(out.name)){
+  if(is.null(out.prefix)){
     outfullname <- paste("PlinkQC", maflabel, missinglabel, sep = "_")
   } else {
-    outfullname <- paste(out.name, "PlinkQC", maflabel, missinglabel, sep = "_")
+    outfullname <- paste(out.prefix, "PlinkQC", maflabel, missinglabel, sep = "_")
   }
   
   # make full output path

@@ -12,7 +12,7 @@
 #' @param calc.kinship boolean, optional, if TRUE, the kinship matrix will be calculated for use in mixed linear model gwas. 
 #' @param plink.path character, optional, path to plink2 executable. Will overide option set by [panvaR::set_plink_path].
 #' @param out.dir character, optional, path to store output. Will overide option set by [panvaR::set_out_dir].
-#' @param out.name character, optional, a prefix for output files.
+#' @param out.prefix character, optional, a prefix for output files. Will overide option set by [panvaR::set_file_prefix].
 #'
 #' @returns
 #' Input files to be used for downstream panvaR functions. Stored in `out.dir` or the option set in [panvaR::set_out_dir]
@@ -28,20 +28,33 @@ make_panvar_inputs <- function(genotype.path,
                                calc.kinship = F,
                                plink.path = NULL,
                                out.dir = NULL,
-                               out.name = NULL){
+                               out.prefix = NULL){
   
   # ~~~~ Initialize ~~~~
   
   # store phenotype name
   pheno.name <- names(phenotype.table)[2]
+  
   # check plink.path
-  if (!is.null(options()$plink_path)) {
+  if(!is.null(plink.path)){
+    plink.exec <- plink.path
+  } else if(!is.null(options()$plink_path)){
     plink.exec <- options()$plink_path
   } else {
     plink.exec <- "plink2"
   }
+  
   # check output directory
   out.dir.path <- temporary_directory(out.dir)
+  
+  # check prefix
+  if(!is.null(out.prefix)){
+    out.prefix <- out.prefix
+  } else if(!is.null(options()$panvar_prefix)){
+    out.prefix <- options()$panvar_prefix
+  } else {
+    out.prefix <- NULL
+  }
   
   # ~~~~ QC phenotype ~~~~
   
@@ -70,7 +83,7 @@ make_panvar_inputs <- function(genotype.path,
       sample.list.path = samples.out.file,
       plink.path = plink.path,
       out.dir = out.dir,
-      out.name = out.name
+      out.prefix = out.prefix
     )
 
   # ~~~~ generate PC's and Kinship ~~~~ 
@@ -81,10 +94,10 @@ make_panvar_inputs <- function(genotype.path,
   }
   
   # make our output
-  if(is.null(out.name)){
+  if(is.null(out.prefix)){
     mvp.out.path <- file.path(out.dir.path, "PanvarIN")
   } else {
-    mvp.out.path <- file.path(out.dir.path, out.name)
+    mvp.out.path <- file.path(out.dir.path, out.prefix)
   }
   
   rMVP::MVP.Data(fileBed = snp_qc_path,
