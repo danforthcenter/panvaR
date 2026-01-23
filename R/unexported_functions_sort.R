@@ -754,12 +754,20 @@ temp_file <- function(create_file = FALSE, working_directory = NULL, prefix = NU
 
 temporary_directory <- function(dir = NULL, delete_files = FALSE) {
   
-  if(!is.null(options()$panvar_outdir)){
+  # if(!is.null(options()$panvar_outdir)){
+  #   dir_path <- options()$panvar_outdir
+  # } else if(is.null(dir)){
+  #   dir_path <- tempdir()
+  # } else {
+  #   dir_path <- dir
+  # }
+  
+  if(!is.null(dir)){
+    dir_path <- path.expand(dir)
+  } else if(!is.null(options()$panvar_outdir)){
     dir_path <- options()$panvar_outdir
-  } else if(is.null(dir)){
-    dir_path <- tempdir()
   } else {
-    dir_path <- dir
+    dir_path <- tempdir()
   }
   
   # Use provided working directory or default to "panvar"

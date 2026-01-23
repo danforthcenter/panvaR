@@ -4,7 +4,9 @@
 pheno <- read.delim("inst/extdata/Setaria_shattering_example_phenotype.tsv")
 
 make_panvar_inputs(genotype.path = "inst/extdata/Setaria_shattering_example_pruned.bed",
-                   phenotype.table = pheno)
+                   phenotype.table = pheno,
+                   out.prefix = "INPUTSPHENO",
+                   out.dir = "~/scratch/temp")
 
 pheno <- read.csv("~/scratch/gwas_in_F_pgrp/6.BG.bothftcovs_all_experiments_BLUPs_scaled_withPCtraits.csv")
 pheno <- pheno %>% 
