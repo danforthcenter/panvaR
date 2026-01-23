@@ -130,14 +130,15 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
   
   # make output parameters
   if(output.manhattan){
-    out.params <- c("pmap", "plot")
-  } else {
     out.params <- c("plot")
+  } else {
+    out.params <- NULL
   }
   
   message("Running GWAS")
   if(gwas.model == "GLM"){
     
+    mvp.res <- 
     MVP(phe = pheno.sub,
         geno = geno,
         map = map,
@@ -150,6 +151,7 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
     
   } else {
     
+    mvp.res <-
     MVP(phe = pheno.sub,
         geno = geno,
         map = map,
@@ -163,29 +165,19 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
     
   }
   
+  # format gwas results
+  dim(mvp.res$glm.results)
+  if(gwas.model == "GLM"){
+    out <- as.data.frame(mvp.res$glm.results)
+  } else {
+    out <- as.data.frame(mvp.res$mlm.results)
+  }
   
+  names(out)[3] <- "Pval"
+  out <- out %>% 
+    mutate(LogPval = -log10(Pval))
   
-  # MVP(phe = pheno.sub,
-  #     geno = geno,
-  #     map = map,
-  #     # K = kin,
-  #     nPC.GLM = num.pcs,
-  #     nPC.MLM = num.pcs,
-  #     nPC.FarmCPU = num.pcs,
-  #     p.threshold = effective.bonf,
-  #     QTN.threshold = .01, # when to include snps in fcpu model, default = .01
-  #     method.bin= "FaST-LMM",
-  #     priority = "speed",
-  #     vc.method = "EMMA",
-  #     # method = c("GLM", "FarmCPU"), # original
-  #     method = c("FarmCPU", "MLM", "GLM"), # flip order
-  #     outpath = paste0("/scratch/gwas_out/mvp_out/tables/", pheno.name),
-  #     file.output = c("pmap", "pmap.signal", "log"),
-  #     verbose = T,
-  #     # cutoff for "signals" file and for drawing and plots. plots only plotted if "plot" in file.output vector
-  #     # cutoff is the alpha value (gets divided by marker number), so if want specific pvalue have to do this
-  #     threshold = effective.bonf * nrow(geno), 
-  #     memo = this.memo)
-  
-  
+  # write out gwas results
+  outfullfilename <- paste0(out.prefix, "_", gwas.model, "_GWASresults.csv")
+  write.csv(out, file.path(out.dir, outfullfilename), row.names = F)
 }
