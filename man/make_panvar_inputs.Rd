@@ -12,7 +12,7 @@ make_panvar_inputs(
   calc.kinship = F,
   plink.path = NULL,
   out.dir = NULL,
-  out.name = NULL
+  out.prefix = NULL
 )
 }
 \arguments{
@@ -32,7 +32,7 @@ To avoid removing lines from analysis can supply a dummy data.frame with all gen
 
 \item{out.dir}{character, optional, path to store output. Will overide option set by \link{set_out_dir}.}
 
-\item{out.name}{character, optional, a prefix for output files.}
+\item{out.prefix}{character, optional, a prefix for output files. Will overide option set by \link{set_file_prefix}.}
 }
 \value{
 Input files to be used for downstream panvaR functions. Stored in \code{out.dir} or the option set in \link{set_out_dir}

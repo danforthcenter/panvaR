@@ -57,3 +57,27 @@ get_geno_filetype <- function(genotype.path){
   }
 }
 
+
+
+make_ld <- function(plink.path,
+                    snp.name,
+                    window,
+                    bedfile,
+                    in.dir,
+                    out.dir) {
+  system(
+    paste0(
+      plink.path,
+      " --silent --bfile ",
+      in.dir,
+      bedfile,
+      " --r2-unphased --ld-snp ",
+      snp.name,
+      " --ld-window-kb ",
+      window,
+      " --ld-window 99999 --ld-window-r2 0 --out ",
+      out.dir, 
+      "ld_out_temp"
+    )
+  )
+}

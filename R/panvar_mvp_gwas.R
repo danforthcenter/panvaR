@@ -168,14 +168,17 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
   # format gwas results
   dim(mvp.res$glm.results)
   if(gwas.model == "GLM"){
-    out <- as.data.frame(mvp.res$glm.results)
+    out <- as.data.frame(cbind(mvp.res$map, mvp.res$glm.results))
   } else {
-    out <- as.data.frame(mvp.res$mlm.results)
+    out <- as.data.frame(cbind(mvp.res$map, mvp.res$mlm.results))
   }
   
-  names(out)[3] <- "Pval"
+  names(out)[9] <- "PVAL"
   out <- out %>% 
-    mutate(LogPval = -log10(Pval))
+    mutate(LOGPVAL = -log10(.data$PVAL)) %>% 
+    rename("CHR" = "CHROM",
+           "EFF" = "Effect",
+           "marker.ID" = "SNP")
   
   # write out gwas results
   outfullfilename <- paste0(out.prefix, "_", gwas.model, "_GWASresults.csv")
