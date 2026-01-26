@@ -7,7 +7,7 @@
 #' @param qtl.df data.frame, table that includes list of snps to calculate LD to with columns (CHR, POS, LOGPVAL), corresponding to (chromosome, physical position, and -log10(p-value)). 
 #' QTL are typically defined as hits grouped by LD by something like `plink --clump`
 #' @param tag.snp character, marker.ID of snp around which to calculate LD. In the form 'CHR-POS'
-#' @param window numeric, kilobases on either side of top QTL snp or tag.snp to plot. Size of entire search window will be 2*window.
+#' @param window numeric, total window size in KB, all variants within .5 * window are calculated. 
 #' @param plink.path character, optional, path to plink2 executable. Will overide option set by [panvaR::set_plink_path].
 #' @param geno.bed character, prefix of genotype files in plink (bed/bim/fam) format. Do not include ".bed" extension.
 #' @param in.dir character, directory where genotype files are located
@@ -57,12 +57,11 @@ get_ld_in_window <- function(qtl.df= NULL,
     stop("Must supply one of qtl.df or tag.snp.")
   # Use tag snp
   } else if(!is.null(tag.snp)){
-    # TODO: add out directory option to this function
     this.snp.name <- tag.snp
     key.snp <- tag.snp
     make_ld(plink.path = plink.exec, 
             snp.name = this.snp.name, 
-            windo = window, 
+            window = window, 
             bedfile = geno.bed, 
             in.dir = in.dir,
             out.dir = out.dir)
@@ -96,7 +95,7 @@ get_ld_in_window <- function(qtl.df= NULL,
       
       make_ld(plink.path = plink.exec, 
               snp.name = this.snp.name, 
-              windo = window, 
+              window = window, 
               bedfile = geno.bed, 
               in.dir = in.dir,
               out.dir = out.dir)

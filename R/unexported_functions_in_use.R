@@ -59,6 +59,19 @@ get_geno_filetype <- function(genotype.path){
 
 
 
+#' use plink to calculate ld
+#'
+#' @param plink.path path to plink2 executable
+#' @param snp.name name of snp
+#' @param window total window size in KB, all variants within .5 * window are calculated
+#' @param bedfile bedfile prefix, no .bed
+#' @param in.dir path to location of bed file
+#' @param out.dir path to output temp file 
+#'
+#' @returns
+#' @export
+#'
+#' @examples
 make_ld <- function(plink.path,
                     snp.name,
                     window,

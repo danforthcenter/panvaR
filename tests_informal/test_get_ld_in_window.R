@@ -7,7 +7,7 @@ set_plink_path("/home/cluebbert/bin/plink2")
 # test tag snp
 out <- 
 panvaR::get_ld_in_window(tag.snp = "Chr_05-6857045",
-                 window = 500,
+                 window = 500*2,
                  in.dir = "inst/extdata/",
                  out.dir = "~/scratch/panvar_test/",
                  geno.bed = "Setaria_shattering_example_pruned")
@@ -24,7 +24,7 @@ sub <- qtl.df %>%
          LOGPVAL = logpval)
 
 panvaR::get_ld_in_window(qtl.df = sub,
-                         window = 500,
+                         window = 500*2,
                          in.dir = "~/scratch/gwas_in_F_pgrp/",
                          out.dir = "~/scratch/gwas_in_F_pgrp/",
                          geno.bed = "1.WiDiv_942g_AGPv4_imputed_maf0.05_maxmaf0.95_masMissing0.1_onlyphenotypedlines_fixnames", 
