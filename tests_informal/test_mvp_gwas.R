@@ -12,8 +12,9 @@ panvar_mvp_gwas(inputs.dir = "~/scratch/panvar_test/gwas/",
                 out.dir = "~/scratch/temp",
                 gwas.model = "GLM")
 
+
 # run full genome, unfixed chromosomes. does it break anything besides throwing a warning?
-# outputs warning if plotting
+# outputs warning if plotting, I think will be fixed if we fix the chromosome names. this file has scaffolds
 make_panvar_inputs(genotype.path = "~/scratch/setaria_annotated_vcf.vcf.vcf",
                    phenotype.table = pheno,
                    out.prefix = "GWAStest",

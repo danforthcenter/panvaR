@@ -8,6 +8,7 @@
 #' @importFrom dplyr desc
 #' @importFrom dplyr distinct
 #' @importFrom dplyr left_join
+#' @importFrom dplyr n
 #' @importFrom dplyr rename
 #' @importFrom dplyr slice
 #' @importFrom ggplot2 scale_shape_manual

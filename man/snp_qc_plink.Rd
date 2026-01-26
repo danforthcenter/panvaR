@@ -11,7 +11,7 @@ snp_qc_plink(
   sample.list.path = NULL,
   plink.path = NULL,
   out.dir = NULL,
-  out.name = NULL
+  out.prefix = NULL
 )
 }
 \arguments{
@@ -28,7 +28,7 @@ Samples in file will be included. Sample filtering happens before other filterin
 
 \item{out.dir}{character, optional, path to output files. If not provided, will default to option set by \link{set_out_dir}}
 
-\item{out.name}{character, optional, prefix for files output.}
+\item{out.prefix}{character, optional, prefix for files output.}
 }
 \value{
 filtered bed/bim/bam files stored in out.dir.
