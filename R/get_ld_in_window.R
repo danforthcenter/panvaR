@@ -9,7 +9,7 @@
 #' @param tag.snp character, marker.ID of snp around which to calculate LD. In the form 'CHR-POS'
 #' @param window numeric, kilobases on either side of top QTL snp or tag.snp to plot. Size of entire search window will be 2*window.
 #' @param plink.path character, optional, path to plink2 executable. Will overide option set by [panvaR::set_plink_path].
-#' @param geno.bed character, prefix of genotype files in plink (bed/bim/fam) format
+#' @param geno.bed character, prefix of genotype files in plink (bed/bim/fam) format. Do not include ".bed" extension.
 #' @param in.dir character, directory where genotype files are located
 #' @param out.dir character, where to output some temporary files. 
 #' @param verbose boolean, if TRUE, output some status reports
@@ -68,7 +68,7 @@ get_ld_in_window <- function(qtl.df= NULL,
             out.dir = out.dir)
     ld.table <- read.delim(paste0(out.dir, "/ld_out_temp.vcor"), header = T)
     ld.table_out <- ld.table %>%
-      select("marker.ID" = "ID_B", "R2" = "UNPHASED_R2")  # Use qtl dataframe
+      select("marker.ID" = "ID_B", "R2" = "UNPHASED_R2")  
   } else {
     this.clump.df <- qtl.df %>%
       mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-"))
@@ -100,9 +100,9 @@ get_ld_in_window <- function(qtl.df= NULL,
               bedfile = geno.bed, 
               in.dir = in.dir,
               out.dir = out.dir)
-      ld.table <- read.table(paste0(out.dir, "/ld_out_temp.vcor"), header = T)
+      ld.table <- read.delim(paste0(out.dir, "/ld_out_temp.vcor"), header = T)
       ld.table_sub <- ld.table %>%
-        select("marker.ID" = "ID_B", "UNPHASED_R2")
+        select("marker.ID" = "ID_B", "R2" = "UNPHASED_R2")  
       ld.table_all <- bind_rows(ld.table_all, ld.table_sub)
       if(do.progress){
         setTxtProgressBar(pb, i)
