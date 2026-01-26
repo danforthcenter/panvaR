@@ -6,7 +6,7 @@
 \usage{
 make_panvar_inputs(
   genotype.path,
-  phenotype.table,
+  phenotype.path,
   min.maf = 0.05,
   max.missing.snp = 0.1,
   calc.kinship = F,
@@ -18,9 +18,8 @@ make_panvar_inputs(
 \arguments{
 \item{genotype.path}{character, path to genotype file, supported types: '.bed', .'vcf', '.vcf.gz'.}
 
-\item{phenotype.table}{data.frame, table of phenotype to test. Expects samples (lines) in column 1 and phenotype in column 2.
-This is used to determine the set of samples (lines) to use in the analysis.
-To avoid removing lines from analysis can supply a dummy data.frame with all genotypes in column 1 and any non-NA value in column 2.}
+\item{phenotype.path}{character, path to table of phenotype to test. Expects samples (lines) in column 1 and phenotype in column 2.
+This is used to determine the set of samples (lines) to use in the analysis.}
 
 \item{min.maf}{numeric, filtering cutoff for minor allele frequency, snps are removed if they have maf less than this value. To ignore set to 0.}
 
@@ -32,7 +31,7 @@ To avoid removing lines from analysis can supply a dummy data.frame with all gen
 
 \item{out.dir}{character, optional, path to store output. Will overide option set by \link{set_out_dir}.}
 
-\item{out.prefix}{character, optional, a prefix for output files. Will overide option set by \link{set_file_prefix}.}
+\item{out.prefix}{character, optional, a prefix for output files. Will overide option set by \link{set_panvar_prefix}.}
 }
 \value{
 Input files to be used for downstream panvaR functions. Stored in \code{out.dir} or the option set in \link{set_out_dir}

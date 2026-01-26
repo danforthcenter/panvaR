@@ -8,11 +8,11 @@ get_ld_in_window(
   qtl.df = NULL,
   tag.snp = NULL,
   window,
-  plink.path,
+  plink.path = NULL,
   geno.bed,
   in.dir,
-  out.dir,
-  verbose = T
+  out.dir = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -21,11 +21,11 @@ QTL are typically defined as hits grouped by LD by something like \code{plink --
 
 \item{tag.snp}{character, marker.ID of snp around which to calculate LD. In the form 'CHR-POS'}
 
-\item{window}{numeric, kilobases on either side of top QTL snp or tag.snp to plot. Size of entire search window will be 2*window.}
+\item{window}{numeric, total window size in KB, all variants within .5 * window are calculated.}
 
 \item{plink.path}{character, optional, path to plink2 executable. Will overide option set by \link{set_plink_path}.}
 
-\item{geno.bed}{character, prefix of genotype files in plink (bed/bim/fam) format}
+\item{geno.bed}{character, prefix of genotype files in plink (bed/bim/fam) format. Do not include ".bed" extension.}
 
 \item{in.dir}{character, directory where genotype files are located}
 

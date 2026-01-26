@@ -69,9 +69,11 @@ get_geno_filetype <- function(genotype.path){
 #' @param out.dir path to output temp file 
 #'
 #' @returns
+#' ld values in file named 'ld_out_temp.vcor' 
 #' @export
 #'
 #' @examples
+#' # work in progress
 make_ld <- function(plink.path,
                     snp.name,
                     window,

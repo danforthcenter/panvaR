@@ -1,33 +1,32 @@
-# pheno <- read.table(paste0(in.prefix, ".phe"), header = T)
-# geno <- attach.big.matrix(paste0(in.prefix, ".geno.desc"))
-# map <- read.table(paste0(in.prefix, ".geno.map"), header = T)
-# pcs <- attach.big.matrix(paste0(in.prefix, ".pc.desc"))
-# kin <- attach.big.matrix(paste0(in.prefix, ".kin.desc"))
-# 
-# 
-# MVP(phe = pheno.sub[,c(1,2)],
-#     geno = geno,
-#     map = map,
-#     K = kin,
-#     nPC.GLM = num.pcs,
-#     nPC.MLM = num.pcs,
-#     nPC.FarmCPU = num.pcs,
-#     p.threshold = effective.bonf,
-#     QTN.threshold = .01, # when to include snps in fcpu model, default = .01
-#     method.bin= "FaST-LMM",
-#     priority = "speed",
-#     vc.method = "EMMA",
-#     # method = c("GLM", "FarmCPU"), # original
-#     method = c("FarmCPU", "MLM", "GLM"), # flip order
-#     outpath = paste0("/scratch/gwas_out/mvp_out/tables/", pheno.name),
-#     file.output = c("pmap", "pmap.signal", "log"),
-#     verbose = T,
-#     # cutoff for "signals" file and for drawing and plots. plots only plotted if "plot" in file.output vector
-#     # cutoff is the alpha value (gets divided by marker number), so if want specific pvalue have to do this
-#     threshold = effective.bonf * nrow(geno), 
-#     memo = this.memo)
 
-
+#' Use rMVP to run gwas 
+#' 
+#' Designed to be used with [panvaR::make_panvar_inputs]. Will read in files and 
+#' run GWAS using [rMVP::MVP]. Can also supply inputs as matrices. 
+#'
+#' @param inputs.dir character, directory to find input files created by [panvaR::make_panvar_inputs]. 
+#' Consider using `options()$panvar_outdir`. 
+#' @param in.prefix character, prefix of files in input directory. Same as supplied to [panvaR::make_panvar_inputs].
+#' Consider using [panvaR::set_panvar_prefix]. 
+#' @param npcs numeric, number of principal components to be included in the gwas model. 
+#' @param gwas.model character, one of "GLM" or "MLM" to refer to a generalized linear model 
+#' and mixed-linear model respectively. 
+#' @param output.manhattan boolean, if TRUE, visualizations of gwas results will be output to out.dir
+#' @param phenotype.mat matrix, optional, object to use for phenotype 
+#' @param geno.mat big.matrix, optional, object to use for genotype 
+#' @param map.mat matrix, optional, object to use a genotype map file
+#' @param pcs.mat big.matrix, optional, object to use as principal component matrix
+#' @param kin.mat big.matrix, optional, object to use as kinship matrix
+#' @param out.dir character, optional, path to store output. Will overide option set by [panvaR::set_out_dir]
+#' @param out.prefix character, optional, a prefix for output files. Will overide option set by [panvaR::set_panvar_prefix].
+#'
+#' @returns
+#' outputs table of gwas results and optionally visualizations produced by 
+#' [rMVP::MVP]
+#' @export
+#'
+#' @examples
+#' # work in progress
 panvar_mvp_gwas <- function(inputs.dir = NULL,
                             in.prefix = NULL,
                             npcs = NULL,
