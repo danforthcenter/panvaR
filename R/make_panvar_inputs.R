@@ -22,7 +22,7 @@
 #' @examples
 #' # work in progress
 make_panvar_inputs <- function(genotype.path,
-                               phenotype.table, # two columns, 1: linenames 2: phenotype
+                               phenotype.path, # two columns, 1: linenames 2: phenotype
                                min.maf = .05,
                                max.missing.snp = .1,
                                calc.kinship = F,
@@ -31,6 +31,9 @@ make_panvar_inputs <- function(genotype.path,
                                out.prefix = NULL){
   
   # ~~~~ Initialize ~~~~
+  
+  # read in phenotype file
+  phenotype.table <- data.table::fread(phenotype.path)
   
   # store phenotype name
   pheno.name <- names(phenotype.table)[2]
@@ -103,6 +106,7 @@ make_panvar_inputs <- function(genotype.path,
   rMVP::MVP.Data(fileBed = snp_qc_path,
                  filePC = TRUE,
                  fileKin = calc.kinship,
+                 filePhe = phenotype.path,
                  pcs.keep = 10,
                  out = mvp.out.path)
 }

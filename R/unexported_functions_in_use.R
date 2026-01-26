@@ -90,7 +90,18 @@ make_ld <- function(plink.path,
       window,
       " --ld-window 99999 --ld-window-r2 0 --out ",
       out.dir, 
-      "ld_out_temp"
+      "/ld_out_temp"
     )
   )
+}
+
+
+# extract position from marker.ID in the form "CHR-POS"
+get_bp_from_id <- function(marker.ID){
+  as.numeric(stringr::str_extract(marker.ID, "-(.*)", group = 1))
+}
+
+# extract chromsome from marker.ID in the form "CHR-POS"
+get_chrom_from_id <- function(marker.ID){
+  as.numeric(stringr::str_extract(x, "(^.*)-(.*)", group = 1))
 }

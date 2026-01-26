@@ -30,10 +30,10 @@
 
 panvar_mvp_gwas <- function(inputs.dir = NULL,
                             in.prefix = NULL,
-                            phenotype.table = NULL,
                             npcs = NULL,
                             gwas.model = c("GLM", "MLM"),
                             output.manhattan = FALSE,
+                            phenotype.mat = NULL,
                             geno.mat = NULL,
                             map.mat = NULL,
                             pcs.mat = NULL,
@@ -44,6 +44,24 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
   # check input directory
   if(!is.null(inputs.dir)){
     inputs.dir <- normalizePath(inputs.dir)
+  }
+  
+  # check out.dir
+  if(!is.null(out.dir)){
+    out.dir <- out.dir
+  } else if(!is.null(options()$panvar_outdir)){
+    out.dir <- options()$panvar_outdir
+  } else {
+    out.dir <- tempdir()
+  }
+  
+  # check out prefix
+  if(!is.null(out.prefix)){
+    out.prefix <- out.prefix
+  } else if(!is.null(options()$panvar_prefix)){
+    out.prefix <- options()$panvar_prefix
+  } else {
+    out.prefix <- NULL
   }
   
   # check in prefix
@@ -61,6 +79,9 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
     user.supplied <- TRUE
   } else {
     matched.files <- list.files(path = inputs.dir, pattern = paste0("^", in.prefix))
+    if(length(matched.files) == 0){
+      stop(paste0("Error in finding input files using input directory: ", inputs.dir, " and input prefix ", in.prefix))
+    }
     message(paste0("Searching for prefix: ", out.prefix, " in directory: ", out.dir))
     message(paste0("Found the following files: \n",
                    paste(matched.files, collapse = ", \n")))
@@ -71,9 +92,10 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
   # read in the matrices if user supplied and make sure they're all here
   if(user.supplied){
     geno <- geno.mat
+    pheno <- pheno.mat
     map <- map.mat
     pcs <- pcs.mat
-    mats <- list(geno.mat = geno, map.mat = map, pcs.mat = pcs)
+    mats <- list(geno.mat = geno, map.mat = map, pcs.mat = pcs, pheno.mat = pheno)
     if(gwas.model == "GLM"){
       if(any(sapply(mats, is.null))){
         stop(paste0("Must supply all of geno.mat, map.mat and pcs.mat for GLM.
@@ -95,38 +117,22 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
     list.files(path = inputs.dir, pattern = paste0("^", in.prefix, ".*", ".geno.desc$"), full.names = T)
     
     geno <- attach.big.matrix(get_an_input(inputs.dir, in.prefix, "geno.desc"))
+    pheno <- read.table(get_an_input(inputs.dir, in.prefix, ".phe"), header = T)
     map <- read.table(get_an_input(inputs.dir, in.prefix, "geno.map"), header = T)
     pcs <- attach.big.matrix(get_an_input(inputs.dir, in.prefix, "pc.desc"))
     if(gwas.model == "MLM"){
       kin <- attach.big.matrix(get_an_input(inputs.dir, in.prefix, "kin.desc"))
     }
   }
-
-  # check out.dir
-  if(!is.null(out.dir)){
-    out.dir <- out.dir
-  } else if(!is.null(options()$panvar_prefix)){
-    out.dir <- options()$panvar_prefix
-  } else {
-    out.dir <- tempdir()
-  }
-  
-  # check out prefix
-  if(!is.null(out.prefix)){
-    out.prefix <- out.prefix
-  } else if(!is.null(options()$panvar_prefix)){
-    out.prefix <- options()$panvar_prefix
-  } else {
-    out.prefix <- NULL
-  }
   
   message("Checking phenotype table.")
   # check phenotype table
-  pheno.name <- names(phenotype.table)[2]
-  pheno.sub <- phenotype.table %>% 
-    filter(!is.na(.data[[pheno.name]])) 
-  message(paste("Removed", nrow(phenotype.table) - nrow(pheno.sub), "samples due to NA values in phenotype."))
-  names(pheno.sub)[1] <- "Taxa"
+  
+  # pheno.name <- names(phenotype.table)[2]
+  # pheno.sub <- phenotype.table %>% 
+  #   filter(!is.na(.data[[pheno.name]])) 
+  # message(paste("Removed", nrow(phenotype.table) - nrow(pheno.sub), "samples due to NA values in phenotype."))
+  # names(pheno.sub)[1] <- "Taxa"
   
   # make output parameters
   if(output.manhattan){
@@ -139,7 +145,7 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
   if(gwas.model == "GLM"){
     
     mvp.res <- 
-    MVP(phe = pheno.sub,
+    MVP(phe = pheno,
         geno = geno,
         map = map,
         method = "GLM",
@@ -152,7 +158,7 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
   } else {
     
     mvp.res <-
-    MVP(phe = pheno.sub,
+    MVP(phe = pheno,
         geno = geno,
         map = map,
         K = kin,

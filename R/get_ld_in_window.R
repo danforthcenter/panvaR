@@ -30,7 +30,7 @@ get_ld_in_window <- function(qtl.df= NULL,
                              geno.bed,
                              in.dir,
                              out.dir = NULL,
-                             verbose = T){
+                             verbose = TRUE){
   
   # check plink.path
   if(!is.null(plink.path)){
@@ -49,6 +49,7 @@ get_ld_in_window <- function(qtl.df= NULL,
   } else {
     out.dir <- tempdir()
   }
+  out.dir <- normalizePath(out.dir)
   
   # calc ld either using 1 tag snp or multiple snps in a qtl
   if(!is.null(qtl.df) & !is.null(tag.snp)){
@@ -65,7 +66,7 @@ get_ld_in_window <- function(qtl.df= NULL,
             bedfile = geno.bed, 
             in.dir = in.dir,
             out.dir = out.dir)
-    ld.table <- read.delim(paste0(out.dir, "/ld_out_temp.vcor"), header = T)
+    ld.table <- read.delim(file.path(out.dir, "ld_out_temp.vcor"), header = T)
     ld.table_out <- ld.table %>%
       select("marker.ID" = "ID_B", "R2" = "UNPHASED_R2")  
   } else {
@@ -99,7 +100,7 @@ get_ld_in_window <- function(qtl.df= NULL,
               bedfile = geno.bed, 
               in.dir = in.dir,
               out.dir = out.dir)
-      ld.table <- read.delim(paste0(out.dir, "/ld_out_temp.vcor"), header = T)
+      ld.table <- read.delim(file.path(out.dir, "ld_out_temp.vcor"), header = T)
       ld.table_sub <- ld.table %>%
         select("marker.ID" = "ID_B", "R2" = "UNPHASED_R2")  
       ld.table_all <- bind_rows(ld.table_all, ld.table_sub)
@@ -117,6 +118,14 @@ get_ld_in_window <- function(qtl.df= NULL,
       filter(1:n() == 1)
   }
   
+  # retain list of qtl snps 
+  if(!is.null(tag.snp)){
+    qtl.snps <- NULL
+  } else {
+    qtl.snps <- unique(this.clump.df$marker.ID)
+  }
+  
   return(list(table = ld.table_out,
-              key.snp = key.snp))
+              key.snp = key.snp,
+              qtl.snps = qtl.snps))
 }
