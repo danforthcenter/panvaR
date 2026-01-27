@@ -4,3 +4,5 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^tests_informal$
+^Reproduction\.html$
+^Reproduction\.qmd$

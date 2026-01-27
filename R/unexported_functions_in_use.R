@@ -105,5 +105,5 @@ get_bp_from_id <- function(marker.ID){
 
 # extract chromsome from marker.ID in the form "CHR-POS"
 get_chrom_from_id <- function(marker.ID){
-  as.numeric(stringr::str_extract(x, "(^.*)-(.*)", group = 1))
+  as.numeric(stringr::str_extract(marker.ID, "(^.*)-(.*)", group = 1))
 }

@@ -38,4 +38,4 @@ make_panvar_manhattan(gwas.res = gwas.df,
                       pvals.in.log = F,
                       ld.list = out_ld,
                       window = 500,
-                      sig.line = 6)
+                      sig.line = 6, orient = "V")

@@ -11,7 +11,8 @@ make_panvar_manhattan(
   plot.r2.thresh = 0.2,
   ld.list,
   window,
-  sig.line
+  sig.line,
+  orient = c("H", "V")
 )
 }
 \arguments{
@@ -28,9 +29,12 @@ make_panvar_manhattan(
 \item{window}{kilobases on either side of top QTL snp to plot}
 
 \item{sig.line}{-log10(p) value to draw line on plot}
+
+\item{orient}{character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
+refers to how the "buildings" of the plot are plotted.}
 }
 \value{
-GGplot of manhattan plot with points colored by maximum R2 to markers in the qtl.df.
+GGplot of manhattan plot with points colored by R2.
 }
 \description{
 Make sideways manhattan plot for building locus zoom. Receives output from a single gwas model.

@@ -12,7 +12,7 @@
 #' @param gwas.model character, one of "GLM" or "MLM" to refer to a generalized linear model 
 #' and mixed-linear model respectively. 
 #' @param output.manhattan boolean, if TRUE, visualizations of gwas results will be output to out.dir
-#' @param phenotype.mat matrix, optional, object to use for phenotype 
+#' @param pheno.mat matrix, optional, object to use for phenotype 
 #' @param geno.mat big.matrix, optional, object to use for genotype 
 #' @param map.mat matrix, optional, object to use a genotype map file
 #' @param pcs.mat big.matrix, optional, object to use as principal component matrix
@@ -32,7 +32,7 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
                             npcs = NULL,
                             gwas.model = c("GLM", "MLM"),
                             output.manhattan = FALSE,
-                            phenotype.mat = NULL,
+                            pheno.mat = NULL,
                             geno.mat = NULL,
                             map.mat = NULL,
                             pcs.mat = NULL,
