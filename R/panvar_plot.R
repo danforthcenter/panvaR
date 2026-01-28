@@ -215,36 +215,37 @@ panvar_plot <- function(reports_table,
     message("Attempting to save plot to: ", filename)
 
     if (export_format == "svg") {
-      # Try SVG export, fallback to PNG on error
-      svg_success <- tryCatch({
-        # Check if svglite is available *before* trying to use it
-        if (!requireNamespace("svglite", quietly = TRUE)) {
-          stop("'svglite' package needed for SVG export. Please install it.", call. = FALSE)
-        }
-        ggplot2::ggsave(filename = filename, plot = plot, device = "svg", width = 10, height = 6)
-        TRUE # Return TRUE on success
-      }, error = function(e) {
-        warning("SVG export failed. Error: ", e$message,
-                "\nAttempting to save as PNG instead. (Is 'svglite' package installed and working?)",
-                call. = FALSE)
-        # Construct PNG filename as fallback
-        fallback_filename <- sub("\\.svg$", ".png", filename)
-        if (!endsWith(fallback_filename, ".png")){ # Ensure it ends with .png
-             fallback_filename <- paste0(export_file, ".png")
-        }
-        tryCatch({
-             ggplot2::ggsave(filename = fallback_filename, plot = plot, device = "png", width = 10, height = 6, dpi = 300)
-             message("Successfully saved plot as PNG (fallback): ", fallback_filename)
-             # We could return FALSE here to indicate SVG failed, but the message suffices.
-             FALSE # Indicate original SVG save failed
-        }, error = function(e2){
-             warning("Fallback PNG export also failed. Error: ", e2$message, call. = FALSE)
-             FALSE # Indicate fallback PNG save also failed
-        })
-      })
-      if (svg_success) {
-        message("Successfully saved plot as SVG: ", filename)
-      }
+      stop("SVG not supported currently.")
+      # # Try SVG export, fallback to PNG on error
+      # svg_success <- tryCatch({
+      #   # Check if svglite is available *before* trying to use it
+      #   if (!requireNamespace("svglite", quietly = TRUE)) {
+      #     stop("'svglite' package needed for SVG export. Please install it.", call. = FALSE)
+      #   }
+      #   ggplot2::ggsave(filename = filename, plot = plot, device = "svg", width = 10, height = 6)
+      #   TRUE # Return TRUE on success
+      # }, error = function(e) {
+      #   warning("SVG export failed. Error: ", e$message,
+      #           "\nAttempting to save as PNG instead. (Is 'svglite' package installed and working?)",
+      #           call. = FALSE)
+      #   # Construct PNG filename as fallback
+      #   fallback_filename <- sub("\\.svg$", ".png", filename)
+      #   if (!endsWith(fallback_filename, ".png")){ # Ensure it ends with .png
+      #        fallback_filename <- paste0(export_file, ".png")
+      #   }
+      #   tryCatch({
+      #        ggplot2::ggsave(filename = fallback_filename, plot = plot, device = "png", width = 10, height = 6, dpi = 300)
+      #        message("Successfully saved plot as PNG (fallback): ", fallback_filename)
+      #        # We could return FALSE here to indicate SVG failed, but the message suffices.
+      #        FALSE # Indicate original SVG save failed
+      #   }, error = function(e2){
+      #        warning("Fallback PNG export also failed. Error: ", e2$message, call. = FALSE)
+      #        FALSE # Indicate fallback PNG save also failed
+      #   })
+      # })
+      # if (svg_success) {
+      #   message("Successfully saved plot as SVG: ", filename)
+      # }
 
     } else if (export_format == "png") {
       # Export as PNG
