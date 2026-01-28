@@ -730,36 +730,36 @@ tag_snp_splitter <- function(tag_snp){
 # temporary files, but more specifically different intermediate files serve -
 # different purposes. For example, you will have intermediate files 
 
-temp_file <- function(create_file = FALSE, working_directory = NULL, prefix = NULL) {
-  
-  if(!is.null(options()$panvar_outdir)){
-    dir_path <- options()$panvar_outdir
-  } else if(is.null(working_directory)){
-    dir_path <- tempdir()
-  } else {
-    dir_path <- working_directory
-  }
-  # dir_path <- ifelse(is.null(working_directory), tempdir(), working_directory)
-  
-  # Generate a random letters that you can use for the filename
-  random_letters <- paste0(sample(LETTERS, 5, replace = TRUE), collapse = "")
-  
-  if(!is.null(prefix)){
-    random_name <- paste0(prefix,"_",random_letters)
-  } else{
-    random_name <- paste0(random_letters)
-  }
-  
-  # Create the final path
-  final_path <- file.path(dir_path, random_name)
-  
-  # Create the file if specified
-  if (create_file) {
-    file.create(final_path)
-  }
-  
-  return(final_path)
-}
+# temp_file <- function(create_file = FALSE, working_directory = NULL, prefix = NULL) {
+#   
+#   if(!is.null(options()$panvar_outdir)){
+#     dir_path <- options()$panvar_outdir
+#   } else if(is.null(working_directory)){
+#     dir_path <- tempdir()
+#   } else {
+#     dir_path <- working_directory
+#   }
+#   # dir_path <- ifelse(is.null(working_directory), tempdir(), working_directory)
+#   
+#   # Generate a random letters that you can use for the filename
+#   random_letters <- paste0(sample(LETTERS, 5, replace = TRUE), collapse = "")
+#   
+#   if(!is.null(prefix)){
+#     random_name <- paste0(prefix,"_",random_letters)
+#   } else{
+#     random_name <- paste0(random_letters)
+#   }
+#   
+#   # Create the final path
+#   final_path <- file.path(dir_path, random_name)
+#   
+#   # Create the file if specified
+#   if (create_file) {
+#     file.create(final_path)
+#   }
+#   
+#   return(final_path)
+# }
 
 # Function to manage the temporary directory
 # Checks if the directory exists; if not, creates it. Deletes contents if specified.
