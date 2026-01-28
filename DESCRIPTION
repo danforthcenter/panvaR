@@ -36,10 +36,10 @@ Imports:
     shiny,
     dplyr,
     methods,
-    svglite,
     stats,
     tibble,
     rlang,
     stringr,
     rMVP,
-    utils
+    utils,
+    tidyr

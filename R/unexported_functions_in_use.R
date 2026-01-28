@@ -151,31 +151,6 @@ execute_snpsift2 <- function(file_path) {
   if(try == 1){
     return(readLines(error_message))
   } else {
-    # snp_eff_table is the path -
-    # let's return a data.table as well
-
-    # snp_eff_datatable <- fread(snp_eff_table)
-    #
-    # # Change the names of the table
-    # colnames(snp_eff_datatable) <- c(
-    #   "CHROM",
-    #   "BP",
-    #   "GENE",
-    #   "REF",
-    #   "ALT",
-    #   "EFFECT",
-    #   "AA",
-    #   "IMPACT"
-    # )
-    #
-    # # Make a list and return it
-    #
-    # return(
-    #   list(
-    #     path = snp_eff_table,
-    #     table = snp_eff_datatable
-    #   )
-    # )
     return(snp_eff_table)
   }
 }
@@ -196,10 +171,10 @@ format_snpeff_annotations <- function(vcfpath){
   # make a new impact category that splits modifier
   sort <- dat.long %>% 
     ungroup() %>% 
-    mutate(marker.ID = paste(CHROM, POS, sep = "-")) %>% 
-    mutate(IMPACT_PLUS = case_when(IMPACT == "MODIFIER" & BIOTYPE == "protein_coding" ~ "MODIFIER_CODING",
-                                   IMPACT == "MODIFIER" & BIOTYPE == "." ~ "MODIFIER_INTERGENIC",
-                                   TRUE ~ IMPACT)) 
+    mutate(marker.ID = paste(.data$CHROM, .data$POS, sep = "-")) %>% 
+    mutate(IMPACT_PLUS = case_when(.data$IMPACT == "MODIFIER" & .data$BIOTYPE == "protein_coding" ~ "MODIFIER_CODING",
+                                   .data$IMPACT == "MODIFIER" & .data$BIOTYPE == "." ~ "MODIFIER_INTERGENIC",
+                                   TRUE ~ .data$IMPACT)) 
   
   #  make a numeric scale to rank our preference for choosing these impacts if a snp has multiple
   scoring.key <- data.frame(IMPACT_PLUS = c("MODIFIER_INTERGENIC", "MODIFIER_CODING", "LOW", "MODERATE", "HIGH"),
@@ -208,10 +183,10 @@ format_snpeff_annotations <- function(vcfpath){
   # retain our favorite impact
   sort_score <- sort %>% 
     left_join(scoring.key, by = "IMPACT_PLUS") %>% 
-    group_by(marker.ID) %>% 
-    mutate(is.max.impact.score = IMPACT_score == max(IMPACT_score)) %>% 
-    filter(is.max.impact.score) %>% 
-    select(CHROM, POS, marker.ID, IMPACT, IMPACT_PLUS) %>% 
+    group_by(.data$marker.ID) %>% 
+    mutate(is.max.impact.score = .data$IMPACT_score == max(.data$IMPACT_score)) %>% 
+    filter(.data$is.max.impact.score) %>% 
+    select("CHROM", "POS", "marker.ID", "IMPACT", "IMPACT_PLUS") %>% 
     distinct() 
   
   # keep 2 tables
