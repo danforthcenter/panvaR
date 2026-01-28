@@ -3,6 +3,7 @@
 export(apply_maf)
 export(bed_file_clean_up)
 export(filter_vcf_file)
+export(format_snpeff_annotations)
 export(generate_missing_report)
 export(get_ld_in_window)
 export(get_vcf_chromosomes)
