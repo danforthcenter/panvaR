@@ -16,7 +16,7 @@ panvar_func(vcf_file_path = "/home/cluebbert/scratch/setaria_annotated_chrsnumer
 
 
 out$plot
-
+x <- out$table
 
 out <-
   panvar_func(vcf_file_path = "/home/cluebbert/scratch/setaria_annotated_chrsnumeric.vcf.gz",

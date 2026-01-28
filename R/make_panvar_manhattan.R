@@ -7,9 +7,11 @@
 #' @param ld.list output of [luebbert::get_ld_in_window]
 #' @param window kilobases on either side of top QTL snp to plot
 #' @param sig.line -log10(p) value to draw line on plot
+#' @param orient character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
+#' refers to how the "buildings" of the plot are plotted. 
 #'
 #' @returns
-#' GGplot of manhattan plot with points colored by maximum R2 to markers in the qtl.df.
+#' GGplot of manhattan plot with points colored by R2.
 #' @export
 #'
 #' @examples
@@ -20,7 +22,8 @@ make_panvar_manhattan <- function(gwas.res,
                                     plot.r2.thresh = .2,
                                     ld.list,
                                     window,
-                                    sig.line)
+                                    sig.line,
+                                  orient = c("H", "V"))
   # qualitative.annotation (shape)
   # quantitative.annotation (color) = LD
   # quantitative.fill.scall (from its own function)
@@ -68,7 +71,7 @@ make_panvar_manhattan <- function(gwas.res,
   plot.limits <- c(this.pos + window * 1000, this.pos - window * 1000)
   plot.limits.ex <- c(plot.limits[1] + y.spread.factor.window, plot.limits[2] - y.spread.factor.window)
   
-  # Base plot
+  # base plot
   man <-
     ggplot(aes(x = .data$POS, y = .data$PVAL), data = plot.df) +
     geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot), size = 3, shape = 21, color = "black") +
@@ -81,28 +84,46 @@ make_panvar_manhattan <- function(gwas.res,
                  show.limits = T,
                  guide = "colorsteps",
                  na.value = "grey50") +
-    # shape.scale +
-    scale_x_reverse(
-      limits = plot.limits.ex,
-      labels = scales::label_number(scale_cut = scales::cut_short_scale()),
-      name = "-log10pval"
-    ) +
-    coord_flip() +
-    scale_y_reverse() +
     theme_bw() +
     theme(
       panel.background = element_rect(fill = "grey95"),
-      axis.title.y = element_blank(),
       legend.position = "left",
       legend.justification = "top",
       panel.grid = element_blank()
     ) +
-    labs(y = bquote(-log[10](p - value))) +
-    geom_rug(aes(x = .data$POS),
-             sides = 't',
-             data = marker.list.in.window,
-             inherit.aes = F) +
     geom_hline(yintercept = sig.line, linetype = 'dashed')
   
+  # flip it if you want
+  orient <- match.arg(orient)
+  if(orient == "V"){
+    man <- man +
+      geom_rug(aes(x = .data$POS),
+               sides = 'b',
+               data = marker.list.in.window,
+               inherit.aes = F) +
+      scale_x_continuous(
+        limits = plot.limits.ex,
+        labels = scales::label_number(scale_cut = scales::cut_short_scale())
+      ) +
+      labs(y = bquote(-log[10](p-value))) +
+      theme(axis.title.x = element_blank())
+  } else if(orient == "H"){
+    man <- man +
+      coord_flip() +
+      scale_y_reverse() +
+      geom_rug(aes(x = .data$POS),
+               sides = 't',
+               data = marker.list.in.window,
+               inherit.aes = F) +
+      scale_x_reverse(
+        limits = plot.limits.ex,
+        labels = scales::label_number(scale_cut = scales::cut_short_scale())
+      ) +
+      labs(x = bquote(-log[10](p-value))) +
+      theme(axis.title.y = element_blank())
+  } else {
+    stop("Orientation must be either vertical (V) or horizontal (H).")
+  }
+
   return(man)
 }

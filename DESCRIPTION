@@ -41,4 +41,5 @@ Imports:
     rlang,
     stringr,
     rMVP,
-    utils
+    utils,
+    tidyr

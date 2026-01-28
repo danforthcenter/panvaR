@@ -10,7 +10,7 @@ panvar_mvp_gwas(
   npcs = NULL,
   gwas.model = c("GLM", "MLM"),
   output.manhattan = FALSE,
-  phenotype.mat = NULL,
+  pheno.mat = NULL,
   geno.mat = NULL,
   map.mat = NULL,
   pcs.mat = NULL,
@@ -33,7 +33,7 @@ and mixed-linear model respectively.}
 
 \item{output.manhattan}{boolean, if TRUE, visualizations of gwas results will be output to out.dir}
 
-\item{phenotype.mat}{matrix, optional, object to use for phenotype}
+\item{pheno.mat}{matrix, optional, object to use for phenotype}
 
 \item{geno.mat}{big.matrix, optional, object to use for genotype}
 
