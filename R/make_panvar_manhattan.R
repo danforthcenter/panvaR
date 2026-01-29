@@ -17,23 +17,23 @@
 #' @examples
 #' # Work in progress
 make_panvar_manhattan <- function(gwas.res,
-                                    qtl.df = NULL,
-                                    pvals.in.log = TRUE,
-                                    plot.r2.thresh = .2,
-                                    ld.list,
-                                    window,
-                                    sig.line,
-                                  orient = c("H", "V"))
+                                  qtl.df = NULL,
+                                  pvals.in.log = TRUE,
+                                  plot.r2.thresh = .2,
+                                  ld.list,
+                                  window,
+                                  sig.line,
+                                  orient = c("H", "V"),
+                                  qualitative.annotation = NULL,
+                                  qualitative.shape.scale = NULL)
   # qualitative.annotation (shape)
   # quantitative.annotation (color) = LD
   # quantitative.fill.scall (from its own function)
   # qualititave.shape.scale (from its own function)
   {
   
-  
-  # chrom <- unique(qtl.df$CHR)
-  
   gwas.sub <- gwas.res %>%
+    as.data.frame() %>% 
     # filter(.data$CHR == chrom) %>%
     mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>%
     # filter(between(physical.pos, this.pos - window * 1000, this.pos + window * 1000)) %>%
@@ -71,19 +71,52 @@ make_panvar_manhattan <- function(gwas.res,
   plot.limits <- c(this.pos + window * 1000, this.pos - window * 1000)
   plot.limits.ex <- c(plot.limits[1] + y.spread.factor.window, plot.limits[2] - y.spread.factor.window)
   
-  # base plot
+
+  # ------------------------------------------------------------------------\
+  # prepare qualitative variable --------
+  # ------------------------------------------------------------------------\
+  
+  
+  # If we're using IMPACT then use this scale
+  if(is.null(qualitative.shape.scale) & qualitative.annotation == "IMPACT"){
+    qual.vars <-  c("HIGH", "MODERATE", "LOW", "MODIFIER")
+    qualitative.shape.scale <- make_consistent_scale(values = c(24, 22, 25, 23),
+                                                     vars = qual.vars,
+                                                     type = "shape",
+                                                     name = qualitative.annotation)
+    
+    plot.df$IMPACT <- factor(plot.df$IMPACT, levels = qual.vars)
+  } else if(is.null(qualitative.shape.scale) & qualitative.annotation == "IMPACT_PLUS"){
+    qual.vars <-  c("HIGH", "MODERATE", "LOW", "MODIFIER_CODING", "MODIFIER_INTERGENIC")
+    qualitative.shape.scale <- make_consistent_scale(values = c(24, 22, 25, 23, 21),
+                                                     vars = qual.vars,
+                                                     type = "shape",
+                                                     name = qualitative.annotation)
+    
+    plot.df$IMPACT_PLUS <- factor(plot.df$IMPACT_PLUS, levels = qual.vars)
+    
+  } else if(is.null(qualitative.shape.scale)){
+    # make one using the unique values of qualitative annotation column
+    qual.vars <- sort(unique(plot.df[,qualitative.annotation]))
+    
+    # throw an error if there are more than 5 things for now
+    if(qual.vars > 5){
+      stop("Qualitative variable must not have more than 5 unique values. 
+           Points are plotted using the fill aesthetic to give them a color, 
+           R only has 5 shapes (21-25) that can be assigned fill values.")
+    }
+    qualitative.shape.scale <- make_consistent_scale(values = c(21:25)[1:length(qual.vars)],
+                                                     vars = qual.vars,
+                                                     type = "shape",
+                                                     name = qualitative.annotation)
+  }
+  
+  # ------------------------------------------------------------------------\
+  # base plot --------
+  # ------------------------------------------------------------------------\
+  
   man <-
     ggplot(aes(x = .data$POS, y = .data$PVAL), data = plot.df) +
-    geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot), size = 3, shape = 21, color = "black") +
-    scale_alpha(guide = "none") +
-    binned_scale(aesthetics = "fill",
-                 name = "R2 \n",
-                 palette = function(x) c("#43638E", "#88DAA0", "#DBC32D", "#B94712"),
-                 limits = c(plot.r2.thresh, 1),
-                 breaks = seq(plot.r2.thresh, 1, length.out = 5)[-c(1,5)],
-                 show.limits = T,
-                 guide = "colorsteps",
-                 na.value = "grey50") +
     theme_bw() +
     theme(
       panel.background = element_rect(fill = "grey95"),
@@ -92,6 +125,41 @@ make_panvar_manhattan <- function(gwas.res,
       panel.grid = element_blank()
     ) +
     geom_hline(yintercept = sig.line, linetype = 'dashed')
+  
+  # ------------------------------------------------------------------------\
+  # add extra annotations to plot --------
+  # ------------------------------------------------------------------------\
+  
+  
+  if(is.null(qualitative.annotation)){
+    man <- man + 
+      geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot), size = 3, shape = 21, color = "black") +
+      scale_alpha(guide = "none") +
+      binned_scale(aesthetics = "fill",
+                   name = "R2 \n",
+                   palette = function(x) c("#43638E", "#88DAA0", "#DBC32D", "#B94712"),
+                   limits = c(plot.r2.thresh, 1),
+                   breaks = seq(plot.r2.thresh, 1, length.out = 5)[-c(1,5)],
+                   show.limits = T,
+                   guide = "colorsteps",
+                   na.value = "grey50") 
+  } else {
+    man <- man + 
+      geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot, shape = .data[[qualitative.annotation]]), size = 3, color = "black") +
+      qualitative.shape.scale +
+      scale_alpha(guide = "none") +
+      binned_scale(aesthetics = "fill",
+                   name = "R2 \n",
+                   palette = function(x) c("#43638E", "#88DAA0", "#DBC32D", "#B94712"),
+                   limits = c(plot.r2.thresh, 1),
+                   breaks = seq(plot.r2.thresh, 1, length.out = 5)[-c(1,5)],
+                   show.limits = T,
+                   guide = "colorsteps",
+                   na.value = "grey50") 
+  }
+  
+  # add a quantitative variable
+  
   
   # flip it if you want
   orient <- match.arg(orient)
@@ -105,7 +173,9 @@ make_panvar_manhattan <- function(gwas.res,
         limits = plot.limits.ex,
         labels = scales::label_number(scale_cut = scales::cut_short_scale())
       ) +
-      labs(y = bquote(-log[10](p-value))) +
+      # bquote doesn't work with plotly
+      # labs(y = bquote(-log[10](p-value))) +
+      labs(y = "-log(p-value)") +
       theme(axis.title.x = element_blank())
   } else if(orient == "H"){
     man <- man +
@@ -119,7 +189,9 @@ make_panvar_manhattan <- function(gwas.res,
         limits = plot.limits.ex,
         labels = scales::label_number(scale_cut = scales::cut_short_scale())
       ) +
-      labs(x = bquote(-log[10](p-value))) +
+      # bquote doesn't work with plotly
+      # labs(y = bquote(-log[10](p-value))) 
+      labs(y = "-log(p-value)") +
       theme(axis.title.y = element_blank())
   } else {
     stop("Orientation must be either vertical (V) or horizontal (H).")

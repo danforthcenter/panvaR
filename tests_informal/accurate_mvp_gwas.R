@@ -1,3 +1,9 @@
+# was having an issue of unexpected gwas results
+# Setaria shattering was not hitting chrom 5 where it should.
+# Discovered this was due to poor alignment between phenotype and snp file genotype names
+# I fixed this by letting MVP format the phenotype file whereas I was formatting myself previously.
+# this fixed the issue in the package. 
+
 set_out_dir("~/scratch/mvp_ts/")
 
 panvaR::vcf_to_plink2("/home/cluebbert/scratch/setaria_annotated_vcf.vcf.vcf")
