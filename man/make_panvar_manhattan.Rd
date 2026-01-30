@@ -12,7 +12,9 @@ make_panvar_manhattan(
   ld.list,
   window,
   sig.line,
-  orient = c("H", "V")
+  orient = c("H", "V"),
+  qualitative.annotation = NULL,
+  qualitative.shape.scale = NULL
 )
 }
 \arguments{
@@ -32,6 +34,13 @@ make_panvar_manhattan(
 
 \item{orient}{character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
 refers to how the "buildings" of the plot are plotted.}
+
+\item{qualitative.annotation}{character, column in gwas.res that contains qualitative annotations.
+For example impact grades from snpeff. See \link{format_snpeff_annotations}.
+Will be plotted as shapes. Only accepts up to 5 classes.}
+
+\item{qualitative.shape.scale}{ggplot scale, an object with a stored call to
+\link[ggplot2:scale_manual]{ggplot2::scale_shape_manual}. More often an output of the function \link{make_consistent_scale}.}
 }
 \value{
 GGplot of manhattan plot with points colored by R2.

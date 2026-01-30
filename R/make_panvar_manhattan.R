@@ -9,6 +9,11 @@
 #' @param sig.line -log10(p) value to draw line on plot
 #' @param orient character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
 #' refers to how the "buildings" of the plot are plotted. 
+#' @param qualitative.annotation character, column in gwas.res that contains qualitative annotations.
+#' For example impact grades from snpeff. See [panvaR::format_snpeff_annotations].
+#' Will be plotted as shapes. Only accepts up to 5 classes. 
+#' @param qualitative.shape.scale ggplot scale, an object with a stored call to 
+#' [ggplot2::scale_shape_manual]. More often an output of the function [panvaR::make_consistent_scale]. 
 #'
 #' @returns
 #' GGplot of manhattan plot with points colored by R2.

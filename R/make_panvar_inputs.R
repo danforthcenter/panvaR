@@ -102,10 +102,24 @@ make_panvar_inputs <- function(genotype.path,
     mvp.out.path <- file.path(out.dir.path, out.prefix)
   }
   
+  # get phenotype file separater
+  # phefile <- basename(phenotype.path)
+  phe_ext <- tools::file_ext(phenotype.path)
+  if(phe_ext == ".tsv"){
+    sep.phe <- "\t"
+  } else if (phe_ext == ".csv"){
+    sep.phe <- ".csv"
+  } else {
+    stop("Phenotype file does not have either .tsv or .csv extension.
+         Only tab or comma separated tables are accepted. Please ensure proper 
+         file extension is present.")
+  }
+  
   rMVP::MVP.Data(fileBed = snp_qc_path,
                  filePC = TRUE,
                  fileKin = calc.kinship,
                  filePhe = phenotype.path,
+                 sep.phe = sep.phe, 
                  pcs.keep = 10,
                  out = mvp.out.path)
 }

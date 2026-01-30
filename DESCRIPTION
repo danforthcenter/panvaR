@@ -42,4 +42,5 @@ Imports:
     stringr,
     rMVP,
     utils,
-    tidyr
+    tidyr,
+    khroma
