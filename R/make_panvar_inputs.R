@@ -105,10 +105,10 @@ make_panvar_inputs <- function(genotype.path,
   # get phenotype file separater
   # phefile <- basename(phenotype.path)
   phe_ext <- tools::file_ext(phenotype.path)
-  if(phe_ext == ".tsv"){
+  if(phe_ext == "tsv"){
     sep.phe <- "\t"
-  } else if (phe_ext == ".csv"){
-    sep.phe <- ".csv"
+  } else if (phe_ext == "csv"){
+    sep.phe <- ","
   } else {
     stop("Phenotype file does not have either .tsv or .csv extension.
          Only tab or comma separated tables are accepted. Please ensure proper 
