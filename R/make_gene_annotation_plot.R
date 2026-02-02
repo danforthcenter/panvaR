@@ -43,7 +43,8 @@ make_gene_annotation_plot <- function(annotation.table,
                                       window,
                                       include.id = F,
                                       highlight.ids = NULL,
-                                      highlight.color = "red"){
+                                      highlight.color = "red",
+                                      use.arrows = F){
   
   
   # get pos and chrom
@@ -87,41 +88,80 @@ make_gene_annotation_plot <- function(annotation.table,
   breaks.anno <- seq(from = mid - window * 1000,
                      to = mid + window * 1000,
                      length.out = 9)
-  
-  anno <-
-    ggplot(data = anno.spread) +
-    geom_segment(aes(y = .data$start, yend = .data$end, x = .5, xend = .5), linewidth = 2, color = "red") +
-    scale_y_reverse(limits = plot.limits.ex,
-                    labels = function(x) paste0((x - this.pos) / 1000, " KB"),
-                    breaks = breaks.anno) +
-    xlim(.5, .875) +
-    geom_segment(aes(x = .5, xend = .55, y = .data$gene.mid, yend = .data$y.pos)) +
-    theme_bw() +
-    theme(axis.text.x = element_blank(),
-          axis.title.x = element_blank(),
-          #axis.text.y = element_blank(),
-          axis.title.y = element_blank(),
-          panel.grid = element_blank())
-  
+  if(use.arrows){
+    anno <-
+      ggplot(data = anno.spread) +
+      # geom_segment(aes(y = .data$start, yend = .data$end, x = .5, xend = .5), linewidth = 2, color = "red") +
+      gggenes::geom_gene_arrow(aes(xmin = .data$start, xmax = .data$end, y = .5), fill = "blue") +
+      scale_x_reverse(limits = plot.limits.ex,
+                      labels = function(x) paste0((x - this.pos) / 1000, " KB"),
+                      breaks = breaks.anno) +
+      ylim(.5, .875) +
+      geom_segment(aes(y = .5, yend = .55, x = .data$gene.mid, xend = .data$y.pos)) +
+      theme_bw() +
+      theme(axis.text.x = element_blank(),
+            axis.title.x = element_blank(),
+            #axis.text.y = element_blank(),
+            axis.title.y = element_blank(),
+            panel.grid = element_blank()) +
+      coord_flip()
+  } else {
+    anno <-
+      ggplot(data = anno.spread) +
+      geom_segment(aes(y = .data$start, yend = .data$end, x = .5, xend = .5), linewidth = 2, color = "blue") +
+      scale_y_reverse(limits = plot.limits.ex,
+                      labels = function(x) paste0((x - this.pos) / 1000, " KB"),
+                      breaks = breaks.anno) +
+      xlim(.5, .875) +
+      geom_segment(aes(x = .5, xend = .55, y = .data$gene.mid, yend = .data$y.pos)) +
+      theme_bw() +
+      theme(axis.text.x = element_blank(),
+            axis.title.x = element_blank(),
+            #axis.text.y = element_blank(),
+            axis.title.y = element_blank(),
+            panel.grid = element_blank())
+  }
   
   if(!is.null(highlight.ids)){
-    anno <- anno +
-      ggfittext::geom_fit_text(aes(xmin = .55, xmax = .85, y = .data$y.pos, label = .data$plot.label, color = .data$gene.label.color),
-                               place = "left",
-                               #grow = TRUE,
-                               hjust = 0,
-                               padding.y = grid::unit(.1, "lines"),
-                               min.size = 4,
-                               show.legend = F) +
-      scale_color_manual(values = c(highlight.color, "black"))
+    if(use.arrows){
+      anno <- anno +
+        ggfittext::geom_fit_text(aes(ymin = .55, ymax = .85, x = .data$y.pos, label = .data$plot.label, color = .data$gene.label.color),
+                                 place = "left",
+                                 #grow = TRUE,
+                                 hjust = 0,
+                                 padding.x = grid::unit(.1, "lines"),
+                                 min.size = 4,
+                                 show.legend = F) +
+        scale_color_manual(values = c(highlight.color, "black"))
+    } else {
+      anno <- anno +
+        ggfittext::geom_fit_text(aes(xmin = .55, xmax = .85, y = .data$y.pos, label = .data$plot.label, color = .data$gene.label.color),
+                                 place = "left",
+                                 #grow = TRUE,
+                                 hjust = 0,
+                                 padding.y = grid::unit(.1, "lines"),
+                                 min.size = 4,
+                                 show.legend = F) +
+        scale_color_manual(values = c(highlight.color, "black"))
+    }
   } else {
-    anno <- anno +
-      ggfittext::geom_fit_text(aes(xmin = .55, xmax = .85, y = .data$y.pos, label = .data$plot.label),
-                               place = "left",
-                               #grow = TRUE,
-                               hjust = 0,
-                               padding.y = grid::unit(.1, "lines"),
-                               min.size = 4)
+    if(use.arrows){
+      anno <- anno +
+        ggfittext::geom_fit_text(aes(ymin = .55, ymax = .85, x = .data$y.pos, label = .data$plot.label),
+                                 place = "left",
+                                 #grow = TRUE,
+                                 hjust = 0,
+                                 padding.y = grid::unit(.1, "lines"),
+                                 min.size = 4) 
+    } else {
+      anno <- anno +
+        ggfittext::geom_fit_text(aes(xmin = .55, xmax = .85, y = .data$y.pos, label = .data$plot.label),
+                                 place = "left",
+                                 #grow = TRUE,
+                                 hjust = 0,
+                                 padding.y = grid::unit(.1, "lines"),
+                                 min.size = 4) 
+    }
   }
   
   return(anno)

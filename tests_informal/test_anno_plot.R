@@ -17,5 +17,6 @@ anno <- read.csv("~/scratch/setaria_biomart.txt") %>%
 
 make_gene_annotation_plot(anno,
                           middle.snp = out_ld$key.snp,
-                          window = 200, 
-                          include.id = T)
+                          window = 25, 
+                          include.id = T,
+                          use.arrows = F)
