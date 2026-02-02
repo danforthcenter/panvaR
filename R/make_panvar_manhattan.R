@@ -83,7 +83,9 @@ make_panvar_manhattan <- function(gwas.res,
   
   
   # If we're using IMPACT then use this scale
-  if(is.null(qualitative.shape.scale) & qualitative.annotation == "IMPACT"){
+  if(is.null(qualitative.shape.scale) & is.null(qualitative.annotation)){
+    # do nothing
+  } else if(is.null(qualitative.shape.scale) & qualitative.annotation == "IMPACT"){
     qual.vars <-  c("HIGH", "MODERATE", "LOW", "MODIFIER")
     qualitative.shape.scale <- make_consistent_scale(values = c(24, 22, 25, 23),
                                                      vars = qual.vars,

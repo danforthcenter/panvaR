@@ -32,3 +32,23 @@ panvaR::get_ld_in_window(qtl.df = sub,
                          geno.bed = "1.WiDiv_942g_AGPv4_imputed_maf0.05_maxmaf0.95_masMissing0.1_onlyphenotypedlines_fixnames", 
                          verbose = T)
 
+
+# ------------------------------------------------------------------------\
+# sorghum --------
+# ------------------------------------------------------------------------\
+
+set_out_dir("~/Projects/Sorghum13CMash/results/")
+set_panvar_prefix("Sorg13C")
+set_plink_path("~/bin/plink2")
+
+ldlist <- get_ld_in_window(tag.snp = "1-21909576",
+                           window = 500,
+                           geno.bed = "Sorg13C_PlinkQC_maf0.05_missing0.1.bed",
+                           in.dir = "~/Projects/Sorghum13CMash/results/")
+
+gwas.res <- fread("~/Projects/Sorghum13CMash/results/Sorg13C_GLM_GWASresults.csv", data.table = F)
+make_panvar_manhattan(gwas.res = gwas.res,
+                      ld.list = ldlist,
+                      window = 500,
+                      sig.line = 8,
+                      pvals.in.log = F)

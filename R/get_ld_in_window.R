@@ -44,12 +44,22 @@ get_ld_in_window <- function(qtl.df= NULL,
   # check out.dir
   if(!is.null(out.dir)){
     out.dir <- out.dir
-  } else if(!is.null(options()$panvar_prefix)){
-    out.dir <- options()$panvar_prefix
+  } else if(!is.null(options()$panvar_outdir)){
+    out.dir <- options()$panvar_outdir
   } else {
     out.dir <- tempdir()
   }
   out.dir <- normalizePath(out.dir)
+  
+  # check for .bed extension on input
+  if(grepl("\\.bed$", geno.bed)){
+    geno.bed <- tools::file_path_sans_ext(geno.bed)
+  }
+  
+  # check that bedfile exists
+  if(!file.exists(file.path(in.dir, paste0(geno.bed, ".bed")))){
+    stop("Bed file not found in input directory.")
+  }
   
   # calc ld either using 1 tag snp or multiple snps in a qtl
   if(!is.null(qtl.df) & !is.null(tag.snp)){
