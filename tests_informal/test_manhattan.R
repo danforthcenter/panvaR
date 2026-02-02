@@ -80,7 +80,55 @@ make_panvar_manhattan(gwas.res = gwas.df_ann,
 p
 ggplotly(p)
 
-# test consistent scale
+# add something that approximates zero shot score
+gwas.df_ann <- gwas.df_ann %>% 
+  mutate(zero.shot.sim = -rnorm(nrow(gwas.df_ann), -1, sd = 2))
+
+# p <- 
+make_panvar_manhattan(gwas.res = gwas.df_ann,
+                      qtl.df = NULL,
+                      pvals.in.log = F,
+                      ld.list = out_ld,
+                      plot.r2.thresh = .6,
+                      unplotted.alpha = 0,
+                      window = 500,
+                      sig.line = 6, 
+                      orient = "V",
+                      qualitative.annotation = "IMPACT_PLUS",
+                      qualitative.shape.scale = NULL,
+                      quantitative.annotation = "zero.shot.sim")
+
+
+cadscore <- arrow::read_parquet("~/scratch/setaria_plantCAD_scores.parquet", col_select = -annotation) %>% 
+  mutate(CHR = as.numeric(str_replace(CHR, "Chr_", ""))) %>% 
+  mutate(marker.ID = paste0(CHR, "-", POS)) %>% 
+  select(marker.ID, zero_shot) %>% 
+  mutate(zero_shot = as.numeric(zero_shot))
+
+gwas.df_ann <- left_join(gwas.df_ann, cadscore, by = "marker.ID") %>% 
+  mutate(zero_shot_positive = -zero_shot)
+
+make_panvar_manhattan(gwas.res = gwas.df_ann,
+                      qtl.df = NULL,
+                      pvals.in.log = F,
+                      ld.list = out_ld,
+                      plot.r2.thresh = .8,
+                      unplotted.alpha = 0,
+                      window = 50,
+                      sig.line = 6, 
+                      orient = "V",
+                      qualitative.annotation = "IMPACT_PLUS",
+                      qualitative.shape.scale = NULL,
+                      quantitative.annotation = "zero_shot_positive",
+                      quantitative.fill.scale = "magma")
+
+
+
+
+# ------------------------------------------------------------------------\
+# test consistent scale --------
+# ------------------------------------------------------------------------\
+
 qual.vars <-  c("HIGH", "MODERATE", "LOW", "MODIFIER")
 values <- c(24, 22, 25, 23)
 vars <- qual.vars
@@ -109,3 +157,5 @@ qualitative.shape.scale <- make_consistent_scale(values = c(24, 22, 25, 23),
                                                  vars = c("HIGH",  "LOW","MODERATE", "MODIFIER"),
                                                  type = "shape",
                                                  name = ,show.example = T)
+
+

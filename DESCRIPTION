@@ -43,4 +43,5 @@ Imports:
     rMVP,
     utils,
     tidyr,
-    khroma
+    khroma,
+    ggfittext

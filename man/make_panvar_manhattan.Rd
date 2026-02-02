@@ -9,38 +9,52 @@ make_panvar_manhattan(
   qtl.df = NULL,
   pvals.in.log = TRUE,
   plot.r2.thresh = 0.2,
+  unplotted.alpha = 0.4,
   ld.list,
   window,
   sig.line,
   orient = c("H", "V"),
   qualitative.annotation = NULL,
-  qualitative.shape.scale = NULL
+  qualitative.shape.scale = NULL,
+  quantitative.annotation = NULL,
+  quantitative.fill.scale = NULL
 )
 }
 \arguments{
-\item{gwas.res}{table of all gwas results, should contain columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and pvalue).}
+\item{gwas.res}{data.frame of all gwas results, should contain columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and pvalue).}
 
-\item{qtl.df}{table with same columns that includes only significant hits in a qtl. QTL are typically defined as hits grouped by LD by something like \code{plink --clump}}
+\item{qtl.df}{data.frame with same columns that includes only significant hits in a qtl. QTL are typically defined as hits grouped by LD by something like \code{plink --clump}}
 
 \item{pvals.in.log}{boolean, are pvalues in input data.frames in -log10(p)?}
 
 \item{plot.r2.thresh}{minimum LD with qtl snps to plot snps colored by LD}
 
-\item{ld.list}{output of \link[luebbert:get_ld_in_window]{luebbert::get_ld_in_window}}
+\item{unplotted.alpha}{numeric, number from 0 to 1 to indicate alpha values of snps below the plot.r2.thresh.
+To not plot these snps set value to 0.}
 
-\item{window}{kilobases on either side of top QTL snp to plot}
+\item{ld.list}{list, output of \link[luebbert:get_ld_in_window]{luebbert::get_ld_in_window}}
 
-\item{sig.line}{-log10(p) value to draw line on plot}
+\item{window}{numeric, kilobases on either side of top QTL snp to plot}
+
+\item{sig.line}{numeric, -log10(p) value to draw line on plot}
 
 \item{orient}{character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
 refers to how the "buildings" of the plot are plotted.}
 
 \item{qualitative.annotation}{character, column in gwas.res that contains qualitative annotations.
 For example impact grades from snpeff. See \link{format_snpeff_annotations}.
-Will be plotted as shapes. Only accepts up to 5 classes.}
+Will be plotted as shapes. Only accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special
+cases that will have a pre-assigned scale used if supplied here.}
 
 \item{qualitative.shape.scale}{ggplot scale, an object with a stored call to
 \link[ggplot2:scale_manual]{ggplot2::scale_shape_manual}. More often an output of the function \link{make_consistent_scale}.}
+
+\item{quantitative.annotation}{character, column in gwas.res that contains quantitative annotations.
+For example, variant effect scores. Will be plotted as fill to points.}
+
+\item{quantitative.fill.scale}{character or scale object, either a character indicating the
+\code{option} parameter passed to \link[ggplot2:scale_viridis]{ggplot2::scale_fill_viridis_b} that alters the color scale used.
+Or a previous call to a ggplot2 fill scale for example \link[ggplot2:scale_steps]{ggplot2::scale_fill_stepsn}.}
 }
 \value{
 GGplot of manhattan plot with points colored by R2.

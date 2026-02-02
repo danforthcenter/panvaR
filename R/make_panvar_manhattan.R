@@ -1,19 +1,27 @@
 #' Make sideways manhattan plot for building locus zoom. Receives output from a single gwas model.
 #'
-#' @param gwas.res table of all gwas results, should contain columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and pvalue).
-#' @param qtl.df table with same columns that includes only significant hits in a qtl. QTL are typically defined as hits grouped by LD by something like `plink --clump`
+#' @param gwas.res data.frame of all gwas results, should contain columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and pvalue).
+#' @param qtl.df data.frame with same columns that includes only significant hits in a qtl. QTL are typically defined as hits grouped by LD by something like `plink --clump`
 #' @param pvals.in.log boolean, are pvalues in input data.frames in -log10(p)?
 #' @param plot.r2.thresh minimum LD with qtl snps to plot snps colored by LD
-#' @param ld.list output of [luebbert::get_ld_in_window]
-#' @param window kilobases on either side of top QTL snp to plot
-#' @param sig.line -log10(p) value to draw line on plot
+#' @param unplotted.alpha numeric, number from 0 to 1 to indicate alpha values of snps below the plot.r2.thresh. 
+#' To not plot these snps set value to 0. 
+#' @param ld.list list, output of [luebbert::get_ld_in_window]
+#' @param window numeric, kilobases on either side of top QTL snp to plot
+#' @param sig.line numeric, -log10(p) value to draw line on plot
 #' @param orient character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
 #' refers to how the "buildings" of the plot are plotted. 
 #' @param qualitative.annotation character, column in gwas.res that contains qualitative annotations.
 #' For example impact grades from snpeff. See [panvaR::format_snpeff_annotations].
-#' Will be plotted as shapes. Only accepts up to 5 classes. 
+#' Will be plotted as shapes. Only accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special 
+#' cases that will have a pre-assigned scale used if supplied here.
 #' @param qualitative.shape.scale ggplot scale, an object with a stored call to 
 #' [ggplot2::scale_shape_manual]. More often an output of the function [panvaR::make_consistent_scale]. 
+#' @param quantitative.annotation character, column in gwas.res that contains quantitative annotations. 
+#' For example, variant effect scores. Will be plotted as fill to points. 
+#' @param quantitative.fill.scale character or scale object, either a character indicating the
+#' `option` parameter passed to [ggplot2::scale_fill_viridis_b] that alters the color scale used.
+#' Or a previous call to a ggplot2 fill scale for example [ggplot2::scale_fill_stepsn].
 #'
 #' @returns
 #' GGplot of manhattan plot with points colored by R2.
@@ -25,17 +33,15 @@ make_panvar_manhattan <- function(gwas.res,
                                   qtl.df = NULL,
                                   pvals.in.log = TRUE,
                                   plot.r2.thresh = .2,
+                                  unplotted.alpha = .4,
                                   ld.list,
                                   window,
                                   sig.line,
                                   orient = c("H", "V"),
                                   qualitative.annotation = NULL,
-                                  qualitative.shape.scale = NULL)
-  # qualitative.annotation (shape)
-  # quantitative.annotation (color) = LD
-  # quantitative.fill.scall (from its own function)
-  # qualititave.shape.scale (from its own function)
-  {
+                                  qualitative.shape.scale = NULL,
+                                  quantitative.annotation = NULL,
+                                  quantitative.fill.scale = NULL){
   
   gwas.sub <- gwas.res %>%
     as.data.frame() %>% 
@@ -55,7 +61,7 @@ make_panvar_manhattan <- function(gwas.res,
   plot.df <- gwas.sub %>%
     # alpha scale
     mutate(how.to.plot = case_when(.data$R2 > plot.r2.thresh ~ 1,
-                                   TRUE ~ .4)) %>%
+                                   TRUE ~ unplotted.alpha)) %>%
     # color scale
     mutate(plot.R2 = case_when(.data$R2 < plot.r2.thresh ~ NA,
                                TRUE ~ R2))
@@ -119,6 +125,43 @@ make_panvar_manhattan <- function(gwas.res,
   }
   
   # ------------------------------------------------------------------------\
+  # prepare quantitative variable --------
+  # ------------------------------------------------------------------------\
+  
+  # check if the scale provided is a ggplot scale or not
+  if("Scale" %in% class(quantitative.fill.scale)){
+    user.supplied.scale.option <- "scale"
+  } else {
+    user.supplied.scale.option <- "not.scale"
+  }
+  
+  if(!is.null(quantitative.annotation) & user.supplied.scale.option == "scale"){
+    # Both variable and scale provided 
+    # use user supplied scale
+    quantitative.fill.scale <- quantitative.fill.scale
+    # only plot that stuff that's above the LD threshold 
+    plot.df <- plot.df %>% 
+      mutate(plot.quant.var = case_when(.data$R2 < plot.r2.thresh ~ NA,
+                                        TRUE ~ .data[[quantitative.annotation]]))
+  } else if(!is.null(quantitative.annotation)){
+    # Only variable provided 
+    # set a binned color scale
+    if(is.null(quantitative.fill.scale)){
+      quantitative.fill.scale <- scale_fill_viridis_b(name = quantitative.annotation)
+    } else {
+      quantitative.fill.scale <- scale_fill_viridis_b(name = quantitative.annotation, option = quantitative.fill.scale)
+    }
+    # only plot that stuff that's above the LD threshold 
+    plot.df <- plot.df %>% 
+      mutate(plot.quant.var = case_when(.data$R2 < plot.r2.thresh ~ NA,
+                                        TRUE ~ .data[[quantitative.annotation]]))
+  } else if(is.null(quantitative.annotation) & !is.null(quantitative.fill.scale)){
+    warning("No quantitative annotation specified. Provided quantitative.fill.scale ignored.")
+  } else {
+    # do nothing
+  }
+  
+  # ------------------------------------------------------------------------\
   # base plot --------
   # ------------------------------------------------------------------------\
   
@@ -137,36 +180,51 @@ make_panvar_manhattan <- function(gwas.res,
   # add extra annotations to plot --------
   # ------------------------------------------------------------------------\
   
+  # set default LD color scale
+  default.LD.fill.scale <- binned_scale(
+    aesthetics = "fill",
+    name = "R2 \n",
+    palette = function(x)
+      c("#43638E", "#88DAA0", "#DBC32D", "#B94712"),
+    limits = c(plot.r2.thresh, 1),
+    breaks = seq(plot.r2.thresh, 1, length.out = 5)[-c(1, 5)],
+    show.limits = T,
+    guide = "colorsteps",
+    na.value = "grey50"
+  )
   
-  if(is.null(qualitative.annotation)){
-    man <- man + 
-      geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot), size = 3, shape = 21, color = "black") +
-      scale_alpha(guide = "none") +
-      binned_scale(aesthetics = "fill",
-                   name = "R2 \n",
-                   palette = function(x) c("#43638E", "#88DAA0", "#DBC32D", "#B94712"),
-                   limits = c(plot.r2.thresh, 1),
-                   breaks = seq(plot.r2.thresh, 1, length.out = 5)[-c(1,5)],
-                   show.limits = T,
-                   guide = "colorsteps",
-                   na.value = "grey50") 
-  } else {
+  # Some logic for including extra variables
+  if(!is.null(qualitative.annotation) & !is.null(quantitative.annotation)){
+    # Use a quant and a qual
+    man <- man +
+      geom_point(aes(fill = .data$plot.quant.var, alpha = .data$how.to.plot, shape = .data[[qualitative.annotation]]),
+                 size = 3, color = "black") +
+      scale_alpha(guide = "none", range = c(0, 1)) +
+      quantitative.fill.scale +
+      qualitative.shape.scale
+    
+  } else if(is.null(qualitative.annotation) & !is.null(quantitative.annotation)){
+    # Use just a quant 
+    man <- man +
+      geom_point(aes(fill = .data$plot.quant.var, alpha = .data$how.to.plot), shape = 21, size = 3, color = "black") +
+      scale_alpha(guide = "none", range = c(0, 1)) +
+      quantitative.fill.scale
+    
+  } else if(!is.null(qualitative.annotation) & is.null(quantitative.annotation)){
+    # Use just a qual
     man <- man + 
       geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot, shape = .data[[qualitative.annotation]]), size = 3, color = "black") +
       qualitative.shape.scale +
-      scale_alpha(guide = "none") +
-      binned_scale(aesthetics = "fill",
-                   name = "R2 \n",
-                   palette = function(x) c("#43638E", "#88DAA0", "#DBC32D", "#B94712"),
-                   limits = c(plot.r2.thresh, 1),
-                   breaks = seq(plot.r2.thresh, 1, length.out = 5)[-c(1,5)],
-                   show.limits = T,
-                   guide = "colorsteps",
-                   na.value = "grey50") 
+      scale_alpha(guide = "none", range = c(0, 1)) +
+      default.LD.fill.scale
+    
+  } else {
+    # Use neither
+    man <- man + 
+      geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot), size = 3, shape = 21, color = "black") +
+      scale_alpha(guide = "none", range = c(0, 1)) +
+      default.LD.fill.scale
   }
-  
-  # add a quantitative variable
-  
   
   # flip it if you want
   orient <- match.arg(orient)
