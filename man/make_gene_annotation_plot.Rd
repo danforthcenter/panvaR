@@ -10,7 +10,8 @@ make_gene_annotation_plot(
   window,
   include.id = F,
   highlight.ids = NULL,
-  highlight.color = "red"
+  highlight.color = "red",
+  use.arrows = F
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ make_gene_annotation_plot(
 \item{highlight.ids}{character, optional, vector of ids to highlight}
 
 \item{highlight.color}{character, optional, color to highlight ids}
+
+\item{use.arrows}{boolean, if TRUE, use \link[gggenes:geom_gene_arrow]{gggenes::geom_gene_arrow} to draw representations of genes.
+If the direction is encoded in another variable, supply that to \if{html}{\out{<NEW ARGUMENT NAME>}}}
 }
 \description{
 Title

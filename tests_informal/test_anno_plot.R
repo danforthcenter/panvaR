@@ -20,3 +20,14 @@ make_gene_annotation_plot(anno,
                           window = 25, 
                           include.id = T,
                           use.arrows = F)
+
+# ------------------------------------------------------------------------\
+# horizontal --------
+# ------------------------------------------------------------------------\
+
+make_gene_annotation_plot_horiz(anno,
+                          middle.snp = out_ld$key.snp,
+                          window = 25, 
+                          include.id = T,
+                          use.arrows = F)
+

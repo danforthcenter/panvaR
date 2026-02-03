@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_consistent_scale.R
 \name{make_consistent_scale}
 \alias{make_consistent_scale}
-\title{Make a ggplot scale that has consistent correspondence between aesthetics and variables}
+\title{Generate discrete scale}
 \usage{
 make_consistent_scale(
   values,
@@ -27,7 +27,7 @@ make_consistent_scale(
 ggplot scale object for use in downstream plotting
 }
 \description{
-Make a ggplot scale that has consistent correspondence between aesthetics and variables
+Make a ggplot discrete scale that has consistent correspondence between aesthetics and variables
 }
 \examples{
 # work in progress
