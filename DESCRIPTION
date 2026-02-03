@@ -44,4 +44,5 @@ Imports:
     utils,
     tidyr,
     khroma,
-    ggfittext
+    ggfittext,
+    patchwork

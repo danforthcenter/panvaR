@@ -32,6 +32,8 @@ get.gene.y.pos <- function(from, to, length.out) {
 #' @param include.id boolean, include geneID in gene annotations or not
 #' @param highlight.ids character, optional, vector of ids to highlight
 #' @param highlight.color character, optional, color to highlight ids
+#' @param use.arrows boolean, if TRUE, use [gggenes::geom_gene_arrow] to draw representations of genes. 
+#' If the direction is encoded in another variable, supply that to <NEW ARGUMENT NAME>
 #'
 #' @returns
 #' @export
