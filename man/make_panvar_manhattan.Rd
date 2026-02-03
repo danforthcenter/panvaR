@@ -6,7 +6,6 @@
 \usage{
 make_panvar_manhattan(
   gwas.res,
-  qtl.df = NULL,
   pvals.in.log = TRUE,
   plot.r2.thresh = 0.2,
   unplotted.alpha = 0.4,
@@ -23,8 +22,6 @@ make_panvar_manhattan(
 \arguments{
 \item{gwas.res}{data.frame of all gwas results, should contain columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and pvalue).}
 
-\item{qtl.df}{data.frame with same columns that includes only significant hits in a qtl. QTL are typically defined as hits grouped by LD by something like \code{plink --clump}}
-
 \item{pvals.in.log}{boolean, are pvalues in input data.frames in -log10(p)?}
 
 \item{plot.r2.thresh}{minimum LD with qtl snps to plot snps colored by LD}
@@ -39,7 +36,8 @@ To not plot these snps set value to 0.}
 \item{sig.line}{numeric, -log10(p) value to draw line on plot}
 
 \item{orient}{character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
-refers to how the "buildings" of the plot are plotted.}
+refers to how the "buildings" of the plot are plotted.
+"V" places pvalue on y-axis, "H" places pvalues on x-axis.}
 
 \item{qualitative.annotation}{character, column in gwas.res that contains qualitative annotations.
 For example impact grades from snpeff. See \link{format_snpeff_annotations}.

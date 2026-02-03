@@ -1,7 +1,6 @@
 #' Make sideways manhattan plot for building locus zoom. Receives output from a single gwas model.
 #'
 #' @param gwas.res data.frame of all gwas results, should contain columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and pvalue).
-#' @param qtl.df data.frame with same columns that includes only significant hits in a qtl. QTL are typically defined as hits grouped by LD by something like `plink --clump`
 #' @param pvals.in.log boolean, are pvalues in input data.frames in -log10(p)?
 #' @param plot.r2.thresh minimum LD with qtl snps to plot snps colored by LD
 #' @param unplotted.alpha numeric, number from 0 to 1 to indicate alpha values of snps below the plot.r2.thresh. 
@@ -11,6 +10,7 @@
 #' @param sig.line numeric, -log10(p) value to draw line on plot
 #' @param orient character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
 #' refers to how the "buildings" of the plot are plotted. 
+#' "V" places pvalue on y-axis, "H" places pvalues on x-axis. 
 #' @param qualitative.annotation character, column in gwas.res that contains qualitative annotations.
 #' For example impact grades from snpeff. See [panvaR::format_snpeff_annotations].
 #' Will be plotted as shapes. Only accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special 
@@ -30,7 +30,6 @@
 #' @examples
 #' # Work in progress
 make_panvar_manhattan <- function(gwas.res,
-                                  qtl.df = NULL,
                                   pvals.in.log = TRUE,
                                   plot.r2.thresh = .2,
                                   unplotted.alpha = .4,

@@ -1,4 +1,6 @@
-#' Make a ggplot scale that has consistent correspondence between aesthetics and variables
+#' Generate discrete scale
+#' 
+#' Make a ggplot discrete scale that has consistent correspondence between aesthetics and variables
 #'
 #' @param values vector, values to supply to given scale (e.g. colors or shapes)
 #' @param vars character, variables to link to values. Will have one to one correspondence to values based on order

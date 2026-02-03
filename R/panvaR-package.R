@@ -42,6 +42,7 @@
 #' @importFrom ggplot2 xlim
 #' @importFrom ggplot2 ylim
 #' @importFrom khroma plot_scheme
+#' @importFrom patchwork plot_layout
 #' @importFrom rlang .data
 #' @importFrom rMVP attach.big.matrix
 #' @importFrom rMVP MVP
