@@ -15,11 +15,16 @@ anno <- read.csv("~/scratch/setaria_biomart.txt") %>%
                                 TRUE ~ annotation)) %>% 
   distinct()
 
-make_gene_annotation_plot(anno,
+anno_ld <- anno %>% 
+  mutate(ld_sim = runif(nrow(anno)))
+
+make_gene_annotation_plot(anno_ld,
                           middle.snp = out_ld$key.snp,
                           window = 25, 
                           include.id = T,
-                          use.arrows = F)
+                          use.arrows = F,
+                          point.color = NULL,
+                          point.fill.scale = NULL)
 
 # ------------------------------------------------------------------------\
 # horizontal --------

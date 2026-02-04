@@ -1,3 +1,21 @@
+# ------------------------------------------------------------------------\
+# unexported --------
+# ------------------------------------------------------------------------\
+
+get.gene.from.snp <- function(bp, gene.df){
+  check.vec <- data.table::between(bp, gene.df$start, gene.df$end)
+  if(any(check.vec)){
+    gene.id.out <- list(gene.df$geneID[check.vec])
+    # gene.id.out <- paste(gene.df$geneID[check.vec], collapse = "|")
+  } else {
+    gene.id.out <- NA
+  }
+  return(gene.id.out)
+}
+
+# ------------------------------------------------------------------------\
+# main function --------
+# ------------------------------------------------------------------------\
 
 
 #' Make a locus zoom style plot with results from a single gwas, points colored by R2 to a qtl and nearby genes annotated.
@@ -25,28 +43,30 @@
 #' @examples
 #' # work in progress
 make_panvar_plot <- function(gwas.res,
-                              qtl.df = NULL,
-                              tag.snp = NULL, 
-                              annotation.table,
-                              plink.path,
-                              pvals.in.log = T,
-                              geno.bed.filename,
-                              geno.bed.directory = "/.",
-                             temp.dir = tempdir(), 
-                              plot.r2.thresh = .2,
-                              unplotted.alpha = .4, 
-                              window,
-                              sig.line,
-                              orient = "H",
-                              qualitative.annotation = NULL,
-                              qualitative.shape.scale = NULL,
-                              quantitative.annotation = NULL,
-                              quantitative.fill.scale = NULL,
-                              plot.title = "",
-                              include.gene.id = F,
-                              highlight.gene.ids = NULL,
-                              gene.highlight.color = "red",
-                              plot.effect = F) {
+                             qtl.df = NULL,
+                             tag.snp = NULL,
+                             annotation.table,
+                             plink.path,
+                             pvals.in.log = T,
+                             geno.bed.filename,
+                             geno.bed.directory = "/.",
+                             temp.dir = tempdir(),
+                             plot.r2.thresh = .2,
+                             unplotted.alpha = .4,
+                             window,
+                             sig.line,
+                             orient = "H",
+                             qualitative.annotation = NULL,
+                             qualitative.shape.scale = NULL,
+                             quantitative.annotation = NULL,
+                             quantitative.fill.scale = NULL,
+                             plot.title = "",
+                             include.gene.id = F,
+                             highlight.gene.ids = NULL,
+                             gene.highlight.color = "red",
+                             annotation.point.variable = "LD",
+                             annotation.point.scale = NULL,
+                             plot.effect = F) {
   
   # ------------------------------------------------------------------------\
   # make LD --------
@@ -82,17 +102,86 @@ make_panvar_plot <- function(gwas.res,
                                qualitative.shape.scale = qualitative.shape.scale,
                                quantitative.annotation = quantitative.annotation,
                                quantitative.fill.scale = quantitative.fill.scale)
+  
+  # ------------------------------------------------------------------------\
+  # make snp to gene stats --------
+  # ------------------------------------------------------------------------\
+  
+  if(!is.null(annotation.point.variable)){
+    message("Generating snp to gene correspondence")
+    
+    # filter gwas df to just in window and join LD
+    gwas.sub <- gwas.res %>%
+      as.data.frame() %>% 
+      mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>%
+      left_join(ld.list$table, by = "marker.ID") %>%
+      filter(!is.na(.data$R2)) %>% 
+      rename("LD" = "R2")
+    
+    # filter anno to just window
+    this.chrom <- get_chrom_from_id(middle.snp)
+    this.pos <- get_bp_from_id(middle.snp)
+    anno.sub <- annotation.table %>%
+      filter(.data$CHR == this.chrom) %>%
+      rowwise() %>%
+      mutate(dist.from.snp = get.gene.dist.from.snp(this.pos, .data$start, .data$end)) %>%
+      filter(.data$dist.from.snp <= window * 1000) 
+    
+    # get maximum value per gene 
+    point.color.stat <- gwas.sub %>% 
+      rowwise() %>% 
+      mutate(snp.in.gene = get.gene.from.snp(.data$POS, anno.sub)) %>% 
+      filter(!is.null(.data$snp.in.gene)) %>% 
+      unnest_longer(.data$snp.in.gene) %>% 
+      group_by(.data$snp.in.gene) %>% 
+      summarize(maximum.value = max(.data[[annotation.point.variable]])) %>% 
+      rename("geneID" = "snp.in.gene")
+    
+    anno.in <- annotation.table %>% 
+      left_join(point.color.stat, by = "geneID")
+  } else {
+    anno.in <- annotation.table
+  }
+  
+  
 
   # ------------------------------------------------------------------------\
   # make annotation --------
   # ------------------------------------------------------------------------\
   
-  anno <- make_gene_annotation_plot(annotation.table = annotation.table,
+  if(is.null(annotation.point.variable)){
+    point.color.option <- NULL
+  } else if(annotation.point.variable == "LD"){
+    default.LD.fill.scale <- binned_scale(
+      aesthetics = "fill",
+      name = "R2 \n",
+      palette = function(x)
+        c("#43638E", "#88DAA0", "#DBC32D", "#B94712"),
+      limits = c(plot.r2.thresh, 1),
+      breaks = seq(plot.r2.thresh, 1, length.out = 5)[-c(1, 5)],
+      show.limits = T,
+      guide = "colorsteps",
+      na.value = "grey50"
+    )
+    annotation.point.scale <- default.LD.fill.scale
+    anno.in <- anno.in %>% 
+      rename("LD" = "maximum.value")
+    point.color.option <- "LD"
+  } else if(!is.null(annotation.point.variable)) {
+    point.color.option <- maximum.value
+  } else {
+    point.color.option <- NULL
+  }
+
+  anno <- make_gene_annotation_plot(annotation.table = anno.in,
                                     middle.snp = ld.list$key.snp,
                                     window = window,
                                     include.id = include.gene.id,
                                     highlight.ids = highlight.gene.ids,
-                                    highlight.color = gene.highlight.color)
+                                    highlight.color = gene.highlight.color,
+                                    use.arrows = F,
+                                    point.color = point.color.option,
+                                    point.fill.scale = annotation.point.scale)
 
   # ------------------------------------------------------------------------\
   # make effect --------
