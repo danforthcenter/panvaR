@@ -108,7 +108,9 @@ get_chrom_from_id <- function(marker.ID){
   as.numeric(stringr::str_extract(marker.ID, "(^.*)-(.*)", group = 1))
 }
 
-
+# execute_snpsift2 is in use now 
+# execute_snpsift has some errors 
+# will switch over to this full time when we clean up the whole package
 execute_snpsift2 <- function(file_path) {
   message("~~~~~~~~~~~~~~~ Extracting SNP impacts ~~~~~~~~~~~~~~~")
   file_path <- path.expand(file_path)
@@ -155,6 +157,7 @@ execute_snpsift2 <- function(file_path) {
   }
 }
 
+# create a tempfile in a provided directory 
 temp_file <- function(create_file = FALSE, working_directory = NULL, prefix = NULL) {
   
   if(!is.null(options()$panvar_outdir)){
@@ -184,4 +187,9 @@ temp_file <- function(create_file = FALSE, working_directory = NULL, prefix = NU
   }
   
   return(final_path)
+}
+
+# do min/max normalization
+minmaxnormal <- function(x) {
+  return((x- min(x)) /(max(x)-min(x)))
 }

@@ -51,7 +51,6 @@ out_ld <-
 gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv"))
 
 make_panvar_manhattan(gwas.res = gwas.df,
-                      qtl.df = NULL,
                       pvals.in.log = F,
                       ld.list = out_ld,
                       window = 500,
@@ -67,7 +66,6 @@ myshapescale <- make_consistent_scale(values = c(21:25), vars = unique(gwas.df_a
 
 p <-
 make_panvar_manhattan(gwas.res = gwas.df_ann,
-                      qtl.df = NULL,
                       pvals.in.log = F,
                       ld.list = out_ld,
                       window = 500,
@@ -86,7 +84,6 @@ gwas.df_ann <- gwas.df_ann %>%
 
 # p <- 
 make_panvar_manhattan(gwas.res = gwas.df_ann,
-                      qtl.df = NULL,
                       pvals.in.log = F,
                       ld.list = out_ld,
                       plot.r2.thresh = .6,
@@ -107,9 +104,9 @@ cadscore <- arrow::read_parquet("~/scratch/setaria_plantCAD_scores.parquet", col
 
 gwas.df_ann <- left_join(gwas.df_ann, cadscore, by = "marker.ID") %>% 
   mutate(zero_shot_positive = -zero_shot)
+write.csv(gwas.df_ann, "~/scratch/panvar_test/setaria_shatter_full/Shatter_GLM_res_with_snpeff_and_cad.csv", row.names = F)
 
 make_panvar_manhattan(gwas.res = gwas.df_ann,
-                      qtl.df = NULL,
                       pvals.in.log = F,
                       ld.list = out_ld,
                       plot.r2.thresh = .8,

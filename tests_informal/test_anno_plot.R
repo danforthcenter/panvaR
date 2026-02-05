@@ -23,7 +23,7 @@ make_gene_annotation_plot(anno_ld,
                           window = 25, 
                           include.id = T,
                           use.arrows = F,
-                          point.color = NULL,
+                          point.color = "ld_sim",
                           point.fill.scale = NULL)
 
 # ------------------------------------------------------------------------\

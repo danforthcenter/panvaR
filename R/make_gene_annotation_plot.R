@@ -141,8 +141,12 @@ make_gene_annotation_plot <- function(annotation.table,
   
   # Add some points if you want
   if(!is.null(point.color)){
+    # anno <- anno +
+    #   geom_point(aes(x = .555, y = .data$y.pos, fill = .data[[point.color]]), shape = 21, size = 2) +
+    #   theme(legend.position = "right",
+    #         legend.justification = "top")
     anno <- anno +
-      geom_point(aes(x = .555, y = .data$y.pos, fill = .data[[point.color]]), shape = 21, size = 2) +
+      geom_point(aes(x = .555, y = .data$y.pos, color = .data[[point.color]]), shape = 15, size = 3) +
       theme(legend.position = "right",
             legend.justification = "top")
     if(!is.null(point.fill.scale)){
@@ -150,7 +154,8 @@ make_gene_annotation_plot <- function(annotation.table,
         point.fill.scale
     } else {
       anno <- anno + 
-        scale_fill_viridis_b()
+        # scale_fill_viridis_b(name = point.color)
+        scale_color_viridis_b(name = point.color)
     }
     # move the text over a little to accomodate point
     text.x.start <- .56

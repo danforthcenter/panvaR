@@ -55,6 +55,11 @@ make_panvar_manhattan <- function(gwas.res,
     select("marker.ID", "POS") %>%
     distinct()
   
+  # add middlesnp back in
+  gwas.sub.mid.snp <- gwas.res %>% 
+    filter(marker.ID == middle.snp) %>% 
+    mutate(LD = 1)
+  gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp)
   
   # make manhattan
   plot.df <- gwas.sub %>%

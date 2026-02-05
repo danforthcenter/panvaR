@@ -49,31 +49,66 @@ make_gene_annotation_plot(anno,
 # ------------------------------------------------------------------------\
 
 # p <- 
-make_panvar_plot(gwas.res = gwas.df,
-                             tag.snp = "5-6857045", 
-                             annotation.table = anno,
-                             plink.path = options()$plink_path,
-                             pvals.in.log = F,
-                             geno.bed.filename = "SetShattering_PlinkQC_maf0.05_missing0.1",
-                             geno.bed.directory = "/home/cluebbert/scratch/panvar_test/setaria_shatter_full/",
-                             plot.r2.thresh = .2,
-                             unplotted.alpha = .4, 
-                             window = 100,
-                             sig.line = 6,
-                             orient = "H",
-                             qualitative.annotation = NULL,
-                             qualitative.shape.scale = NULL,
-                             quantitative.annotation = NULL,
-                             quantitative.fill.scale = NULL,
-                             plot.title = "",
-                             include.gene.id = T,
-                             highlight.gene.ids = NULL,
-                             gene.highlight.color = "red",
-                 annotation.point.scale = ggplot2::scale_fill_viridis_b(),
-                             plot.effect = F)
+make_panvar_plot(
+  gwas.res = gwas.df,
+  tag.snp = "5-6857045",
+  annotation.table = anno,
+  plink.path = options()$plink_path,
+  pvals.in.log = F,
+  geno.bed.filename = "SetShattering_PlinkQC_maf0.05_missing0.1",
+  geno.bed.directory = "/home/cluebbert/scratch/panvar_test/setaria_shatter_full/",
+  plot.r2.thresh = .2,
+  unplotted.alpha = .4,
+  window = 100,
+  sig.line = 6,
+  orient = "H",
+  qualitative.annotation = NULL,
+  qualitative.shape.scale = NULL,
+  quantitative.annotation = NULL,
+  quantitative.fill.scale = NULL,
+  plot.title = "",
+  include.gene.id = T,
+  highlight.gene.ids = NULL,
+  gene.highlight.color = "red",
+  annotation.point.scale = ggplot2::scale_fill_viridis_b(option = "plasma"),
+  plot.effect = F
+)
 
 # doesn't work :(
 ggplotly(p)
+
+# ------------------------------------------------------------------------\
+# test full plot with some other values --------
+# ------------------------------------------------------------------------\
+
+gwas.df <- read.csv("~/scratch/panvar_test/setaria_shatter_full/Shatter_GLM_res_with_snpeff_and_cad.csv")
+
+make_panvar_plot(
+  gwas.res = gwas.df,
+  tag.snp = "5-6857045",
+  annotation.table = anno,
+  plink.path = options()$plink_path,
+  pvals.in.log = F,
+  geno.bed.filename = "SetShattering_PlinkQC_maf0.05_missing0.1",
+  geno.bed.directory = "/home/cluebbert/scratch/panvar_test/setaria_shatter_full/",
+  plot.r2.thresh = .2,
+  unplotted.alpha = .4,
+  window = 100,
+  sig.line = 6,
+  orient = "H",
+  qualitative.annotation = NULL,
+  qualitative.shape.scale = NULL,
+  # quantitative.annotation = "zero_shot_positive",
+  quantitative.fill.scale = NULL,
+  plot.title = "Setaria Shattering",
+  include.gene.id = T,
+  highlight.gene.ids = NULL,
+  gene.highlight.color = "red",
+  annotation.point.variable = "snp.score",
+  annotation.point.scale = ggplot2::scale_color_viridis_b(option = "plasma"),
+  plot.effect = F,
+  compute.scores = T
+)
 
 # ------------------------------------------------------------------------\
 # test make input to points in anno --------
@@ -129,3 +164,4 @@ test <- gwas.sub %>%
 bp <- gwas.sub$POS[9188]
 
 between(bp, anno.sub$start, anno.sub$end)
+
