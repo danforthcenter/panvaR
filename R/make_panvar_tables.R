@@ -67,11 +67,14 @@ make_panvar_tables <- function(gwas.res,
     # rename this here to work with special case "LD" given to point variable
     rename("LD" = "R2")
   
-  # add middlesnp back in
-  gwas.sub.mid.snp <- gwas.res %>% 
-    filter(marker.ID == ld.list$key.snp) %>% 
-    mutate(LD = 1)
-  gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp)
+  # add middlesnp back in, gets ignored by LD calcu if using tagsnp
+  if(!is.null(tag.snp)){
+    gwas.sub.mid.snp <- gwas.res %>% 
+      filter(marker.ID == ld.list$key.snp) %>% 
+      mutate(LD = 1)
+    gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp) 
+  }
+  
   
   # ------------------------------------------------------------------------\
   # make scores --------
@@ -169,7 +172,9 @@ make_panvar_tables <- function(gwas.res,
   # ------------------------------------------------------------------------\
   
   out <- list(gwas = gwas.sub,
-              anno = anno.out)
+              anno = anno.out,
+              key.snp = ld.list$key.snp,
+              qtl.snps = ld.list$qtl.snps)
   
   return(out)
 }

@@ -20,10 +20,10 @@ out_ld <-
 gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv"))
 
 # manhattan
-make_panvar_manhattan(gwas.res = gwas.df,
+make_panvar_manhattan2(gwas.res = gwas.df,
                       pvals.in.log = F,
                       ld.list = out_ld,
-                      window = 250,
+                      window = 10,
                       sig.line = 6, orient = "V")
 
 # annotation
