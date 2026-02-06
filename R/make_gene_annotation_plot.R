@@ -29,10 +29,12 @@ get.gene.y.pos <- function(from, to, length.out) {
 #' Use a table of genes, descriptions and their start and end points to plot their locations 
 #' and annotations along the genome. 
 #'
+#' @param panvar.table.list list, output from [panvaR::make_panvar_tables]. Provide either this list or both annotation.table and middle.snp. 
 #' @param annotation.table table with annotations with columns (geneID, CHR, start, end, annotation). start and end correspond to base-pair coordinates of start and end of gene. CHR is chromosome of gene.
 #' @param middle.snp character, SNP name in form "CHR-POS" center of window. Often the key.snp output of [panvaR::get_ld_in_window]
 #' @param window integer, kilobases on either side of middle.snp to plot
 #' @param include.id boolean, include geneID in gene annotations or not
+#' @param gene.color 
 #' @param highlight.ids character, optional, vector of ids to highlight
 #' @param highlight.color character, optional, color to highlight ids
 #' @param use.arrows boolean, if TRUE, use [gggenes::geom_gene_arrow] to draw representations of genes. 
@@ -43,6 +45,8 @@ get.gene.y.pos <- function(from, to, length.out) {
 #' If used, legend will not be displayed. 
 #' @param point.fill.scale ggplot2 scale object, a fill scale to customize how point.color 
 #' is displayed. 
+
+
 #'
 #' @returns
 #' GGplot object 
@@ -50,8 +54,9 @@ get.gene.y.pos <- function(from, to, length.out) {
 #'
 #' @examples
 #' # Work in progress
-make_gene_annotation_plot <- function(annotation.table,
-                                      middle.snp,
+make_gene_annotation_plot <- function(panvar.table.list = NULL,
+                                      annotation.table = NULL,
+                                      middle.snp = NULL,
                                       window,
                                       include.id = F,
                                       gene.color = "blue",
@@ -62,9 +67,48 @@ make_gene_annotation_plot <- function(annotation.table,
                                       point.fill.scale = NULL){
   
   
-  # get pos and chrom
-  this.chrom <- stringr::str_extract(middle.snp, "^(.*?)-", group = 1)
-  this.pos <- get_bp_from_id(middle.snp)
+  # make sure we don't use both
+  if(!is.null(panvar.table.list) & (!is.null(middle.snp) | !is.null(annotation.table))){
+    stop("Must provide only one of panvar.table.list or middle.snp and annotation.table")
+  }
+  
+  # use middle.snp and annotation.table
+  if(is.null(panvar.table.list)){
+    if(is.null(middle.snp) & is.null(annotation.table)){
+      stop("Must provide either panvar.table.list or middle.snp and annotation.table")
+    } else if(is.null(middle.snp) | is.null(annotation.table)){
+      stop("Must provide middle.snp and annotation.table")
+    } else {
+      # get pos and chrom
+      this.chrom <- stringr::str_extract(middle.snp, "^(.*?)-", group = 1)
+      this.pos <- get_bp_from_id(middle.snp)
+      
+      # format plot inputs
+      anno.sub <- annotation.table %>%
+        # select("geneID", "CHR", "start", "end", "annotation") %>%
+        filter(.data$CHR == this.chrom) %>%
+        rowwise() %>%
+        mutate(dist.from.snp = get.gene.dist.from.snp(this.pos, .data$start, .data$end)) %>%
+        filter(.data$dist.from.snp <= window * 1000) %>%
+        mutate(id.plus.anno = paste0(.data$geneID, ", ", .data$annotation),
+               plot.label = ifelse(include.id, .data$id.plus.anno, .data$annotation)) %>% 
+        mutate(gene.mid = median(c(.data$start, .data$end))) %>% 
+        arrange(.data$gene.mid)    
+      }
+    # use panvar.table.list
+  } else {
+    this.pos <- get_bp_from_id(panvar.table.list$key.snp)
+    
+    anno.sub <- panvar.table.list$anno %>% 
+      mutate(dist.from.snp = get.gene.dist.from.snp(this.pos, .data$start, .data$end)) %>%
+      filter(.data$dist.from.snp <= window * 1000) %>%
+      mutate(id.plus.anno = paste0(.data$geneID, ", ", .data$annotation),
+             plot.label = ifelse(include.id, .data$id.plus.anno, .data$annotation)) %>% 
+      mutate(gene.mid = median(c(.data$start, .data$end))) %>% 
+      arrange(.data$gene.mid)    
+  }
+  
+  # start plotting
   
   # how far to spread labels past ends, in percentage
   y.spread.expansion <- .1
@@ -75,24 +119,11 @@ make_gene_annotation_plot <- function(annotation.table,
   plot.limits <- c(this.pos + window * 1000, this.pos - window * 1000)
   plot.limits.ex <- c(plot.limits[1] + y.spread.factor.window, plot.limits[2] - y.spread.factor.window)
   
-  
-  # make gene plot
-  anno.sub <- annotation.table %>%
-    # select("geneID", "CHR", "start", "end", "annotation") %>%
-    filter(.data$CHR == this.chrom) %>%
-    rowwise() %>%
-    mutate(dist.from.snp = get.gene.dist.from.snp(this.pos, .data$start, .data$end)) %>%
-    filter(.data$dist.from.snp <= window * 1000) %>%
-    mutate(id.plus.anno = paste0(.data$geneID, ", ", .data$annotation),
-           plot.label = ifelse(include.id, .data$id.plus.anno, .data$annotation)) %>% 
-    mutate(gene.mid = median(c(.data$start, .data$end))) %>% 
-    arrange(.data$gene.mid)
-  
   anno.spread <- anno.sub %>%
     tibble::add_column(y.pos = get.gene.y.pos(min(plot.limits.ex),
-                                      max(plot.limits.ex),
-                                      nrow(anno.sub)))
-  
+                                              max(plot.limits.ex),
+                                              nrow(anno.sub)))
+
   if(!is.null(highlight.ids)){
     anno.spread <- anno.spread %>%
       mutate(gene.label.color = case_when(geneID %in% highlight.ids ~ "A",

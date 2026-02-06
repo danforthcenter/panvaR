@@ -38,7 +38,7 @@ anno <- read.csv("~/scratch/setaria_biomart.txt") %>%
                                 TRUE ~ annotation)) %>% 
   distinct()
 
-make_gene_annotation_plot(anno,
+make_gene_annotation_plot(annotation.table = anno,
                           middle.snp = out_ld$key.snp,
                           window = 250, 
                           include.id = T,

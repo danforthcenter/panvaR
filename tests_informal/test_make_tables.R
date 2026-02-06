@@ -67,3 +67,33 @@ make_panvar_manhattan(panvar.table.list = tables,
                        window = 250,
                        sig.line = 6,
                        orient = "H")
+
+# ------------------------------------------------------------------------\
+# annotation with tables --------
+# ------------------------------------------------------------------------\
+
+
+make_gene_annotation_plot(panvar.table.list = tables,
+                          window = 20, 
+                          include.id = T,
+                          use.arrows = F)
+
+# annotation
+anno <- read.csv("~/scratch/setaria_biomart.txt") %>% 
+  filter(str_detect(Chromosome.Name, "scaffold", negate = T)) %>% 
+  mutate(CHR = as.numeric(str_replace(Chromosome.Name, "Chr_", ""))) %>% 
+  select(CHR, geneID = Gene.Name, 
+         start = Gene.Start..bp.,
+         end = Gene.End..bp.,
+         annotation = Description) %>% 
+  mutate(annotation = case_when(annotation == "" ~ "No gene description.",
+                                TRUE ~ annotation)) %>% 
+  distinct()
+
+make_gene_annotation_plot(annotation.table = anno,
+                          middle.snp = out_ld$key.snp,
+                          window = 250, 
+                          include.id = T,
+                          use.arrows = F)
+
+
