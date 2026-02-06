@@ -154,7 +154,7 @@ make_panvar_plot <- function(gwas.res,
   
   # add middlesnp back in
   gwas.sub.mid.snp <- gwas.res %>% 
-    filter(marker.ID == middle.snp) %>% 
+    filter(marker.ID == ld.list$key.snp) %>% 
     mutate(LD = 1)
   gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp)
   
@@ -167,7 +167,7 @@ make_panvar_plot <- function(gwas.res,
     message("Computing scores")
     # add dist column 
     score.in <- gwas.sub %>% 
-      mutate(key.snp.pos = get_bp_from_id(middle.snp)) %>% 
+      mutate(key.snp.pos = get_bp_from_id(ld.list$key.snp)) %>% 
       mutate(DIST = abs(POS - key.snp.pos)) 
     
     if(!pvals.in.log){

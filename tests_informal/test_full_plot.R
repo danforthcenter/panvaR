@@ -81,7 +81,8 @@ ggplotly(p)
 # test full plot with some other values --------
 # ------------------------------------------------------------------------\
 
-gwas.df <- read.csv("~/scratch/panvar_test/setaria_shatter_full/Shatter_GLM_res_with_snpeff_and_cad.csv")
+gwas.df <- data.table::fread("~/scratch/panvar_test/setaria_shatter_full/Shatter_GLM_res_with_snpeff_and_cad.csv",
+                             data.table = F)
 
 make_panvar_plot(
   gwas.res = gwas.df,
@@ -96,7 +97,7 @@ make_panvar_plot(
   window = 100,
   sig.line = 6,
   orient = "H",
-  qualitative.annotation = NULL,
+  qualitative.annotation = "IMPACT_PLUS",
   qualitative.shape.scale = NULL,
   # quantitative.annotation = "zero_shot_positive",
   quantitative.fill.scale = NULL,
@@ -109,6 +110,8 @@ make_panvar_plot(
   plot.effect = F,
   compute.scores = T
 )
+
+luebbert::memesave("~/OneDrive/vm_transfer/SetariaShattering_panvar_snp.score.png")
 
 # ------------------------------------------------------------------------\
 # test make input to points in anno --------
@@ -159,6 +162,19 @@ test <- gwas.sub %>%
   unnest_longer(snp.in.gene) %>% 
   group_by(snp.in.gene) %>% 
   summarize(maximum.value = max(R2))
+
+# make it work with any number of variables, always do LD...
+variables <- c("LOGPVAL", "R2")
+test <- gwas.sub %>% 
+  rowwise() %>% 
+  mutate(snp.in.gene = get.gene.from.snp(POS, anno.sub)) %>% 
+  filter(!is.null(snp.in.gene)) %>% 
+  unnest_longer(snp.in.gene) %>% 
+  group_by(snp.in.gene)
+
+x <- test %>% 
+  summarize(across(all_of(variables), ~ max(.x, na.rm = T)))  
+
 
 # overlapping genes
 bp <- gwas.sub$POS[9188]

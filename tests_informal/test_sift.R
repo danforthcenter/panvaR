@@ -121,11 +121,53 @@ final_snp_impact_grades <- sort_score %>%
   select(CHROM, POS, marker.ID, IMPACT_PLUS, IMPACT) %>% 
   distinct() 
 max(table(final_snp_impact_grades$marker.ID))
+names(table(finalsnp))
+
+# can't retain info about which gene this max impact is because there are ties!
+# :( lots of snps as both "upstream" and "downstream" variants. What do we do with these?????? 
+test <- sort_score %>% 
+  select(CHROM, POS, GENE, marker.ID, IMPACT_PLUS, IMPACT, IMPACT_score) %>% 
+  distinct() 
+max(table(test$marker.ID))
+these <- names(table(test$marker.ID))[which(table(test$marker.ID) > 1)]
+# this is really slow... ? 
+test2 <- test %>% 
+  filter(marker.ID %in% sample(these, 100)) %>% 
+  arrange(marker.ID)
+# to-do output one row per gene with most impactful impact listed
+x <- test %>% 
+  group_by(GENE) %>% 
+  mutate(is.max.impact.score = IMPACT_score == max(IMPACT_score)) %>% 
+  filter(is.max.impact.score) %>% 
+  select(GENE, IMPACT_PLUS, IMPACT, IMPACT_score) %>% 
+  distinct()
+
+y <- test %>% 
+  mutate(GENE_sep = strsplit(GENE, split = "-"))%>% 
+  tidyr::unnest_longer(GENE_sep) %>% 
+  group_by(GENE_sep) %>% 
+  mutate(is.max.impact.score = IMPACT_score == max(IMPACT_score)) %>% 
+  filter(is.max.impact.score) %>% 
+  select(GENE = GENE_sep, IMPACT_PLUS, IMPACT, IMPACT_score) %>% 
+  distinct()
+
+non.inter.genes <- x$GENE[str_detect(x$GENE, "-", negate = T)]
+length(non.inter.genes)
+length(unique(y$GENE))
+# 3 genes had only intergenic snps! 
 
 formatted_snpeff_annotations <- sort 
   
 # make this a function:
 out <- 
 format_snpeff_annotations("~/scratch/setaria_vcf_chrsnumeric/setaria_annotated_chrsnumeric_CHR9.vcf.gz")
+
+# want to find a way to use this table to make snp to gene correspondence
+# big file (3GB)
+# 1) filter to only snps you care about (in window)
+#     - can we read in only those rows? 
+# 2) join your snp based variable to this table
+# 3) group by gene and get maximum 
+test <- out$formatted_snpeff_annotations
 
 out <- format_snpeff_annotations("~/scratch/setaria_annotated_chrsnumeric.vcf.gz")
