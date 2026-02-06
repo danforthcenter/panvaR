@@ -45,8 +45,6 @@ get.gene.y.pos <- function(from, to, length.out) {
 #' If used, legend will not be displayed. 
 #' @param point.fill.scale ggplot2 scale object, a fill scale to customize how point.color 
 #' is displayed. 
-
-
 #'
 #' @returns
 #' GGplot object 

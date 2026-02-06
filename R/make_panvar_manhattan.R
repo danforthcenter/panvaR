@@ -79,7 +79,7 @@ make_panvar_manhattan <- function(panvar.table.list = NULL,
   } else {
     key.snp <- panvar.table.list$key.snp
     gwas.sub <- panvar.table.list$gwas %>% 
-      mutate(R2 = LD)
+      mutate(R2 = .data$LD)
     
     # for rug plot
     marker.list.in.window <- gwas.sub %>%

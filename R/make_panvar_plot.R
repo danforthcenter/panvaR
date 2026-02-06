@@ -35,7 +35,7 @@ get.gene.from.snp <- function(bp, gene.df){
 #'   of start and end of gene. CHR is chromosome of gene.
 #' @param plink.path character, optional, path to plink2 executable. Will
 #'   overide option set by [panvaR::set_plink_path].
-#' @param pvals.in.log
+#' @param pvals.in.log boolean, if TRUE PVAL column has already been converted to -log10(pvalue)
 #' @param geno.bed.filename character, prefix of genotype files in plink
 #'   (bed/bim/fam) format. Do not include ".bed" extension.
 #' @param geno.bed.directory character, directory where genotype files are

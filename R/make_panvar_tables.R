@@ -1,25 +1,58 @@
-#' Title
+#' Make some standardized tables from gwas and annotation tables
 #'
-#' @param gwas.res 
-#' @param qtl.df 
-#' @param tag.snp 
-#' @param annotation.table 
-#' @param plink.path 
-#' @param pvals.in.log 
-#' @param geno.bed.filename 
-#' @param geno.bed.directory 
-#' @param temp.dir 
-#' @param window 
-#' @param snp.to.gene.vars 
-#' @param compute.scores 
-#' @param score.vars 
-#' @param score.dirs 
-#' @param score.weights 
+#' @param gwas.res data.frame of all gwas results, should contain columns (CHR,
+#'   POS, PVAL), corresponding to (chromosome, physical position, and pvalue).
+#' @param qtl.df data.frame, table that includes list of snps to calculate LD to
+#'   with columns (CHR, POS, LOGPVAL), corresponding to (chromosome, physical
+#'   position, and -log10(p-value)). QTL are typically defined as hits grouped
+#'   by LD by something like `plink --clump`. See [panvaR::get_ld_in_window]
+#' @param tag.snp character, marker.ID of snp around which to calculate LD. In
+#'   the form 'CHR-POS'
+#' @param annotation.table table with annotations with columns (geneID, CHR,
+#'   start, end, annotation). start and end correspond to base-pair coordinates
+#'   of start and end of gene. CHR is chromosome of gene.
+#' @param plink.path character, optional, path to plink2 executable. Will
+#'   overide option set by [panvaR::set_plink_path].
+#' @param pvals.in.log boolean, if TRUE PVAL column has already been converted to -log10(pvalue)
+#' @param geno.bed.filename character, prefix of genotype files in plink
+#'   (bed/bim/fam) format. Do not include ".bed" extension.
+#' @param geno.bed.directory character, directory where genotype files are
+#'   located
+#' @param temp.dir character, where to output some temporary files.
+#' @param window numeric, total window size in KB, all variants within .5 *
+#'   window are calculated.
+#' @param snp.to.gene.vars character, numeric variables in gwas.res to aggregate by gene. 
+#' For each gene, snps with a physical position with the start and end of the gene are considered. 
+#' The maximum value for all snps within the gene is returned. Special values, `DIST`, `LD` and `LOGPVAL` can
+#' be included in addition to any user supplied variables. 
+#' @param compute.scores boolean, if TRUE, snp scores will be computed. See details for more info.  
+#' @param score.vars character, vector of column names indicating which variables to included in the score.
+#' @param score.dirs numeric, a vector indicating which direction is to be considered more indicative
+#' of an association. 1 indicates higher is better, -1 indicates lower is better. The order should correspond 
+#' with the order in cols. 
+#' @param score.weights numeric, a vector indicating weights for the variables. These must add up to 1. 
 #'
+#' @details
+#' Scores:
+#' Scores are simple scaled and weighted averages of some variables. First variables are 
+#' normalized using min/max normalization. The variables are then made negative if 
+#' they need to be reversed to indicate a larger value as a more desirable value. For example,
+#' distance from the key snp should be reversed as a small distance is more desirable.
+#' A log-pvalue is already of this form 'bigger is better' so does not need to be altered. 
+#' Finally, a weighted average is taken based on user defined weights. The default weights all variables equally. 
+#' The outcome is a score from 0-1 that ranks the snps based on these variables. 
+#' see: [panvaR::make_scores]
+#' 
 #' @returns
+#' A named list with the following entries:
+#' - gwas: formatted gwas results.
+#' - anno: formatted annotation results.
+#' - key.snp: tag.snp or in the qtl.df case the highest p-value snp supplied to the function for downstream use.
+#' - qtl.df: qtl.df supplied to the program if used. 
 #' @export
 #'
 #' @examples
+#' # work in progress
 make_panvar_tables <- function(gwas.res,
                                qtl.df = NULL,
                                tag.snp = NULL,
@@ -70,7 +103,7 @@ make_panvar_tables <- function(gwas.res,
   # add middlesnp back in, gets ignored by LD calcu if using tagsnp
   if(!is.null(tag.snp)){
     gwas.sub.mid.snp <- gwas.res %>% 
-      filter(marker.ID == ld.list$key.snp) %>% 
+      filter(.data$marker.ID == ld.list$key.snp) %>% 
       mutate(LD = 1)
     gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp) 
   }
@@ -86,7 +119,7 @@ make_panvar_tables <- function(gwas.res,
     # add dist column 
     score.in <- gwas.sub %>% 
       mutate(key.snp.pos = get_bp_from_id(ld.list$key.snp)) %>% 
-      mutate(DIST = abs(POS - key.snp.pos)) 
+      mutate(DIST = abs(.data$POS - .data$key.snp.pos)) 
     
     if(!pvals.in.log){
       score.in <- score.in %>%
