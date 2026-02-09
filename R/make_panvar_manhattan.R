@@ -71,7 +71,7 @@ make_panvar_manhattan <- function(panvar.table.list = NULL,
       
       # add middlesnp back in
       gwas.sub.mid.snp <- gwas.res %>% 
-        filter(marker.ID == ld.list$key.snp) %>% 
+        filter(.data$marker.ID == ld.list$key.snp) %>% 
         mutate(LD = 1)
       gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp)
     }

@@ -15,7 +15,8 @@ make_panvar_tables(
   geno.bed.directory = "/.",
   temp.dir = tempdir(),
   window,
-  snp.to.gene.vars = NULL,
+  snp.to.gene.vars = "LD",
+  snp.to.gene.buffer = 0,
   compute.scores = F,
   score.vars = NULL,
   score.dirs = NULL,
@@ -58,6 +59,9 @@ window are calculated.}
 For each gene, snps with a physical position with the start and end of the gene are considered.
 The maximum value for all snps within the gene is returned. Special values, \code{DIST}, \code{LD} and \code{LOGPVAL} can
 be included in addition to any user supplied variables.}
+
+\item{snp.to.gene.buffer}{numeric, kilobases to add to gene start and end to include genes
+that are close but not in gene. Snpeff uses 5 KB by default to call a snp "upstream"/"downstream" variant. default is 0.}
 
 \item{compute.scores}{boolean, if TRUE, snp scores will be computed. See details for more info.}
 

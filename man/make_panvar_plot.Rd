@@ -5,15 +5,11 @@
 \title{Make a plot that lines up manhattan and gene locations}
 \usage{
 make_panvar_plot(
-  gwas.res,
-  qtl.df = NULL,
-  tag.snp = NULL,
-  annotation.table,
-  plink.path,
+  panvar.table.list = NULL,
+  gwas.res = NULL,
+  ld.list = NULL,
+  annotation.table = NULL,
   pvals.in.log = T,
-  geno.bed.filename,
-  geno.bed.directory = "/.",
-  temp.dir = tempdir(),
   plot.r2.thresh = 0.2,
   unplotted.alpha = 0.4,
   window,
@@ -30,41 +26,20 @@ make_panvar_plot(
   annotation.point.variable.location = c("gwas", "anno"),
   annotation.point.variable = "LD",
   annotation.point.scale = NULL,
-  compute.scores = F,
-  score.vars = NULL,
-  score.dirs = NULL,
-  score.weights = NULL,
   plot.effect = F
 )
 }
 \arguments{
+\item{panvar.table.list}{list, output from \link{make_panvar_tables}. Provide either this list or both gwas.res and ld.list.}
+
 \item{gwas.res}{data.frame of all gwas results, should contain columns (CHR,
 POS, PVAL), corresponding to (chromosome, physical position, and pvalue).}
-
-\item{qtl.df}{data.frame, table that includes list of snps to calculate LD to
-with columns (CHR, POS, LOGPVAL), corresponding to (chromosome, physical
-position, and -log10(p-value)). QTL are typically defined as hits grouped
-by LD by something like \code{plink --clump}. See \link{get_ld_in_window}}
-
-\item{tag.snp}{character, marker.ID of snp around which to calculate LD. In
-the form 'CHR-POS'}
 
 \item{annotation.table}{table with annotations with columns (geneID, CHR,
 start, end, annotation). start and end correspond to base-pair coordinates
 of start and end of gene. CHR is chromosome of gene.}
 
-\item{plink.path}{character, optional, path to plink2 executable. Will
-overide option set by \link{set_plink_path}.}
-
 \item{pvals.in.log}{boolean, if TRUE PVAL column has already been converted to -log10(pvalue)}
-
-\item{geno.bed.filename}{character, prefix of genotype files in plink
-(bed/bim/fam) format. Do not include ".bed" extension.}
-
-\item{geno.bed.directory}{character, directory where genotype files are
-located}
-
-\item{temp.dir}{character, where to output some temporary files.}
 
 \item{plot.r2.thresh}{minimum LD with qtl snps to plot snps colored by LD}
 
@@ -125,6 +100,9 @@ how point.color is displayed.}
 
 \item{plot.effect}{boolean, if TRUE include volcano style effect vs pvalue
 plot as inset.}
+
+\item{tag.snp}{character, marker.ID of snp around which to calculate LD. In
+the form 'CHR-POS'}
 }
 \value{
 ggplot2 object of plot with manhattan plot alongside genes for a
