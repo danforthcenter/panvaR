@@ -20,7 +20,7 @@ out_ld <-
 gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv"))
 
 # manhattan
-make_panvar_manhattan2(gwas.res = gwas.df,
+make_panvar_manhattan(gwas.res = gwas.df,
                       pvals.in.log = F,
                       ld.list = out_ld,
                       window = 10,
@@ -221,6 +221,11 @@ tables <- make_panvar_tables(gwas.res = gwas.df,
                              snp.to.gene.vars = c("LD", "snp.score"),
                              snp.to.gene.buffer = 5)
 
+make_panvar_manhattan(panvar.table.list = tables,
+                      pvals.in.log = F,
+                      window = 10, 
+                      sig.line = 6)
+
 out_ld <- 
   panvaR::get_ld_in_window(tag.snp = "5-6857045",
                            window = 500,
@@ -229,18 +234,18 @@ out_ld <-
                            geno.bed = "SetShattering_PlinkQC_maf0.05_missing0.1")
 
 
-make_panvar_plot2(panvar.table.list = tables,
-  gwas.res = gwas.df,
-  ld.list = out_ld, 
+make_panvar_plot(panvar.table.list = tables,
+  # gwas.res = gwas.df,
+  # ld.list = out_ld, 
   # tag.snp = "5-6857045",
-  annotation.table = anno,
+  # annotation.table = anno,
   # plink.path = options()$plink_path,
   pvals.in.log = F,
   # geno.bed.filename = "SetShattering_PlinkQC_maf0.05_missing0.1",
   # geno.bed.directory = "/home/cluebbert/scratch/panvar_test/setaria_shatter_full/",
   plot.r2.thresh = .2,
   unplotted.alpha = .4,
-  window = 100,
+  window = 8,
   sig.line = 6,
   orient = "H",
   qualitative.annotation = NULL,
@@ -253,5 +258,5 @@ make_panvar_plot2(panvar.table.list = tables,
   gene.highlight.color = "red",
   annotation.point.variable = NULL,
   annotation.point.scale = ggplot2::scale_color_viridis_b(option = "plasma"),
-  plot.effect = F
+  plot.effect = T
 )
