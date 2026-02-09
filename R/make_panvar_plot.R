@@ -183,16 +183,23 @@ make_panvar_plot <- function(panvar.table.list = NULL,
   # make effect --------
   # ------------------------------------------------------------------------\
   
-  # if (plot.effect) {
-  #   effect.plot <- make_effect_plot(gwas.res,
-  #                                   qtl.df,
-  #                                   pvals.in.log,
-  #                                   plot.r2.thresh,
-  #                                   ld.list,
-  #                                   window,
-  #                                   sig.line)
-  #   
-  # }
+  if (plot.effect) {
+    effect.plot <- make_effect_plot(panvar.table.list = panvar.table.list, 
+                                    gwas.res = gwas.res,
+                                    pvals.in.log = pvals.in.log,
+                                    plot.r2.thresh = plot.r2.thresh,
+                                    unplotted.alpha = unplotted.alpha,
+                                    ld.list = ld.list,
+                                    window = window,
+                                    sig.line = sig.line,
+                                    orient = "V",
+                                    qualitative.annotation = qualitative.annotation,
+                                    qualitative.shape.scale = qualitative.shape.scale,
+                                    quantitative.annotation = quantitative.annotation,
+                                    quantitative.fill.scale = quantitative.fill.scale,
+                                    include.legend = F)
+
+  }
   
   # ------------------------------------------------------------------------\
   # final plot --------

@@ -20,7 +20,7 @@ out_ld <-
 gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv"))
 
 # manhattan
-make_panvar_manhattan2(gwas.res = gwas.df,
+make_panvar_manhattan(gwas.res = gwas.df,
                       pvals.in.log = F,
                       ld.list = out_ld,
                       window = 10,
@@ -229,11 +229,11 @@ out_ld <-
                            geno.bed = "SetShattering_PlinkQC_maf0.05_missing0.1")
 
 
-make_panvar_plot2(panvar.table.list = tables,
-  gwas.res = gwas.df,
-  ld.list = out_ld, 
+make_panvar_plot(panvar.table.list = tables,
+  # gwas.res = gwas.df,
+  # ld.list = out_ld, 
   # tag.snp = "5-6857045",
-  annotation.table = anno,
+  # annotation.table = anno,
   # plink.path = options()$plink_path,
   pvals.in.log = F,
   # geno.bed.filename = "SetShattering_PlinkQC_maf0.05_missing0.1",
@@ -253,5 +253,5 @@ make_panvar_plot2(panvar.table.list = tables,
   gene.highlight.color = "red",
   annotation.point.variable = NULL,
   annotation.point.scale = ggplot2::scale_color_viridis_b(option = "plasma"),
-  plot.effect = F
+  plot.effect = T
 )
