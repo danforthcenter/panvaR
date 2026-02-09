@@ -7,11 +7,10 @@
 #' @param panvar.table.list list, output from [panvaR::make_panvar_tables]. Provide either this list or both gwas.res and ld.list.
 #' @param gwas.res data.frame of all gwas results, should contain columns (CHR,
 #'   POS, PVAL), corresponding to (chromosome, physical position, and pvalue).
-#' @param tag.snp character, marker.ID of snp around which to calculate LD. In
-#'   the form 'CHR-POS'
 #' @param annotation.table table with annotations with columns (geneID, CHR,
 #'   start, end, annotation). start and end correspond to base-pair coordinates
 #'   of start and end of gene. CHR is chromosome of gene.
+#' @param ld.list list, output of [panvaR::get_ld_in_window]
 #' @param pvals.in.log boolean, if TRUE PVAL column has already been converted to -log10(pvalue)
 #' @param plot.r2.thresh minimum LD with qtl snps to plot snps colored by LD
 #' @param unplotted.alpha numeric, number from 0 to 1 to indicate alpha values

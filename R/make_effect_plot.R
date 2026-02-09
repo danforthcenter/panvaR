@@ -4,14 +4,30 @@
 
 #' Make volcano style effect size vs pvalue plot
 #'
-#' @param gwas.res table of all gwas results, should contain columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and pvalue).
-#' @param qtl.df table with same columns that includes only significant hits in a qtl. QTL are typically defined as hits grouped by LD by something like `plink --clump`
+#' @param panvar.table.list list, output from [panvaR::make_panvar_tables]. Provide either this list or both gwas.res and ld.list.
+#' @param gwas.res data.frame of all gwas results, should contain columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and pvalue).
+#' @param ld.list list, output of [panvaR::get_ld_in_window]
 #' @param pvals.in.log boolean, are pvalues in input data.frames in -log10(p)?
 #' @param plot.r2.thresh minimum LD with qtl snps to plot snps colored by LD
-#' @param ld.list output of [luebbert::get_ld_in_window]
-#' @param window kilobases on either side of top QTL snp to plot
-#' @param sig.line -log10(p) value to draw line on plot
-#' @param include.legend include a legend in the plot
+#' @param unplotted.alpha numeric, number from 0 to 1 to indicate alpha values of snps below the plot.r2.thresh. 
+#' To not plot these snps set value to 0. 
+#' @param window numeric, kilobases on either side of top QTL snp to plot
+#' @param sig.line numeric, -log10(p) value to draw line on plot
+#' @param orient character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
+#' refers to how the "buildings" of the plot are plotted. 
+#' "V" places pvalue on y-axis, "H" places pvalues on x-axis. 
+#' @param qualitative.annotation character, column in gwas.res that contains qualitative annotations.
+#' For example impact grades from snpeff. See [panvaR::format_snpeff_annotations].
+#' Will be plotted as shapes. Only accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special 
+#' cases that will have a pre-assigned scale used if supplied here.
+#' @param qualitative.shape.scale ggplot scale, an object with a stored call to 
+#' [ggplot2::scale_shape_manual]. More often an output of the function [panvaR::make_consistent_scale]. 
+#' @param quantitative.annotation character, column in gwas.res that contains quantitative annotations. 
+#' For example, variant effect scores. Will be plotted as fill to points. 
+#' @param quantitative.fill.scale character or scale object, either a character indicating the
+#' `option` parameter passed to [ggplot2::scale_fill_viridis_b] that alters the color scale used.
+#' Or a previous call to a ggplot2 fill scale for example [ggplot2::scale_fill_stepsn].
+#' @param include.legend boolean, if TRUE, legend will be included. 
 #'
 #' @returns
 #' GGplot object of plot. Points colored by maximum R2 to snps in qtl.df

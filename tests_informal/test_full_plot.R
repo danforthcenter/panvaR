@@ -221,6 +221,11 @@ tables <- make_panvar_tables(gwas.res = gwas.df,
                              snp.to.gene.vars = c("LD", "snp.score"),
                              snp.to.gene.buffer = 5)
 
+make_panvar_manhattan(panvar.table.list = tables,
+                      pvals.in.log = F,
+                      window = 10, 
+                      sig.line = 6)
+
 out_ld <- 
   panvaR::get_ld_in_window(tag.snp = "5-6857045",
                            window = 500,
@@ -240,7 +245,7 @@ make_panvar_plot(panvar.table.list = tables,
   # geno.bed.directory = "/home/cluebbert/scratch/panvar_test/setaria_shatter_full/",
   plot.r2.thresh = .2,
   unplotted.alpha = .4,
-  window = 100,
+  window = 8,
   sig.line = 6,
   orient = "H",
   qualitative.annotation = NULL,

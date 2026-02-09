@@ -35,6 +35,8 @@ make_panvar_plot(
 \item{gwas.res}{data.frame of all gwas results, should contain columns (CHR,
 POS, PVAL), corresponding to (chromosome, physical position, and pvalue).}
 
+\item{ld.list}{list, output of \link{get_ld_in_window}}
+
 \item{annotation.table}{table with annotations with columns (geneID, CHR,
 start, end, annotation). start and end correspond to base-pair coordinates
 of start and end of gene. CHR is chromosome of gene.}
@@ -100,9 +102,6 @@ how point.color is displayed.}
 
 \item{plot.effect}{boolean, if TRUE include volcano style effect vs pvalue
 plot as inset.}
-
-\item{tag.snp}{character, marker.ID of snp around which to calculate LD. In
-the form 'CHR-POS'}
 }
 \value{
 ggplot2 object of plot with manhattan plot alongside genes for a

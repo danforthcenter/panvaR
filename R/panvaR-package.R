@@ -28,6 +28,7 @@
 #' @importFrom ggplot2 geom_rug
 #' @importFrom ggplot2 geom_segment
 #' @importFrom ggplot2 geom_text
+#' @importFrom ggplot2 geom_vline
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 labs
 #' @importFrom ggplot2 scale_alpha
