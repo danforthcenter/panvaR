@@ -2,18 +2,14 @@
 % Please edit documentation in R/make_panvar_plot.R
 \name{make_panvar_plot}
 \alias{make_panvar_plot}
-\title{Make a locus zoom style plot with results from a single gwas, points colored by R2 to a qtl and nearby genes annotated.}
+\title{Make a plot that lines up manhattan and gene locations}
 \usage{
 make_panvar_plot(
-  gwas.res,
-  qtl.df = NULL,
-  tag.snp = NULL,
-  annotation.table,
-  plink.path,
+  panvar.table.list = NULL,
+  gwas.res = NULL,
+  ld.list = NULL,
+  annotation.table = NULL,
   pvals.in.log = T,
-  geno.bed.filename,
-  geno.bed.directory = "/.",
-  temp.dir = tempdir(),
   plot.r2.thresh = 0.2,
   unplotted.alpha = 0.4,
   window,
@@ -27,43 +23,93 @@ make_panvar_plot(
   include.gene.id = F,
   highlight.gene.ids = NULL,
   gene.highlight.color = "red",
+  annotation.point.variable.location = c("gwas", "anno"),
+  annotation.point.variable = "LD",
+  annotation.point.scale = NULL,
   plot.effect = F
 )
 }
 \arguments{
-\item{gwas.res}{table of all gwas results, should contain columns (\code{CHR}, \code{POS}, \code{PVAL}), corresponding to (chromosome, physical position, and pvalue).}
+\item{panvar.table.list}{list, output from \link{make_panvar_tables}. Provide either this list or both gwas.res and ld.list.}
 
-\item{qtl.df}{table with same columns that includes only significant hits in a qtl. QTL are typically defined as hits grouped by LD by something like \code{plink --clump}.}
+\item{gwas.res}{data.frame of all gwas results, should contain columns (CHR,
+POS, PVAL), corresponding to (chromosome, physical position, and pvalue).}
 
-\item{annotation.table}{table with annotations with columns (geneID, CHR, start, end, annotation). start and end correspond to base-pair coordinates of start and end of gene. CHR is chromosome of gene.}
+\item{annotation.table}{table with annotations with columns (geneID, CHR,
+start, end, annotation). start and end correspond to base-pair coordinates
+of start and end of gene. CHR is chromosome of gene.}
 
-\item{plink.path}{path to plink 1.9 executable.}
+\item{pvals.in.log}{boolean, if TRUE PVAL column has already been converted to -log10(pvalue)}
 
-\item{pvals.in.log}{boolean, are pvalues in input data.frames in -log10(p) format?}
+\item{plot.r2.thresh}{minimum LD with qtl snps to plot snps colored by LD}
 
-\item{geno.bed.filename}{prefix of genotype files in plink (bed/bim/fam) format.}
+\item{unplotted.alpha}{numeric, number from 0 to 1 to indicate alpha values
+of snps below the plot.r2.thresh. To not plot these snps set value to 0.}
 
-\item{geno.bed.directory}{directory where genotype files are located.}
+\item{window}{numeric, total window size in KB, all variants within .5 *
+window are calculated.}
 
-\item{plot.r2.thresh}{minimum LD with qtl snps to plot snps colored by LD. SNPs below are plotted in grey.}
+\item{sig.line}{numeric, -log10(p) value to draw line on plot}
 
-\item{window}{kilobases on either side of top QTL snp to plot.}
+\item{orient}{character, will rotate plot 90 degrees. vertical (V) or
+horizontal (H) refers to how the "buildings" of the plot are plotted. "V"
+places pvalue on y-axis, "H" places pvalues on x-axis.}
 
-\item{sig.line}{-log10(p) value to draw line on plot.}
+\item{qualitative.annotation}{character, column in \code{gwas.res} that contains
+qualitative annotations. For example impact grades from snpeff. See
+\link{format_snpeff_annotations}. Will be plotted as shapes. Only
+accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special cases that
+will have a pre-assigned scale used if supplied here.}
 
-\item{plot.title}{Optional. Title of plot.}
+\item{qualitative.shape.scale}{ggplot scale, an object with a stored call to
+\link[ggplot2:scale_manual]{ggplot2::scale_shape_manual}. More often an output of the function
+\link{make_consistent_scale}.}
 
-\item{include.gene.id}{boolean, include geneID in gene annotations or not}
+\item{quantitative.annotation}{character, column in \code{gwas.res} that contains
+quantitative annotations. For example, variant effect scores. Will be
+plotted as fill to points.}
 
-\item{plot.effect}{boolean, include plot of pvalues vs effect size? If TRUE, \code{gwas.res} and \code{qtl.df} must have column \code{EFF} that conatins gwas effect sizes.}
+\item{quantitative.fill.scale}{character or scale object, either a character
+indicating the \code{option} parameter passed to \link[ggplot2:scale_viridis]{ggplot2::scale_fill_viridis_b}
+that alters the color scale used. Or a previous call to a ggplot2 fill
+scale for example \link[ggplot2:scale_steps]{ggplot2::scale_fill_stepsn}.}
 
-\item{geno.bed}{prefix of genotype files in plink (bed/bim/fam) format.}
+\item{plot.title}{character, a title for the plot}
+
+\item{include.gene.id}{boolean, if TRUE, \code{geneID} column will be included in
+annotation plot.}
+
+\item{highlight.gene.ids}{character, vector of geneID's that will be
+highlighted in the plot.}
+
+\item{gene.highlight.color}{character, a color to highlight specific geneIDs}
+
+\item{annotation.point.variable.location}{character, either "anno" or "gwas"
+to indicate the location of the column indicated in
+\code{annotation.point.variable} in either \code{annotation.table} or \code{gwas.res}
+respectively. If column is located in \code{gwas.res}, the maximum value of all
+snps in a given gene will be used.}
+
+\item{annotation.point.variable}{character, variable in either \code{gwas.res} or
+\code{annotation.table} that indicates how to color points plotted next to gene
+descriptions. If not supplied, no points are plotted. The input "LD" is
+reserved and will use LD.}
+
+\item{annotation.point.scale}{ggplot2 scale object, a color scale to customize
+how point.color is displayed.}
+
+\item{plot.effect}{boolean, if TRUE include volcano style effect vs pvalue
+plot as inset.}
+
+\item{tag.snp}{character, marker.ID of snp around which to calculate LD. In
+the form 'CHR-POS'}
 }
 \value{
-ggplot object of plot
+ggplot2 object of plot with manhattan plot alongside genes for a
+given genomic window.
 }
 \description{
-Make a locus zoom style plot with results from a single gwas, points colored by R2 to a qtl and nearby genes annotated.
+Make a plot that lines up manhattan and gene locations
 }
 \examples{
 # work in progress

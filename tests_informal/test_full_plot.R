@@ -20,10 +20,10 @@ out_ld <-
 gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv"))
 
 # manhattan
-make_panvar_manhattan(gwas.res = gwas.df,
+make_panvar_manhattan2(gwas.res = gwas.df,
                       pvals.in.log = F,
                       ld.list = out_ld,
-                      window = 250,
+                      window = 10,
                       sig.line = 6, orient = "V")
 
 # annotation
@@ -38,7 +38,7 @@ anno <- read.csv("~/scratch/setaria_biomart.txt") %>%
                                 TRUE ~ annotation)) %>% 
   distinct()
 
-make_gene_annotation_plot(anno,
+make_gene_annotation_plot(annotation.table = anno,
                           middle.snp = out_ld$key.snp,
                           window = 250, 
                           include.id = T,
@@ -81,7 +81,8 @@ ggplotly(p)
 # test full plot with some other values --------
 # ------------------------------------------------------------------------\
 
-gwas.df <- read.csv("~/scratch/panvar_test/setaria_shatter_full/Shatter_GLM_res_with_snpeff_and_cad.csv")
+gwas.df <- data.table::fread("~/scratch/panvar_test/setaria_shatter_full/Shatter_GLM_res_with_snpeff_and_cad.csv",
+                             data.table = F)
 
 make_panvar_plot(
   gwas.res = gwas.df,
@@ -96,7 +97,7 @@ make_panvar_plot(
   window = 100,
   sig.line = 6,
   orient = "H",
-  qualitative.annotation = NULL,
+  qualitative.annotation = "IMPACT_PLUS",
   qualitative.shape.scale = NULL,
   # quantitative.annotation = "zero_shot_positive",
   quantitative.fill.scale = NULL,
@@ -109,6 +110,8 @@ make_panvar_plot(
   plot.effect = F,
   compute.scores = T
 )
+
+luebbert::memesave("~/OneDrive/vm_transfer/SetariaShattering_panvar_snp.score.png")
 
 # ------------------------------------------------------------------------\
 # test make input to points in anno --------
@@ -160,8 +163,95 @@ test <- gwas.sub %>%
   group_by(snp.in.gene) %>% 
   summarize(maximum.value = max(R2))
 
+# make it work with any number of variables, always do LD...
+variables <- c("LOGPVAL", "R2")
+test <- gwas.sub %>% 
+  rowwise() %>% 
+  mutate(snp.in.gene = get.gene.from.snp(POS, anno.sub)) %>% 
+  filter(!is.null(snp.in.gene)) %>% 
+  unnest_longer(snp.in.gene) %>% 
+  group_by(snp.in.gene)
+
+x <- test %>% 
+  summarize(across(all_of(variables), ~ max(.x, na.rm = T)))  
+
+
 # overlapping genes
 bp <- gwas.sub$POS[9188]
 
 between(bp, anno.sub$start, anno.sub$end)
 
+# ------------------------------------------------------------------------\
+# test with tables list input --------
+# ------------------------------------------------------------------------\
+
+snpeffann <- read.csv("~/scratch/panvar_test/setaria_annotated_chrsnumeric_snpeffinfo_1persnp.csv") %>% 
+  select(-CHROM, -POS)
+
+# set global options 
+set_plink_path("/home/cluebbert/bin/plink2")
+set_panvar_prefix("SetShattering")
+set_out_dir("~/scratch/panvar_test/setaria_shatter_full")
+
+gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv"))
+anno <- read.csv("~/scratch/setaria_biomart.txt") %>% 
+  filter(str_detect(Chromosome.Name, "scaffold", negate = T)) %>% 
+  mutate(CHR = as.numeric(str_replace(Chromosome.Name, "Chr_", ""))) %>% 
+  select(CHR, geneID = Gene.Name, 
+         start = Gene.Start..bp.,
+         end = Gene.End..bp.,
+         annotation = Description) %>% 
+  mutate(annotation = case_when(annotation == "" ~ "No gene description.",
+                                TRUE ~ annotation)) %>% 
+  distinct()
+
+qtl.df.test <- gwas.df %>% 
+  dplyr::slice_max(LOGPVAL, n = 3)
+
+tables <- make_panvar_tables(gwas.res = gwas.df,
+                             tag.snp = "5-6857045",
+                             # qtl.df = qtl.df.test, 
+                             annotation.table = anno,
+                             plink.path = options()$plink_path,
+                             pvals.in.log = F,
+                             geno.bed.filename = "SetShattering_PlinkQC_maf0.05_missing0.1",
+                             geno.bed.directory = "/home/cluebbert/scratch/panvar_test/setaria_shatter_full/",
+                             window = 500,
+                             compute.scores = T,
+                             snp.to.gene.vars = c("LD", "snp.score"),
+                             snp.to.gene.buffer = 5)
+
+out_ld <- 
+  panvaR::get_ld_in_window(tag.snp = "5-6857045",
+                           window = 500,
+                           in.dir = "/home/cluebbert/scratch/panvar_test/setaria_shatter_full/",
+                           out.dir = "/home/cluebbert/scratch/panvar_test/setaria_shatter_full",
+                           geno.bed = "SetShattering_PlinkQC_maf0.05_missing0.1")
+
+
+make_panvar_plot2(panvar.table.list = tables,
+  gwas.res = gwas.df,
+  ld.list = out_ld, 
+  # tag.snp = "5-6857045",
+  annotation.table = anno,
+  # plink.path = options()$plink_path,
+  pvals.in.log = F,
+  # geno.bed.filename = "SetShattering_PlinkQC_maf0.05_missing0.1",
+  # geno.bed.directory = "/home/cluebbert/scratch/panvar_test/setaria_shatter_full/",
+  plot.r2.thresh = .2,
+  unplotted.alpha = .4,
+  window = 100,
+  sig.line = 6,
+  orient = "H",
+  qualitative.annotation = NULL,
+  qualitative.shape.scale = NULL,
+  # quantitative.annotation = "zero_shot_positive",
+  quantitative.fill.scale = NULL,
+  plot.title = "Setaria Shattering",
+  include.gene.id = T,
+  highlight.gene.ids = NULL,
+  gene.highlight.color = "red",
+  annotation.point.variable = NULL,
+  annotation.point.scale = ggplot2::scale_color_viridis_b(option = "plasma"),
+  plot.effect = F
+)

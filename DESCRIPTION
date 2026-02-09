@@ -45,4 +45,5 @@ Imports:
     tidyr,
     khroma,
     ggfittext,
-    patchwork
+    patchwork,
+    gggenes

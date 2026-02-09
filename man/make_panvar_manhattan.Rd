@@ -5,11 +5,12 @@
 \title{Make sideways manhattan plot for building locus zoom. Receives output from a single gwas model.}
 \usage{
 make_panvar_manhattan(
-  gwas.res,
+  panvar.table.list = NULL,
+  gwas.res = NULL,
+  ld.list = NULL,
   pvals.in.log = TRUE,
   plot.r2.thresh = 0.2,
   unplotted.alpha = 0.4,
-  ld.list,
   window,
   sig.line,
   orient = c("H", "V"),
@@ -20,7 +21,11 @@ make_panvar_manhattan(
 )
 }
 \arguments{
+\item{panvar.table.list}{list, output from \link{make_panvar_tables}. Provide either this list or both gwas.res and ld.list.}
+
 \item{gwas.res}{data.frame of all gwas results, should contain columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and pvalue).}
+
+\item{ld.list}{list, output of \link{get_ld_in_window}}
 
 \item{pvals.in.log}{boolean, are pvalues in input data.frames in -log10(p)?}
 
@@ -28,8 +33,6 @@ make_panvar_manhattan(
 
 \item{unplotted.alpha}{numeric, number from 0 to 1 to indicate alpha values of snps below the plot.r2.thresh.
 To not plot these snps set value to 0.}
-
-\item{ld.list}{list, output of \link[luebbert:get_ld_in_window]{luebbert::get_ld_in_window}}
 
 \item{window}{numeric, kilobases on either side of top QTL snp to plot}
 
@@ -55,7 +58,7 @@ For example, variant effect scores. Will be plotted as fill to points.}
 Or a previous call to a ggplot2 fill scale for example \link[ggplot2:scale_steps]{ggplot2::scale_fill_stepsn}.}
 }
 \value{
-GGplot of manhattan plot with points colored by R2.
+GGplot of manhattan plot with points colored by R2. Accepts input
 }
 \description{
 Make sideways manhattan plot for building locus zoom. Receives output from a single gwas model.

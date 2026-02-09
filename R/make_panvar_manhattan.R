@@ -1,11 +1,12 @@
 #' Make sideways manhattan plot for building locus zoom. Receives output from a single gwas model.
 #'
+#' @param panvar.table.list list, output from [panvaR::make_panvar_tables]. Provide either this list or both gwas.res and ld.list.
 #' @param gwas.res data.frame of all gwas results, should contain columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and pvalue).
+#' @param ld.list list, output of [panvaR::get_ld_in_window]
 #' @param pvals.in.log boolean, are pvalues in input data.frames in -log10(p)?
 #' @param plot.r2.thresh minimum LD with qtl snps to plot snps colored by LD
 #' @param unplotted.alpha numeric, number from 0 to 1 to indicate alpha values of snps below the plot.r2.thresh. 
 #' To not plot these snps set value to 0. 
-#' @param ld.list list, output of [luebbert::get_ld_in_window]
 #' @param window numeric, kilobases on either side of top QTL snp to plot
 #' @param sig.line numeric, -log10(p) value to draw line on plot
 #' @param orient character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
@@ -24,16 +25,17 @@
 #' Or a previous call to a ggplot2 fill scale for example [ggplot2::scale_fill_stepsn].
 #'
 #' @returns
-#' GGplot of manhattan plot with points colored by R2.
+#' GGplot of manhattan plot with points colored by R2. Accepts input
 #' @export
 #'
 #' @examples
 #' # Work in progress
-make_panvar_manhattan <- function(gwas.res,
+make_panvar_manhattan <- function(panvar.table.list = NULL,
+                                  gwas.res = NULL,
+                                  ld.list = NULL,
                                   pvals.in.log = TRUE,
                                   plot.r2.thresh = .2,
                                   unplotted.alpha = .4,
-                                  ld.list,
                                   window,
                                   sig.line,
                                   orient = c("H", "V"),
@@ -42,24 +44,50 @@ make_panvar_manhattan <- function(gwas.res,
                                   quantitative.annotation = NULL,
                                   quantitative.fill.scale = NULL){
   
-  gwas.sub <- gwas.res %>%
-    as.data.frame() %>% 
-    # filter(.data$CHR == chrom) %>%
-    mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>%
-    # filter(between(physical.pos, this.pos - window * 1000, this.pos + window * 1000)) %>%
-    left_join(ld.list$table, by = "marker.ID") %>%
-    filter(!is.na(.data$R2))
-  # for rug plot
-  marker.list.in.window <- ld.list$table %>%
-    mutate(POS = get_bp_from_id(.data$marker.ID)) %>%
-    select("marker.ID", "POS") %>%
-    distinct()
+  # make sure we don't use both
+  if(!is.null(panvar.table.list) & (!is.null(ld.list) | !is.null(gwas.res))){
+    stop("Must provide only one of panvar.table.list or ld.list and gwas.res.")
+  }
   
-  # add middlesnp back in
-  gwas.sub.mid.snp <- gwas.res %>% 
-    filter(marker.ID == middle.snp) %>% 
-    mutate(LD = 1)
-  gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp)
+  # use ld.list and gwas.res
+  if(is.null(panvar.table.list)){
+    if(is.null(ld.list) & is.null(gwas.res)){
+      stop("Must provide either panvar.table.list or ld.list and gwas.res.")
+    } else if(is.null(ld.list) | is.null(gwas.res)){
+      stop("Must provide ld.list and gwas.res.")
+    } else {
+      gwas.sub <- gwas.res %>%
+        as.data.frame() %>% 
+        # filter(.data$CHR == chrom) %>%
+        mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>%
+        # filter(between(physical.pos, this.pos - window * 1000, this.pos + window * 1000)) %>%
+        left_join(ld.list$table, by = "marker.ID") %>%
+        filter(!is.na(.data$R2))
+      # for rug plot
+      marker.list.in.window <- ld.list$table %>%
+        mutate(POS = get_bp_from_id(.data$marker.ID)) %>%
+        select("marker.ID", "POS") %>%
+        distinct()
+      
+      # add middlesnp back in
+      gwas.sub.mid.snp <- gwas.res %>% 
+        filter(.data$marker.ID == ld.list$key.snp) %>% 
+        mutate(LD = 1)
+      gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp)
+    }
+    # use panvar.table.list
+  } else {
+    key.snp <- panvar.table.list$key.snp
+    gwas.sub <- panvar.table.list$gwas %>% 
+      mutate(R2 = .data$LD)
+    
+    # for rug plot
+    marker.list.in.window <- gwas.sub %>%
+      mutate(POS = get_bp_from_id(.data$marker.ID)) %>%
+      select("marker.ID", "POS") %>%
+      distinct()
+  }
+  
   
   # make manhattan
   plot.df <- gwas.sub %>%
