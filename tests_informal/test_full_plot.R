@@ -193,7 +193,8 @@ set_plink_path("/home/cluebbert/bin/plink2")
 set_panvar_prefix("SetShattering")
 set_out_dir("~/scratch/panvar_test/setaria_shatter_full")
 
-gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv"))
+gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv")) %>% 
+  left_join(snpeffann, by = "marker.ID")
 anno <- read.csv("~/scratch/setaria_biomart.txt") %>% 
   filter(str_detect(Chromosome.Name, "scaffold", negate = T)) %>% 
   mutate(CHR = as.numeric(str_replace(Chromosome.Name, "Chr_", ""))) %>% 
@@ -221,6 +222,8 @@ tables <- make_panvar_tables(gwas.res = gwas.df,
                              snp.to.gene.vars = c("LD", "snp.score"),
                              snp.to.gene.buffer = 5)
 
+
+
 make_panvar_manhattan(panvar.table.list = tables,
                       pvals.in.log = F,
                       window = 10, 
@@ -245,18 +248,18 @@ make_panvar_plot(panvar.table.list = tables,
   # geno.bed.directory = "/home/cluebbert/scratch/panvar_test/setaria_shatter_full/",
   plot.r2.thresh = .2,
   unplotted.alpha = .4,
-  window = 8,
+  window = 200,
   sig.line = 6,
   orient = "H",
   qualitative.annotation = NULL,
   qualitative.shape.scale = NULL,
-  # quantitative.annotation = "zero_shot_positive",
+  quantitative.annotation = NULL,
   quantitative.fill.scale = NULL,
   plot.title = "Setaria Shattering",
   include.gene.id = T,
   highlight.gene.ids = NULL,
   gene.highlight.color = "red",
-  annotation.point.variable = NULL,
+  annotation.point.variable = "LD",
   annotation.point.scale = ggplot2::scale_color_viridis_b(option = "plasma"),
   plot.effect = T
 )

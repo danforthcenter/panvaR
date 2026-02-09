@@ -81,6 +81,8 @@ make_effect_plot <- function(panvar.table.list = NULL,
         mutate(LD = 1)
       gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp)
     }
+    key.snp <- ld.list$key.snp
+    
     # use panvar.table.list
   } else {
     key.snp <- panvar.table.list$key.snp
@@ -115,10 +117,12 @@ make_effect_plot <- function(panvar.table.list = NULL,
   y.spread.factors <- c(1 + y.spread.expansion, 1 - y.spread.expansion)
   y.spread.factor.window <- (window * y.spread.expansion) * 1000
   
-  # plot limits
-  this.pos <- get_bp_from_id(ld.list$key.snp)
-  plot.limits <- c(this.pos + window * 1000, this.pos - window * 1000)
-  plot.limits.ex <- c(plot.limits[1] + y.spread.factor.window, plot.limits[2] - y.spread.factor.window)
+  # plot only points in window
+  this.pos <- get_bp_from_id(key.snp)
+  plot.df <- plot.df %>% 
+    filter(between(.data$POS, this.pos - window * 1000, this.pos + window * 1000)) 
+  # plot.limits <- c(this.pos + window * 1000, this.pos - window * 1000)
+  # plot.limits.ex <- c(plot.limits[1] + y.spread.factor.window, plot.limits[2] - y.spread.factor.window)
   
   
   # ------------------------------------------------------------------------\
@@ -202,17 +206,6 @@ make_effect_plot <- function(panvar.table.list = NULL,
   # ------------------------------------------------------------------------\
   # base plot --------
   # ------------------------------------------------------------------------\
-  
-  # man <-
-  #   ggplot(aes(x = .data$POS, y = .data$PVAL), data = plot.df) +
-  #   theme_bw() +
-  #   theme(
-  #     panel.background = element_rect(fill = "grey95"),
-  #     legend.position = "left",
-  #     legend.justification = "top",
-  #     panel.grid = element_blank()
-  #   ) +
-  #   geom_hline(yintercept = sig.line, linetype = 'dashed')
   
   effect.plot <-
     ggplot(aes(x = .data$EFF, y = .data$PVAL), data = plot.df) +

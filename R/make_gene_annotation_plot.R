@@ -34,7 +34,7 @@ get.gene.y.pos <- function(from, to, length.out) {
 #' @param middle.snp character, SNP name in form "CHR-POS" center of window. Often the key.snp output of [panvaR::get_ld_in_window]
 #' @param window integer, kilobases on either side of middle.snp to plot
 #' @param include.id boolean, include geneID in gene annotations or not
-#' @param gene.color 
+#' @param gene.color character, color to plot genes 
 #' @param highlight.ids character, optional, vector of ids to highlight
 #' @param highlight.color character, optional, color to highlight ids
 #' @param use.arrows boolean, if TRUE, use [gggenes::geom_gene_arrow] to draw representations of genes. 
@@ -181,6 +181,9 @@ make_gene_annotation_plot <- function(panvar.table.list = NULL,
     if(!is.null(point.fill.scale)){
       anno <- anno + 
         point.fill.scale
+    # } else if(point.color == "LD"){
+    #   anno <- anno +
+    #     default.panvar.LD.scale(type = "color")
     } else {
       anno <- anno + 
         # scale_fill_viridis_b(name = point.color)

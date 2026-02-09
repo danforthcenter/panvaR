@@ -18,12 +18,12 @@ anno <- read.csv("~/scratch/setaria_biomart.txt") %>%
 anno_ld <- anno %>% 
   mutate(ld_sim = runif(nrow(anno)))
 
-make_gene_annotation_plot(anno_ld,
+make_gene_annotation_plot(annotation.table = anno_ld,
                           middle.snp = out_ld$key.snp,
                           window = 25, 
                           include.id = T,
                           use.arrows = F,
-                          point.color = "ld_sim",
+                          point.color = "LD",
                           point.fill.scale = NULL)
 
 # ------------------------------------------------------------------------\

@@ -29,7 +29,7 @@ make_gene_annotation_plot(
 
 \item{include.id}{boolean, include geneID in gene annotations or not}
 
-\item{gene.color}{}
+\item{gene.color}{character, color to plot genes}
 
 \item{highlight.ids}{character, optional, vector of ids to highlight}
 

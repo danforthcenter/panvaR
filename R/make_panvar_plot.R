@@ -114,18 +114,7 @@ make_panvar_plot <- function(panvar.table.list = NULL,
   if(is.null(annotation.point.variable)){
     # do nothing
   } else if(annotation.point.variable == "LD"){
-      default.LD.fill.scale <- binned_scale(
-        aesthetics = "fill",
-        name = "R2 \n",
-        palette = function(x)
-          c("#43638E", "#88DAA0", "#DBC32D", "#B94712"),
-        limits = c(plot.r2.thresh, 1),
-        breaks = seq(plot.r2.thresh, 1, length.out = 5)[-c(1, 5)],
-        show.limits = T,
-        guide = "colorsteps",
-        na.value = "grey50"
-      )
-    annotation.point.scale <- default.LD.fill.scale
+    annotation.point.scale <- default.panvar.LD.scale(type = "color", plot.r2.thresh = plot.r2.thresh)
   }
   
   # make sure the variable is in the table if its provided 
@@ -144,29 +133,7 @@ make_panvar_plot <- function(panvar.table.list = NULL,
     }
   }
   
-  # if(is.null(annotation.point.variable)){
-  #   point.color.option <- NULL
-  # } else if(annotation.point.variable == "LD"){
-  #   default.LD.fill.scale <- binned_scale(
-  #     aesthetics = "fill",
-  #     name = "R2 \n",
-  #     palette = function(x)
-  #       c("#43638E", "#88DAA0", "#DBC32D", "#B94712"),
-  #     limits = c(plot.r2.thresh, 1),
-  #     breaks = seq(plot.r2.thresh, 1, length.out = 5)[-c(1, 5)],
-  #     show.limits = T,
-  #     guide = "colorsteps",
-  #     na.value = "grey50"
-  #   )
-  #   annotation.point.scale <- default.LD.fill.scale
-  #   # anno.in <- anno.in %>% 
-  #   #   rename("LD" = "maximum.value")
-  #   point.color.option <- "LD"
-  # } else if(!is.null(annotation.point.variable)) {
-  #   point.color.option <- annotation.point.variable
-  # } 
-  
-  
+
   anno <- make_gene_annotation_plot(panvar.table.list = panvar.table.list,
                                     annotation.table = annotation.table,
                                     middle.snp = ld.list$key.snp,

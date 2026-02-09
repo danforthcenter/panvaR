@@ -217,3 +217,34 @@ get.gene.from.snp <- function(bp, gene.df, gene.buffer = 0){
   }
   return(gene.id.out)
 }
+
+
+default.panvar.LD.scale <- function(type = c("fill", "color"), plot.r2.thresh = .2){
+  type <- match.arg(type)
+  if(type == "fill"){
+    out <- binned_scale(
+      aesthetics = "fill",
+      name = "R2 \n",
+      palette = function(x)
+        c("#43638E", "#88DAA0", "#DBC32D", "#B94712"),
+      limits = c(plot.r2.thresh, 1),
+      breaks = seq(plot.r2.thresh, 1, length.out = 5)[-c(1, 5)],
+      show.limits = T,
+      guide = "colorsteps",
+      na.value = "grey50"
+    )
+  } else if(type == "color"){
+    out <- binned_scale(
+      aesthetics = "color",
+      name = "R2 \n",
+      palette = function(x)
+        c("#43638E", "#88DAA0", "#DBC32D", "#B94712"),
+      limits = c(plot.r2.thresh, 1),
+      breaks = seq(plot.r2.thresh, 1, length.out = 5)[-c(1, 5)],
+      show.limits = T,
+      guide = "colorsteps",
+      na.value = "grey50"
+    )
+  }
+  return(out)
+}

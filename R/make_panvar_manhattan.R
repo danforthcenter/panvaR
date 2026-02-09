@@ -75,6 +75,7 @@ make_panvar_manhattan <- function(panvar.table.list = NULL,
         mutate(LD = 1)
       gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp)
     }
+    key.snp <- ld.list$key.snp
     # use panvar.table.list
   } else {
     key.snp <- panvar.table.list$key.snp
@@ -110,11 +111,14 @@ make_panvar_manhattan <- function(panvar.table.list = NULL,
   y.spread.factor.window <- (window * y.spread.expansion) * 1000
   
   # plot limits
-  this.pos <- get_bp_from_id(ld.list$key.snp)
+  this.pos <- get_bp_from_id(key.snp)
   plot.limits <- c(this.pos + window * 1000, this.pos - window * 1000)
   plot.limits.ex <- c(plot.limits[1] + y.spread.factor.window, plot.limits[2] - y.spread.factor.window)
   
-
+  # filter to only in window
+  plot.df <- plot.df %>% 
+    filter(between(.data$POS, this.pos - window * 1000, this.pos + window * 1000)) 
+  
   # ------------------------------------------------------------------------\
   # prepare qualitative variable --------
   # ------------------------------------------------------------------------\

@@ -65,7 +65,7 @@ make_panvar_manhattan(gwas.res = gwas.df,
 
 make_panvar_manhattan(panvar.table.list = tables,
                        pvals.in.log = F,
-                       window = 250,
+                       window = 25,
                        sig.line = 6,
                        orient = "H")
 
