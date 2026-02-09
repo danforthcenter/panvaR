@@ -193,3 +193,27 @@ temp_file <- function(create_file = FALSE, working_directory = NULL, prefix = NU
 minmaxnormal <- function(x) {
   return((x- min(x)) /(max(x)-min(x)))
 }
+
+
+#' get genes that a snp is on
+#'
+#' @param bp numeric, physical position of snp
+#' @param gene.df data.frame, gene annotation table with start, end and geneID columns. 
+#' @param gene.buffer numeric, kilobases to add to gene start and end to include genes 
+#' that are close but not in gene. Snpeff uses 5 KB by default to call a snp "upstream"/"downstream" variant
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+get.gene.from.snp <- function(bp, gene.df, gene.buffer = 0){
+  gene.buffer * 1000
+  check.vec <- data.table::between(bp, gene.df$start - gene.buffer, gene.df$end + gene.buffer)
+  if(any(check.vec)){
+    gene.id.out <- list(gene.df$geneID[check.vec])
+    # gene.id.out <- paste(gene.df$geneID[check.vec], collapse = "|")
+  } else {
+    gene.id.out <- NA
+  }
+  return(gene.id.out)
+}

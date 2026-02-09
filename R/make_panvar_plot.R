@@ -1,21 +1,4 @@
 
-
-# ------------------------------------------------------------------------\
-# unexported --------
-# ------------------------------------------------------------------------\
-
-get.gene.from.snp <- function(bp, gene.df){
-  check.vec <- data.table::between(bp, gene.df$start, gene.df$end)
-  if(any(check.vec)){
-    gene.id.out <- list(gene.df$geneID[check.vec])
-    # gene.id.out <- paste(gene.df$geneID[check.vec], collapse = "|")
-  } else {
-    gene.id.out <- NA
-  }
-  return(gene.id.out)
-}
-
-
 # ------------------------------------------------------------------------\
 # main function --------
 # ------------------------------------------------------------------------\

@@ -46,7 +46,8 @@ tables <- make_panvar_tables(gwas.res = gwas.df,
                              geno.bed.directory = "/home/cluebbert/scratch/panvar_test/setaria_shatter_full/",
                              window = 500,
                              compute.scores = T,
-                             snp.to.gene.vars = c("LD", "snp.score"))
+                             snp.to.gene.vars = c("LD", "snp.score"),
+                             snp.to.gene.buffer = 5)
 
 
 head(tables$anno)

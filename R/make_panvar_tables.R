@@ -25,6 +25,8 @@
 #' For each gene, snps with a physical position with the start and end of the gene are considered. 
 #' The maximum value for all snps within the gene is returned. Special values, `DIST`, `LD` and `LOGPVAL` can
 #' be included in addition to any user supplied variables. 
+#' @param snp.to.gene.buffer numeric, kilobases to add to gene start and end to include genes 
+#' that are close but not in gene. Snpeff uses 5 KB by default to call a snp "upstream"/"downstream" variant. default is 0. 
 #' @param compute.scores boolean, if TRUE, snp scores will be computed. See details for more info.  
 #' @param score.vars character, vector of column names indicating which variables to included in the score.
 #' @param score.dirs numeric, a vector indicating which direction is to be considered more indicative
@@ -64,6 +66,7 @@ make_panvar_tables <- function(gwas.res,
                                temp.dir = tempdir(),
                                window,
                                snp.to.gene.vars = NULL,
+                               snp.to.gene.buffer = 0,
                                compute.scores = F,
                                score.vars = NULL,
                                score.dirs = NULL,
@@ -185,7 +188,7 @@ make_panvar_tables <- function(gwas.res,
     # get the snp to gene correspondence for whatever you want
     point.color.stat <- gwas.sub %>% 
       rowwise() %>% 
-      mutate(snp.in.gene = get.gene.from.snp(.data$POS, anno.sub)) %>% 
+      mutate(snp.in.gene = get.gene.from.snp(.data$POS, anno.sub, snp.to.gene.buffer)) %>% 
       filter(!is.null(.data$snp.in.gene)) %>% 
       unnest_longer(.data$snp.in.gene) %>% 
       group_by(.data$snp.in.gene) %>% 
