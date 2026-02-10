@@ -17,7 +17,7 @@
 format_snpeff_annotations <- function(vcfpath){
   
   path <-
-    execute_snpsift2(vcfpath)
+    execute_snpsift(vcfpath)
   
   message("~~~~~~~~~~~~~~~ Formatting SNP impacts ~~~~~~~~~~~~~~~")
   

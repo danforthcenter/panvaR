@@ -41,7 +41,7 @@ get.gene.y.pos <- function(from, to, length.out) {
 #' If the direction is encoded in another variable, supply that to <NEW ARGUMENT NAME>
 #' @param point.color character, variable in annotation.table that indicates how to color 
 #' points plotted next to gene descriptions. If not supplied, no points are plotted. 
-#' The input "LD" is reserved to give functionality to [panvaR::make_panvar_plot].
+#' The input "LD" is reserved to give functionality to [panvaR::plot_panvar].
 #' If used, legend will not be displayed. 
 #' @param point.fill.scale ggplot2 scale object, a fill scale to customize how point.color 
 #' is displayed. 
@@ -52,7 +52,7 @@ get.gene.y.pos <- function(from, to, length.out) {
 #'
 #' @examples
 #' # Work in progress
-make_gene_annotation_plot <- function(panvar.table.list = NULL,
+plot_gene_annotation <- function(panvar.table.list = NULL,
                                       annotation.table = NULL,
                                       middle.snp = NULL,
                                       window,

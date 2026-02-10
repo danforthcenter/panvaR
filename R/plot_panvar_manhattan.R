@@ -1,8 +1,4 @@
-# ------------------------------------------------------------------------\
-# main function --------
-# ------------------------------------------------------------------------\
-
-#' Make volcano style effect size vs pvalue plot
+#' Make sideways manhattan plot for building locus zoom. Receives output from a single gwas model.
 #'
 #' @param panvar.table.list list, output from [panvaR::make_panvar_tables]. Provide either this list or both gwas.res and ld.list.
 #' @param gwas.res data.frame of all gwas results, should contain columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and pvalue).
@@ -27,28 +23,26 @@
 #' @param quantitative.fill.scale character or scale object, either a character indicating the
 #' `option` parameter passed to [ggplot2::scale_fill_viridis_b] that alters the color scale used.
 #' Or a previous call to a ggplot2 fill scale for example [ggplot2::scale_fill_stepsn].
-#' @param include.legend boolean, if TRUE, legend will be included. 
 #'
 #' @returns
-#' GGplot object of plot. Points colored by maximum R2 to snps in qtl.df
+#' GGplot of manhattan plot with points colored by R2. Accepts input
 #' @export
 #'
 #' @examples
 #' # Work in progress
-make_effect_plot <- function(panvar.table.list = NULL,
-                             gwas.res = NULL,
-                             ld.list = NULL,
-                             pvals.in.log = TRUE,
-                             plot.r2.thresh = .2,
-                             unplotted.alpha = .4,
-                             window,
-                             sig.line,
-                             orient = c("V", "H"),
-                             qualitative.annotation = NULL,
-                             qualitative.shape.scale = NULL,
-                             quantitative.annotation = NULL,
-                             quantitative.fill.scale = NULL,
-                             include.legend = T){
+plot_panvar_manhattan <- function(panvar.table.list = NULL,
+                                  gwas.res = NULL,
+                                  ld.list = NULL,
+                                  pvals.in.log = TRUE,
+                                  plot.r2.thresh = .2,
+                                  unplotted.alpha = .4,
+                                  window,
+                                  sig.line,
+                                  orient = c("H", "V"),
+                                  qualitative.annotation = NULL,
+                                  qualitative.shape.scale = NULL,
+                                  quantitative.annotation = NULL,
+                                  quantitative.fill.scale = NULL){
   
   # make sure we don't use both
   if(!is.null(panvar.table.list) & (!is.null(ld.list) | !is.null(gwas.res))){
@@ -82,7 +76,6 @@ make_effect_plot <- function(panvar.table.list = NULL,
       gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp)
     }
     key.snp <- ld.list$key.snp
-    
     # use panvar.table.list
   } else {
     key.snp <- panvar.table.list$key.snp
@@ -117,13 +110,14 @@ make_effect_plot <- function(panvar.table.list = NULL,
   y.spread.factors <- c(1 + y.spread.expansion, 1 - y.spread.expansion)
   y.spread.factor.window <- (window * y.spread.expansion) * 1000
   
-  # plot only points in window
+  # plot limits
   this.pos <- get_bp_from_id(key.snp)
+  plot.limits <- c(this.pos + window * 1000, this.pos - window * 1000)
+  plot.limits.ex <- c(plot.limits[1] + y.spread.factor.window, plot.limits[2] - y.spread.factor.window)
+  
+  # filter to only in window
   plot.df <- plot.df %>% 
     filter(between(.data$POS, this.pos - window * 1000, this.pos + window * 1000)) 
-  # plot.limits <- c(this.pos + window * 1000, this.pos - window * 1000)
-  # plot.limits.ex <- c(plot.limits[1] + y.spread.factor.window, plot.limits[2] - y.spread.factor.window)
-  
   
   # ------------------------------------------------------------------------\
   # prepare qualitative variable --------
@@ -207,14 +201,16 @@ make_effect_plot <- function(panvar.table.list = NULL,
   # base plot --------
   # ------------------------------------------------------------------------\
   
-  effect.plot <-
-    ggplot(aes(x = .data$EFF, y = .data$PVAL), data = plot.df) +
+  man <-
+    ggplot(aes(x = .data$POS, y = .data$PVAL), data = plot.df) +
     theme_bw() +
-    # geom_point(aes(color = .data$plot.R2, alpha = .data$how.to.plot), shape = 16, show.legend = include.legend) +
-    # scale_color_stepsn(colors = my.colors, name = "R2") +
-    geom_hline(yintercept = sig.line) +
-    theme(panel.grid = element_blank()) +
-    geom_vline(xintercept = 0, linetype = 'dashed', color = 'gray')
+    theme(
+      panel.background = element_rect(fill = "grey95"),
+      legend.position = "left",
+      legend.justification = "top",
+      panel.grid = element_blank()
+    ) +
+    geom_hline(yintercept = sig.line, linetype = 'dashed')
   
   # ------------------------------------------------------------------------\
   # add extra annotations to plot --------
@@ -236,35 +232,32 @@ make_effect_plot <- function(panvar.table.list = NULL,
   # Some logic for including extra variables
   if(!is.null(qualitative.annotation) & !is.null(quantitative.annotation)){
     # Use a quant and a qual
-    effect.plot <- effect.plot +
+    man <- man +
       geom_point(aes(fill = .data$plot.quant.var, alpha = .data$how.to.plot, shape = .data[[qualitative.annotation]]),
-                 size = 3, color = "black", show.legend = include.legend) +
+                 size = 3, color = "black") +
       scale_alpha(guide = "none", range = c(0, 1)) +
       quantitative.fill.scale +
       qualitative.shape.scale
     
   } else if(is.null(qualitative.annotation) & !is.null(quantitative.annotation)){
     # Use just a quant 
-    effect.plot <- effect.plot +
-      geom_point(aes(fill = .data$plot.quant.var, alpha = .data$how.to.plot), 
-                 shape = 21, size = 3, color = "black", show.legend = include.legend) +
+    man <- man +
+      geom_point(aes(fill = .data$plot.quant.var, alpha = .data$how.to.plot), shape = 21, size = 3, color = "black") +
       scale_alpha(guide = "none", range = c(0, 1)) +
       quantitative.fill.scale
     
   } else if(!is.null(qualitative.annotation) & is.null(quantitative.annotation)){
     # Use just a qual
-    effect.plot <- effect.plot + 
-      geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot, shape = .data[[qualitative.annotation]]), 
-                 size = 3, color = "black", show.legend = include.legend) +
+    man <- man + 
+      geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot, shape = .data[[qualitative.annotation]]), size = 3, color = "black") +
       qualitative.shape.scale +
       scale_alpha(guide = "none", range = c(0, 1)) +
       default.LD.fill.scale
     
   } else {
     # Use neither
-    effect.plot <- effect.plot + 
-      geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot), 
-                 size = 3, shape = 21, color = "black", show.legend = include.legend) +
+    man <- man + 
+      geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot), size = 3, shape = 21, color = "black") +
       scale_alpha(guide = "none", range = c(0, 1)) +
       default.LD.fill.scale
   }
@@ -272,9 +265,13 @@ make_effect_plot <- function(panvar.table.list = NULL,
   # flip it if you want
   orient <- match.arg(orient)
   if(orient == "V"){
-    effect.plot <- effect.plot +
+    man <- man +
+      geom_rug(aes(x = .data$POS),
+               sides = 'b',
+               data = marker.list.in.window,
+               inherit.aes = F) +
       scale_x_continuous(
-        # limits = plot.limits.ex,
+        limits = plot.limits.ex,
         labels = scales::label_number(scale_cut = scales::cut_short_scale())
       ) +
       # bquote doesn't work with plotly
@@ -282,13 +279,17 @@ make_effect_plot <- function(panvar.table.list = NULL,
       labs(y = "-log(p-value)") +
       theme(axis.title.x = element_blank())
   } else if(orient == "H"){
-    effect.plot <- effect.plot +
+    man <- man +
       coord_flip() +
-      # scale_y_reverse() +
-      # scale_x_reverse(
-      #   limits = plot.limits.ex,
-      #   labels = scales::label_number(scale_cut = scales::cut_short_scale())
-      # ) +
+      scale_y_reverse() +
+      geom_rug(aes(x = .data$POS),
+               sides = 't',
+               data = marker.list.in.window,
+               inherit.aes = F) +
+      scale_x_reverse(
+        limits = plot.limits.ex,
+        labels = scales::label_number(scale_cut = scales::cut_short_scale())
+      ) +
       # bquote doesn't work with plotly
       # labs(y = bquote(-log[10](p-value))) 
       labs(y = "-log(p-value)") +
@@ -296,8 +297,6 @@ make_effect_plot <- function(panvar.table.list = NULL,
   } else {
     stop("Orientation must be either vertical (V) or horizontal (H).")
   }
-  
-  return(effect.plot)
-  
-}
 
+  return(man)
+}

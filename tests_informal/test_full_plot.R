@@ -224,7 +224,7 @@ tables <- make_panvar_tables(gwas.res = gwas.df,
 
 
 
-make_panvar_manhattan(panvar.table.list = tables,
+plot_panvar_manhattan(panvar.table.list = tables,
                       pvals.in.log = F,
                       window = 10, 
                       sig.line = 6)
@@ -237,7 +237,7 @@ out_ld <-
                            geno.bed = "SetShattering_PlinkQC_maf0.05_missing0.1")
 
 
-make_panvar_plot(panvar.table.list = tables,
+plot_panvar(panvar.table.list = tables,
   # gwas.res = gwas.df,
   # ld.list = out_ld, 
   # tag.snp = "5-6857045",
