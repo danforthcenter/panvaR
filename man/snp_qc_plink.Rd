@@ -11,7 +11,8 @@ snp_qc_plink(
   sample.list.path = NULL,
   plink.path = NULL,
   out.dir = NULL,
-  out.prefix = NULL
+  out.prefix = NULL,
+  extra.options
 )
 }
 \arguments{
@@ -29,13 +30,17 @@ Samples in file will be included. Sample filtering happens before other filterin
 \item{out.dir}{character, optional, path to output files. If not provided, will default to option set by \link{set_out_dir}}
 
 \item{out.prefix}{character, optional, prefix for files output.}
+
+\item{extra.options}{character, a string of options to include in call to plink2.
+Should be a single string e.g. "--max-maf .95 --max-alleles 2"}
 }
 \value{
 filtered bed/bim/bam files stored in out.dir.
 character string of path to bed file.
 }
 \description{
-Quality control a snp file using plink2
+Does some standard qc of snp files before gwas. Mainly maf and missing filter. Also filters for single allele snps.
+Extra calls to plink2 can be included to filter in more ways.
 }
 \examples{
 # work in progress

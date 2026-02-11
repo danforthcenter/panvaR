@@ -1,4 +1,7 @@
 #' Quality control a snp file using plink2
+#' 
+#' Does some standard qc of snp files before gwas. Mainly maf and missing filter. Also filters for single allele snps. 
+#' Extra calls to plink2 can be included to filter in more ways. 
 #'
 #' @param genotype.path character, path to genotype file, supported types: '.bed', .'vcf', '.vcf.gz'.
 #' @param min.maf numeric, filtering cutoff for minor allele frequency, snps are removed if they have maf less than this value. To ignore set to 0.
@@ -7,7 +10,9 @@
 #' Samples in file will be included. Sample filtering happens before other filtering per plink's order of operations.
 #' @param plink.path character, optional, path to plink2 executable. If not provided, will default to option set by [panvaR::set_plink_path].
 #' @param out.dir character, optional, path to output files. If not provided, will default to option set by [panvaR::set_out_dir]
-#' @param out.prefix character, optional, prefix for files output. 
+#' @param out.prefix character, optional, prefix for files output.
+#' @param extra.options character, a string of options to include in call to plink2. 
+#' Should be a single string e.g. "--max-maf .95 --max-alleles 2"
 #'
 #' @returns
 #' filtered bed/bim/bam files stored in out.dir. 
@@ -23,7 +28,8 @@ snp_qc_plink <- function(genotype.path,
                          sample.list.path = NULL,
                          plink.path = NULL,
                          out.dir = NULL,
-                         out.prefix = NULL){
+                         out.prefix = NULL,
+                         extra.options){
   
   # ~~~~ Initialize ~~~~
   
@@ -79,7 +85,9 @@ snp_qc_plink <- function(genotype.path,
       "--maf", min.maf,
       "--make-bed",
       "--set-all-var-ids", "@-#",
-      "--out", out_fullpath
+      "--min-alleles 1",
+      "--out", out_fullpath,
+      extra.options
     )
   } else if(filetype == "vcf"){
     # plink wants the vcf file extension but not the bed one, leave this out
@@ -91,7 +99,9 @@ snp_qc_plink <- function(genotype.path,
     "--maf", min.maf,
     "--make-bed",
     "--set-all-var-ids", "@-#",
-    "--out", out_fullpath
+    "--min-alleles 1",
+    "--out", out_fullpath,
+    extra.options
     )
   } else {
     stop(paste0("Unsupported genotype file type for file: ", genotype.path, ". \n",
