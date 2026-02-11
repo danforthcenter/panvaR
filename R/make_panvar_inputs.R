@@ -14,7 +14,8 @@
 #' @param out.prefix character, optional, a prefix for output files. Will overide option set by [panvaR::set_panvar_prefix].
 #'
 #' @returns
-#' Input files to be used for downstream panvaR functions. Stored in `out.dir` or the option set in [panvaR::set_out_dir]
+#' Input files to be used for downstream panvaR functions. Stored in `out.dir` or the option set in [panvaR::set_out_dir]. 
+#' Runs [panvaR::snp_qc_plink] to filter for maf and missing using plink2 and then [rMVP::MVP.Data] to prepare data for GWAS. 
 #' 
 #' @export
 #'

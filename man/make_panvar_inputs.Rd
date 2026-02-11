@@ -34,7 +34,8 @@ This is used to determine the set of samples (lines) to use in the analysis.}
 \item{out.prefix}{character, optional, a prefix for output files. Will overide option set by \link{set_panvar_prefix}.}
 }
 \value{
-Input files to be used for downstream panvaR functions. Stored in \code{out.dir} or the option set in \link{set_out_dir}
+Input files to be used for downstream panvaR functions. Stored in \code{out.dir} or the option set in \link{set_out_dir}.
+Runs \link{snp_qc_plink} to filter for maf and missing using plink2 and then \link[rMVP:MVP.Data]{rMVP::MVP.Data} to prepare data for GWAS.
 }
 \description{
 Does some filtering of the genotype file for samples that have a phenotype and also minor allele frequency and snps with high missing rates.
