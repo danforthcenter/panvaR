@@ -11,8 +11,9 @@
 #' @param plink.path character, optional, path to plink2 executable. If not provided, will default to option set by [panvaR::set_plink_path].
 #' @param out.dir character, optional, path to output files. If not provided, will default to option set by [panvaR::set_out_dir]
 #' @param out.prefix character, optional, prefix for files output.
-#' @param extra.options character, a string of options to include in call to plink2. 
-#' Should be a single string e.g. "--max-maf .95 --max-alleles 2"
+#' @param extra.options character, a vector of options to include in call to plink2. 
+#' Should be a vector with plink2 arguments and their values as separate elements of vector. 
+#' E.G. c("--max-maf", ".95", "--max-alleles", "2")
 #'
 #' @returns
 #' filtered bed/bim/bam files stored in out.dir. 
@@ -29,7 +30,7 @@ snp_qc_plink <- function(genotype.path,
                          plink.path = NULL,
                          out.dir = NULL,
                          out.prefix = NULL,
-                         extra.options){
+                         extra.options = NULL){
   
   # ~~~~ Initialize ~~~~
   
@@ -85,9 +86,8 @@ snp_qc_plink <- function(genotype.path,
       "--maf", min.maf,
       "--make-bed",
       "--set-all-var-ids", "@-#",
-      "--min-alleles 1",
-      "--out", out_fullpath,
-      extra.options
+      "--min-alleles", 1,
+      "--out", out_fullpath
     )
   } else if(filetype == "vcf"){
     # plink wants the vcf file extension but not the bed one, leave this out
@@ -99,9 +99,8 @@ snp_qc_plink <- function(genotype.path,
     "--maf", min.maf,
     "--make-bed",
     "--set-all-var-ids", "@-#",
-    "--min-alleles 1",
-    "--out", out_fullpath,
-    extra.options
+    "--min-alleles", 1,
+    "--out", out_fullpath
     )
   } else {
     stop(paste0("Unsupported genotype file type for file: ", genotype.path, ". \n",
@@ -118,6 +117,14 @@ snp_qc_plink <- function(genotype.path,
     )
   }
 
+  # an arbitrary amount of extra arguments
+  if(!is.null(extra.options)){
+    current_args <- c(
+      current_args,
+      extra.options
+    )
+  }
+  
   # ~~~~ Run plink2 ~~~~
   
   tryCatch(

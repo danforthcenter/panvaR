@@ -4,9 +4,15 @@
 pheno <- read.delim("inst/extdata/Setaria_shattering_example_phenotype.tsv")
 
 make_panvar_inputs(genotype.path = "inst/extdata/Setaria_shattering_example_pruned.bed",
-                   phenotype.table = pheno,
+                   phenotype.path = "inst/extdata/Setaria_shattering_example_phenotype.tsv",
                    out.prefix = "INPUTSPHENO",
-                   out.dir = "~/scratch/temp")
+                   out.dir = "~/scratch/temp",
+                   extra.plink.options = c("--max-maf", ".95"))
+
+snp_qc_plink(
+  genotype.path = "inst/extdata/Setaria_shattering_example_pruned.bed",
+  extra.options = c("--max-maf", ".95")
+)
 
 pheno <- read.csv("~/scratch/gwas_in_F_pgrp/6.BG.bothftcovs_all_experiments_BLUPs_scaled_withPCtraits.csv")
 pheno <- pheno %>% 

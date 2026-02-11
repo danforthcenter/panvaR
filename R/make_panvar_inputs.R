@@ -28,7 +28,8 @@ make_panvar_inputs <- function(genotype.path,
                                calc.kinship = F,
                                plink.path = NULL,
                                out.dir = NULL,
-                               out.prefix = NULL){
+                               out.prefix = NULL,
+                               extra.plink.options = NULL){
   
   # ~~~~ Initialize ~~~~
   
@@ -86,7 +87,8 @@ make_panvar_inputs <- function(genotype.path,
       sample.list.path = samples.out.file,
       plink.path = plink.path,
       out.dir = out.dir,
-      out.prefix = out.prefix
+      out.prefix = out.prefix,
+      extra.options = extra.plink.options
     )
 
   # ~~~~ generate PC's and Kinship ~~~~ 
