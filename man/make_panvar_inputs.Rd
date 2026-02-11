@@ -33,6 +33,10 @@ This is used to determine the set of samples (lines) to use in the analysis.}
 \item{out.dir}{character, optional, path to store output. Will overide option set by \link{set_out_dir}.}
 
 \item{out.prefix}{character, optional, a prefix for output files. Will overide option set by \link{set_panvar_prefix}.}
+
+\item{extra.plink.options}{character, a vector of options to include in call to plink2.
+Should be a vector with plink2 arguments and their values as separate elements of vector.
+E.G. c("--max-maf", ".95", "--max-alleles", "2"). see \link{snp_qc_plink}}
 }
 \value{
 Input files to be used for downstream panvaR functions. Stored in \code{out.dir} or the option set in \link{set_out_dir}.

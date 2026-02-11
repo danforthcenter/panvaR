@@ -12,6 +12,9 @@
 #' @param plink.path character, optional, path to plink2 executable. Will overide option set by [panvaR::set_plink_path].
 #' @param out.dir character, optional, path to store output. Will overide option set by [panvaR::set_out_dir].
 #' @param out.prefix character, optional, a prefix for output files. Will overide option set by [panvaR::set_panvar_prefix].
+#' @param extra.plink.options character, a vector of options to include in call to plink2. 
+#' Should be a vector with plink2 arguments and their values as separate elements of vector. 
+#' E.G. c("--max-maf", ".95", "--max-alleles", "2"). see [panvaR::snp_qc_plink]
 #'
 #' @returns
 #' Input files to be used for downstream panvaR functions. Stored in `out.dir` or the option set in [panvaR::set_out_dir]. 

@@ -172,13 +172,13 @@ make_ld <- function(plink.path,
     outfile
   )
   
-  suppressWarnings(
+  # suppressWarnings()
   result <- 
   system2(command = plink.path,
           args = current_args,
           stdout = T,
           stderr = T)
-  )
+
   
   if(!"status" %in% attributes(result)){
     return()

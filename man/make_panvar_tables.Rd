@@ -9,7 +9,7 @@ make_panvar_tables(
   qtl.df = NULL,
   tag.snp = NULL,
   annotation.table,
-  plink.path,
+  plink.path = NULL,
   pvals.in.log = T,
   geno.bed.filename,
   geno.bed.directory = "/.",
