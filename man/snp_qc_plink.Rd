@@ -12,7 +12,7 @@ snp_qc_plink(
   plink.path = NULL,
   out.dir = NULL,
   out.prefix = NULL,
-  extra.options
+  extra.options = NULL
 )
 }
 \arguments{
@@ -31,8 +31,9 @@ Samples in file will be included. Sample filtering happens before other filterin
 
 \item{out.prefix}{character, optional, prefix for files output.}
 
-\item{extra.options}{character, a string of options to include in call to plink2.
-Should be a single string e.g. "--max-maf .95 --max-alleles 2"}
+\item{extra.options}{character, a vector of options to include in call to plink2.
+Should be a vector with plink2 arguments and their values as separate elements of vector.
+E.G. c("--max-maf", ".95", "--max-alleles", "2")}
 }
 \value{
 filtered bed/bim/bam files stored in out.dir.

@@ -93,6 +93,44 @@ get_geno_filetype <- function(genotype.path){
 
 
 
+#' Outdated, poor error handling, use plink to calculate ld
+#'
+#' @param plink.path path to plink2 executable
+#' @param snp.name name of snp
+#' @param window total window size in KB, all variants within .5 * window are calculated
+#' @param bedfile bedfile prefix, no .bed
+#' @param in.dir path to location of bed file
+#' @param out.dir path to output temp file 
+#'
+#' @returns
+#' ld values in file named 'ld_out_temp.vcor' 
+#' 
+#' @keywords internal
+#' # work in progress
+make_ld2 <- function(plink.path,
+                    snp.name,
+                    window,
+                    bedfile,
+                    in.dir,
+                    out.dir) {
+  system(
+    paste0(
+      plink.path,
+      " --silent --bfile ",
+      in.dir,
+      "/",
+      bedfile,
+      " --r2-unphased --ld-snp ",
+      snp.name,
+      " --ld-window-kb ",
+      window,
+      " --ld-window 99999 --ld-window-r2 0 --out ",
+      out.dir, 
+      "/ld_out_temp"
+    )
+  )
+}
+
 #' use plink to calculate ld
 #'
 #' @param plink.path path to plink2 executable
@@ -108,28 +146,48 @@ get_geno_filetype <- function(genotype.path){
 #' @keywords internal
 #' # work in progress
 make_ld <- function(plink.path,
-                    snp.name,
-                    window,
-                    bedfile,
-                    in.dir,
-                    out.dir) {
-  system(
-    paste0(
-      plink.path,
-      " --silent --bfile ",
-      in.dir,
-      bedfile,
-      " --r2-unphased --ld-snp ",
-      snp.name,
-      " --ld-window-kb ",
-      window,
-      " --ld-window 99999 --ld-window-r2 0 --out ",
-      out.dir, 
-      "/ld_out_temp"
-    )
+                     snp.name,
+                     window,
+                     bedfile,
+                     in.dir,
+                     out.dir){
+  
+  bfile <- paste0(in.dir, "/", bedfile)
+  outfile <- paste0(out.dir, "/ld_out_temp")
+  
+  current_args <- c(
+    "--silent", 
+    "--bfile",
+    bfile,
+    "--r2-unphased",
+    "--ld-snp",
+    snp.name,
+    "--ld-window-kb",
+    window,
+    "--ld-window",
+    "99999",
+    "--ld-window-r2",
+    "0",
+    "--out",
+    outfile
   )
+  
+  suppressWarnings(
+  result <- 
+  system2(command = plink.path,
+          args = current_args,
+          stdout = T,
+          stderr = T)
+  )
+  
+  if(!"status" %in% attributes(result)){
+    return()
+  }
+  
+  if(attr(result, "status") != 0){
+    stop(result[1])
+  }
 }
-
 
 # extract position from marker.ID in the form "CHR-POS"
 get_bp_from_id <- function(marker.ID){

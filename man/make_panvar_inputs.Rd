@@ -12,7 +12,8 @@ make_panvar_inputs(
   calc.kinship = F,
   plink.path = NULL,
   out.dir = NULL,
-  out.prefix = NULL
+  out.prefix = NULL,
+  extra.plink.options = NULL
 )
 }
 \arguments{

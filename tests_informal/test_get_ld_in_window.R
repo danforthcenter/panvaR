@@ -10,7 +10,33 @@ panvaR::get_ld_in_window(tag.snp = "Chr_05-6857045",
                  window = 500*2,
                  in.dir = "inst/extdata/",
                  out.dir = "~/scratch/panvar_test/",
-                 geno.bed = "Setaria_shattering_example_pruned")
+                 geno.bed = "Setaria_shattering_example_pruned.bed")
+
+get_ld_in_window(tag.snp = "1-21909576",
+                 window = 20,
+                 geno.bed = "sig1_Sorg13C_PlinkQC_maf0.05_missing0.1.bed",
+                 in.dir = "~/Projects/Sorghum13CMash/results/panvar_res/sig1")
+
+test.function <- function(x){
+  if(x == 1){
+    make_ld2(plink.path = "plink2", 
+            snp.name = "Chr01_21909576", 
+            window = 20, 
+            bedfile = "sig1_Sorg13C_PlinkQC_maf0.05_missing0.1", 
+            in.dir = "~/Projects/Sorghum13CMash/results/panvar_res/sig1",
+            out.dir = "~/scratch/panvar_test/")
+  }
+  return("A note!")
+}
+
+test.function(1)
+
+make_ld(plink.path = "plink2", 
+        snp.name = "Chr01_21909576", 
+        window = 20, 
+        bedfile = "sig1_Sorg13C_PlinkQC_maf0.05_missing0.1", 
+        in.dir = "~/Projects/Sorghum13CMash/results/panvar_res/sig1",
+        out.dir = "~/scratch/panvar_test/")
 
 head(out_ld)
 

@@ -51,6 +51,9 @@ get_ld_in_window <- function(qtl.df= NULL,
   }
   out.dir <- normalizePath(out.dir)
   
+  # check in.dir 
+  in.dir <- normalizePath(in.dir)
+  
   # check for .bed extension on input
   if(grepl("\\.bed$", geno.bed)){
     geno.bed <- tools::file_path_sans_ext(geno.bed)
