@@ -25,6 +25,8 @@ ld values in file named 'ld_out_temp.vcor'
 \description{
 use plink to calculate ld
 }
-\examples{
-# work in progress
-}
+\keyword{#}
+\keyword{in}
+\keyword{internal}
+\keyword{progress}
+\keyword{work}

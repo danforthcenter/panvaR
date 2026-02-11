@@ -10,6 +10,40 @@
 # will iterate in the current file then copy over when I fully transfer over to using this file
 
 # temporary_directory 
+temporary_directory <- function(dir = NULL, delete_files = FALSE) {
+  
+  # if(!is.null(options()$panvar_outdir)){
+  #   dir_path <- options()$panvar_outdir
+  # } else if(is.null(dir)){
+  #   dir_path <- tempdir()
+  # } else {
+  #   dir_path <- dir
+  # }
+  
+  if(!is.null(dir)){
+    dir_path <- path.expand(dir)
+  } else if(!is.null(options()$panvar_outdir)){
+    dir_path <- options()$panvar_outdir
+  } else {
+    dir_path <- tempdir()
+  }
+  
+  # Use provided working directory or default to "panvar"
+  # dir_path <- ifelse(is.null(working_directory), tempdir(), working_directory)
+  
+  # Delete the contents of the directory if it exists and delete_files is TRUE
+  if (dir.exists(dir_path) && delete_files) {
+    file.remove(list.files(dir_path, full.names = TRUE))
+  }
+  
+  # Create the directory if it does not exist
+  if (!dir.exists(dir_path)) {
+    dir.create(dir_path)
+  }
+  
+  return(dir_path)
+}
+
 
 # ------------------------------------------------------------------------\
 # new functions --------
@@ -70,9 +104,8 @@ get_geno_filetype <- function(genotype.path){
 #'
 #' @returns
 #' ld values in file named 'ld_out_temp.vcor' 
-#' @export
-#'
-#' @examples
+#' 
+#' @keywords internal
 #' # work in progress
 make_ld <- function(plink.path,
                     snp.name,
@@ -111,7 +144,7 @@ get_chrom_from_id <- function(marker.ID){
 # execute_snpsift2 is in use now 
 # execute_snpsift has some errors 
 # will switch over to this full time when we clean up the whole package
-execute_snpsift2 <- function(file_path) {
+execute_snpsift <- function(file_path) {
   message("~~~~~~~~~~~~~~~ Extracting SNP impacts ~~~~~~~~~~~~~~~")
   file_path <- path.expand(file_path)
 
@@ -203,9 +236,9 @@ minmaxnormal <- function(x) {
 #' that are close but not in gene. Snpeff uses 5 KB by default to call a snp "upstream"/"downstream" variant
 #'
 #' @returns
-#' @export
+#' gene ids that a snp is in
+#' @keywords internal
 #'
-#' @examples
 get.gene.from.snp <- function(bp, gene.df, gene.buffer = 0){
   gene.buffer * 1000
   check.vec <- data.table::between(bp, gene.df$start - gene.buffer, gene.df$end + gene.buffer)

@@ -14,6 +14,10 @@ get.gene.from.snp(bp, gene.df, gene.buffer = 0)
 \item{gene.buffer}{numeric, kilobases to add to gene start and end to include genes
 that are close but not in gene. Snpeff uses 5 KB by default to call a snp "upstream"/"downstream" variant}
 }
+\value{
+gene ids that a snp is in
+}
 \description{
 get genes that a snp is on
 }
+\keyword{internal}

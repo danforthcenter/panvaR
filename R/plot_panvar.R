@@ -62,7 +62,7 @@
 #'
 #' @examples
 #' # work in progress
-make_panvar_plot <- function(panvar.table.list = NULL, 
+plot_panvar <- function(panvar.table.list = NULL, 
                              gwas.res = NULL,
                              ld.list = NULL,
                              annotation.table = NULL,
@@ -90,7 +90,7 @@ make_panvar_plot <- function(panvar.table.list = NULL,
   # ------------------------------------------------------------------------\
   
   message("Making manhattan")
-  man <- make_panvar_manhattan(panvar.table.list = panvar.table.list, 
+  man <- plot_panvar_manhattan(panvar.table.list = panvar.table.list, 
                                gwas.res = gwas.res,
                                pvals.in.log = pvals.in.log,
                                plot.r2.thresh = plot.r2.thresh,
@@ -134,7 +134,7 @@ make_panvar_plot <- function(panvar.table.list = NULL,
   }
   
 
-  anno <- make_gene_annotation_plot(panvar.table.list = panvar.table.list,
+  anno <- plot_gene_annotation(panvar.table.list = panvar.table.list,
                                     annotation.table = annotation.table,
                                     middle.snp = ld.list$key.snp,
                                     window = window,
@@ -150,7 +150,7 @@ make_panvar_plot <- function(panvar.table.list = NULL,
   # ------------------------------------------------------------------------\
   
   if (plot.effect) {
-    effect.plot <- make_effect_plot(panvar.table.list = panvar.table.list, 
+    effect.plot <- plot_effect(panvar.table.list = panvar.table.list, 
                                     gwas.res = gwas.res,
                                     pvals.in.log = pvals.in.log,
                                     plot.r2.thresh = plot.r2.thresh,
