@@ -86,7 +86,6 @@ snp_qc_plink <- function(genotype.path,
       "--maf", min.maf,
       "--make-bed",
       "--set-all-var-ids", "@-#",
-      "--min-alleles", 1,
       "--out", out_fullpath
     )
   } else if(filetype == "vcf"){
@@ -99,7 +98,6 @@ snp_qc_plink <- function(genotype.path,
     "--maf", min.maf,
     "--make-bed",
     "--set-all-var-ids", "@-#",
-    "--min-alleles", 1,
     "--out", out_fullpath
     )
   } else {
