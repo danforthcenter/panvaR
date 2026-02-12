@@ -172,6 +172,9 @@ make_panvar_tables <- function(gwas.res,
   # filter anno to just window
   this.chrom <- get_chrom_from_id(ld.list$key.snp)
   this.pos <- get_bp_from_id(ld.list$key.snp)
+  if(!is.numeric(annotation.table$CHR)){
+    stop("Annotation table column 'CHR' must be numeric.")
+  }
   anno.sub <- annotation.table %>%
     filter(.data$CHR == this.chrom) %>%
     rowwise() %>%

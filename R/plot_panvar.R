@@ -42,13 +42,7 @@
 #' @param highlight.gene.ids character, vector of geneID's that will be
 #'   highlighted in the plot.
 #' @param gene.highlight.color character, a color to highlight specific geneIDs
-#' @param annotation.point.variable.location character, either "anno" or "gwas"
-#'   to indicate the location of the column indicated in
-#'   `annotation.point.variable` in either `annotation.table` or `gwas.res`
-#'   respectively. If column is located in `gwas.res`, the maximum value of all
-#'   snps in a given gene will be used.
-#' @param annotation.point.variable character, variable in either `gwas.res` or
-#'   `annotation.table` that indicates how to color points plotted next to gene
+#' @param annotation.point.variable character, variable in  `annotation.table` that indicates how to color points plotted next to gene
 #'   descriptions. If not supplied, no points are plotted. The input "LD" is
 #'   reserved and will use LD.
 #' @param annotation.point.scale ggplot2 scale object, a color scale to customize
@@ -80,7 +74,6 @@ plot_panvar <- function(panvar.table.list = NULL,
                              include.gene.id = F,
                              highlight.gene.ids = NULL,
                              gene.highlight.color = "red",
-                             annotation.point.variable.location = c("gwas", "anno"),
                              annotation.point.variable = "LD",
                              annotation.point.scale = NULL,
                              plot.effect = F) {
