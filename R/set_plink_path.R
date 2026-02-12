@@ -5,6 +5,8 @@
 #' @returns
 #' sets global option that for path to global executable for plink2. If plink2 is on path and option is not supplied, will use the executable on the path. 
 #' 
+#' Accessible at: options()$plink_path
+#' 
 #' plink V2.00a6 minimum recommended 
 #' @export
 #'

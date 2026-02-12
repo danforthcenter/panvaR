@@ -41,7 +41,7 @@ tables <-
                      geno.bed.filename = "sig1_Sorg13C_PlinkQC_maf0.05_missing0.1.bed",
                      geno.bed.directory = "results/panvar_res/sig1",
                      window = 500,
-                     snp.to.gene.vars = c("PlantCad_zeroshot", "snp.score"),
+                     snp.to.gene.vars = c("PlantCad_zeroshot", "snp.score", "LD"),
                      snp.to.gene.buffer = 5,
                      compute.scores = T,
                      score.vars = c("LD", "LOGPVAL", "PlantCad_zeroshot"),

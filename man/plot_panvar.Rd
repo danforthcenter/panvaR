@@ -23,7 +23,6 @@ plot_panvar(
   include.gene.id = F,
   highlight.gene.ids = NULL,
   gene.highlight.color = "red",
-  annotation.point.variable.location = c("gwas", "anno"),
   annotation.point.variable = "LD",
   annotation.point.scale = NULL,
   plot.effect = F
@@ -86,14 +85,7 @@ highlighted in the plot.}
 
 \item{gene.highlight.color}{character, a color to highlight specific geneIDs}
 
-\item{annotation.point.variable.location}{character, either "anno" or "gwas"
-to indicate the location of the column indicated in
-\code{annotation.point.variable} in either \code{annotation.table} or \code{gwas.res}
-respectively. If column is located in \code{gwas.res}, the maximum value of all
-snps in a given gene will be used.}
-
-\item{annotation.point.variable}{character, variable in either \code{gwas.res} or
-\code{annotation.table} that indicates how to color points plotted next to gene
+\item{annotation.point.variable}{character, variable in  \code{annotation.table} that indicates how to color points plotted next to gene
 descriptions. If not supplied, no points are plotted. The input "LD" is
 reserved and will use LD.}
 

@@ -19,7 +19,7 @@ get_ld_in_window(tag.snp = "1-21909576",
 
 test.function <- function(x){
   if(x == 1){
-    make_ld2(plink.path = "plink2", 
+    make_ld(plink.path = "plink2", 
             snp.name = "Chr01_21909576", 
             window = 20, 
             bedfile = "sig1_Sorg13C_PlinkQC_maf0.05_missing0.1", 

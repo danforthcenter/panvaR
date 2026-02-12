@@ -152,6 +152,12 @@ make_ld <- function(plink.path,
                      in.dir,
                      out.dir){
   
+  if(is.null(plink.path)){
+    warning("plink.path is NULL, searching path... \n",
+            "Attempting to use ", Sys.which("plink2"))
+    plink.path <- Sys.which("plink2")
+  } 
+  
   bfile <- paste0(in.dir, "/", bedfile)
   outfile <- paste0(out.dir, "/ld_out_temp")
   
@@ -181,7 +187,7 @@ make_ld <- function(plink.path,
   )
 
   
-  if(!"status" %in% attributes(result)){
+  if(!"status" %in% names(attributes(result))){
     return()
   }
   
