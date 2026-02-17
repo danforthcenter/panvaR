@@ -15,7 +15,7 @@
 #' @param verbose boolean, if TRUE, output some status reports
 #'
 #' @returns
-#' #' Named list with 2 items
+#' Named list with 2 items
 #'  - table: table with marker.IDs (CHR-POS) and maximum LD in R2 for each snp to the snps in the qtl.df or LD to tag.snp
 #'  - key.snp: marker.ID corresponding to the middle of the window, either the max(LOGPVAL) of qtl.df or tag.snp. useful to retain for downstream functions.
 
