@@ -35,3 +35,6 @@ set_plink_path("~/bin/plink2")
 make_panvar_inputs(genotype.path = "~/Projects/Sorghum13CMash/data/Crawford_BAP_new.recode.vcf.gz",
                    phenotype.path = "~/Projects/Sorghum13CMash/data/Chr01_21909576_Phenotype.csv")
 
+
+
+

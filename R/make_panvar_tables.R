@@ -38,9 +38,11 @@
 #' Scores:
 #' Scores are simple scaled and weighted averages of some variables. First variables are 
 #' normalized using min/max normalization. The variables are then made negative if 
-#' they need to be reversed to indicate a larger value as a more desirable value. For example,
-#' distance from the key snp should be reversed as a small distance is more desirable.
+#' they need to be reversed to indicate a larger value as a more desirable value. 
+#' 
+#' For example, distance from the key snp should be reversed as a small distance is more desirable.
 #' A log-pvalue is already of this form 'bigger is better' so does not need to be altered. 
+#' 
 #' Finally, a weighted average is taken based on user defined weights. The default weights all variables equally. 
 #' The outcome is a score from 0-1 that ranks the snps based on these variables. 
 #' see: [panvaR::make_scores]

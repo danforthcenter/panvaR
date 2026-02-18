@@ -34,7 +34,7 @@ QTL are typically defined as hits grouped by LD by something like \code{plink --
 \item{verbose}{boolean, if TRUE, output some status reports}
 }
 \value{
-#' Named list with 2 items
+Named list with 2 items
 \itemize{
 \item table: table with marker.IDs (CHR-POS) and maximum LD in R2 for each snp to the snps in the qtl.df or LD to tag.snp
 \item key.snp: marker.ID corresponding to the middle of the window, either the max(LOGPVAL) of qtl.df or tag.snp. useful to retain for downstream functions.
