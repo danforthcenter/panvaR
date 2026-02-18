@@ -235,7 +235,7 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
     man <- man +
       geom_point(aes(fill = .data$plot.quant.var, alpha = .data$how.to.plot, shape = .data[[qualitative.annotation]]),
                  size = 3, color = "black") +
-      scale_alpha(guide = "none", range = c(0, 1)) +
+      scale_alpha_continuous(guide = "none", limits = c(0,NA), range = c(0, 1)) +
       quantitative.fill.scale +
       qualitative.shape.scale
     
@@ -243,7 +243,7 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
     # Use just a quant 
     man <- man +
       geom_point(aes(fill = .data$plot.quant.var, alpha = .data$how.to.plot), shape = 21, size = 3, color = "black") +
-      scale_alpha(guide = "none", range = c(0, 1)) +
+      scale_alpha_continuous(guide = "none", limits = c(0,NA), range = c(0, 1)) +
       quantitative.fill.scale
     
   } else if(!is.null(qualitative.annotation) & is.null(quantitative.annotation)){
@@ -251,14 +251,14 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
     man <- man + 
       geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot, shape = .data[[qualitative.annotation]]), size = 3, color = "black") +
       qualitative.shape.scale +
-      scale_alpha(guide = "none", range = c(0, 1)) +
+      scale_alpha_continuous(guide = "none", limits = c(0,NA), range = c(0, 1)) +
       default.LD.fill.scale
     
   } else {
     # Use neither
-    man <- man + 
+    man <- man +
       geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot), size = 3, shape = 21, color = "black") +
-      scale_alpha(guide = "none", range = c(0, 1)) +
+      scale_alpha_continuous(guide = "none", limits = c(0,NA), range = c(0, 1)) +
       default.LD.fill.scale
   }
   
