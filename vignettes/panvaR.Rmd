@@ -12,20 +12,20 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.width = 6,
-  fig.asp = ((1 + sqrt(5)) / 2) - 1
+  fig.asp = .618
 )
 ```
 
 ```{r}
-library(panvaR, verbose = F)
-library(dplyr, verbose = F)
+library(panvaR, warn.conflicts = F)
+library(dplyr, warn.conflicts = F)
 ```
 
 ## Introduction
 
 PanvaR is a data integration tool that seeks to speed up fine-mapping of GWAS peaks.
 
-Genome-wide association studies (GWAS) are powerful tools that test entire genomes for regions where variability in the markers are correlated with variability in a certain phenotype. However, due to the phenomenon of linkage disequilibrium (LD), the top associated marker may not necessarily be in the specific gene that is causing the variability in phenotype. Additionally, multi-locus models, which have proven to be a powerful flavor of GWAS, collapse signal from these locally correlated snps that are in LD into a single snp that is output by the model. This obfuscates information about association of snps with the phenotype in the region of an identified locus. Finally, GWAS is often run on a smaller number of snps to manage computational resources. Once a peak is identified however, a denser set of snps may be used to further pinpoint causal genes.
+Genome-wide association studies (GWAS) are powerful tools that test entire genomes for regions where variability in the markers are correlated with variability in a certain phenotype. However, due to the phenomenon of linkage disequilibrium (LD), the top associated marker may not necessarily be in the specific gene that is causing the variability in phenotype. Additionally, multi-locus models, which have proven to be a powerful flavor of GWAS, collapse signal from these locally correlated snps that are in LD into a single snp that is output by the model. This obfuscates information about association of snps with the phenotype in the region of an identified locus. Finally, GWAS is often run on a smaller number of snps to manage computational resources. Once a peak is identified however, a denser set of snps may be used to further pinpoint causal genes. All of these reasons point towards an extra step of fine-mapping between GWAS and candidate gene identification.
 
 PanvaR makes this critical step of association mapping easier and quicker by optionally re-running GWAS using a single-locus model, visualizing a gwas peak alongside genes and retaining flexibility to include user defined measures of snp impact and gene importance. Overall, the goal of the package is to make combining different types of data quicker to more efficiently prioritize candidate genes underlying QTL.
 
@@ -188,27 +188,30 @@ annotation.table <- read.csv(system.file("extdata",
 head(annotation.table)
 ```
 
-This function creates
+We will use this gene annotation table to help line up genes and GWAS results. First, read in gwas results generated from last step and format chromosome column.
 
 ```{r}
 gwas.path <- list.files(options()$panvar_outdir,
                                         pattern = "GWASresults\\.csv$",
                                         full.names = TRUE)
 
-# match chromosome format with the chromosome format in the annotation file
-head(anno$CHR)
+# match chromosome format, want to use numeric style chromsome, see note below
+head(annotation.table$CHR)
 gwas.df <- read.csv(gwas.path) 
 head(gwas.df$CHR)
 gwas.df <- gwas.df %>% 
   mutate(CHR = panvaR::get_chrom_from_id(marker.ID, sep = "-"))
 head(gwas.df$CHR)
+```
 
+Use these inputs to generate 2 tables at the gene and snp level. Also, retain some info about the `tag.snp` and/or `qtl.df` .
+
+```{r}
 # make the tables 
-# Chr_05-6857045
 tables <- make_panvar_tables(gwas.res = gwas.df,
                              tag.snp = "Chr_05-6857045",
                              # qtl.df = qtl.df.test,
-                             annotation.table = anno,
+                             annotation.table = annotation.table,
                              plink.path = options()$plink_path,
                              pvals.in.log = F,
                              geno.bed.filename = filtered.bedfile,
@@ -218,6 +221,36 @@ tables <- make_panvar_tables(gwas.res = gwas.df,
                              snp.to.gene.vars = c("LD", "snp.score"),
                              snp.to.gene.buffer = 5)
 
+names(tables)
+head(tables$gwas)
+head(tables$anno)
 ```
 
+### A note on chromsome names and marker.ID's
+
+As part of `make_panvar_inputs()` marker.ID's are standardized to be of the form `CHR-POS` as they are coded in the input genotype file. This standardizes the marker.ID's to have a consistent form but does not alter the chromosome names.
+
+Chromosome names can often have some leading characters e.g. "CHR01". To standardize chromosomes across different inputs, chromosome names are often converted to a number using the function `get_chrom_from_id()` . Some genotype files may include things like scaffolds that cannot be easily assigned a chromosome number. It is recommend to remove these from the input file before running panvaR. Where applicable, the form of chromosome name is indicated in the function documentation when a user supplied marker.ID is required.
+
+### Snp scores
+
 ## Plotting
+
+```{r, out.extra='style="max-width:none; width:90vw; margin-left:calc(50% - 45vw);"', fig.width = 15, fig.height = 10}
+
+plot_panvar(panvar.table.list = tables,
+  pvals.in.log = F,
+  plot.r2.thresh = .2,
+  unplotted.alpha = .4,
+  window = 75,
+  sig.line = 6,
+  orient = "H",
+  qualitative.annotation = NULL,
+  qualitative.shape.scale = NULL,
+  quantitative.annotation = NULL,
+  quantitative.fill.scale = NULL,
+  include.gene.id = T,
+  annotation.point.variable = "snp.score",
+  plot.effect = F
+)
+```

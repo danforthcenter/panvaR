@@ -17,3 +17,7 @@ position for this marker as a number
 \description{
 Extract position from marker.ID in the form "CHR-POS"
 }
+\examples{
+my.marker <- "Chr01-123"
+get_bp_from_id(my.marker, sep = "-")
+}

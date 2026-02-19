@@ -99,11 +99,14 @@ make_panvar_tables <- function(gwas.res,
   # filter gwas df to just in window and join LD
   gwas.sub <- gwas.res %>%
     as.data.frame() %>% 
-    mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>%
-    left_join(ld.list$table, by = "marker.ID") %>%
+    # mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>%
+    left_join(ld.list$table, by = c("CHR", "POS")) %>%
+    select(-contains("marker.ID")) %>% 
+    mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>% 
     filter(!is.na(.data$R2)) %>% 
     # rename this here to work with special case "LD" given to point variable
-    rename("LD" = "R2")
+    rename("LD" = "R2") %>% 
+    relocate(marker.ID)
   
   # add middlesnp back in, gets ignored by LD calcu if using tagsnp
   if(!is.null(tag.snp)){

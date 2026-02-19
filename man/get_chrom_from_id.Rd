@@ -19,3 +19,8 @@ chromsome for this marker as a number if you want
 \description{
 Extract chromsome from marker.ID in the form "CHR-POS"
 }
+\examples{
+my.marker <- "Chr01-123"
+get_chrom_from_id(my.marker, tonumeric = T)
+get_chrom_from_id(my.marker, tonumeric = F)
+}

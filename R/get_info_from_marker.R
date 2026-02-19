@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-#' my.marker <- "Chr01-123
+#' my.marker <- "Chr01-123"
 #' get_bp_from_id(my.marker, sep = "-")
 get_bp_from_id <- function(marker.ID, sep = "-"){
   as.numeric(stringr::str_extract(marker.ID, paste0(sep, "(.*)"), group = 1))
@@ -26,7 +26,7 @@ get_bp_from_id <- function(marker.ID, sep = "-"){
 #' @export
 #'
 #' @examples
-#' my.marker <- "Chr01-123
+#' my.marker <- "Chr01-123"
 #' get_chrom_from_id(my.marker, tonumeric = T)
 #' get_chrom_from_id(my.marker, tonumeric = F)
 get_chrom_from_id <- function(marker.ID, sep = "-", tonumeric = T){

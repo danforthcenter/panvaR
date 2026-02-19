@@ -126,6 +126,14 @@ plot_panvar <- function(panvar.table.list = NULL,
     }
   }
   
+  # if(is.null(ld.list$key.snp)){
+  #   middle.snp <- NULL
+  # } else {
+  #   middle.snp <- paste0(get_chrom_from_id(ld.list$key.snp),
+  #                        "_",
+  #                        get_bp_from_id(ld.list$key.snp))
+  # }
+
 
   anno <- plot_gene_annotation(panvar.table.list = panvar.table.list,
                                     annotation.table = annotation.table,
