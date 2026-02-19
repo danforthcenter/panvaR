@@ -196,15 +196,15 @@ make_ld <- function(plink.path,
   }
 }
 
-# extract position from marker.ID in the form "CHR-POS"
-get_bp_from_id <- function(marker.ID){
-  as.numeric(stringr::str_extract(marker.ID, "-(.*)", group = 1))
-}
-
-# extract chromsome from marker.ID in the form "CHR-POS"
-get_chrom_from_id <- function(marker.ID){
-  as.numeric(stringr::str_extract(marker.ID, "(^.*)-(.*)", group = 1))
-}
+# # extract position from marker.ID in the form "CHR-POS"
+# get_bp_from_id <- function(marker.ID){
+#   as.numeric(stringr::str_extract(marker.ID, "-(.*)", group = 1))
+# }
+# 
+# # extract chromsome from marker.ID in the form "CHR-POS"
+# get_chrom_from_id <- function(marker.ID){
+#   as.numeric(stringr::str_extract(marker.ID, "(^.*)-(.*)", group = 1))
+# }
 
 # execute_snpsift2 is in use now 
 # execute_snpsift has some errors 

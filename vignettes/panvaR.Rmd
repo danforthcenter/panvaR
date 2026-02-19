@@ -16,8 +16,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, include = FALSE}
-library(panvaR)
+```{r}
+library(panvaR, verbose = F)
+library(dplyr, verbose = F)
 ```
 
 ## Introduction
@@ -37,6 +38,12 @@ PanvaR makes use of plink2 for much of its snp file manipulation. Please downloa
 ###### rMVP
 
 rMVP is used as the package's GWAS software. This does not need to be downloaded separately as it will be loaded by installing the panvaR package but this is noted here as an acknowledgement. See their [documentation](https://github.com/xiaolei-lab/rMVP) for any issues pertaining to this aspect of the pipeline.
+
+## Example data
+
+### Example data
+
+The data for this vignette comes from [this paper](https://doi.org/10.1038/s41587-020-0681-2). The paper identified a strong GWAS peak for shattering on chromosome 5. The genotype file has been subset to only include a small range around this peak.
 
 ## Formatting inputs
 
@@ -88,7 +95,7 @@ set_out_dir(current.directory)
 
 ### Standardize inputs
 
-This function will do some basic qc and standardize some inputs before we run the gwas. By default it will filter for minor allele frequency and missing rate. It will also remove genotypes that do not have a corresponding phenotype value. `plink2` is called to produce a filtered bed file and `rMVP::MVP.Data` is called to format data for use in `rMVP` . This also attempts to standardize marker.ID's by setting them to `CHR-POS` in the filtered bed file.
+This function will do some basic qc and standardize some inputs before we run the gwas. By default it will filter for minor allele frequency and missing rate. It will also remove genotypes that do not have a corresponding phenotype value. `plink2` is called to produce a filtered bed file and `rMVP::MVP.Data()` is called to format data for use in `rMVP` . This also attempts to standardize marker.ID's by setting them to `CHR-POS` in the filtered bed file.
 
 ```{r}
 genotype.path <- system.file("extdata", 
@@ -109,11 +116,11 @@ make_panvar_inputs(genotype.path = genotype.path,
 If you aren't sure how many principal components to use in the GWAS model to control for population structure it might be a good idea to make a scree plot to select a reasonable number to include.
 
 ```{r, fig.width=8}
-filtered.bedfile <- list.files(options()$panvar_outdir, 
-                               pattern = "bed$", 
-                               full.names = TRUE)
-plot_pc_scree(bedfile.path = filtered.bedfile,
-              num.pcs = 10)
+filtered.bedfile.fullpath <- list.files(options()$panvar_outdir,
+                                        pattern = "bed$",
+                                        full.names = TRUE)
+
+plot_pc_scree(bedfile.path = filtered.bedfile.fullpath, num.pcs = 10)
 ```
 
 We'll use the first 2 PC's for this example.
@@ -121,6 +128,8 @@ We'll use the first 2 PC's for this example.
 ### Different GWAS models
 
 You can run a generalized linear model (GLM) or a mixed-linear model (MLM). A GLM uses only PC's to control for population structure. An MLM uses both PC's and the kinship matrix. Due to the extra control for population structure, an MLM model is typically more conservative and therefore less likely to have false positives but can also over-correct for population structure leading to false negatives when compared directly to GLM.
+
+The GWAS function has been designed to be used with the `make_panvar_inputs()` function but can also be used with custom inputs. If the `inputs.dir` argument is specified the function will attempt to automatically use required files from this directory. If supplying other inputs, they should be in a format that `rMVP::MVP()` can accept. See the documentation for `panvar_mvp_gwas()` .
 
 ```{r}
 
@@ -133,9 +142,82 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 Here is the manhattan:
 
 ```{r}
-knitr::include_graphics(file.path(current.directory, "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"), dpi = 96)
+knitr::include_graphics(
+  file.path(
+    current.directory,
+    "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
+  ),
+  dpi = 600
+)
 ```
 
 ## Creating tables
+
+### LD calculation
+
+A main functionality of the package is to more easily calculate local linkage disequilbrium around a given marker. panvaR uses `plink2` to generate pairwise LD to a single marker or a group of markers within a set physical distance.
+
+If supplying a group of markers via the `qtl.df` argument, the output will have a single value for each snp in the window representing the maximum LD of that marker to any snp in the `qtl.df`.
+
+You can create a table of LD in R^2^ in a window using the following function:
+
+```{r}
+filtered.bedfile <- list.files(options()$panvar_outdir, pattern = "bed$")
+
+out_ld <-
+  get_ld_in_window(
+    tag.snp = "Chr_05-6857045",
+    window = 500,
+    geno.bed = filtered.bedfile,
+    in.dir = current.directory
+  )
+head(out_ld$table)
+```
+
+### Including more information
+
+As mentioned in the section on inputs, panvaR can accept a number of different data types to generate a gene based and snp based table.
+
+To use gene information, a table of gene locations and annotations is required. This is usually generated from a .gff annotation file. Try the function `read.gff()` from the `ape` package, to manipulate these files in R. An example of the format of the table:
+
+```{r}
+annotation.table <- read.csv(system.file("extdata",
+                                         "Setaria_shattering_annotation.csv",
+                                         package = "panvaR"))
+
+head(annotation.table)
+```
+
+This function creates
+
+```{r}
+gwas.path <- list.files(options()$panvar_outdir,
+                                        pattern = "GWASresults\\.csv$",
+                                        full.names = TRUE)
+
+# match chromosome format with the chromosome format in the annotation file
+head(anno$CHR)
+gwas.df <- read.csv(gwas.path) 
+head(gwas.df$CHR)
+gwas.df <- gwas.df %>% 
+  mutate(CHR = panvaR::get_chrom_from_id(marker.ID, sep = "-"))
+head(gwas.df$CHR)
+
+# make the tables 
+# Chr_05-6857045
+tables <- make_panvar_tables(gwas.res = gwas.df,
+                             tag.snp = "Chr_05-6857045",
+                             # qtl.df = qtl.df.test,
+                             annotation.table = anno,
+                             plink.path = options()$plink_path,
+                             pvals.in.log = F,
+                             geno.bed.filename = filtered.bedfile,
+                             geno.bed.directory = current.directory,
+                             window = 250,
+                             compute.scores = T,
+                             snp.to.gene.vars = c("LD", "snp.score"),
+                             snp.to.gene.buffer = 5)
+
+```
 
 ## Plotting

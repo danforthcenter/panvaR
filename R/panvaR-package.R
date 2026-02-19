@@ -76,6 +76,7 @@
 #' @importFrom stats predict
 #' @importFrom stats weighted.mean
 #' @importFrom stringr str_detect
+#' @importFrom stringr str_extract_all
 #' @importFrom stringr str_replace
 #' @importFrom sys exec_wait
 #' @importFrom tibble add_column

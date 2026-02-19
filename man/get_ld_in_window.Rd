@@ -21,7 +21,9 @@ QTL are typically defined as hits grouped by LD by something like \code{plink --
 
 \item{tag.snp}{character, marker.ID of snp around which to calculate LD. In the form 'CHR-POS'}
 
-\item{window}{numeric, total window size in KB, all variants within .5 * window are calculated.}
+\item{window}{numeric, a physical distance to determine which snps to calculate LD for.
+Snps within this distance to the tag.snp or qtl.df snps will be calculated.
+The entire size of the region centered on the tag snp within which LD will be calculated is 2*window.}
 
 \item{plink.path}{character, optional, path to plink2 executable. Will overide option set by \link{set_plink_path}.}
 
@@ -38,6 +40,7 @@ Named list with 2 items
 \itemize{
 \item table: table with marker.IDs (CHR-POS) and maximum LD in R2 for each snp to the snps in the qtl.df or LD to tag.snp
 \item key.snp: marker.ID corresponding to the middle of the window, either the max(LOGPVAL) of qtl.df or tag.snp. useful to retain for downstream functions.
+\item qtl.snps: marker.ID corresponding to the markers in the qtl.df. useful to retain for downstream functions.
 }
 }
 \description{

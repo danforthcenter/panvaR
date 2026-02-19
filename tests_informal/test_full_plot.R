@@ -263,3 +263,21 @@ plot_panvar(panvar.table.list = tables,
   annotation.point.scale = ggplot2::scale_color_viridis_b(option = "plasma"),
   plot.effect = T
 )
+
+
+# subset annotation
+anno <- read.csv("~/scratch/setaria_biomart.txt") %>% 
+  filter(str_detect(Chromosome.Name, "scaffold", negate = T)) %>% 
+  mutate(CHR = as.numeric(str_replace(Chromosome.Name, "Chr_", ""))) %>% 
+  select(CHR, geneID = Gene.Name, 
+         start = Gene.Start..bp.,
+         end = Gene.End..bp.,
+         annotation = Description) %>% 
+  mutate(annotation = case_when(annotation == "" ~ "No gene description.",
+                                TRUE ~ annotation)) %>% 
+  distinct()
+
+out <- anno %>% 
+  filter(CHR == 5) %>% 
+  filter(between(start, 6857045 - 1000 * 1000, 6857045 + 1000 * 1000))
+write.csv(out, "inst/extdata/Setaria_shattering_annotation.csv", row.names = F)
