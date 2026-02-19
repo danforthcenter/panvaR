@@ -50,9 +50,10 @@ out_ld <-
 
 gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv"))
 
-make_panvar_manhattan(gwas.res = gwas.df,
+plot_panvar_manhattan(gwas.res = gwas.df,
                       pvals.in.log = F,
                       ld.list = out_ld,
+                      unplotted.alpha = .5,
                       window = 500,
                       sig.line = 6, orient = "V")
 

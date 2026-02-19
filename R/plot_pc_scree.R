@@ -30,7 +30,7 @@ plot_pc_scree <- function(bedfile.path,
   
   if(!cumulative){
     p <-
-      ggplot(aes(x = PC, y = prop.var), data = plot.df) +
+      ggplot(aes(x = .data$PC, y = .data$prop.var), data = plot.df) +
       geom_point() +
       geom_line() +
       theme_bw(13) +
@@ -38,7 +38,7 @@ plot_pc_scree <- function(bedfile.path,
            y = "Proportion of Variance Explained (approximate)")
   } else {
     p <- 
-      ggplot(aes(x = PC, y = cumulative), data = plot.df) +
+      ggplot(aes(x = .data$PC, y = .data$cumulative), data = plot.df) +
       geom_point() +
       geom_line() +
       theme_bw(13) +

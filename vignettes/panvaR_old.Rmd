@@ -1,0 +1,180 @@
+---
+title: "panvaR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{panvaR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# The different ways of using PanvaR
+
+## When you have tag SNP/s handy
+
+Running PanvaR
+`PanvaR` can be executed in multiple ways, depending on the type of input provided. Inputs to PanvaR are categorized into optional and required fields:
+
+Required Inputs
+
+Annotated VCF: A `SnpEff` annotated VCF file, essential for `IMPACT` information added to VCF data.
+Tag SNP: The chromosome and base pair (BP) of the tag SNP, typically the SNP with the highest score from the GWAS.
+GWAS Results: Tabular GWAS results, providing association data for each SNP.
+
+### Running PanvaR with GWAS Results and Annotated VCF
+
+To run PanvaR with GWAS results and an annotated VCF, use the following function:
+
+```R
+panvar_gwas_tagsnp_snpeff(
+  gwas_table_path = "<path/to/gwas/table>",
+  vcf_file_path = "<path/to/vcf/file.gz>",
+  chrom = "Chr_05:6857045",
+  r2_threshold = 0.8,
+  window = 500000,
+  all_impact = FALSE
+)
+```
+Note:
+- gwas_table_path and vcf_file_path should be replaced with actual file paths.
+- chrom and bp specify the tag SNP's chromosome and base pair.
+- r2_threshold and window are optional parameters for filtering and analysis.
+- all_impact is a logical flag for including all IMPACT categories.
+- `PanvaR` determines the Linkage Disequilibrium (LD) between the tag Single Nucleotide Polymorphism (SNP) and every other SNP within a genome segment. This segment is centered on the tag SNP, extending up to a specified window size in both directions.
+
+Details on the inputs:-
+
+### Gwas table
+
+You are free to supply your gwas table but it needs to have at least three fields of data (spelling and case is important):-
+
+1. `BP` - The base-pair loci of the data.
+2. `CHROM` - The chromosomes.
+3. `Pvalues` - The -log10 of the pvalues for each loci per GWAS.
+
+Example of a table that can be supplied to the `gwas_table_path` parameter.
+
+| Chroms | BP   | Pvalues |
+| ------ | ---- | ------- |
+| Chr01  | 515  | 15.487  |
+| Chr_01 | 2552 | 14.87   |
+| chr01  | 4657 | 12.87   |
+| 01     | 7889 | 26.72   |
+
+For `panvaR` to run smoothly the above fields should be named exactly as presented - this makes the manipulation of tabular data easier and faster.
+
+### Annotated VCF file
+
+This should be an annotated VCF file from `SpnEff` - if you have a VCF file that is not annotated please use `SnpEff` to annotate it.
+
+### Tag_snp
+
+The tag snp should be supplied with the params `chrom` and `bp`. For example:-
+
+```r
+chrom = "Chr_05"
+bp = 6857045
+```
+## When you don't have a tag SNP/s handy
+
+But if you don't have the `tag SNP` you can use the `panvar_gwas` functionality built into `panvaR`. This is a fairly straight forward `GWAS` pipeline that depends on:-
+
+```
+library(bigsnpr)
+library(modelr)
+```
+
+The default behaviour is to use 5 PCs and produce GWAS results using `big_randomSVD`, `big_random_pca`, `big_univLinReg` and `snp_gc` for most of its functionality.
+
+To use `panvaR`'s GWAS module use you can use the following syntax
+
+```
+panvar_gwas(
+  genotype_data,
+  phentotype_path,
+  pc_min = 5,
+  pc_max = 5, 
+  maf = 0.05, 
+  missing_rate = 0.1
+)
+```
+
+If you are looking for details into how the `GWAS` pipeline has been implemented - please read into `R/panvar_gwas.R`.
+
+## Using `panvaR` with a Phenotype file
+
+If you want to automate the a `panvaR` run starting with a phenotype file and an annotated VCF file, you can use the `panvar_pheno_geno_snpeff` function.
+
+```r
+panvar_pheno_geno_snpeff(
+    phenotype_data_path = "</path/to/phenotype/file>",
+    vcf_file_path = "</path/to/vcf/file>"
+)
+```
+
+The above function is really just a convienience wrapper that:-
+
+1. Runs GWAS with the supplied phenotype and genotype data.
+2. Gets the `Tag_snp` (i.e. the SNP with the strongest Pvalues from GWAS)
+3. Then calls `panvar_gwas_tagsnp_snpeff` 
+
+# Elaborate example run
+
+Example input and output for `panvaR`.
+
+(The links in this section are stored in a OneDrive account - if you have diffculty accessing them, please contact maintainers.)
+
+Here is an example of `PanvaR` being used with real world data.
+
+Reference publication:- https://doi.org/10.1038/s41587-020-0681-2
+
+Data:-
+
+[genotype data (annotated VCF file)](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/EdfaZqrVgA1BuXfr275_jZ4B8s6BqjdP8x6ZIbSQHh2FgA?e=MWa9vP)
+
+[Phentotype data(shattering scores)](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/EdfaZqrVgA1BuXfr275_jZ4B8s6BqjdP8x6ZIbSQHh2FgA?e=MWa9vP)
+
+The above genotype and phenotype data will produce [this GWAS table](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/Eb52QTajVw9FgELlyvKaWvkB6sA9I0yPTF_WdIPh3hytSw?e=kDOMXd) (when run with 5 PCs).
+
+To run the above data you can:-
+
+```r
+panvar_gwas_tagsnp_snpeff(
+  "setaria_gwas_table.tsv", 
+  "setaria_annotated_vcf.vcf.gz", 
+  tag_snps = "chr_05:54675",
+  r2_threshold = 0.6
+)
+```
+
+If you are looking to run multiple `SNP`s at once you can supply multiple `SNP`s to `tag_snps` in the following manner:-
+
+```R
+bulk_test_run <- panvar_func_bulk(
+    phenotype_data_path = "setaria/shattering.tsv",
+    vcf_file_path = "setaria/setaria_annotated_vcf.vcf.gz",
+    all.impacts = FALSE,
+    r2_threshold = 0.8,
+    tag_snps = c("Chr_05:6857045", "Chr_05:6836247")
+)
+```
+
+Note:- Be sure to run the above example in `R` before downloading the unit test outcome.
+
+Which should produce [this table](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/ETUszsHynbdAnb4WaWbJ8kYBDRhsxsGAaXOrBRzOAE3LbA?e=FoJolr) as outcome.
+
+Table for SHA512sums of the inputs and outputs of the above section.
+
+| File                                                            | SHA512sum                                                                                                                        |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| setaria_annotated_vcf.vcf.gz                                    | 6d437b9863295ccd76194f382beee66ed7b66a930ee1462d4a83c57a74bab2dde63d1a2fd1777df1f65708ea091adb190a9e16eb65f53c28ed6afb8e706c9629 |
+| setaria_gwas_table.tsv                                          | ff019601bfcd2d2a6ea2d26d749ad1656ce6237b1d0045eb9a014d04bbefce622a8a0d88e6d0d49e88e7a3c65731d48ae7fc9b01a537fb432f328022e823ac17 |
+| setaria_shattering_unit_test_r2_008_maf_005_missng_rate_001.tsv | 67778fb07a69af3a5acd307641c3b7c1153edf4ba1da28776583eb32e9097936b2a5339505bed789b4c47435c35f32762cf56543d933f7f7e59fe94cd51f910b |
+| shattering.tsv                                                  | 883c1a0104ac4c1cbf9c041b9ebd67ad1c1b8fa8c83ab4bd09b8a71963e4509974fb3aa3437080a33eb957976515fa45b69328525fe5862cf66603df2f9c56c5 |

@@ -10,171 +10,132 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 6,
+  fig.asp = ((1 + sqrt(5)) / 2) - 1
 )
 ```
 
-
-# The different ways of using PanvaR
-
-## When you have tag SNP/s handy
-
-Running PanvaR
-`PanvaR` can be executed in multiple ways, depending on the type of input provided. Inputs to PanvaR are categorized into optional and required fields:
-
-Required Inputs
-
-Annotated VCF: A `SnpEff` annotated VCF file, essential for `IMPACT` information added to VCF data.
-Tag SNP: The chromosome and base pair (BP) of the tag SNP, typically the SNP with the highest score from the GWAS.
-GWAS Results: Tabular GWAS results, providing association data for each SNP.
-
-### Running PanvaR with GWAS Results and Annotated VCF
-
-To run PanvaR with GWAS results and an annotated VCF, use the following function:
-
-```R
-panvar_gwas_tagsnp_snpeff(
-  gwas_table_path = "<path/to/gwas/table>",
-  vcf_file_path = "<path/to/vcf/file.gz>",
-  chrom = "Chr_05:6857045",
-  r2_threshold = 0.8,
-  window = 500000,
-  all_impact = FALSE
-)
-```
-Note:
-- gwas_table_path and vcf_file_path should be replaced with actual file paths.
-- chrom and bp specify the tag SNP's chromosome and base pair.
-- r2_threshold and window are optional parameters for filtering and analysis.
-- all_impact is a logical flag for including all IMPACT categories.
-- `PanvaR` determines the Linkage Disequilibrium (LD) between the tag Single Nucleotide Polymorphism (SNP) and every other SNP within a genome segment. This segment is centered on the tag SNP, extending up to a specified window size in both directions.
-
-Details on the inputs:-
-
-### Gwas table
-
-You are free to supply your gwas table but it needs to have at least three fields of data (spelling and case is important):-
-
-1. `BP` - The base-pair loci of the data.
-2. `CHROM` - The chromosomes.
-3. `Pvalues` - The -log10 of the pvalues for each loci per GWAS.
-
-Example of a table that can be supplied to the `gwas_table_path` parameter.
-
-| Chroms | BP   | Pvalues |
-| ------ | ---- | ------- |
-| Chr01  | 515  | 15.487  |
-| Chr_01 | 2552 | 14.87   |
-| chr01  | 4657 | 12.87   |
-| 01     | 7889 | 26.72   |
-
-For `panvaR` to run smoothly the above fields should be named exactly as presented - this makes the manipulation of tabular data easier and faster.
-
-### Annotated VCF file
-
-This should be an annotated VCF file from `SpnEff` - if you have a VCF file that is not annotated please use `SnpEff` to annotate it.
-
-### Tag_snp
-
-The tag snp should be supplied with the params `chrom` and `bp`. For example:-
-
-```r
-chrom = "Chr_05"
-bp = 6857045
-```
-## When you don't have a tag SNP/s handy
-
-But if you don't have the `tag SNP` you can use the `panvar_gwas` functionality built into `panvaR`. This is a fairly straight forward `GWAS` pipeline that depends on:-
-
-```
-library(bigsnpr)
-library(modelr)
+```{r, include = FALSE}
+library(panvaR)
 ```
 
-The default behaviour is to use 5 PCs and produce GWAS results using `big_randomSVD`, `big_random_pca`, `big_univLinReg` and `snp_gc` for most of its functionality.
+## Introduction
 
-To use `panvaR`'s GWAS module use you can use the following syntax
+PanvaR is a data integration tool that seeks to speed up fine-mapping of GWAS peaks.
 
-```
-panvar_gwas(
-  genotype_data,
-  phentotype_path,
-  pc_min = 5,
-  pc_max = 5, 
-  maf = 0.05, 
-  missing_rate = 0.1
-)
-```
+Genome-wide association studies (GWAS) are powerful tools that test entire genomes for regions where variability in the markers are correlated with variability in a certain phenotype. However, due to the phenomenon of linkage disequilibrium (LD), the top associated marker may not necessarily be in the specific gene that is causing the variability in phenotype. Additionally, multi-locus models, which have proven to be a powerful flavor of GWAS, collapse signal from these locally correlated snps that are in LD into a single snp that is output by the model. This obfuscates information about association of snps with the phenotype in the region of an identified locus. Finally, GWAS is often run on a smaller number of snps to manage computational resources. Once a peak is identified however, a denser set of snps may be used to further pinpoint causal genes.
 
-If you are looking for details into how the `GWAS` pipeline has been implemented - please read into `R/panvar_gwas.R`.
+PanvaR makes this critical step of association mapping easier and quicker by optionally re-running GWAS using a single-locus model, visualizing a gwas peak alongside genes and retaining flexibility to include user defined measures of snp impact and gene importance. Overall, the goal of the package is to make combining different types of data quicker to more efficiently prioritize candidate genes underlying QTL.
 
-## Using `panvaR` with a Phenotype file
+## Dependencies
 
-If you want to automate the a `panvaR` run starting with a phenotype file and an annotated VCF file, you can use the `panvar_pheno_geno_snpeff` function.
+###### plink2
 
-```r
-panvar_pheno_geno_snpeff(
-    phenotype_data_path = "</path/to/phenotype/file>",
-    vcf_file_path = "</path/to/vcf/file>"
-)
-```
+PanvaR makes use of plink2 for much of its snp file manipulation. Please download the program for your operating system from the website [here](https://www.cog-genomics.org/plink/2.0/).
 
-The above function is really just a convienience wrapper that:-
+###### rMVP
 
-1. Runs GWAS with the supplied phenotype and genotype data.
-2. Gets the `Tag_snp` (i.e. the SNP with the strongest Pvalues from GWAS)
-3. Then calls `panvar_gwas_tagsnp_snpeff` 
+rMVP is used as the package's GWAS software. This does not need to be downloaded separately as it will be loaded by installing the panvaR package but this is noted here as an acknowledgement. See their [documentation](https://github.com/xiaolei-lab/rMVP) for any issues pertaining to this aspect of the pipeline.
 
-# Elaborate example run
+## Formatting inputs
 
-Example input and output for `panvaR`.
+PanvaR was designed as a flexible tool. As such, much of its core functionality of data integration and visualization can be generated with different combinations of input data.
 
-(The links in this section are stored in a OneDrive account - if you have diffculty accessing them, please contact maintainers.)
+#### Required inputs
 
-Here is an example of `PanvaR` being used with real world data.
+-   Set of snps in either vcf or bed/bim/fam format
 
-Reference publication:- https://doi.org/10.1038/s41587-020-0681-2
+-   One of:
 
-Data:-
+    -   Phenotype file
 
-[genotype data (annotated VCF file)](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/EdfaZqrVgA1BuXfr275_jZ4B8s6BqjdP8x6ZIbSQHh2FgA?e=MWa9vP)
+    -   Pre-computed gwas results with p-values
 
-[Phentotype data(shattering scores)](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/EdfaZqrVgA1BuXfr275_jZ4B8s6BqjdP8x6ZIbSQHh2FgA?e=MWa9vP)
+#### Recommended inputs
 
-The above genotype and phenotype data will produce [this GWAS table](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/Eb52QTajVw9FgELlyvKaWvkB6sA9I0yPTF_WdIPh3hytSw?e=kDOMXd) (when run with 5 PCs).
+-   Annotation table that has gene start and end positions and a short description of predicted function
 
-To run the above data you can:-
+#### Additional inputs
 
-```r
-panvar_gwas_tagsnp_snpeff(
-  "setaria_gwas_table.tsv", 
-  "setaria_annotated_vcf.vcf.gz", 
-  tag_snps = "chr_05:54675",
-  r2_threshold = 0.6
-)
+-   A vcf that has been annotated by snpEff. See [here](https://pcingola.github.io/SnpEff/).
+
+-   Variant effect scores such as the output of a program like [PROVEAN](https://github.com/cDaIryPOUV/ePat) or from a DNA language model like [Plant Caduceus](https://github.com/plantcad/plantcad?tab=readme-ov-file#zero-shot-scoring-of-genomic-variants-and-regions).
+
+-   Other quantitative or qualitative scores at the snp or gene level that a user finds useful.
+
+### Initialize options
+
+We need to use a function to download plink2 for use in this vignette. The plink path should be modified for your own machine.
+
+```{r}
+plink.path <- bigsnpr::download_plink2()
 ```
 
-If you are looking to run multiple `SNP`s at once you can supply multiple `SNP`s to `tag_snps` in the following manner:-
+We can set these options for the input formatting and GWAS functions to access.
 
-```R
-bulk_test_run <- panvar_func_bulk(
-    phenotype_data_path = "setaria/shattering.tsv",
-    vcf_file_path = "setaria/setaria_annotated_vcf.vcf.gz",
-    all.impacts = FALSE,
-    r2_threshold = 0.8,
-    tag_snps = c("Chr_05:6857045", "Chr_05:6836247")
-)
+```{r}
+# set the path to plink
+set_plink_path(plink.path)
+
+# set a prefix for outputs generated by this run 
+set_panvar_prefix("PanvarExample")
+
+# set a directory to output results and intermediate files
+current.directory <- tempdir()
+set_out_dir(current.directory)
 ```
 
-Note:- Be sure to run the above example in `R` before downloading the unit test outcome.
+### Standardize inputs
 
-Which should produce [this table](https://ddpsc-my.sharepoint.com/:u:/g/personal/rdhakal_danforthcenter_org/ETUszsHynbdAnb4WaWbJ8kYBDRhsxsGAaXOrBRzOAE3LbA?e=FoJolr) as outcome.
+This function will do some basic qc and standardize some inputs before we run the gwas. By default it will filter for minor allele frequency and missing rate. It will also remove genotypes that do not have a corresponding phenotype value. `plink2` is called to produce a filtered bed file and `rMVP::MVP.Data` is called to format data for use in `rMVP` . This also attempts to standardize marker.ID's by setting them to `CHR-POS` in the filtered bed file.
 
-Table for SHA512sums of the inputs and outputs of the above section.
+```{r}
+genotype.path <- system.file("extdata", 
+                             "Setaria_shattering_example_pruned.bed",
+                             package = "panvaR")
 
-| File                                                            | SHA512sum                                                                                                                        |
-| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| setaria_annotated_vcf.vcf.gz                                    | 6d437b9863295ccd76194f382beee66ed7b66a930ee1462d4a83c57a74bab2dde63d1a2fd1777df1f65708ea091adb190a9e16eb65f53c28ed6afb8e706c9629 |
-| setaria_gwas_table.tsv                                          | ff019601bfcd2d2a6ea2d26d749ad1656ce6237b1d0045eb9a014d04bbefce622a8a0d88e6d0d49e88e7a3c65731d48ae7fc9b01a537fb432f328022e823ac17 |
-| setaria_shattering_unit_test_r2_008_maf_005_missng_rate_001.tsv | 67778fb07a69af3a5acd307641c3b7c1153edf4ba1da28776583eb32e9097936b2a5339505bed789b4c47435c35f32762cf56543d933f7f7e59fe94cd51f910b |
-| shattering.tsv                                                  | 883c1a0104ac4c1cbf9c041b9ebd67ad1c1b8fa8c83ab4bd09b8a71963e4509974fb3aa3437080a33eb957976515fa45b69328525fe5862cf66603df2f9c56c5 |
+phenotype.path <- system.file("extdata",
+                              "Setaria_shattering_example_phenotype.tsv",
+                              package = "panvaR")
+
+make_panvar_inputs(genotype.path = genotype.path,
+                   phenotype.path = phenotype.path)
+
+```
+
+## Running GWAS
+
+If you aren't sure how many principal components to use in the GWAS model to control for population structure it might be a good idea to make a scree plot to select a reasonable number to include.
+
+```{r, fig.width=8}
+filtered.bedfile <- list.files(options()$panvar_outdir, 
+                               pattern = "bed$", 
+                               full.names = TRUE)
+plot_pc_scree(bedfile.path = filtered.bedfile,
+              num.pcs = 10)
+```
+
+We'll use the first 2 PC's for this example.
+
+### Different GWAS models
+
+You can run a generalized linear model (GLM) or a mixed-linear model (MLM). A GLM uses only PC's to control for population structure. An MLM uses both PC's and the kinship matrix. Due to the extra control for population structure, an MLM model is typically more conservative and therefore less likely to have false positives but can also over-correct for population structure leading to false negatives when compared directly to GLM.
+
+```{r}
+
+panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
+                npcs = 2,
+                gwas.model = "GLM",
+                output.manhattan = T)
+```
+
+Here is the manhattan:
+
+```{r}
+knitr::include_graphics(file.path(current.directory, "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"), dpi = 96)
+```
+
+## Creating tables
+
+## Plotting

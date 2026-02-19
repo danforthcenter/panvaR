@@ -7,7 +7,9 @@
 #' @param qtl.df data.frame, table that includes list of snps to calculate LD to with columns (CHR, POS, LOGPVAL), corresponding to (chromosome, physical position, and -log10(p-value)). 
 #' QTL are typically defined as hits grouped by LD by something like `plink --clump`
 #' @param tag.snp character, marker.ID of snp around which to calculate LD. In the form 'CHR-POS'
-#' @param window numeric, total window size in KB, all variants within .5 * window are calculated. 
+#' @param window numeric, a physical distance to determine which snps to calculate LD for. 
+#' Snps within this distance to the tag.snp or qtl.df snps will be calculated. 
+#' The entire size of the region centered on the tag snp within which LD will be calculated is 2*window. 
 #' @param plink.path character, optional, path to plink2 executable. Will overide option set by [panvaR::set_plink_path].
 #' @param geno.bed character, prefix of genotype files in plink (bed/bim/fam) format. Do not include ".bed" extension.
 #' @param in.dir character, directory where genotype files are located
@@ -18,7 +20,8 @@
 #' Named list with 2 items
 #'  - table: table with marker.IDs (CHR-POS) and maximum LD in R2 for each snp to the snps in the qtl.df or LD to tag.snp
 #'  - key.snp: marker.ID corresponding to the middle of the window, either the max(LOGPVAL) of qtl.df or tag.snp. useful to retain for downstream functions.
-
+#'  - qtl.snps: marker.ID corresponding to the markers in the qtl.df. useful to retain for downstream functions.
+#'  
 #' @export
 #'
 #' @examples
