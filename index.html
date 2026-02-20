@@ -58,178 +58,26 @@
 <p>Install panvaR:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"danforthcenter/panvaR"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>To get started, view the vignette:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span><span class="st">"panvaR"</span><span class="op">)</span></span></code></pre></div>
 <p>We have also implemented a GUI for visualizing results. To use the GUI run:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://danforthcenter.github.io/panvaR/">panvaR</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/panvar_gui.html">panvar_gui</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
-</div>
-<div class="section level1">
-<h1 id="reproduction">Reproduction<a class="anchor" aria-label="anchor" href="#reproduction"></a>
-</h1>
-<p>Please visit the following Zenodo repository for result reproduction: {Placeholder for Collin to add Zenodo link}</p>
-</div>
-<div class="section level1">
-<h1 id="bugs-and-feature-requests">Bugs and feature requests<a class="anchor" aria-label="anchor" href="#bugs-and-feature-requests"></a>
-</h1>
-<p>Please use github issues for reporting bugs and feature requests. Thank you!</p>
-</div>
-<div class="section level1">
-<h1 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
-</h1>
-<p>While PanvaR uses R to visualize and combine data, it relies on some utilities that are not available on all operating systems. Consequently, we are not supporting Windows operating systems at this time.</p>
 <div class="section level2">
-<h2 id="non-r-dependencies">Non-R Dependencies<a class="anchor" aria-label="anchor" href="#non-r-dependencies"></a>
+<h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h2>
-<p><code>panvaR</code> is an R package that also relies on several external, command-line bioinformatics tools to function correctly. These tools must be installed and available in your system’s <code>PATH</code>.</p>
-<p>The required external dependencies are:</p>
-<ul>
-<li>
-<p><strong>PLINK 2 (<code>plink2</code>)</strong>: (Tested with Version 2.0.0-a.6.9LM) The primary workhorse for genetic data manipulation. It is used for:</p>
-<ul>
-<li>Converting VCF files to PLINK’s binary format (<code>.bed</code>, <code>.bim</code>, <code>.fam</code>).</li>
-<li>Quality control filtering (e.g., Minor Allele Frequency, missingness).</li>
-<li>Calculating Linkage Disequilibrium (LD) to find SNPs correlated with a tag SNP.</li>
-<li>Extracting specific genomic regions (windowing).</li>
-<li>Generating reports on missing data.</li>
-</ul>
-</li>
-<li><p><strong>BCFtools (<code>bcftools</code>)</strong>: (Tested with version 1.21) Primarily used for indexing and retrieving data from compressed VCF/BCF files (<code>.vcf.gz</code> or <code>.bcf</code>), creating <code>.tbi</code> index files using the <code>tabix</code> command. It may also be used to list chromosomes, though this is a secondary function.</p></li>
-<li><p><strong>VCFtools (<code>vcftools</code>)</strong>: (Tested with Version 0.1.16) Used for filtering and manipulating VCF files. <code>panvaR</code> uses it to create new VCF files based on SNP lists (e.g., those identified through LD analysis) and potentially for other filtering operations. It’s worth noting that some functionality might overlap with BCFtools, and future development could explore consolidating these dependencies.</p></li>
-<li><p><strong>tabix</strong>: (Tested with version 1.21)A generic tool for indexing and retrieving data from tab-delimited files. <code>panvaR</code> uses it to create and check for index files (<code>.tbi</code>) for compressed VCF files (<code>.vcf.gz</code>), which is essential for fast data access.</p></li>
-<li><p><strong>Java Runtime Environment (JRE)</strong>: (Version 17 or later) Required to run SnpSift, which is used for annotation extraction.</p></li>
-<li><p><strong>SnpSift</strong>: (Version 4.3t or later) This tool is part of the SnpEff suite and is used to parse and extract functional annotation information (e.g., variant effect, impact, gene name) from the <code>INFO</code> field of a VCF file. A <code>snpSift.jar</code> file is included within the <code>panvaR</code> package, but a system-wide Java installation is still necessary to execute it.</p></li>
-</ul>
+<p>To get started, check out the documentation <a href="https://danforthcenter.github.io/panvaR/">here</a>.</p>
 </div>
 <div class="section level2">
-<h2 id="r-dependencies">R Dependencies<a class="anchor" aria-label="anchor" href="#r-dependencies"></a>
+<h2 id="main-outputs">Main outputs<a class="anchor" aria-label="anchor" href="#main-outputs"></a>
 </h2>
-<p>TLDR: So long as you are on the most up-to-date versions of the following packages, we do not expect many breaking-level issues from the R dependencies. That being said, the workflow has been tested with the following packages and listed are their versions.</p>
-<p>The requested R package information is as follows:</p>
-<table class="table">
-<colgroup>
-<col width="50%">
-<col width="50%">
-</colgroup>
-<thead><tr class="header">
-<th>Package Name</th>
-<th>Version Details</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>bigsnpr</td>
-<td>1.12.18 (2024-11-26) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="even">
-<td>bigstatsr</td>
-<td>1.6.1 (2024-09-09) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="odd">
-<td>data.table</td>
-<td>1.17.0 (2025-02-22) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="even">
-<td>DT</td>
-<td>0.33 (2024-04-04) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="odd">
-<td>dplyr</td>
-<td>1.1.4 (2023-11-17) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="even">
-<td>forcats</td>
-<td>1.0.0 (2023-01-29) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="odd">
-<td>ggplot2</td>
-<td>3.5.1 (2024-04-23) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="even">
-<td>knitr</td>
-<td>1.49 (2024-11-08) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="odd">
-<td>lubridate</td>
-<td>1.9.4 (2024-12-08) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="even">
-<td>modelr</td>
-<td>0.1.11 (2023-03-22) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="odd">
-<td>plotly</td>
-<td>4.10.4 (2024-01-13) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="even">
-<td>purrr</td>
-<td>1.0.4 (2025-02-05) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="odd">
-<td>readr</td>
-<td>2.1.5 (2024-01-10) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="even">
-<td>rmarkdown</td>
-<td>Not found in session info</td>
-</tr>
-<tr class="odd">
-<td>shiny</td>
-<td>1.10.0 (2024-12-14) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="even">
-<td>shinyBS</td>
-<td>0.61.1 (2022-04-17) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="odd">
-<td>shinyFiles</td>
-<td>0.9.3 (2022-08-19) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="even">
-<td>shinyjs</td>
-<td>2.1.0 (2021-12-23) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="odd">
-<td>stringr</td>
-<td>1.5.1 (2023-11-14) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="even">
-<td>sys</td>
-<td>3.4.3 (2024-10-04) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="odd">
-<td>tibble</td>
-<td>3.2.1 (2023-03-20) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="even">
-<td>tidyr</td>
-<td>1.3.1 (2024-01-24) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="odd">
-<td>tidyverse</td>
-<td>2.0.0 (2023-02-22) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="even">
-<td>usethis</td>
-<td>3.1.0 (2024-11-26) CRAN (R 4.4.3)</td>
-</tr>
-<tr class="odd">
-<td>parallel</td>
-<td>Base R package (not listed in session info as separate entry)</td>
-</tr>
-</tbody>
-</table>
+</div>
+<div class="section level2">
+<h2 id="reporting-issues">Reporting issues<a class="anchor" aria-label="anchor" href="#reporting-issues"></a>
+</h2>
+<p>Please let us know if there are problems with the package via the github issues page. We are always open to improving the ease of use so please inform us of any potential improvements. Thanks for using our tool!</p>
 </div>
 </div>
-<div class="section level1">
-<h1 id="windows-support">Windows support<a class="anchor" aria-label="anchor" href="#windows-support"></a>
-</h1>
-<p>For now, <code>panvaR</code> has been tested and runs successfully on POSIX compliant operating systems (MacOS, various Linux distributions). We have <strong>not</strong> been able to test the package on WSL2 or WSL1 - while the WSL2 and WSL1 are POSIX compliant, because we have not been able to test the package properly in the said environments we cannot yet comment on whether the package will work there.</p>
-<p>As of this commit <code>PanvaR</code> definitely does not work on Windows due the workflows reliance on <code>HTSLib</code> based tools <code>BCFtools</code>, <code>VCFtools</code>, and <code>tabix</code> which do not have binaries of Windows. It is possible that Windows could be supported in the future as we explore the removal of <code>HTSLib</code> based dependencies.</p>
-</div>
-
   </main><aside class="col-md-3"><div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">

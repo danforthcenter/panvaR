@@ -140,22 +140,22 @@ phenotype.path <- system.file("extdata",
 make_panvar_inputs(genotype.path = genotype.path,
                    phenotype.path = phenotype.path)
 #> Removed 0 samples due to NA values in phenotype.
-#> [1] "/tmp/RtmpStKs8q/PanvarExample_PlinkQC_maf0.05_missing0.1"
+#> [1] "/tmp/RtmpYLdYhx/PanvarExample_PlinkQC_maf0.05_missing0.1"
 #> PLINK v2.0.0-a.7LM AVX2 Intel (10 Jan 2026)         cog-genomics.org/plink/2.0/
 #> (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
-#> Logging to /tmp/RtmpStKs8q/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
+#> Logging to /tmp/RtmpYLdYhx/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
 #> Options in effect:
 #>   --allow-extra-chr
 #>   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned
 #>   --geno 0.1
-#>   --keep /tmp/RtmpStKs8q/Panvar_list.of.samples.with.phenotype_shattering.txt
+#>   --keep /tmp/RtmpYLdYhx/Panvar_list.of.samples.with.phenotype_shattering.txt
 #>   --maf 0.05
 #>   --make-bed
-#>   --out /tmp/RtmpStKs8q/PanvarExample_PlinkQC_maf0.05_missing0.1
+#>   --out /tmp/RtmpYLdYhx/PanvarExample_PlinkQC_maf0.05_missing0.1
 #>   --set-all-var-ids @-#
 #> 
-#> Start time: Fri Feb 20 20:44:02 2026
-#> 15994 MiB RAM detected, ~14453 available; reserving 7997 MiB for main
+#> Start time: Fri Feb 20 23:01:19 2026
+#> 15994 MiB RAM detected, ~14446 available; reserving 7997 MiB for main
 #> workspace.
 #> Using up to 4 compute threads.
 #> 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
@@ -172,11 +172,11 @@ make_panvar_inputs(genotype.path = genotype.path,
 #> 2557 variants removed due to allele frequency threshold(s)
 #> (--maf/--max-maf/--mac/--max-mac).
 #> 5158 variants remaining after main filters.
-#> Writing /tmp/RtmpStKs8q/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
-#> Writing /tmp/RtmpStKs8q/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
-#> Writing /tmp/RtmpStKs8q/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
-#> End time: Fri Feb 20 20:44:02 2026
-#> QC was successful, output stored at /tmp/RtmpStKs8q/PanvarExample_PlinkQC_maf0.05_missing0.1
+#> Writing /tmp/RtmpYLdYhx/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
+#> Writing /tmp/RtmpYLdYhx/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
+#> Writing /tmp/RtmpYLdYhx/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
+#> End time: Fri Feb 20 23:01:19 2026
+#> QC was successful, output stored at /tmp/RtmpYLdYhx/PanvarExample_PlinkQC_maf0.05_missing0.1
 #> Using rMVP to calculate PC's.
 #> Preparing data for MVP...
 #> Reading file...
@@ -240,7 +240,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
                 npcs = 2,
                 gwas.model = "GLM",
                 output.manhattan = T)
-#> Searching for prefix: PanvarExample in directory: /tmp/RtmpStKs8q
+#> Searching for prefix: PanvarExample in directory: /tmp/RtmpYLdYhx
 #> Found the following files: 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bed, 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bim, 
@@ -268,7 +268,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #>   Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li      
 #>   Mailto: xiaoleiliu@mail.hzau.edu.cn, ylilin@mail.hzau.edu.cn   
 #> =================================================================
-#> Start: 2026-02-20 20:44:03 UTC 
+#> Start: 2026-02-20 23:01:21 UTC 
 #> Input data has 215 individuals and 5158 markers 
 #> Markers are detected to be stored by column 
 #> Analyzed trait: shattering 
@@ -294,8 +294,8 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #> Circular_Manhattan Plotting shattering.GLM 
 #> Rectangular_Manhattan Plotting shattering.GLM
 #> Q_Q Plotting shattering.GLM
-#> Results are stored at Working Directory: /tmp/RtmpStKs8q 
-#> End: 2026-02-20 20:44:04 UTC 
+#> Results are stored at Working Directory: /tmp/RtmpYLdYhx 
+#> End: 2026-02-20 23:01:22 UTC 
 #> Total running time: 1s 
 #> ===================== MVP ACCOMPLISHED =====================
 ```
@@ -309,19 +309,70 @@ knitr::include_graphics("shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
 
 ![](shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg)
 
+## Creating tables
+
+### Identifying QTL
+
+The first step in a typical GWAS analysis might be identifying some
+regions that we want to look at closer. We can identify discrete regions
+or QTL using p-values from our GWAS and linkage disequilibrium.
+Following language used by `plink2` we refer to these groups of snps as
+clumps. A function is presented to sort snps into clumps. This follows a
+similar logic to that of `plink2 --clump` . See
+[here](https://www.cog-genomics.org/plink/2.0/postproc#clump).
+
 ``` r
+# get bedfile name
+filtered.bedfile <- list.files(options()$panvar_outdir, pattern = "bed$")
 
-man.plot.path <- list.files(options()$panvar_outdir, 
-                            pattern = "GLM.Rectangular-Manhattan",
-                            full.names = T)
+# read in gwas results
+gwas.path <- list.files(options()$panvar_outdir,
+                                        pattern = "GWASresults\\.csv$",
+                                        full.names = TRUE)
 
-knitr::include_graphics(
-  man.plot.path,
-  dpi = 600
-)
+
+gwas.df <- read.csv(gwas.path) 
+
+# subset to only top p-value snps 
+gwas.df_subset <- gwas.df %>% 
+  filter(LOGPVAL > 8)
+
+# clump
+clumped.df <- 
+snp_make_clumps(geno.bed.filename = filtered.bedfile,
+                geno.bed.dir = current.directory,
+                gwas.res = gwas.df,
+                pvals.in.log = F,
+                window = 500,
+                ld.thresh = .2)
+#> Creating clumps...
+#>   |                                                                              |=====================                                                 |  30%  |                                                                              |==============================                                        |  43%  |                                                                              |====================================                                  |  51%  |                                                                              |============================================                          |  63%  |                                                                              |=============================================                         |  65%  |                                                                              |===============================================                       |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  77%  |                                                                              |========================================================              |  81%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================|  99%  |                                                                              |======================================================================| 100%
+
+head(clumped.df)
+#>        marker.ID clump_num
+#> 1 Chr_05-6357216         1
+#> 2 Chr_05-6357799         1
+#> 3 Chr_05-6358406         1
+#> 4 Chr_05-6359285         1
+#> 5 Chr_05-6360245         1
+#> 6 Chr_05-6362641         1
 ```
 
-## Creating tables
+Using a process like this to decide on specific regions as well as snps
+that represent those regions is an important first step in analyzing a
+genome wide set of results.
+
+We will use the most significant p-value snp in our top clump.
+
+``` r
+top_clump <- gwas.df_subset %>% 
+  left_join(clumped.df, by = "marker.ID") %>% 
+  filter(clump_num == 1) 
+
+my.tag.snp <- top_clump$marker.ID[which.max(top_clump$LOGPVAL)]
+my.tag.snp
+#> [1] "Chr_05-6843742"
+```
 
 ### LD calculation
 
@@ -338,23 +389,24 @@ You can create a table of LD in R² in a window using the following
 function:
 
 ``` r
-filtered.bedfile <- list.files(options()$panvar_outdir, pattern = "bed$")
 
+"Chr_05-6857045"
+#> [1] "Chr_05-6857045"
 out_ld <-
   get_ld_in_window(
-    tag.snp = "Chr_05-6857045",
+    tag.snp = my.tag.snp,
     window = 500,
     geno.bed = filtered.bedfile,
     in.dir = current.directory
   )
 head(out_ld$table)
-#>        marker.ID CHR     POS        R2
-#> 1 Chr_05-6357130   5 6357130 0.0886082
-#> 2 Chr_05-6357216   5 6357216 0.2546220
-#> 3 Chr_05-6357284   5 6357284 0.0284959
-#> 4 Chr_05-6357327   5 6357327 0.0148500
-#> 5 Chr_05-6357411   5 6357411 0.0165741
-#> 6 Chr_05-6357799   5 6357799 0.2385730
+#>        marker.ID CHR     POS         R2
+#> 1 Chr_05-6357130   5 6357130 0.10427000
+#> 2 Chr_05-6357216   5 6357216 0.21802200
+#> 3 Chr_05-6357284   5 6357284 0.03239760
+#> 4 Chr_05-6357327   5 6357327 0.01377000
+#> 5 Chr_05-6357411   5 6357411 0.00551269
+#> 6 Chr_05-6357799   5 6357799 0.20275900
 ```
 
 ### Including more information
@@ -416,7 +468,7 @@ retain some info about the `tag.snp` and/or `qtl.df` .
 ``` r
 # make the tables 
 tables <- make_panvar_tables(gwas.res = gwas.df,
-                             tag.snp = "Chr_05-6857045",
+                             tag.snp = my.tag.snp,
                              # qtl.df = qtl.df.test,
                              annotation.table = annotation.table,
                              plink.path = options()$plink_path,
@@ -435,31 +487,31 @@ tables <- make_panvar_tables(gwas.res = gwas.df,
 names(tables)
 #> [1] "gwas"     "anno"     "key.snp"  "qtl.snps"
 head(tables$gwas)
-#>   marker.ID CHR     POS A1 A2        MAF       EFF        SE        PVAL
-#> 1 5-6613105   5 6613105  C  T 0.07674419 0.5627145 0.1737419 0.001394353
-#> 2 5-6613116   5 6613116  G  A 0.11627907 0.2321791 0.1510872 0.125859320
-#> 3 5-6613168   5 6613168  A  G 0.29767442 0.1992612 0.1260080 0.115298535
-#> 4 5-6613299   5 6613299  T  C 0.26046512 0.3973633 0.1224243 0.001362165
-#> 5 5-6613346   5 6613346  A  G 0.33953488 0.1942228 0.1183441 0.102251822
-#> 6 5-6613666   5 6613666  T  C 0.07674419 0.5627145 0.1737419 0.001394353
-#>     LOGPVAL         LD  snp.score
-#> 1 2.8556274 0.11211800 0.10034297
-#> 2 0.9001146 0.00674034 0.02744978
-#> 3 0.9381762 0.24495200 0.10911834
-#> 4 2.8657702 0.00759504 0.06530709
-#> 5 0.9903289 0.18044800 0.08844584
-#> 6 2.8556274 0.11211800 0.10109101
+#>   marker.ID CHR     POS A1 A2       MAF       EFF        SE         PVAL
+#> 1 5-6593889   5 6593889  C  T 0.3953488 1.5093899 0.3438404 1.793220e-05
+#> 2 5-6594203   5 6594203  C  T 0.4000000 1.6027790 0.3391369 4.179088e-06
+#> 3 5-6594221   5 6594221  C  T 0.2697674 0.3744463 0.1226170 2.550661e-03
+#> 4 5-6594555   5 6594555  C  T 0.3976744 1.3218306 0.3326345 9.709064e-05
+#> 5 5-6594565   5 6594565  T  C 0.3232558 0.1700479 0.1205841 1.599527e-01
+#> 6 5-6595115   5 6595115  A  G 0.4093023 1.2464036 0.2980155 4.230227e-05
+#>     LOGPVAL        LD  snp.score
+#> 1 4.7463665 0.2634650 0.19165460
+#> 2 5.3789184 0.2686300 0.20691793
+#> 3 2.5933473 0.0145675 0.05892300
+#> 4 4.0128226 0.2565160 0.17498787
+#> 5 0.7960084 0.1856760 0.08358724
+#> 6 4.3736363 0.2792060 0.19125771
 head(tables$anno)
 #> # A tibble: 6 × 8
 #> # Rowwise: 
 #>     CHR geneID           start     end annotation  dist.from.snp    LD snp.score
 #>   <int> <chr>            <int>   <int> <chr>               <dbl> <dbl>     <dbl>
-#> 1     5 Sevir.5G084050 6725589 6729788 No gene de…        127257 0.452     0.336
-#> 2     5 Sevir.5G083800 6699949 6705777 (1 of 1) P…        151268 0.293     0.306
-#> 3     5 Sevir.5G083600 6687900 6690770 (1 of 1) P…        166275 0.427     0.290
-#> 4     5 Sevir.5G086500 6947423 6948860 (1 of 1) P…         90378 0.324     0.341
-#> 5     5 Sevir.5G083550 6674012 6674119 No gene de…        182926 0.176     0.240
-#> 6     5 Sevir.5G084566 6782341 6783306 (1 of 2) P…         73739 0.624     0.486
+#> 1     5 Sevir.5G082600 6600913 6602150 (1 of 3) P…        241592 0.257     0.190
+#> 2     5 Sevir.5G084050 6725589 6729788 No gene de…        113954 0.371     0.377
+#> 3     5 Sevir.5G083800 6699949 6705777 (1 of 1) P…        137965 0.320     0.348
+#> 4     5 Sevir.5G083600 6687900 6690770 (1 of 1) P…        152972 0.424     0.317
+#> 5     5 Sevir.5G086500 6947423 6948860 (1 of 1) P…        103681 0.317     0.328
+#> 6     5 Sevir.5G083550 6674012 6674119 No gene de…        169623 0.212     0.305
 ```
 
 ### A note on chromsome names and marker.ID’s
@@ -508,8 +560,8 @@ plot_panvar(panvar.table.list = tables,
 )
 #> Making manhattan
 #> Making annotation plot
-#> Warning: Removed 1517 rows containing missing values or values outside the scale range
+#> Warning: Removed 1555 rows containing missing values or values outside the scale range
 #> (`geom_rug()`).
 ```
 
-![](panvaR_files/figure-html/unnamed-chunk-15-1.png)
+![](panvaR_files/figure-html/unnamed-chunk-16-1.png)
