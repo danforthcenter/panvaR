@@ -91,7 +91,7 @@ temp <- gwas.df %>%
   arrange(desc(LOGPVAL)) %>% 
   mutate(is.key = marker.ID == tables$key.snp)
 
-
+p <-
 plot_panvar(panvar.table.list = tables,
             pvals.in.log = F,
             plot.r2.thresh = .2,

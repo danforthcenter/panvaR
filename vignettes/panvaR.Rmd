@@ -202,8 +202,6 @@ If supplying a group of markers via the `qtl.df` argument, the output will have 
 You can create a table of LD in R^2^ in a window using the following function:
 
 ```{r}
-
-"Chr_05-6857045"
 out_ld <-
   get_ld_in_window(
     tag.snp = my.tag.snp,
