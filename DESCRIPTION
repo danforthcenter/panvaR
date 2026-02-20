@@ -35,7 +35,7 @@ Imports:
     tibble,
     rlang,
     stringr,
-    rMVP,
+    rMVP (>= 1.4.5),
     utils,
     tidyr,
     khroma,
@@ -45,3 +45,5 @@ Imports:
     pcadapt,
     bigsnpr
 URL: https://danforthcenter.github.io/panvaR/
+Remotes:  
+    xiaolei-lab/rMVP
