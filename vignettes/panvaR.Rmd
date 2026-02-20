@@ -149,6 +149,7 @@ Here is the manhattan:
 #   ),
 #   dpi = 600
 # )
+
 list.files(current.directory, full.names = T)
 file.path(
      current.directory,
@@ -158,6 +159,17 @@ file.exists(file.path(
      current.directory,
      "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
    ))
+
+path <-   file.path(
+    current.directory,
+    "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
+  )
+path.for.github <- stringr::str_sub(path, start = 2, end = -1)
+
+knitr::include_graphics(
+  path.for.github,
+  dpi = 600
+)
 ```
 
 ## Creating tables
