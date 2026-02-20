@@ -149,7 +149,12 @@ Here is the manhattan:
 #   ),
 #   dpi = 600
 # )
-list.files(current.directory)
+list.files(current.directory, full.names = T)
+file.path(
+     current.directory,
+     "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
+   )
+
 ```
 
 ## Creating tables
