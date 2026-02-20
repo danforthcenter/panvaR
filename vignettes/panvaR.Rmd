@@ -142,34 +142,15 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 Here is the manhattan:
 
 ```{r}
-# knitr::include_graphics(
-#   file.path(
-#     current.directory,
-#     "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
-#   ),
-#   dpi = 600
-# )
-
-list.files(current.directory, full.names = T)
-file.path(
-     current.directory,
-     "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
-   )
-file.exists(file.path(
-     current.directory,
-     "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
-   ))
-
-path <-   file.path(
+knitr::include_graphics(
+  file.path(
     current.directory,
     "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
-  )
-path.for.github <- stringr::str_sub(path, start = 2, end = -1)
-
-knitr::include_graphics(
-  path.for.github,
-  dpi = 600
+  ),
+  dpi = 600,
+  rel_path = F
 )
+
 ```
 
 ## Creating tables
