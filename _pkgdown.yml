@@ -27,6 +27,7 @@ reference:
     "Functions for visualizing results"
   contents:
   - starts_with("plot")
+  - make_consistent_scale
 - title: "Shiny"
   desc: >
     "Functions for running the shiny app"
