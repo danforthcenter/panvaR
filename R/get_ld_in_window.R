@@ -136,16 +136,15 @@ get_ld_in_window <- function(qtl.df= NULL,
   
   # add chromosome and position columns
   ld.table_out <- ld.table_out %>% 
-    mutate(CHR = get_chrom_from_id(marker.ID = marker.ID,
+    mutate(CHR = get_chrom_from_id(marker.ID = .data$marker.ID,
                                    tonumeric = T),
-           POS = get_bp_from_id(marker.ID = marker.ID)) %>% 
-    relocate(R2, .after = last_col())
+           POS = get_bp_from_id(marker.ID = .data$marker.ID)) %>% 
+    relocate("R2", .after = last_col())
   
   # make key.snp have numeric chrom
-  key.snp_formatted <- ld.table_out %>% 
-    filter(marker.ID == key.snp) %>% 
-    mutate(marker.ID_format = paste0(.data$CHR, "-", .data$POS)) %>% 
-    pull(marker.ID_format)
+  key.snp_formatted <- paste0(get_chrom_from_id(key.snp),
+                              "-",
+                              get_bp_from_id(key.snp))
   
   # retain list of qtl snps 
   if(!is.null(tag.snp)){

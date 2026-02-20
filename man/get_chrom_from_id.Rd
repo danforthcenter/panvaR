@@ -4,7 +4,7 @@
 \alias{get_chrom_from_id}
 \title{Extract chromsome from marker.ID in the form "CHR-POS"}
 \usage{
-get_chrom_from_id(marker.ID, sep = "-", tonumeric = T)
+get_chrom_from_id(marker.ID, sep = "-", tonumeric = TRUE)
 }
 \arguments{
 \item{marker.ID}{character, marker.ID with chromosome and position separated by some seperator}
@@ -21,6 +21,6 @@ Extract chromsome from marker.ID in the form "CHR-POS"
 }
 \examples{
 my.marker <- "Chr01-123"
-get_chrom_from_id(my.marker, tonumeric = T)
-get_chrom_from_id(my.marker, tonumeric = F)
+get_chrom_from_id(my.marker, tonumeric = TRUE)
+get_chrom_from_id(my.marker, tonumeric = FALSE)
 }

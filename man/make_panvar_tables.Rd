@@ -65,7 +65,8 @@ that are close but not in gene. Snpeff uses 5 KB by default to call a snp "upstr
 
 \item{compute.scores}{boolean, if TRUE, snp scores will be computed. See details for more info.}
 
-\item{score.vars}{character, vector of column names indicating which variables to included in the score.}
+\item{score.vars}{character, vector of column names indicating which variables to included in the score.
+If compute.scores is TRUE and score.vars is NULL, the default score will use equally weighted variables: "DIST", "LOGPVAL", "LD".}
 
 \item{score.dirs}{numeric, a vector indicating which direction is to be considered more indicative
 of an association. 1 indicates higher is better, -1 indicates lower is better. The order should correspond

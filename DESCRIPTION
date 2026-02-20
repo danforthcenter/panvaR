@@ -42,4 +42,5 @@ Imports:
     ggfittext,
     patchwork,
     gggenes,
-    pcadapt
+    pcadapt,
+    bigsnpr

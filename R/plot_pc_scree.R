@@ -26,7 +26,7 @@ plot_pc_scree <- function(bedfile.path,
   plot.df <- data.frame(PC = 1:num.pcs, 
                         prop.var = x$singular.values^2 / sum(x$singular.values ^ 2), 
                         eigenvalues = x$singular.values^2) %>% 
-    mutate(cumulative = cumsum(prop.var))
+    mutate(cumulative = cumsum(.data$prop.var))
   
   if(!cumulative){
     p <-

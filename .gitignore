@@ -7,3 +7,7 @@ inst/shiny/panvar/
 PROMPT.md
 .Rproj.user
 panvar/
+.RData
+.httr-oauth
+.DS_Store
+.quarto

@@ -2,6 +2,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom bigsnpr download_plink2
 #' @importFrom bigstatsr big_univLinReg
 #' @importFrom data.table fread
 #' @importFrom dplyr %>%
@@ -12,15 +13,18 @@
 #' @importFrom dplyr between
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr case_when
+#' @importFrom dplyr contains
 #' @importFrom dplyr dense_rank
 #' @importFrom dplyr desc
 #' @importFrom dplyr distinct
 #' @importFrom dplyr filter
 #' @importFrom dplyr group_by
+#' @importFrom dplyr last_col
 #' @importFrom dplyr left_join
 #' @importFrom dplyr mutate
 #' @importFrom dplyr n
 #' @importFrom dplyr pull
+#' @importFrom dplyr relocate
 #' @importFrom dplyr rename
 #' @importFrom dplyr rename_with
 #' @importFrom dplyr rowwise

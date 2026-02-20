@@ -27,9 +27,9 @@ get_bp_from_id <- function(marker.ID, sep = "-"){
 #'
 #' @examples
 #' my.marker <- "Chr01-123"
-#' get_chrom_from_id(my.marker, tonumeric = T)
-#' get_chrom_from_id(my.marker, tonumeric = F)
-get_chrom_from_id <- function(marker.ID, sep = "-", tonumeric = T){
+#' get_chrom_from_id(my.marker, tonumeric = TRUE)
+#' get_chrom_from_id(my.marker, tonumeric = FALSE)
+get_chrom_from_id <- function(marker.ID, sep = "-", tonumeric = TRUE){
   if(tonumeric){
     out <- stringr::str_extract(marker.ID, paste0("(^.*)", sep, "(.*)"), group = 1)
     

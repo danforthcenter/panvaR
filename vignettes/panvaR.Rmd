@@ -234,6 +234,8 @@ Chromosome names can often have some leading characters e.g. "CHR01". To standar
 
 ### Snp scores
 
+A flexible scoring system has been implemented to allow quantification of the likelihood of a snp being causal. Users supply the parameters they wish to include as well as the direction that indicates more impactfulness (higher or lower value). The user can also select how each of these values is weighted in the final score.
+
 ## Plotting
 
 ```{r, out.extra='style="max-width:none; width:90vw; margin-left:calc(50% - 45vw);"', fig.width = 15, fig.height = 10}
