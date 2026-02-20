@@ -143,10 +143,10 @@ Here is the manhattan:
 
 ```{r}
 knitr::include_graphics(
-  file.path(
+  normalizePath(file.path(
     current.directory,
     "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
-  ),
+  )),
   dpi = 600,
   rel_path = F
 )
