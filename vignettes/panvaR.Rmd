@@ -154,7 +154,10 @@ file.path(
      current.directory,
      "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
    )
-
+file.exists(file.path(
+     current.directory,
+     "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
+   ))
 ```
 
 ## Creating tables
