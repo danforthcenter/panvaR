@@ -140,22 +140,22 @@ phenotype.path <- system.file("extdata",
 make_panvar_inputs(genotype.path = genotype.path,
                    phenotype.path = phenotype.path)
 #> Removed 0 samples due to NA values in phenotype.
-#> [1] "/tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1"
+#> [1] "/tmp/RtmpT8L8f8/PanvarExample_PlinkQC_maf0.05_missing0.1"
 #> PLINK v2.0.0-a.7LM AVX2 Intel (10 Jan 2026)         cog-genomics.org/plink/2.0/
 #> (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
-#> Logging to /tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
+#> Logging to /tmp/RtmpT8L8f8/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
 #> Options in effect:
 #>   --allow-extra-chr
 #>   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned
 #>   --geno 0.1
-#>   --keep /tmp/Rtmpvm9pJv/Panvar_list.of.samples.with.phenotype_shattering.txt
+#>   --keep /tmp/RtmpT8L8f8/Panvar_list.of.samples.with.phenotype_shattering.txt
 #>   --maf 0.05
 #>   --make-bed
-#>   --out /tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1
+#>   --out /tmp/RtmpT8L8f8/PanvarExample_PlinkQC_maf0.05_missing0.1
 #>   --set-all-var-ids @-#
 #> 
-#> Start time: Fri Feb 20 16:08:44 2026
-#> 15994 MiB RAM detected, ~14293 available; reserving 7997 MiB for main
+#> Start time: Fri Feb 20 16:20:02 2026
+#> 15990 MiB RAM detected, ~14454 available; reserving 7995 MiB for main
 #> workspace.
 #> Using up to 4 compute threads.
 #> 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
@@ -172,11 +172,11 @@ make_panvar_inputs(genotype.path = genotype.path,
 #> 2557 variants removed due to allele frequency threshold(s)
 #> (--maf/--max-maf/--mac/--max-mac).
 #> 5158 variants remaining after main filters.
-#> Writing /tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
-#> Writing /tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
-#> Writing /tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
-#> End time: Fri Feb 20 16:08:44 2026
-#> QC was successful, output stored at /tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1
+#> Writing /tmp/RtmpT8L8f8/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
+#> Writing /tmp/RtmpT8L8f8/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
+#> Writing /tmp/RtmpT8L8f8/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
+#> End time: Fri Feb 20 16:20:02 2026
+#> QC was successful, output stored at /tmp/RtmpT8L8f8/PanvarExample_PlinkQC_maf0.05_missing0.1
 #> Using rMVP to calculate PC's.
 #> Preparing data for MVP...
 #> Reading file...
@@ -240,7 +240,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
                 npcs = 2,
                 gwas.model = "GLM",
                 output.manhattan = T)
-#> Searching for prefix: PanvarExample in directory: /tmp/Rtmpvm9pJv
+#> Searching for prefix: PanvarExample in directory: /tmp/RtmpT8L8f8
 #> Found the following files: 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bed, 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bim, 
@@ -268,7 +268,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #>   Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li      
 #>   Mailto: xiaoleiliu@mail.hzau.edu.cn, ylilin@mail.hzau.edu.cn   
 #> =================================================================
-#> Start: 2026-02-20 16:08:45 UTC 
+#> Start: 2026-02-20 16:20:03 UTC 
 #> Input data has 215 individuals and 5158 markers 
 #> Markers are detected to be stored by column 
 #> Analyzed trait: shattering 
@@ -294,8 +294,8 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #> Circular_Manhattan Plotting shattering.GLM 
 #> Rectangular_Manhattan Plotting shattering.GLM
 #> Q_Q Plotting shattering.GLM
-#> Results are stored at Working Directory: /tmp/Rtmpvm9pJv 
-#> End: 2026-02-20 16:08:47 UTC 
+#> Results are stored at Working Directory: /tmp/RtmpT8L8f8 
+#> End: 2026-02-20 16:20:05 UTC 
 #> Total running time: 1s 
 #> ===================== MVP ACCOMPLISHED =====================
 ```
@@ -310,37 +310,42 @@ Here is the manhattan:
 #   ),
 #   dpi = 600
 # )
-list.files(current.directory)
-#>  [1] "file1e0b166591b0"                                      
-#>  [2] "file1e0b1a5aa5cc"                                      
-#>  [3] "file1e0b34863411"                                      
-#>  [4] "file1e0b3e0e530f"                                      
-#>  [5] "file1e0b4c3d0e48"                                      
-#>  [6] "file1e0b6230986e"                                      
-#>  [7] "file1e0b62750029"                                      
-#>  [8] "file1e0b7655c612.zip"                                  
-#>  [9] "file1e0ba0c92c5"                                       
-#> [10] "Panvar_list.of.samples.with.phenotype_shattering.txt"  
-#> [11] "PanvarExample_GLM_GWASresults.csv"                     
-#> [12] "PanvarExample_PlinkQC_maf0.05_missing0.1.bed"          
-#> [13] "PanvarExample_PlinkQC_maf0.05_missing0.1.bim"          
-#> [14] "PanvarExample_PlinkQC_maf0.05_missing0.1.fam"          
-#> [15] "PanvarExample_PlinkQC_maf0.05_missing0.1.log"          
-#> [16] "PanvarExample.geno.bin"                                
-#> [17] "PanvarExample.geno.desc"                               
-#> [18] "PanvarExample.geno.ind"                                
-#> [19] "PanvarExample.geno.map"                                
-#> [20] "PanvarExample.pc.bin"                                  
-#> [21] "PanvarExample.pc.desc"                                 
-#> [22] "PanvarExample.phe"                                     
-#> [23] "plink2"                                                
-#> [24] "rmarkdown-str1e0b270ecf0.html"                         
-#> [25] "shattering.GLM.Circular-Manhattan.PanvarExample.jpg"   
-#> [26] "shattering.GLM.QQplot.PanvarExample.jpg"               
-#> [27] "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
-#> [28] "shattering.GLM.SNP-Density.PanvarExample.jpg"          
-#> [29] "shattering.PanvarExample.PCA_2D.jpg"                   
-#> [30] "shattering.Phe_Dist.PanvarExample.jpg"
+list.files(current.directory, full.names = T)
+#>  [1] "/tmp/RtmpT8L8f8/file1d7418f67e43"                                      
+#>  [2] "/tmp/RtmpT8L8f8/file1d744af2ca0d"                                      
+#>  [3] "/tmp/RtmpT8L8f8/file1d744e267cf0"                                      
+#>  [4] "/tmp/RtmpT8L8f8/file1d745123b992"                                      
+#>  [5] "/tmp/RtmpT8L8f8/file1d7454f48270"                                      
+#>  [6] "/tmp/RtmpT8L8f8/file1d74559b3e94"                                      
+#>  [7] "/tmp/RtmpT8L8f8/file1d7472c79cb3"                                      
+#>  [8] "/tmp/RtmpT8L8f8/file1d7473ac1496"                                      
+#>  [9] "/tmp/RtmpT8L8f8/file1d7475b05a81.zip"                                  
+#> [10] "/tmp/RtmpT8L8f8/Panvar_list.of.samples.with.phenotype_shattering.txt"  
+#> [11] "/tmp/RtmpT8L8f8/PanvarExample_GLM_GWASresults.csv"                     
+#> [12] "/tmp/RtmpT8L8f8/PanvarExample_PlinkQC_maf0.05_missing0.1.bed"          
+#> [13] "/tmp/RtmpT8L8f8/PanvarExample_PlinkQC_maf0.05_missing0.1.bim"          
+#> [14] "/tmp/RtmpT8L8f8/PanvarExample_PlinkQC_maf0.05_missing0.1.fam"          
+#> [15] "/tmp/RtmpT8L8f8/PanvarExample_PlinkQC_maf0.05_missing0.1.log"          
+#> [16] "/tmp/RtmpT8L8f8/PanvarExample.geno.bin"                                
+#> [17] "/tmp/RtmpT8L8f8/PanvarExample.geno.desc"                               
+#> [18] "/tmp/RtmpT8L8f8/PanvarExample.geno.ind"                                
+#> [19] "/tmp/RtmpT8L8f8/PanvarExample.geno.map"                                
+#> [20] "/tmp/RtmpT8L8f8/PanvarExample.pc.bin"                                  
+#> [21] "/tmp/RtmpT8L8f8/PanvarExample.pc.desc"                                 
+#> [22] "/tmp/RtmpT8L8f8/PanvarExample.phe"                                     
+#> [23] "/tmp/RtmpT8L8f8/plink2"                                                
+#> [24] "/tmp/RtmpT8L8f8/rmarkdown-str1d741dc0a989.html"                        
+#> [25] "/tmp/RtmpT8L8f8/shattering.GLM.Circular-Manhattan.PanvarExample.jpg"   
+#> [26] "/tmp/RtmpT8L8f8/shattering.GLM.QQplot.PanvarExample.jpg"               
+#> [27] "/tmp/RtmpT8L8f8/shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
+#> [28] "/tmp/RtmpT8L8f8/shattering.GLM.SNP-Density.PanvarExample.jpg"          
+#> [29] "/tmp/RtmpT8L8f8/shattering.PanvarExample.PCA_2D.jpg"                   
+#> [30] "/tmp/RtmpT8L8f8/shattering.Phe_Dist.PanvarExample.jpg"
+file.path(
+     current.directory,
+     "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
+   )
+#> [1] "/tmp/RtmpT8L8f8/shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
 ```
 
 ## Creating tables
