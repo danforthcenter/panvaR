@@ -100,7 +100,6 @@ make_panvar_tables <- function(gwas.res,
   # filter gwas df to just in window and join LD
   gwas.sub <- gwas.res %>%
     as.data.frame() %>% 
-    # mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>%
     left_join(ld.list$table, by = c("CHR", "POS")) %>%
     select(-contains("marker.ID")) %>% 
     mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>% 
@@ -112,6 +111,7 @@ make_panvar_tables <- function(gwas.res,
   # add middlesnp back in, gets ignored by LD calc if using tagsnp
   if(!is.null(tag.snp)){
     gwas.sub.mid.snp <- gwas.res %>% 
+      mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>% 
       filter(.data$marker.ID == ld.list$key.snp) %>% 
       mutate(LD = 1)
     gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp) 
