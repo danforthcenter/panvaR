@@ -1,4 +1,33 @@
 url: https://danforthcenter.github.io/panvaR/
 template:
   bootstrap: 5
-
+reference:
+- title: "Formatting Inputs"
+  desc: >
+    "Functions for standardizing inputs 
+    and organizing files"
+  contents: 
+  - starts_with("set")
+  - make_panvar_inputs
+  - snp_qc_plink
+  - format_snpeff_annotations
+- title: "GWAS"
+  desc: >
+    "Functions for generating information about snps and integrating results"
+  contents:
+  - get_ld_in_window
+  - make_panvar_tables
+  - make_scores
+  - panvar_mvp_gwas
+  - snp_make_clumps
+  - get_info_from_marker
+- title: "Plotting"
+  desc: >
+    "Functions for visualizing results"
+  contents:
+  - starts_with("plot")
+- title: "Shiny"
+  desc: >
+    "Functions for running the shiny app"
+  contents:
+  - panvar_gui
