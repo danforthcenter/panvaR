@@ -31,9 +31,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="formatting-inputs">Formatting Inputs<a class="anchor" aria-label="anchor" href="#formatting-inputs"></a></h2>
 
-
+      <div class="section-desc"><p>“Functions for standardizing inputs and organizing files”</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -42,38 +42,24 @@
 
       <dl><dt>
 
-          <code><a href="format_snpeff_annotations.html">format_snpeff_annotations()</a></code>
+          <code><a href="set_out_dir.html">set_out_dir()</a></code>
 
         </dt>
-        <dd>Extracts snpeff annotations from vcf</dd>
+        <dd>Set path for output files</dd>
 
         <dt>
 
-          <code><a href="get_bp_from_id.html">get_bp_from_id()</a></code>
+          <code><a href="set_panvar_prefix.html">set_panvar_prefix()</a></code>
 
         </dt>
-        <dd>Extract position from marker.ID in the form "CHR-POS"</dd>
+        <dd>sets global option "panvar_prefix" for output directory of intermediate panvar files. If not supplied will be sent to output of 'tempdir()'.</dd>
 
         <dt>
 
-          <code><a href="get_chrom_from_id.html">get_chrom_from_id()</a></code>
+          <code><a href="set_plink_path.html">set_plink_path()</a></code>
 
         </dt>
-        <dd>Extract chromsome from marker.ID in the form "CHR-POS"</dd>
-
-        <dt>
-
-          <code><a href="get_ld_in_window.html">get_ld_in_window()</a></code>
-
-        </dt>
-        <dd>Get linkage disequilibrium</dd>
-
-        <dt>
-
-          <code><a href="make_consistent_scale.html">make_consistent_scale()</a></code>
-
-        </dt>
-        <dd>Generate discrete scale</dd>
+        <dd>Set path to plink2 executable</dd>
 
         <dt>
 
@@ -81,6 +67,36 @@
 
         </dt>
         <dd>Make standard inputs for panvaR</dd>
+
+        <dt>
+
+          <code><a href="snp_qc_plink.html">snp_qc_plink()</a></code>
+
+        </dt>
+        <dd>Quality control a snp file using plink2</dd>
+
+        <dt>
+
+          <code><a href="format_snpeff_annotations.html">format_snpeff_annotations()</a></code>
+
+        </dt>
+        <dd>Extracts snpeff annotations from vcf</dd>
+      </dl></div><div class="section level2">
+      <h2 id="gwas">GWAS<a class="anchor" aria-label="anchor" href="#gwas"></a></h2>
+
+      <div class="section-desc"><p>“Functions for generating information about snps and integrating results”</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="get_ld_in_window.html">get_ld_in_window()</a></code>
+
+        </dt>
+        <dd>Get linkage disequilibrium</dd>
 
         <dt>
 
@@ -98,19 +114,42 @@
 
         <dt>
 
-          <code><a href="panvar_gui.html">panvar_gui()</a></code>
-
-        </dt>
-        <dd>panvar_gui Run the panvaR shiny implementation. Will launch in a default browser or can navigate to IP address shown.</dd>
-
-        <dt>
-
           <code><a href="panvar_mvp_gwas.html">panvar_mvp_gwas()</a></code>
 
         </dt>
         <dd>Use rMVP to run gwas</dd>
 
         <dt>
+
+          <code><a href="snp_make_clumps.html">snp_make_clumps()</a></code>
+
+        </dt>
+        <dd>Assign snps to clumps based on LD after gwas</dd>
+
+        <dt>
+
+          <code><a href="get_chrom_from_id.html">get_chrom_from_id()</a></code>
+
+        </dt>
+        <dd>Extract chromsome from marker.ID in the form "CHR-POS"</dd>
+
+        <dt>
+
+          <code><a href="get_bp_from_id.html">get_bp_from_id()</a></code>
+
+        </dt>
+        <dd>Extract position from marker.ID in the form "CHR-POS"</dd>
+      </dl></div><div class="section level2">
+      <h2 id="plotting">Plotting<a class="anchor" aria-label="anchor" href="#plotting"></a></h2>
+
+      <div class="section-desc"><p>“Functions for visualizing results”</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="plot_effect.html">plot_effect()</a></code>
 
@@ -147,40 +186,29 @@
 
         <dt>
 
-          <code><a href="set_out_dir.html">set_out_dir()</a></code>
+          <code><a href="make_consistent_scale.html">make_consistent_scale()</a></code>
 
         </dt>
-        <dd>Set path for output files</dd>
+        <dd>Generate discrete scale</dd>
+      </dl></div><div class="section level2">
+      <h2 id="shiny">Shiny<a class="anchor" aria-label="anchor" href="#shiny"></a></h2>
 
-        <dt>
+      <div class="section-desc"><p>“Functions for running the shiny app”</p></div>
 
-          <code><a href="set_panvar_prefix.html">set_panvar_prefix()</a></code>
+      <dl></dl></div><div class="section level2">
 
-        </dt>
-        <dd>sets global option "panvar_prefix" for output directory of intermediate panvar files. If not supplied will be sent to output of 'tempdir()'.</dd>
 
-        <dt>
 
-          <code><a href="set_plink_path.html">set_plink_path()</a></code>
 
-        </dt>
-        <dd>Set path to plink2 executable</dd>
+      <dl><dt>
 
-        <dt>
-
-          <code><a href="snp_make_clumps.html">snp_make_clumps()</a></code>
+          <code><a href="panvar_gui.html">panvar_gui()</a></code>
 
         </dt>
-        <dd>Assign snps to clumps based on LD after gwas</dd>
-
-        <dt>
-
-          <code><a href="snp_qc_plink.html">snp_qc_plink()</a></code>
-
-        </dt>
-        <dd>Quality control a snp file using plink2</dd>
+        <dd>panvar_gui Run the panvaR shiny implementation. Will launch in a default browser or can navigate to IP address shown.</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
