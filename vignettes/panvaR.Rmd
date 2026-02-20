@@ -246,12 +246,13 @@ A flexible scoring system has been implemented to allow quantification of the li
 
 ## Plotting
 
-```{r, include = F}
-# {r, out.extra='style="max-width:none; width:90vw; margin-left:calc(50% - 45vw);"', fig.width = 15, fig.height = 10}
+```{r, echo = F}
+knitr::opts_chunk$set(dev.args = list(png = list(type = "cairo")))
 
 ```
 
-```{r, fig.dpi=150, fig.width = 6}
+```{r, fig.height = 10, fig.width = 15, out.height=700, out.width=1000}
+
 
 plot_panvar(panvar.table.list = tables,
   pvals.in.log = F,
