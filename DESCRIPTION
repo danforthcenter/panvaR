@@ -13,11 +13,6 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Depends:
-    DT,
-  	shinyBS,
-  	plotly,
-    shinyFiles,
-  	shinyjs
 Suggests: 
     knitr,
     rmarkdown
@@ -43,7 +38,12 @@ Imports:
     patchwork,
     gggenes,
     pcadapt,
-    bigsnpr
+    bigsnpr,
+    DT,
+  	shinyBS,
+  	plotly,
+    shinyFiles,
+  	shinyjs
 URL: https://danforthcenter.github.io/panvaR/
 Remotes:  
     xiaolei-lab/rMVP
