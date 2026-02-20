@@ -142,13 +142,14 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 Here is the manhattan:
 
 ```{r}
+
+man.plot.path <- list.files(options()$panvar_outdir, 
+                            pattern = "GLM.Rectangular-Manhattan",
+                            full.names = T)
+
 knitr::include_graphics(
-  normalizePath(file.path(
-    current.directory,
-    "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
-  )),
-  dpi = 600,
-  rel_path = F
+  man.plot.path,
+  dpi = 600
 )
 
 ```
@@ -240,7 +241,13 @@ A flexible scoring system has been implemented to allow quantification of the li
 
 ## Plotting
 
-```{r, out.extra='style="max-width:none; width:90vw; margin-left:calc(50% - 45vw);"', fig.width = 15, fig.height = 10}
+```{r, include = F}
+# {r, out.extra='style="max-width:none; width:90vw; margin-left:calc(50% - 45vw);"', fig.width = 15, fig.height = 10}
+
+```
+
+```{r}
+
 
 plot_panvar(panvar.table.list = tables,
   pvals.in.log = F,
