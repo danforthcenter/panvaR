@@ -20,7 +20,8 @@ reference:
   - make_scores
   - panvar_mvp_gwas
   - snp_make_clumps
-  - get_info_from_marker
+  - get_chrom_from_id
+  - get_bp_from_id
 - title: "Plotting"
   desc: >
     "Functions for visualizing results"
