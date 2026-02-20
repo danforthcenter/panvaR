@@ -252,8 +252,6 @@ knitr::opts_chunk$set(dev.args = list(png = list(type = "cairo")))
 ```
 
 ```{r, fig.height = 10, fig.width = 15, out.height=700, out.width=1000}
-
-
 plot_panvar(panvar.table.list = tables,
   pvals.in.log = F,
   plot.r2.thresh = .2,
