@@ -6,3 +6,7 @@
 ^tests_informal$
 ^Reproduction\.html$
 ^Reproduction\.qmd$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$

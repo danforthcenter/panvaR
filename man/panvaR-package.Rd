@@ -8,6 +8,13 @@
 \description{
 What the package does (one paragraph).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://danforthcenter.github.io/panvaR/}
+}
+
+}
 \author{
 \strong{Maintainer}: Collin Luebbert \email{cluebbert@danforthcenter.org} (\href{https://orcid.org/0000-0002-8665-5950}{ORCID})
 
