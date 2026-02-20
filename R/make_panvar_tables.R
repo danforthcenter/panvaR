@@ -109,7 +109,7 @@ make_panvar_tables <- function(gwas.res,
     rename("LD" = "R2") %>% 
     relocate("marker.ID")
   
-  # add middlesnp back in, gets ignored by LD calcu if using tagsnp
+  # add middlesnp back in, gets ignored by LD calc if using tagsnp
   if(!is.null(tag.snp)){
     gwas.sub.mid.snp <- gwas.res %>% 
       filter(.data$marker.ID == ld.list$key.snp) %>% 

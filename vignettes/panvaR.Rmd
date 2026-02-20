@@ -146,20 +146,52 @@ knitr::include_graphics("shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
                         dpi = 600)
 ```
 
-```{r, eval = F}
+## Creating tables
 
-man.plot.path <- list.files(options()$panvar_outdir, 
-                            pattern = "GLM.Rectangular-Manhattan",
-                            full.names = T)
+### Identifying QTL
 
-knitr::include_graphics(
-  man.plot.path,
-  dpi = 600
-)
+The first step in a typical GWAS analysis might be identifying some regions that we want to look at closer. We can identify discrete regions or QTL using p-values from our GWAS and linkage disequilibrium. Following language used by `plink2` we refer to these groups of snps as clumps. A function is presented to sort snps into clumps. This follows a similar logic to that of `plink2 --clump` . See [here](https://www.cog-genomics.org/plink/2.0/postproc#clump).
 
+```{r}
+# get bedfile name
+filtered.bedfile <- list.files(options()$panvar_outdir, pattern = "bed$")
+
+# read in gwas results
+gwas.path <- list.files(options()$panvar_outdir,
+                                        pattern = "GWASresults\\.csv$",
+                                        full.names = TRUE)
+
+
+gwas.df <- read.csv(gwas.path) 
+
+# subset to only top p-value snps 
+gwas.df_subset <- gwas.df %>% 
+  filter(LOGPVAL > 8)
+
+# clump
+clumped.df <- 
+snp_make_clumps(geno.bed.filename = filtered.bedfile,
+                geno.bed.dir = current.directory,
+                gwas.res = gwas.df,
+                pvals.in.log = F,
+                window = 500,
+                ld.thresh = .2)
+
+head(clumped.df)
 ```
 
-## Creating tables
+Using a process like this to decide on specific regions as well as snps that represent those regions is an important first step in analyzing a genome wide set of results.
+
+We will use the most significant p-value snp in our top clump.
+
+```{r}
+top_clump <- gwas.df_subset %>% 
+  left_join(clumped.df, by = "marker.ID") %>% 
+  filter(clump_num == 1) 
+
+my.tag.snp <- top_clump$marker.ID[which.max(top_clump$LOGPVAL)]
+my.tag.snp
+```
 
 ### LD calculation
 
@@ -170,11 +202,11 @@ If supplying a group of markers via the `qtl.df` argument, the output will have 
 You can create a table of LD in R^2^ in a window using the following function:
 
 ```{r}
-filtered.bedfile <- list.files(options()$panvar_outdir, pattern = "bed$")
 
+"Chr_05-6857045"
 out_ld <-
   get_ld_in_window(
-    tag.snp = "Chr_05-6857045",
+    tag.snp = my.tag.snp,
     window = 500,
     geno.bed = filtered.bedfile,
     in.dir = current.directory
@@ -217,7 +249,7 @@ Use these inputs to generate 2 tables at the gene and snp level. Also, retain so
 ```{r}
 # make the tables 
 tables <- make_panvar_tables(gwas.res = gwas.df,
-                             tag.snp = "Chr_05-6857045",
+                             tag.snp = my.tag.snp,
                              # qtl.df = qtl.df.test,
                              annotation.table = annotation.table,
                              plink.path = options()$plink_path,
