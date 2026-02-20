@@ -59,30 +59,8 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://danforthcenter.github.io/panvaR/">panvaR</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: DT</span></span>
-<span><span class="co">#&gt; Loading required package: shinyBS</span></span>
-<span><span class="co">#&gt; Loading required package: plotly</span></span>
-<span><span class="co">#&gt; Loading required package: ggplot2</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'plotly'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:ggplot2':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     last_plot</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     filter</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:graphics':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     layout</span></span>
-<span><span class="co">#&gt; Loading required package: shinyFiles</span></span>
-<span><span class="co">#&gt; Loading required package: shinyjs</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'shinyjs'</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:methods':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     removeClass, show</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://danforthcenter.github.io/panvaR/">panvaR</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -224,22 +202,22 @@ filtered bed file.</p>
 <span><span class="fu"><a href="../reference/make_panvar_inputs.html">make_panvar_inputs</a></span><span class="op">(</span>genotype.path <span class="op">=</span> <span class="va">genotype.path</span>,</span>
 <span>                   phenotype.path <span class="op">=</span> <span class="va">phenotype.path</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Removed 0 samples due to NA values in phenotype.</span></span>
-<span><span class="co">#&gt; [1] "/tmp/RtmpByncT1/PanvarExample_PlinkQC_maf0.05_missing0.1"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1"</span></span>
 <span><span class="co">#&gt; PLINK v2.0.0-a.7LM AVX2 Intel (10 Jan 2026)         cog-genomics.org/plink/2.0/</span></span>
 <span><span class="co">#&gt; (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3</span></span>
-<span><span class="co">#&gt; Logging to /tmp/RtmpByncT1/PanvarExample_PlinkQC_maf0.05_missing0.1.log.</span></span>
+<span><span class="co">#&gt; Logging to /tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1.log.</span></span>
 <span><span class="co">#&gt; Options in effect:</span></span>
 <span><span class="co">#&gt;   --allow-extra-chr</span></span>
 <span><span class="co">#&gt;   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned</span></span>
 <span><span class="co">#&gt;   --geno 0.1</span></span>
-<span><span class="co">#&gt;   --keep /tmp/RtmpByncT1/Panvar_list.of.samples.with.phenotype_shattering.txt</span></span>
+<span><span class="co">#&gt;   --keep /tmp/Rtmpvm9pJv/Panvar_list.of.samples.with.phenotype_shattering.txt</span></span>
 <span><span class="co">#&gt;   --maf 0.05</span></span>
 <span><span class="co">#&gt;   --make-bed</span></span>
-<span><span class="co">#&gt;   --out /tmp/RtmpByncT1/PanvarExample_PlinkQC_maf0.05_missing0.1</span></span>
+<span><span class="co">#&gt;   --out /tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1</span></span>
 <span><span class="co">#&gt;   --set-all-var-ids @-#</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Start time: Fri Feb 20 15:47:11 2026</span></span>
-<span><span class="co">#&gt; 15990 MiB RAM detected, ~14284 available; reserving 7995 MiB for main</span></span>
+<span><span class="co">#&gt; Start time: Fri Feb 20 16:08:44 2026</span></span>
+<span><span class="co">#&gt; 15994 MiB RAM detected, ~14293 available; reserving 7997 MiB for main</span></span>
 <span><span class="co">#&gt; workspace.</span></span>
 <span><span class="co">#&gt; Using up to 4 compute threads.</span></span>
 <span><span class="co">#&gt; 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from</span></span>
@@ -256,11 +234,11 @@ filtered bed file.</p>
 <span><span class="co">#&gt; 2557 variants removed due to allele frequency threshold(s)</span></span>
 <span><span class="co">#&gt; (--maf/--max-maf/--mac/--max-mac).</span></span>
 <span><span class="co">#&gt; 5158 variants remaining after main filters.</span></span>
-<span><span class="co">#&gt; Writing /tmp/RtmpByncT1/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.</span></span>
-<span><span class="co">#&gt; Writing /tmp/RtmpByncT1/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.</span></span>
-<span><span class="co">#&gt; Writing /tmp/RtmpByncT1/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.</span></span>
-<span><span class="co">#&gt; End time: Fri Feb 20 15:47:11 2026</span></span>
-<span><span class="co">#&gt; QC was successful, output stored at /tmp/RtmpByncT1/PanvarExample_PlinkQC_maf0.05_missing0.1</span></span>
+<span><span class="co">#&gt; Writing /tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.</span></span>
+<span><span class="co">#&gt; Writing /tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.</span></span>
+<span><span class="co">#&gt; Writing /tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.</span></span>
+<span><span class="co">#&gt; End time: Fri Feb 20 16:08:44 2026</span></span>
+<span><span class="co">#&gt; QC was successful, output stored at /tmp/Rtmpvm9pJv/PanvarExample_PlinkQC_maf0.05_missing0.1</span></span>
 <span><span class="co">#&gt; Using rMVP to calculate PC's.</span></span>
 <span><span class="co">#&gt; Preparing data for MVP...</span></span>
 <span><span class="co">#&gt; Reading file...</span></span>
@@ -316,7 +294,7 @@ directory. If supplying other inputs, they should be in a format that
 <span>                npcs <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>                gwas.model <span class="op">=</span> <span class="st">"GLM"</span>,</span>
 <span>                output.manhattan <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Searching for prefix: PanvarExample in directory: /tmp/RtmpByncT1</span></span>
+<span><span class="co">#&gt; Searching for prefix: PanvarExample in directory: /tmp/Rtmpvm9pJv</span></span>
 <span><span class="co">#&gt; Found the following files: </span></span>
 <span><span class="co">#&gt; PanvarExample_PlinkQC_maf0.05_missing0.1.bed, </span></span>
 <span><span class="co">#&gt; PanvarExample_PlinkQC_maf0.05_missing0.1.bim, </span></span>
@@ -344,7 +322,7 @@ directory. If supplying other inputs, they should be in a format that
 <span><span class="co">#&gt;   Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li      </span></span>
 <span><span class="co">#&gt;   Mailto: xiaoleiliu@mail.hzau.edu.cn, ylilin@mail.hzau.edu.cn   </span></span>
 <span><span class="co">#&gt; =================================================================</span></span>
-<span><span class="co">#&gt; Start: 2026-02-20 15:47:12 UTC </span></span>
+<span><span class="co">#&gt; Start: 2026-02-20 16:08:45 UTC </span></span>
 <span><span class="co">#&gt; Input data has 215 individuals and 5158 markers </span></span>
 <span><span class="co">#&gt; Markers are detected to be stored by column </span></span>
 <span><span class="co">#&gt; Analyzed trait: shattering </span></span>
@@ -370,8 +348,8 @@ directory. If supplying other inputs, they should be in a format that
 <span><span class="co">#&gt; Circular_Manhattan Plotting shattering.GLM </span></span>
 <span><span class="co">#&gt; Rectangular_Manhattan Plotting shattering.GLM</span></span>
 <span><span class="co">#&gt; Q_Q Plotting shattering.GLM</span></span>
-<span><span class="co">#&gt; Results are stored at Working Directory: /tmp/RtmpByncT1 </span></span>
-<span><span class="co">#&gt; End: 2026-02-20 15:47:14 UTC </span></span>
+<span><span class="co">#&gt; Results are stored at Working Directory: /tmp/Rtmpvm9pJv </span></span>
+<span><span class="co">#&gt; End: 2026-02-20 16:08:47 UTC </span></span>
 <span><span class="co">#&gt; Total running time: 1s </span></span>
 <span><span class="co">#&gt; ===================== MVP ACCOMPLISHED =====================</span></span></code></pre></div>
 <p>Here is the manhattan:</p>
@@ -382,7 +360,38 @@ directory. If supplying other inputs, they should be in a format that
 <span><span class="co">#     "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"</span></span>
 <span><span class="co">#   ),</span></span>
 <span><span class="co">#   dpi = 600</span></span>
-<span><span class="co"># )</span></span></code></pre></div>
+<span><span class="co"># )</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">current.directory</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "file1e0b166591b0"                                      </span></span>
+<span><span class="co">#&gt;  [2] "file1e0b1a5aa5cc"                                      </span></span>
+<span><span class="co">#&gt;  [3] "file1e0b34863411"                                      </span></span>
+<span><span class="co">#&gt;  [4] "file1e0b3e0e530f"                                      </span></span>
+<span><span class="co">#&gt;  [5] "file1e0b4c3d0e48"                                      </span></span>
+<span><span class="co">#&gt;  [6] "file1e0b6230986e"                                      </span></span>
+<span><span class="co">#&gt;  [7] "file1e0b62750029"                                      </span></span>
+<span><span class="co">#&gt;  [8] "file1e0b7655c612.zip"                                  </span></span>
+<span><span class="co">#&gt;  [9] "file1e0ba0c92c5"                                       </span></span>
+<span><span class="co">#&gt; [10] "Panvar_list.of.samples.with.phenotype_shattering.txt"  </span></span>
+<span><span class="co">#&gt; [11] "PanvarExample_GLM_GWASresults.csv"                     </span></span>
+<span><span class="co">#&gt; [12] "PanvarExample_PlinkQC_maf0.05_missing0.1.bed"          </span></span>
+<span><span class="co">#&gt; [13] "PanvarExample_PlinkQC_maf0.05_missing0.1.bim"          </span></span>
+<span><span class="co">#&gt; [14] "PanvarExample_PlinkQC_maf0.05_missing0.1.fam"          </span></span>
+<span><span class="co">#&gt; [15] "PanvarExample_PlinkQC_maf0.05_missing0.1.log"          </span></span>
+<span><span class="co">#&gt; [16] "PanvarExample.geno.bin"                                </span></span>
+<span><span class="co">#&gt; [17] "PanvarExample.geno.desc"                               </span></span>
+<span><span class="co">#&gt; [18] "PanvarExample.geno.ind"                                </span></span>
+<span><span class="co">#&gt; [19] "PanvarExample.geno.map"                                </span></span>
+<span><span class="co">#&gt; [20] "PanvarExample.pc.bin"                                  </span></span>
+<span><span class="co">#&gt; [21] "PanvarExample.pc.desc"                                 </span></span>
+<span><span class="co">#&gt; [22] "PanvarExample.phe"                                     </span></span>
+<span><span class="co">#&gt; [23] "plink2"                                                </span></span>
+<span><span class="co">#&gt; [24] "rmarkdown-str1e0b270ecf0.html"                         </span></span>
+<span><span class="co">#&gt; [25] "shattering.GLM.Circular-Manhattan.PanvarExample.jpg"   </span></span>
+<span><span class="co">#&gt; [26] "shattering.GLM.QQplot.PanvarExample.jpg"               </span></span>
+<span><span class="co">#&gt; [27] "shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"</span></span>
+<span><span class="co">#&gt; [28] "shattering.GLM.SNP-Density.PanvarExample.jpg"          </span></span>
+<span><span class="co">#&gt; [29] "shattering.PanvarExample.PCA_2D.jpg"                   </span></span>
+<span><span class="co">#&gt; [30] "shattering.Phe_Dist.PanvarExample.jpg"</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
