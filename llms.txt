@@ -29,7 +29,12 @@ panvar_gui()
 To get started, check out the documentation
 [here](https://danforthcenter.github.io/panvaR/).
 
-## Main outputs
+## Main output
+
+PanvaR visualizes specfic QTL by creating information dense plots using
+a a flexible array of data sources.
+
+![](articles/panvar_explainer_figure_larger.png)
 
 ## Reporting issues
 
