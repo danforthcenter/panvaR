@@ -31,7 +31,7 @@ To get started, check out the documentation [here](https://danforthcenter.github
 
 PanvaR visualizes specfic QTL by creating information dense plots using a a flexible array of data sources.
 
-![](vignettes/panvar_explainer_figure_larger.png)
+![](https://github.com/danforthcenter/panvaR/blob/main/vignettes/panvar_explainer_figure_larger.png)
 
 ## Reporting issues
 
