@@ -231,6 +231,9 @@ tables <-
                      compute.scores = T,
                      score.vars = c("LD", "LOGPVAL", "PlantCad_zeroshot"),
                      score.dirs = c(1, 1, -1))
+
+this.qtl.df$marker.ID %in% tables$gwas$marker.ID
+
 p <-
   plot_panvar(tables,
               window = window,
@@ -242,6 +245,9 @@ p <-
               plot.effect = T,
               include.gene.id = T,
               plot.title = this.key.snp)
+
+x <- filter(tables$gwas, marker.ID == this.key.snp)
+x
 
 memesave(myfilename = file.path(this.outdir, paste0("Clump", this.clump.num, "_PanvarPlot_bestdescription.png")),
          plot = p,

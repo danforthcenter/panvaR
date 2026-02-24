@@ -120,6 +120,14 @@ make_panvar_tables <- function(gwas.res,
       filter(.data$marker.ID == ld.list$key.snp) %>% 
       mutate(LD = 1)
     gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp) 
+  } else if(nrow(qtl.df) == 1){
+    # also want to do this if there is just one snp in qtl.df
+    gwas.sub.mid.snp <- gwas.res %>% 
+      mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>% 
+      filter(.data$marker.ID == ld.list$qtl.snps) %>% 
+      mutate(LD = 1)
+    gwas.sub <- bind_rows(gwas.sub, gwas.sub.mid.snp) 
+    
   }
   
   
