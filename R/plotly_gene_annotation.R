@@ -33,12 +33,7 @@ get.gene.y.pos <- function(from, to, length.out) {
 #' @param annotation.table table with annotations with columns (geneID, CHR, start, end, annotation). start and end correspond to base-pair coordinates of start and end of gene. CHR is chromosome of gene.
 #' @param middle.snp character, SNP name in form "CHR-POS" center of window. Often the key.snp output of [panvaR::get_ld_in_window]
 #' @param window integer, kilobases on either side of middle.snp to plot
-#' @param include.id boolean, include geneID in gene annotations or not
 #' @param gene.color character, color to plot genes 
-#' @param highlight.ids character, optional, vector of ids to highlight
-#' @param highlight.color character, optional, color to highlight ids
-#' @param use.arrows boolean, if TRUE, use [gggenes::geom_gene_arrow] to draw representations of genes. 
-#' If the direction is encoded in another variable, supply that to <NEW ARGUMENT NAME>
 #' @param point.color character, variable in annotation.table that indicates how to color 
 #' points plotted next to gene descriptions. If not supplied, no points are plotted. 
 #' The input "LD" is reserved to give functionality to [panvaR::plot_panvar].
@@ -52,17 +47,13 @@ get.gene.y.pos <- function(from, to, length.out) {
 #'
 #' @examples
 #' # Work in progress
-plot_gene_annotation <- function(panvar.table.list = NULL,
-                                      annotation.table = NULL,
-                                      middle.snp = NULL,
-                                      window,
-                                      include.id = F,
-                                      gene.color = "blue",
-                                      highlight.ids = NULL,
-                                      highlight.color = "red",
-                                      use.arrows = F,
-                                      point.color = NULL,
-                                      point.fill.scale = NULL,
+plotly_gene_annotation <- function(panvar.table.list = NULL,
+                                 annotation.table = NULL,
+                                 middle.snp = NULL,
+                                 window,
+                                 gene.color = "blue",
+                                 point.color = NULL,
+                                 point.fill.scale = NULL,
                                  plotly.style = F){
   
   
@@ -83,6 +74,7 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
       this.pos <- get_bp_from_id(middle.snp)
       
       # format plot inputs
+      # include.id <- TRUE
       anno.sub <- annotation.table %>%
         # select("geneID", "CHR", "start", "end", "annotation") %>%
         filter(.data$CHR == this.chrom) %>%
@@ -90,10 +82,10 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
         mutate(dist.from.snp = get.gene.dist.from.snp(this.pos, .data$start, .data$end)) %>%
         filter(.data$dist.from.snp <= window * 1000) %>%
         mutate(id.plus.anno = paste0(.data$geneID, ", ", .data$annotation),
-               plot.label = ifelse(include.id, .data$id.plus.anno, .data$annotation)) %>% 
+               plot.label = .data$id.plus.anno) %>% 
         mutate(gene.mid = median(c(.data$start, .data$end))) %>% 
         arrange(.data$gene.mid)    
-      }
+    }
     # use panvar.table.list
   } else {
     this.pos <- get_bp_from_id(panvar.table.list$key.snp)
@@ -102,7 +94,7 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
       mutate(dist.from.snp = get.gene.dist.from.snp(this.pos, .data$start, .data$end)) %>%
       filter(.data$dist.from.snp <= window * 1000) %>%
       mutate(id.plus.anno = paste0(.data$geneID, ", ", .data$annotation),
-             plot.label = ifelse(include.id, .data$id.plus.anno, .data$annotation)) %>% 
+             plot.label = .data$id.plus.anno) %>% 
       mutate(gene.mid = median(c(.data$start, .data$end))) %>% 
       arrange(.data$gene.mid)    
   }
@@ -123,51 +115,30 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
                                               max(plot.limits.ex),
                                               nrow(anno.sub)))
 
-  if(!is.null(highlight.ids)){
-    anno.spread <- anno.spread %>%
-      mutate(gene.label.color = case_when(geneID %in% highlight.ids ~ "A",
-                                          TRUE ~ "B"))
-  }
   
   mid <- this.pos
   breaks.anno <- seq(from = mid - window * 1000,
                      to = mid + window * 1000,
                      length.out = 9)
-  if(use.arrows){
-    anno <-
-      ggplot(data = anno.spread) +
-      # geom_segment(aes(y = .data$start, yend = .data$end, x = .5, xend = .5), linewidth = 2, color = "red") +
-      gggenes::geom_gene_arrow(aes(xmin = .data$start, xmax = .data$end, y = .5), fill = gene.color) +
-      scale_x_reverse(limits = plot.limits.ex,
-                      labels = function(x) paste0((x - this.pos) / 1000, " KB"),
-                      breaks = breaks.anno) +
-      ylim(.5, .875) +
-      geom_segment(aes(y = .5, yend = .55, x = .data$gene.mid, xend = .data$y.pos)) +
-      theme_bw() +
-      theme(axis.text.x = element_blank(),
-            axis.title.x = element_blank(),
-            #axis.text.y = element_blank(),
-            axis.title.y = element_blank(),
-            panel.grid = element_blank(),
-            axis.ticks.x = element_blank()) +
-      coord_flip()
-  } else {
-    anno <-
-      ggplot(data = anno.spread) +
-      geom_segment(aes(y = .data$start, yend = .data$end, x = .5, xend = .5), linewidth = 2, color = gene.color) +
-      scale_y_reverse(limits = plot.limits.ex,
-                      labels = function(x) paste0((x - this.pos) / 1000, " KB"),
-                      breaks = breaks.anno) +
-      xlim(.5, .875) +
-      geom_segment(aes(x = .5, xend = .55, y = .data$gene.mid, yend = .data$y.pos)) +
-      theme_bw() +
-      theme(axis.text.x = element_blank(),
-            axis.title.x = element_blank(),
-            #axis.text.y = element_blank(),
-            axis.title.y = element_blank(),
-            panel.grid = element_blank(),
-            axis.ticks.x = element_blank())
-  }
+  
+  
+  
+  anno <-
+    ggplot(data = anno.spread) +
+    geom_segment(aes(y = .data$start, yend = .data$end, x = .5, xend = .5, text = .data$geneID), linewidth = 2, color = gene.color) +
+    scale_y_reverse(limits = plot.limits.ex,
+                    labels = function(x) paste0((x - this.pos) / 1000, " KB"),
+                    breaks = breaks.anno) +
+    xlim(.5,.6) +
+    geom_segment(aes(x = .5, xend = .55, y = .data$gene.mid, yend = .data$y.pos)) +
+    theme_bw() +
+    theme(axis.text.x = element_blank(),
+          axis.title.x = element_blank(),
+          #axis.text.y = element_blank(),
+          axis.title.y = element_blank(),
+          panel.grid = element_blank(),
+          axis.ticks.x = element_blank())
+
   
   # Add some points if you want
   if(!is.null(point.color)){
@@ -176,15 +147,15 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
     #   theme(legend.position = "right",
     #         legend.justification = "top")
     anno <- anno +
-      geom_point(aes(x = .555, y = .data$y.pos, color = .data[[point.color]]), shape = 15, size = 3) +
+      geom_point(aes(x = .555, y = .data$y.pos, color = .data[[point.color]], text = .data$annotation), shape = 15, size = 3) +
       theme(legend.position = "right",
             legend.justification = "top")
     if(!is.null(point.fill.scale)){
       anno <- anno + 
         point.fill.scale
-    # } else if(point.color == "LD"){
-    #   anno <- anno +
-    #     default.panvar.LD.scale(type = "color")
+      # } else if(point.color == "LD"){
+      #   anno <- anno +
+      #     default.panvar.LD.scale(type = "color")
     } else {
       anno <- anno + 
         # scale_fill_viridis_b(name = point.color)
@@ -193,7 +164,11 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
     # move the text over a little to accomodate point
     text.x.start <- .56
   } else {
-    text.x.start <- .55
+    text.x.start <- .56
+    anno <- anno +
+      geom_point(aes(x = .555, y = .data$y.pos, text = .data$annotation), color = "grey50", shape = 15, size = 3) +
+      theme(legend.position = "none")
+    
   }
   
   # make a special case for LD where we hide the legend
@@ -204,52 +179,13 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
     }
   }
   
+  
 
-  if(!is.null(highlight.ids)){
-    if(use.arrows){
-      anno <- anno +
-        ggnewscale::new_scale_color() +
-        ggfittext::geom_fit_text(aes(ymin = text.x.start, ymax = .85, x = .data$y.pos, label = .data$plot.label, color = .data$gene.label.color),
-                                 place = "left",
-                                 #grow = TRUE,
-                                 hjust = 0,
-                                 padding.y = grid::unit(.1, "lines"),
-                                 min.size = 4,
-                                 show.legend = F) +
-        scale_color_manual(values = c(highlight.color, "black"))
-    } else {
-      anno <- anno +
-        ggnewscale::new_scale_color() +
-        ggfittext::geom_fit_text(aes(xmin = text.x.start, xmax = .85, y = .data$y.pos, label = .data$plot.label, color = .data$gene.label.color),
-                                 place = "left",
-                                 #grow = TRUE,
-                                 hjust = 0,
-                                 padding.y = grid::unit(.1, "lines"),
-                                 min.size = 4,
-                                 show.legend = F) +
-        scale_color_manual(values = c(highlight.color, "black"))
-    }
-  } else {
-    if(use.arrows){
-      anno <- anno +
-        ggfittext::geom_fit_text(aes(ymin = text.x.start, ymax = .85, x = .data$y.pos, label = .data$plot.label),
-                                 place = "left",
-                                 #grow = TRUE,
-                                 hjust = 0,
-                                 padding.y = grid::unit(.1, "lines"),
-                                 min.size = 4) 
-    } else {
-      anno <- anno +
-        ggfittext::geom_fit_text(aes(xmin = text.x.start, xmax = .85, y = .data$y.pos, label = .data$plot.label),
-                                 place = "left",
-                                 #grow = TRUE,
-                                 hjust = 0,
-                                 padding.y = grid::unit(.1, "lines"),
-                                 min.size = 4) 
-    }
-  }
+  anno <- anno +
+    geom_text(aes(x = text.x.start, y = .data$y.pos, label = .data$geneID),
+              hjust = 0) 
+
   
   return(anno)
   
 }
-

@@ -24,7 +24,7 @@
 #' @param snp.to.gene.vars character, numeric variables in gwas.res to aggregate by gene. 
 #' For each gene, snps with a physical position with the start and end of the gene are considered. 
 #' The maximum value for all snps within the gene is returned. Special values, `DIST`, `LD` and `LOGPVAL` can
-#' be included in addition to any user supplied variables. 
+#' be included in addition to any user supplied variables.
 #' @param snp.to.gene.buffer numeric, kilobases to add to gene start and end to include genes 
 #' that are close but not in gene. Snpeff uses 5 KB by default to call a snp "upstream"/"downstream" variant. default is 0. 
 #' @param compute.scores boolean, if TRUE, snp scores will be computed. See details for more info.  
@@ -97,9 +97,14 @@ make_panvar_tables <- function(gwas.res,
   # subset gwas  --------
   # ------------------------------------------------------------------------\
   
+  # format some columns in gwas.res
+  gwas.res <- gwas.res %>%
+    as.data.frame() %>% 
+    mutate(CHR = as.numeric(.data$CHR),
+           POS = as.numeric(.data$POS)) 
+  
   # filter gwas df to just in window and join LD
   gwas.sub <- gwas.res %>%
-    as.data.frame() %>% 
     left_join(ld.list$table, by = c("CHR", "POS")) %>%
     select(-contains("marker.ID")) %>% 
     mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>% 

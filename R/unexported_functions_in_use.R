@@ -305,7 +305,7 @@ minmaxnormal <- function(x) {
 #' @keywords internal
 #'
 get.gene.from.snp <- function(bp, gene.df, gene.buffer = 0){
-  gene.buffer * 1000
+  gene.buffer <- gene.buffer * 1000
   check.vec <- data.table::between(bp, gene.df$start - gene.buffer, gene.df$end + gene.buffer)
   if(any(check.vec)){
     gene.id.out <- list(gene.df$geneID[check.vec])
