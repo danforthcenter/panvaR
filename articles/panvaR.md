@@ -140,22 +140,22 @@ phenotype.path <- system.file("extdata",
 make_panvar_inputs(genotype.path = genotype.path,
                    phenotype.path = phenotype.path)
 #> Removed 0 samples due to NA values in phenotype.
-#> [1] "/tmp/Rtmp5g5gzm/PanvarExample_PlinkQC_maf0.05_missing0.1"
+#> [1] "/tmp/RtmpgOv5HE/PanvarExample_PlinkQC_maf0.05_missing0.1"
 #> PLINK v2.0.0-a.7LM AVX2 Intel (10 Jan 2026)         cog-genomics.org/plink/2.0/
 #> (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
-#> Logging to /tmp/Rtmp5g5gzm/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
+#> Logging to /tmp/RtmpgOv5HE/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
 #> Options in effect:
 #>   --allow-extra-chr
 #>   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned
 #>   --geno 0.1
-#>   --keep /tmp/Rtmp5g5gzm/Panvar_list.of.samples.with.phenotype_shattering.txt
+#>   --keep /tmp/RtmpgOv5HE/Panvar_list.of.samples.with.phenotype_shattering.txt
 #>   --maf 0.05
 #>   --make-bed
-#>   --out /tmp/Rtmp5g5gzm/PanvarExample_PlinkQC_maf0.05_missing0.1
+#>   --out /tmp/RtmpgOv5HE/PanvarExample_PlinkQC_maf0.05_missing0.1
 #>   --set-all-var-ids @-#
 #> 
-#> Start time: Mon Feb 23 21:57:52 2026
-#> 15989 MiB RAM detected, ~14427 available; reserving 7994 MiB for main
+#> Start time: Tue Feb 24 16:49:16 2026
+#> 15990 MiB RAM detected, ~14434 available; reserving 7995 MiB for main
 #> workspace.
 #> Using up to 4 compute threads.
 #> 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
@@ -172,11 +172,11 @@ make_panvar_inputs(genotype.path = genotype.path,
 #> 2557 variants removed due to allele frequency threshold(s)
 #> (--maf/--max-maf/--mac/--max-mac).
 #> 5158 variants remaining after main filters.
-#> Writing /tmp/Rtmp5g5gzm/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
-#> Writing /tmp/Rtmp5g5gzm/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
-#> Writing /tmp/Rtmp5g5gzm/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
-#> End time: Mon Feb 23 21:57:52 2026
-#> QC was successful, output stored at /tmp/Rtmp5g5gzm/PanvarExample_PlinkQC_maf0.05_missing0.1
+#> Writing /tmp/RtmpgOv5HE/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
+#> Writing /tmp/RtmpgOv5HE/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
+#> Writing /tmp/RtmpgOv5HE/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
+#> End time: Tue Feb 24 16:49:16 2026
+#> QC was successful, output stored at /tmp/RtmpgOv5HE/PanvarExample_PlinkQC_maf0.05_missing0.1
 #> Using rMVP to calculate PC's.
 #> Preparing data for MVP...
 #> Reading file...
@@ -240,7 +240,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
                 npcs = 2,
                 gwas.model = "GLM",
                 output.manhattan = T)
-#> Searching for prefix: PanvarExample in directory: /tmp/Rtmp5g5gzm
+#> Searching for prefix: PanvarExample in directory: /tmp/RtmpgOv5HE
 #> Found the following files: 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bed, 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bim, 
@@ -268,7 +268,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #>   Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li      
 #>   Mailto: xiaoleiliu@mail.hzau.edu.cn, ylilin@mail.hzau.edu.cn   
 #> =================================================================
-#> Start: 2026-02-23 21:57:53 UTC 
+#> Start: 2026-02-24 16:49:17 UTC 
 #> Input data has 215 individuals and 5158 markers 
 #> Markers are detected to be stored by column 
 #> Analyzed trait: shattering 
@@ -294,8 +294,8 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #> Circular_Manhattan Plotting shattering.GLM 
 #> Rectangular_Manhattan Plotting shattering.GLM
 #> Q_Q Plotting shattering.GLM
-#> Results are stored at Working Directory: /tmp/Rtmp5g5gzm 
-#> End: 2026-02-23 21:57:54 UTC 
+#> Results are stored at Working Directory: /tmp/RtmpgOv5HE 
+#> End: 2026-02-24 16:49:18 UTC 
 #> Total running time: 1s 
 #> ===================== MVP ACCOMPLISHED =====================
 ```
@@ -503,12 +503,12 @@ head(tables$anno)
 #> # Rowwise: 
 #>     CHR geneID           start     end annotation  dist.from.snp    LD snp.score
 #>   <int> <chr>            <int>   <int> <chr>               <dbl> <dbl>     <dbl>
-#> 1     5 Sevir.5G082600 6600913 6602150 (1 of 3) P…        241592 0.257     0.177
-#> 2     5 Sevir.5G084050 6725589 6729788 No gene de…        113954 0.371     0.363
+#> 1     5 Sevir.5G082600 6600913 6602150 (1 of 3) P…        241592 0.309     0.182
+#> 2     5 Sevir.5G084050 6725589 6729788 No gene de…        113954 0.530     0.430
 #> 3     5 Sevir.5G083800 6699949 6705777 (1 of 1) P…        137965 0.320     0.333
-#> 4     5 Sevir.5G083600 6687900 6690770 (1 of 1) P…        152972 0.424     0.304
-#> 5     5 Sevir.5G086500 6947423 6948860 (1 of 1) P…        103681 0.317     0.319
-#> 6     5 Sevir.5G083550 6674012 6674119 No gene de…        169623 0.212     0.290
+#> 4     5 Sevir.5G083600 6687900 6690770 (1 of 1) P…        152972 0.491     0.329
+#> 5     5 Sevir.5G086500 6947423 6948860 (1 of 1) P…        103681 0.385     0.373
+#> 6     5 Sevir.5G083550 6674012 6674119 No gene de…        169623 0.512     0.301
 ```
 
 ### A note on chromsome names and marker.ID’s
