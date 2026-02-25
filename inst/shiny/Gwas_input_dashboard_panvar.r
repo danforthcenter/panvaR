@@ -333,16 +333,16 @@ Gwas_input_dashboard_Server <- function(id, shared) {
             anno.df <- data.table::fread(annotation_table_path(), data.table = F)
             
             # run the function
-            out_list <- 
+            results <- 
             make_panvar_tables(gwas.res = gwas.df,
                                annotation.table = anno.df,
                                geno.bed.filename = bedfile,
                                geno.bed.directory = beddir,
                                tag.snp = input$tag_snp,
-                               pvals.in.log = input$pvals.in.log,
+                               pvals.in.log = input$pvals_in_log,
                                window = input$window_span,
                                snp.to.gene.buffer = input$snp.to.gene.buffer,
-                               compute.scores = input$compute.scores)
+                               compute.scores = input$compute_scores)
             
             # Call the modified panvar_func
             # panvar_func(
