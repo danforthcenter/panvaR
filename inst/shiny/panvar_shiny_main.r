@@ -42,6 +42,7 @@ ui <- fluidPage(
     # tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
   useShinyjs(), # Initialize shinyjs
+  # bsplus::use_bs_tooltip(),
   div(
     class = "app-header",
     style = "background-color: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #dee2e6; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;",

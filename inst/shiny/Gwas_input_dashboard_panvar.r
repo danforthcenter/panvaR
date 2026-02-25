@@ -27,26 +27,27 @@ parsePath_gwas <- function(input_path) {
 # --- Module UI ---
 Gwas_input_dashboard_UI <- function(id) {
   ns <- NS(id)
+  # bsplus::use_bs_tooltip()
   tagList(
     shinyjs::useShinyjs(),
     sidebarLayout(
       sidebarPanel(
         width = 3,
         div(class = "input-section",
-            h4("Required Inputs"),
-            # VCF File Input
+            h4("Input Files"),
+            # bed File Input
             div(
               style = "display: flex; align-items: center; gap: 10px;",
               shinyFilesButton(
-                ns("vcf_file_path"),
-                "Select VCF Genotype File (.vcf.gz)",
+                ns("bed_file_path"),
+                "Select Genotype File (.bed)",
                 "Please select a file",
                 multiple = FALSE
               ),
-              tags$span(id = ns("vcf_file_tooltip"), icon("question-circle"), style = "color: green;")
+              tags$span(id = ns("bed_file_tooltip"), icon("question-circle"), style = "color: green;")
             ),
-            bsTooltip(ns("vcf_file_tooltip"), "Select the SnpEff-annotated and bgzip-compressed VCF file.", "right", "hover"),
-            textOutput(ns("vcf_file_path_results")),
+            shinyBS::bsTooltip(ns("bed_file_tooltip"), "Select the bedfile produced from panvaR::make_panvar_inputs()", "right", "hover"),
+            textOutput(ns("bed_file_path_results")),
             
             # GWAS Table Input
             div(
@@ -59,16 +60,49 @@ Gwas_input_dashboard_UI <- function(id) {
               ),
               tags$span(id = ns("gwas_table_tooltip"), icon("question-circle"), style = "color: green;")
             ),
-            bsTooltip(ns("gwas_table_tooltip"), "Select a file with GWAS results. Must contain CHROM, BP, and Pvalues columns.", "right", "hover"),
-            textOutput(ns("gwas_table_path_results"))
+            shinyBS::bsTooltip(ns("gwas_table_tooltip"), "Select a file with GWAS results. Must contain CHR, POS, PVAL columns.", "right", "hover"),
+            textOutput(ns("gwas_table_path_results")),
+            
+            # annotation table
+            div(
+              style = "display: flex; align-items: center; gap: 10px;",
+              shinyFilesButton(
+                ns("annotation_table_path"),
+                "Select Annotation Table File",
+                "Please select a file",
+                multiple = FALSE
+              ),
+              tags$span(id = ns("anno_table_tooltip"), icon("question-circle"), style = "color: green;")
+            ),
+            bsTooltip(ns("anno_table_tooltip"), "Select an annotation table. Must contain columns geneID, CHR, start, end, annotation.", "right", "hover"),
+            textOutput(ns("anno_table_path_results"))
         ),
         
         div(class = "input-section",
-            h4("Analysis Parameters"),
+            h4("Plink path"),
+            
+            # Plink path
+            div(
+              style = "display: flex; align-items: center; gap: 10px;",
+              shinyFilesButton(
+                ns("plink_path"),
+                "Select plink2 executable",
+                "Please select a file",
+                multiple = FALSE
+              ),
+              tags$span(id = ns("plink_path_tooltip"), icon("question-circle"), style = "color: green;")
+            ),
+            bsTooltip(ns("plink_path_tooltip"), "Select the bedfile produced from panvaR::make_panvar_inputs()", "right", "hover"),
+            textOutput(ns("plink_path_results"))
+        ),
+        
+        div(class = "input-section",
+            h4("Required inputs"),
+            
             # Tag SNPs Input
             div(
               style = "display: flex; align-items: center; gap: 10px;",
-              textAreaInput(ns("tag_snps"), "Tag SNPs (one per line):", ""),
+              textInput(ns("tag_snp"), "Tag SNP:", ""),
               tags$span(id = ns("tag_snps_tooltip"), icon("question-circle"), style = "color: green;")
             ),
             bsTooltip(ns("tag_snps_tooltip"), "Specify tag SNPs in CHR:BP format. If empty, the top hit from the GWAS table will be used.", "right", "hover"),
@@ -81,37 +115,50 @@ Gwas_input_dashboard_UI <- function(id) {
             ),
             bsTooltip(ns("r2_tooltip"), "LD threshold (R²) to find correlated SNPs.", "right", "hover"),
             
-            # MAF
+            # Pvals in log 
             div(
               style = "display: flex; align-items: center; gap: 10px;",
-              numericInput(ns("maf"), "Minor Allele Frequency:", value = 0.05, min = 0, max = 1),
-              tags$span(id = ns("maf_tooltip"), icon("question-circle"), style = "color: green;")
+              checkboxInput(ns("pvals_in_log"), "P-values in Log?", value = T),
+              tags$span(id = ns("pvals_in_log_tooltip"), icon("question-circle"), style = "color: green;")
             ),
-            bsTooltip(ns("maf_tooltip"), "Minimum Minor Allele Frequency for filtering.", "right", "hover"),
+            bsTooltip(ns("pvals_in_log_tooltip"), "Are values in PVAL column already in log10?", "right", "hover"),
             
-            # Missing Rate
+            # Window 
             div(
               style = "display: flex; align-items: center; gap: 10px;",
-              numericInput(ns("missing_rate"), "Missing rate:", value = 0.1, min = 0, max = 1),
-              tags$span(id = ns("missing_rate_tooltip"), icon("question-circle"), style = "color: green;")
-            ),
-            bsTooltip(ns("missing_rate_tooltip"), "Maximum allowed missing rate for variants.", "right", "hover"),
-            
-            # Window Span
-            div(
-              style = "display: flex; align-items: center; gap: 10px;",
-              numericInput(ns("window_span"), "Window around tag SNP (bp):", value = 500000, min = 0),
+              numericInput(ns("window_span"), "Window around tag SNP in kilobases:", value = 100, min = 0),
               tags$span(id = ns("window_span_tooltip"), icon("question-circle"), style = "color: green;")
             ),
-            bsTooltip(ns("window_span_tooltip"), "The genomic window (in base pairs) to analyze around each tag SNP.", "right", "hover"),
+            bsTooltip(ns("window_span_tooltip"), "The physical distance (in kilobases) on either side of tag SNP.", "right", "hover")
+        ),
+        
+        div(class = "input-section",
+            h4("Required inputs"),
             
-            # All Impacts Checkbox
+            # compute scores
             div(
               style = "display: flex; align-items: center; gap: 10px;",
-              checkboxInput(ns("all_impacts"), "Include all SNP impacts", value = FALSE),
-              tags$span(id = ns("all_impacts_tooltip"), icon("question-circle"), style = "color: green;")
+              checkboxInput(ns("compute_scores"), "Compute scores?", value = F),
+              tags$span(id = ns("compute_scores_tooltip"), icon("question-circle"), style = "color: green;")
             ),
-            bsTooltip(ns("all_impacts_tooltip"), "If checked, includes LOW and MODIFIER impacts. If unchecked, only HIGH and MODERATE impacts are considered.", "right", "hover")
+            bsTooltip(ns("compute_scores_tooltip"), "Compute snp scores, an aggregate of some variables?", "right", "hover"),
+            
+            # score.vars
+            
+            # score.dirs
+            
+            # score.weights
+            
+            # snp.to.gene.vars
+            
+            # snp.to.gene.buffer
+            div(
+              style = "display: flex; align-items: center; gap: 10px;",
+              numericInput(ns("snp.to.gene.buffer"), "snp to gene buffer", value = 5, min = 0),
+              tags$span(id = ns("snp.to.gene.buffer_tooltip"), icon("question-circle"), style = "color: green;")
+            ),
+            bsTooltip(ns("snp.to.gene.buffer_tooltip"), "Buffer around genes in KB to associate a snp with a gene", "right", "hover")
+            
         )
       ), # End sidebarPanel
       mainPanel(
@@ -129,94 +176,97 @@ Gwas_input_dashboard_Server <- function(id, shared) {
     rootDir <- c(Home = fs::path_home())
     
     # --- Reactives for File Inputs ---
-    vcf_file_path <- reactive({ parsePath_gwas(input$vcf_file_path) })
+    bed_file_path <- reactive({ parsePath_gwas(input$bed_file_path) })
     gwas_table_path <- reactive({ parsePath_gwas(input$gwas_table_path) })
+    annotation_table_path <- reactive({ parsePath_gwas(input$annotation_table_path) })
+    plink_path <- reactive({ parsePath_gwas(input$plink_path) })
     
     # --- TBI status reactive for the VCF file ---
     tbi_status <- reactiveVal(FALSE)
     
     # --- File Chooser Setup ---
-    shinyFileChoose(input, "vcf_file_path", roots = rootDir, session = session, filetypes = c("gz"))
-    shinyFileChoose(input, "gwas_table_path", roots = rootDir, session = session, filetypes = c("csv", "txt", "tsv"))
+    shinyFileChoose(input, "bed_file_path", roots = rootDir, session = session)
+    shinyFileChoose(input, "gwas_table_path", roots = rootDir, session = session)
+    shinyFileChoose(input, "annotation_table_path", roots = rootDir, session = session)
+    shinyFileChoose(input, "plink_path", roots = rootDir, session = session)
     
     # --- Display Selected File Paths ---
-    output$vcf_file_path_results <- renderText({
-      path <- vcf_file_path()
-      if (!is.null(path)) paste("VCF selected:", basename(path))
+    output$bed_file_path_results <- renderText({
+      path <- bed_file_path()
+      if (!is.null(path)) paste("Bed file:", basename(path))
     })
     output$gwas_table_path_results <- renderText({
       path <- gwas_table_path()
-      if (!is.null(path)) paste("GWAS file selected:", basename(path))
+      if (!is.null(path)) paste("GWAS results file:", basename(path))
     })
+    output$anno_table_path_results <- renderText({
+      path <- annotation_table_path()
+      if (!is.null(path)) paste("Annotation table file:", basename(path))
+    })
+    
     
     # --- Check for TBI file when VCF path changes ---
-    observeEvent(vcf_file_path(), {
-      path <- vcf_file_path()
-      if (is.null(path) || !file.exists(path)) {
-        tbi_status(FALSE)
-        return()
-      }
-      if (!endsWith(path, ".gz")) {
-        showNotification("Warning: The selected VCF file is not gzipped (.gz). Indexing is required and only works on bgzip-compressed files.", type = "warning", duration=8)
-        tbi_status(FALSE)
-        return()
-      }
-      
-      has_tbi <- file.exists(paste0(path, ".tbi"))
-      tbi_status(has_tbi)
-      if (!has_tbi) {
-        showModal(modalDialog(
-          title = "VCF Index File (.tbi) Missing",
-          "The selected VCF file is missing its index (.tbi), which is required. Would you like to create it now? This may take a moment.",
-          footer = tagList(
-            actionButton(ns("generate_tbi_yes"), "Yes, Create Index", class = "btn-primary"),
-            modalButton("Cancel")
-          )
-        ))
-      }
-    })
+    # observeEvent(vcf_file_path(), {
+    #   path <- vcf_file_path()
+    #   if (is.null(path) || !file.exists(path)) {
+    #     tbi_status(FALSE)
+    #     return()
+    #   }
+    #   if (!endsWith(path, ".gz")) {
+    #     showNotification("Warning: The selected VCF file is not gzipped (.gz). Indexing is required and only works on bgzip-compressed files.", type = "warning", duration=8)
+    #     tbi_status(FALSE)
+    #     return()
+    #   }
+    #   
+    #   has_tbi <- file.exists(paste0(path, ".tbi"))
+    #   tbi_status(has_tbi)
+    #   if (!has_tbi) {
+    #     showModal(modalDialog(
+    #       title = "VCF Index File (.tbi) Missing",
+    #       "The selected VCF file is missing its index (.tbi), which is required. Would you like to create it now? This may take a moment.",
+    #       footer = tagList(
+    #         actionButton(ns("generate_tbi_yes"), "Yes, Create Index", class = "btn-primary"),
+    #         modalButton("Cancel")
+    #       )
+    #     ))
+    #   }
+    # })
     
     # --- Handle TBI Generation ---
-    observeEvent(input$generate_tbi_yes, {
-      removeModal()
-      vcf_path <- vcf_file_path()
-      req(vcf_path)
-      
-      withProgress(message = 'Generating VCF index...', value = 0.5, {
-        tryCatch({
-          generate_tbi_file(vcf_path) # Assumes generate_tbi_file is available from the package
-          tbi_status(TRUE)
-          showNotification("VCF index file (.tbi) created successfully!", type = "message")
-        }, error = function(e) {
-          showNotification(paste("Error creating index:", e$message, ". Please ensure bcftools/tabix is installed and in your PATH."), type = "error", duration = 10)
-          tbi_status(FALSE)
-        })
-      })
-    })
+    # observeEvent(input$generate_tbi_yes, {
+    #   removeModal()
+    #   vcf_path <- vcf_file_path()
+    #   req(vcf_path)
+    #   
+    #   withProgress(message = 'Generating VCF index...', value = 0.5, {
+    #     tryCatch({
+    #       generate_tbi_file(vcf_path) # Assumes generate_tbi_file is available from the package
+    #       tbi_status(TRUE)
+    #       showNotification("VCF index file (.tbi) created successfully!", type = "message")
+    #     }, error = function(e) {
+    #       showNotification(paste("Error creating index:", e$message, ". Please ensure bcftools/tabix is installed and in your PATH."), type = "error", duration = 10)
+    #       tbi_status(FALSE)
+    #     })
+    #   })
+    # })
     
     # --- Reactive for Input Validation ---
     all_inputs_valid <- reactive({
-      !is.null(vcf_file_path()) && !is.null(gwas_table_path()) &&
-        file.exists(vcf_file_path()) && file.exists(gwas_table_path()) &&
-        tbi_status() == TRUE &&
+      !is.null(bed_file_path()) && !is.null(gwas_table_path()) &&
+        file.exists(bed_file_path()) && file.exists(gwas_table_path()) &&
         is.numeric(input$r2_threshold) && input$r2_threshold >= 0 && input$r2_threshold <= 1 &&
-        is.numeric(input$maf) && input$maf >= 0 && input$maf <= 1 &&
-        is.numeric(input$missing_rate) && input$missing_rate >= 0 && input$missing_rate <= 1 &&
         is.numeric(input$window_span) && input$window_span >= 0
     })
     
-    # --- UI for Input Status ---
+    # --- UI for Table of inputs ---
     output$input_status_update <- renderUI({
       missing_inputs <- character(0)
       current_values <- list()
       
-      if (!is.null(vcf_file_path()) && file.exists(vcf_file_path())) {
-        current_values$`VCF File` <- basename(vcf_file_path())
-        if(!tbi_status()) {
-          missing_inputs <- c(missing_inputs, "VCF file index (.tbi) is missing")
-        }
+      if (!is.null(bed_file_path()) && file.exists(bed_file_path())) {
+        current_values$`Bed File` <- basename(bed_file_path())
       } else {
-        missing_inputs <- c(missing_inputs, "A valid VCF file (.vcf.gz)")
+        missing_inputs <- c(missing_inputs, "A valid bed file")
       }
       
       if (!is.null(gwas_table_path()) && file.exists(gwas_table_path())) {
@@ -225,14 +275,16 @@ Gwas_input_dashboard_Server <- function(id, shared) {
         missing_inputs <- c(missing_inputs, "A valid GWAS results file")
       }
       
+      if (!is.null(annotation_table_path()) && file.exists(annotation_table_path())) {
+        current_values$`Annotation Table` <- basename(annotation_table_path())
+      } else {
+        missing_inputs <- c(missing_inputs, "An annotation table")
+      }
+      
       tag_snps <- clean_snp_tags_gwas(input$tag_snps)
       current_values$`Tag SNPs` <- if (!is.null(tag_snps)) paste(tag_snps, collapse = ", ") else "Auto-infer from GWAS results"
-      
       current_values$`R² Threshold` <- input$r2_threshold
-      current_values$`Minor Allele Frequency` <- input$maf
-      current_values$`Missing Rate` <- input$missing_rate
-      current_values$`Window Span (bp)` <- format(input$window_span, big.mark = ",")
-      current_values$`Include All Impacts` <- if(input$all_impacts) "Yes" else "No"
+      current_values$`Window (kb)` <- format(input$window_span, big.mark = ",")
       
       tagList(
         div(
@@ -270,63 +322,41 @@ Gwas_input_dashboard_Server <- function(id, shared) {
       if (all_inputs_valid()) {
         shinyjs::disable("run_analysis")
         
-        withProgress(message = 'Running analysis from GWAS table...', value = 0, {
-          results <- tryCatch({
-            incProgress(0.1, detail = "Initializing analysis...")
+        withProgress(message = 'Running make_panvar_tables()', value = 0, {
+            # get bedfile path and filename 
+            bedfullpath <- bed_file_path()
+            bedfile <- str_replace(basename(bedfullpath), "\\.bed", "")
+            beddir <- dirname(bedfullpath)
+          
+            # read in files 
+            gwas.df <- data.table::fread(gwas_table_path(), data.table = F)
+            anno.df <- data.table::fread(annotation_table_path(), data.table = F)
+            
+            # run the function
+            out_list <- 
+            make_panvar_tables(gwas.res = gwas.df,
+                               annotation.table = anno.df,
+                               geno.bed.filename = bedfile,
+                               geno.bed.directory = beddir,
+                               tag.snp = input$tag_snp,
+                               pvals.in.log = input$pvals.in.log,
+                               window = input$window_span,
+                               snp.to.gene.buffer = input$snp.to.gene.buffer,
+                               compute.scores = input$compute.scores)
             
             # Call the modified panvar_func
-            panvar_func(
-                vcf_file_path = vcf_file_path(),
-                gwas_data = gwas_table_path(),
-                phenotype_data = NULL, # Explicitly pass NULL for phenotype
-                tag_snps = clean_snp_tags_gwas(input$tag_snps),
-                r2_threshold = input$r2_threshold,
-                maf = input$maf,
-                missing_rate = input$missing_rate,
-                window = input$window_span,
-                all.impacts = input$all_impacts
-            )
+            # panvar_func(
+            #     vcf_file_path = vcf_file_path(),
+            #     gwas_data = gwas_table_path(),
+            #     phenotype_data = NULL, # Explicitly pass NULL for phenotype
+            #     tag_snps = clean_snp_tags_gwas(input$tag_snps),
+            #     r2_threshold = input$r2_threshold,
+            #     maf = input$maf,
+            #     missing_rate = input$missing_rate,
+            #     window = input$window_span,
+            #     all.impacts = input$all_impacts
+            # )
             
-          }, error = function(e) {
-            # Check if this is an LD filtering error
-            error_message <- e$message
-            if (grepl("No SNPs found in LD", error_message, ignore.case = TRUE)) {
-              showModal(modalDialog(
-                title = tags$div(icon("exclamation-triangle"), " No SNPs Found in LD"),
-                tags$div(
-                  tags$h4("Analysis failed: No SNPs in linkage disequilibrium with the tag SNP"),
-                  tags$hr(),
-                  tags$p(tags$strong("Current settings:")),
-                  tags$ul(
-                    tags$li("R² threshold: ", tags$code(input$r2_threshold)),
-                    tags$li("Window size: ", tags$code(format(input$window_span, big.mark=",")), " bp")
-                  ),
-                  tags$hr(),
-                  tags$p(tags$strong("This usually means:")),
-                  tags$ol(
-                    tags$li("The r² threshold is too high - no SNPs meet the linkage threshold"),
-                    tags$li("The window size is too small"),
-                    tags$li("The tag SNP doesn't exist in your genotype data")
-                  ),
-                  tags$hr(),
-                  tags$p(tags$strong(style="color: #d9534f;", "Try these solutions:")),
-                  tags$ul(
-                    tags$li(tags$strong("Lower the R² threshold"), " to 0.3 or 0.4 (currently: ", input$r2_threshold, ")"),
-                    tags$li(tags$strong("Increase the window size"), " to 1,000,000 bp or larger (currently: ", format(input$window_span, big.mark=","), " bp)"),
-                    tags$li(tags$strong("Verify your tag SNP"), " exists in the VCF file")
-                  ),
-                  tags$hr(),
-                  tags$p(style="font-size: 12px; color: #666;", "Full error message:"),
-                  tags$pre(style="font-size: 11px; background-color: #f5f5f5; padding: 10px; max-height: 200px; overflow-y: auto;", error_message)
-                ),
-                easyClose = TRUE,
-                footer = modalButton("Close")
-              ))
-            } else {
-              # Generic error notification for other errors
-              showNotification(paste("Error during analysis:", error_message), type = "error", duration = 15)
-            }
-            NULL
           })
           
           if (!is.null(results)) {
@@ -335,7 +365,6 @@ Gwas_input_dashboard_Server <- function(id, shared) {
           } else {
             shared$analysis_results <- NULL
           }
-        })
         
         # save window span for plotting 
         shared$window_span <- input$window_span
