@@ -53,8 +53,7 @@ plotly_gene_annotation <- function(panvar.table.list = NULL,
                                  window,
                                  gene.color = "blue",
                                  point.color = NULL,
-                                 point.fill.scale = NULL,
-                                 plotly.style = F){
+                                 point.fill.scale = NULL){
   
   
   # make sure we don't use both

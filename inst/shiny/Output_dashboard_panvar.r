@@ -122,32 +122,6 @@ output_dashboard_UI <- function(id) {
           selected = "dynamic"
         ),
         
-        # Conditional panel for file selection - only shows when "file" is selected
-        conditionalPanel(
-          condition = sprintf("input['%s'] === 'file'", ns("data_source")),
-          div(
-            style = "display: flex; align-items: center; gap: 10px;",
-            shinyFilesButton(
-              ns("Pre_existing_panvaR_results_path"),
-              "Select Pre-existing panvaR results",
-              "Please select a file",
-              multiple = FALSE # Keep as FALSE, expecting a single RDS/TSV file containing the list or single result
-            ),
-            tags$span(
-              id = ns("Pre_existing_panvaR_results_path_tooltip"),
-              icon("question-circle"),
-              style = "color: green;"
-            )
-          ),
-          bsTooltip(
-            id = ns("Pre_existing_panvaR_results_path_tooltip"),
-            title = "Provide path to a pre-existing panvaR result (can be an .rds file containing a list for multiple tag SNPs, or a .tsv/.csv for a single result).",
-            placement = "right",
-            trigger = "hover"
-          ),
-          textOutput(ns("Pre_existing_panvaR_results"))
-        ),
-        
         # --- START: Add Bulk Download Button ---
         hr(), # Add a horizontal rule for separation
         h4("Downloads"),
@@ -445,30 +419,6 @@ output_dashboard_Server <- function(id, shared) {
       original_plots <- reactiveVal(NULL)
       
       
-      # --- File Chooser Setup ---
-      shinyFileChoose(
-        input,
-        "Pre_existing_panvaR_results_path",
-        roots = c(Home = fs::path_home()),
-        session = session,
-        filetypes = c("rds", "tsv", "csv") # Allow RDS for lists, tsv/csv for single tables
-      )
-      
-      # Display chosen file path
-      output$Pre_existing_panvaR_results <- renderText({
-        # Use tryCatch to handle potential errors if input$Pre_existing_panvaR_results_path is invalid
-        file_info <- tryCatch({
-          shinyFiles::parseFilePaths(c(Home = fs::path_home()), input$Pre_existing_panvaR_results_path)
-        }, error = function(e) NULL)
-        
-        if (!is.null(file_info) && nrow(file_info) > 0) {
-          paste("Selected file:", file_info$name[1])
-        } else {
-          "No file selected."
-        }
-      })
-      
-      
       # --- Observe Data Source and Load Data ---
       observe({
         source_type <- input$data_source
@@ -517,110 +467,9 @@ output_dashboard_Server <- function(id, shared) {
           } else {
             showNotification("No dynamic analysis results available yet.", type = "warning")
           }
-        } else { # source_type == "file"
-          req(input$Pre_existing_panvaR_results_path)
-          file_info <- shinyFiles::parseFilePaths(c(Home = fs::path_home()), input$Pre_existing_panvaR_results_path)
-          
-          if (nrow(file_info) > 0) {
-            file_path <- file_info$datapath[1]
-            tryCatch({
-              if (endsWith(tolower(file_path), ".rds")) {
-                # Load RDS file, expecting a list or single result object
-                loaded_object <- readRDS(file_path)
-                # Check if it's a list of results (list of lists, where each inner list has plot/table)
-                is_list_of_results <- is.list(loaded_object) && !is.data.frame(loaded_object) && length(loaded_object)>0 && is.list(loaded_object[[1]]) && all(c("plot", "table") %in% names(loaded_object[[1]]))
-                is_single_result <- is.list(loaded_object) && all(c("plot", "table") %in% names(loaded_object))
-                
-                if (is_list_of_results) {
-                  # Assume it's a list of results
-                  results_to_store <- loaded_object
-                  names_from_rds <- names(results_to_store)
-                  if (is.null(names_from_rds) || any(names_from_rds == "")) {
-                    # Try to extract names from tables
-                    possible_names <- sapply(results_to_store, function(res) {
-                      if (is.list(res) && "table" %in% names(res) && is.data.frame(res$table)) {
-                        tag_row <- res$table %>% filter(Type == "tag_snp") %>% head(1)
-                        if (nrow(tag_row) > 0) return(paste0(tag_row$CHROM, ":", tag_row$BP))
-                      }
-                      return(NA_character_)
-                    })
-                    default_names <- paste("Result", seq_along(results_to_store))
-                    names_to_store <- ifelse(is.na(possible_names), default_names, possible_names)
-                  } else {
-                    names_to_store <- names_from_rds
-                  }
-                  # Extract plots
-                  plots_to_store <- lapply(results_to_store, function(res) if(is.list(res) && "plot" %in% names(res)) res$plot else NULL)
-                  
-                } else if (is_single_result) {
-                  # Assume it's a single result structure
-                  results_to_store <- loaded_object
-                  single_name <- "Single Result"
-                  # Try to get name for the single result
-                  if (is.data.frame(results_to_store$table)) {
-                    tag_row <- results_to_store$table %>% filter(Type == "tag_snp") %>% head(1)
-                    if (nrow(tag_row) > 0) single_name <- paste0(tag_row$CHROM, ":", tag_row$BP)
-                  }
-                  names_to_store <- single_name
-                  plots_to_store <- list(results_to_store$plot) # Store single plot
-                  
-                } else {
-                  stop("RDS file does not contain a valid panvaR result list or single result structure.")
-                }
-                
-              } else if (endsWith(tolower(file_path), ".tsv") || endsWith(tolower(file_path), ".csv")) {
-                # Load delimited file, assuming it's a single result table
-                single_table <- data.table::fread(file_path)
-                # Basic validation for required columns in the single table
-                required_cols_single <- c("CHROM", "BP", "Pvalues", "LD", "Type", "IMPACT", "GENE", "EFFECT", "AA", "REF", "ALT", "final_weight") # Add all expected columns
-                missing_cols_single <- setdiff(required_cols_single, names(single_table))
-                if(length(missing_cols_single) > 0) {
-                  stop(paste("Loaded table file is missing required columns:", paste(missing_cols_single, collapse=", ")))
-                }
-                # We can't reconstruct the original plot object, so set plot to NULL
-                results_to_store <- list(plot = NULL, table = single_table)
-                single_name <- "Single Result File"
-                # Try to get name for the single result
-                tag_row <- single_table %>% filter(Type == "tag_snp") %>% head(1)
-                if (nrow(tag_row) > 0) single_name <- paste0(tag_row$CHROM, ":", tag_row$BP)
-                names_to_store <- single_name
-                plots_to_store <- list(NULL) # No plot available from table file
-                showNotification("Loaded table from file. Plot generation/download from file is not supported.", type = "info", duration=7)
-                
-              } else {
-                stop("Unsupported file type. Please select an .rds, .tsv, or .csv file.")
-              }
-              
-              # Check if results are empty after loading
-              is_empty_result <- FALSE
-              if(is.null(results_to_store)) {
-                is_empty_result <- TRUE
-              } else if (is.list(results_to_store) && !is.data.frame(results_to_store) && length(results_to_store) == 0) {
-                is_empty_result <- TRUE
-              } else if (is.list(results_to_store) && all(c("plot", "table") %in% names(results_to_store)) && (is.null(results_to_store$table) || nrow(results_to_store$table) == 0) ){
-                is_empty_result <- TRUE
-              }
-              
-              if (is_empty_result) {
-                showNotification("Loaded file contains no valid data.", type = "warning")
-                results_to_store <- NULL
-                names_to_store <- NULL
-                plots_to_store <- NULL
-              }
-              
-            }, error = function(e) {
-              showNotification(paste("Error loading or processing file:", e$message), type = "error")
-              results_to_store <- NULL
-              names_to_store <- NULL
-              plots_to_store <- NULL
-            })
-          } else {
-            # This case should ideally not be reached if req() is used, but added for safety
-            results_to_store <- NULL
-            names_to_store <- NULL
-            plots_to_store <- NULL
-          }
-        }
+        } 
+        
+        
         raw_results(results_to_store)
         result_names(names_to_store)
         original_plots(plots_to_store) # Store the original plots
