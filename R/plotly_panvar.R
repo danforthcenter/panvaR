@@ -157,7 +157,7 @@ plotly_panvar <- function(panvar.table.list = NULL,
     layout(legend = list(x = -.15, y = 1)) 
   
   # make combined plot
-  out <- plotly::subplot(test, anno.ly, nrows = 1, shareY = T, which_layout = 1)
+  out <- plotly::subplot(man, anno, nrows = 1, shareY = T, which_layout = 1)
   
   return(out)
 }

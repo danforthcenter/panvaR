@@ -126,7 +126,7 @@ Gwas_input_dashboard_UI <- function(id) {
             # Window 
             div(
               style = "display: flex; align-items: center; gap: 10px;",
-              numericInput(ns("window_span"), "Window around tag SNP in kilobases:", value = 100, min = 0),
+              numericInput(ns("window_span"), "Window around tag SNP in kilobases:", value = 50, min = 0, step = 5),
               tags$span(id = ns("window_span_tooltip"), icon("question-circle"), style = "color: green;")
             ),
             bsTooltip(ns("window_span_tooltip"), "The physical distance (in kilobases) on either side of tag SNP.", "right", "hover")

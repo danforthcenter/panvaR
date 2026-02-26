@@ -4,6 +4,7 @@
 ## usethis namespace: start
 #' @importFrom bigsnpr download_plink2
 #' @importFrom bigstatsr big_univLinReg
+#' @importFrom bslib tooltip
 #' @importFrom data.table fread
 #' @importFrom dplyr %>%
 #' @importFrom dplyr across

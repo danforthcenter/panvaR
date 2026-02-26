@@ -85,6 +85,8 @@ anno.ly$x$data[[4]]$textposition <- "right"
 
 plotly::subplot(test, anno.ly, nrows = 1, shareY = T, which_layout = 1)
 
+# change the alpha thing to plot or not
+
 plotly_panvar(panvar.table.list = tables, 
               pvals.in.log = F,
               plot.r2.thresh = .2,

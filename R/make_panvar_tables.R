@@ -149,6 +149,7 @@ make_panvar_tables <- function(gwas.res,
         mutate(LOGPVAL = -log10(.data$PVAL))
     } else {
       score.in <- score.in %>% 
+        select(-matches("LOGPVAL")) %>% 
         rename("LOGPVAL" = "PVAL")
     }
     
