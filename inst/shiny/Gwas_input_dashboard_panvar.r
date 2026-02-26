@@ -41,7 +41,7 @@ Gwas_input_dashboard_UI <- function(id) {
               shinyFilesButton(
                 ns("bed_file_path"),
                 "Select Genotype File (.bed)",
-                "Please select a file",
+                "Select a genotype file in bed format",
                 multiple = FALSE
               ),
               tags$span(id = ns("bed_file_tooltip"), icon("question-circle"), style = "color: green;")
@@ -55,7 +55,7 @@ Gwas_input_dashboard_UI <- function(id) {
               shinyFilesButton(
                 ns("gwas_table_path"),
                 "Select GWAS Results File",
-                "Please select a file",
+                "Select a table of GWAS results",
                 multiple = FALSE
               ),
               tags$span(id = ns("gwas_table_tooltip"), icon("question-circle"), style = "color: green;")
@@ -69,7 +69,7 @@ Gwas_input_dashboard_UI <- function(id) {
               shinyFilesButton(
                 ns("annotation_table_path"),
                 "Select Annotation Table File",
-                "Please select a file",
+                "Select a table of gene annotations",
                 multiple = FALSE
               ),
               tags$span(id = ns("anno_table_tooltip"), icon("question-circle"), style = "color: green;")
@@ -87,7 +87,7 @@ Gwas_input_dashboard_UI <- function(id) {
               shinyFilesButton(
                 ns("plink_path"),
                 "Select plink2 executable",
-                "Please select a file",
+                "Select plink2 executable",
                 multiple = FALSE
               ),
               tags$span(id = ns("plink_path_tooltip"), icon("question-circle"), style = "color: green;")
@@ -102,7 +102,7 @@ Gwas_input_dashboard_UI <- function(id) {
             # Tag SNPs Input
             div(
               style = "display: flex; align-items: center; gap: 10px;",
-              textInput(ns("tag_snp"), "Tag SNP:", ""),
+              textInput(ns("tag_snp"), "Tag SNP:", value = "Chr_05-6857045"),
               tags$span(id = ns("tag_snps_tooltip"), icon("question-circle"), style = "color: green;")
             ),
             bsTooltip(ns("tag_snps_tooltip"), "Specify tag SNPs in CHR:BP format. If empty, the top hit from the GWAS table will be used.", "right", "hover"),
@@ -173,7 +173,6 @@ Gwas_input_dashboard_UI <- function(id) {
 Gwas_input_dashboard_Server <- function(id, shared) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    rootDir <- c(Home = fs::path_home())
     
     # --- Reactives for File Inputs ---
     bed_file_path <- reactive({ parsePath_gwas(input$bed_file_path) })
@@ -185,10 +184,13 @@ Gwas_input_dashboard_Server <- function(id, shared) {
     tbi_status <- reactiveVal(FALSE)
     
     # --- File Chooser Setup ---
-    shinyFileChoose(input, "bed_file_path", roots = rootDir, session = session)
-    shinyFileChoose(input, "gwas_table_path", roots = rootDir, session = session)
-    shinyFileChoose(input, "annotation_table_path", roots = rootDir, session = session)
-    shinyFileChoose(input, "plink_path", roots = rootDir, session = session)
+    rootDir <- c(Home = fs::path_home())
+    # make this example path to reduce click
+    # rootDir <- "inst/extdata"
+    shinyFileChoose(input, "bed_file_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
+    shinyFileChoose(input, "gwas_table_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
+    shinyFileChoose(input, "annotation_table_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
+    shinyFileChoose(input, "plink_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
     
     # --- Display Selected File Paths ---
     output$bed_file_path_results <- renderText({

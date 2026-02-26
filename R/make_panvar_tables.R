@@ -100,7 +100,8 @@ make_panvar_tables <- function(gwas.res,
   # format some columns in gwas.res
   gwas.res <- gwas.res %>%
     as.data.frame() %>% 
-    mutate(CHR = as.numeric(.data$CHR),
+    mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-")) %>% 
+    mutate(CHR = get_chrom_from_id(.data$marker.ID),
            POS = as.numeric(.data$POS)) 
   
   # filter gwas df to just in window and join LD
