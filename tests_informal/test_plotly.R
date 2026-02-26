@@ -46,29 +46,64 @@ tables <- make_panvar_tables(gwas.res = gwas.df,
 
 # make manhattan
 man <- 
-plot_panvar_manhattan(panvar.table.list = tables,
+plotly_panvar_manhattan(panvar.table.list = tables,
                       pvals.in.log = F,
                       window = 20, 
-                      sig.line = 6)
+                      sig.line = 6,
+                      qualitative.annotation = "IMPACT",
+                      quantitative.annotation = "snp.score")
 
 man
+test <-
+man %>% 
+  layout(legend = list(x = -.15, y = 1)) 
+
+
+man <- 
+  plot_panvar_manhattan(panvar.table.list = tables,
+                        pvals.in.log = F,
+                        window = 20, 
+                        sig.line = 6,
+                        qualitative.annotation = "IMPACT")
+man
+ggplotly(man) 
+man.ly <- ggplotly(man, tooltip = c("POS", "PVAL", plot.quant.var, "plot.qual.var"))
+man.ly
 
 anno <- 
   plotly_gene_annotation(panvar.table.list = tables,
                             window = 20, 
                        point.color = "snp.score")
-anno
+
+plotly::subplot(man, anno, nrows = 1, shareY = T)
+add_lines()
 ggplotly(anno)
-ggp <- ggplotly(anno,tooltip = c("text", "snp.score"))
-ggp$x$data[[4]]$textposition <- "right"
-ggp
+
+anno.ly <- ggplotly(anno,tooltip = c("text", "snp.score"))
+anno.ly$x$data[[4]]$textposition <- "right"
 
 
-plotly::subplot(man, ggp, nrows = 1, shareY = T)
+plotly::subplot(test, anno.ly, nrows = 1, shareY = T, which_layout = 1)
+
+plotly_panvar(panvar.table.list = tables, 
+              pvals.in.log = F,
+              plot.r2.thresh = .2,
+              unplotted.alpha = .4,
+              window = 20,
+              sig.line = 6,
+              qualitative.annotation = "IMPACT",
+              annotation.point.variable = "LD")
 
 # ------------------------------------------------------------------------\
 # example --------
 # ------------------------------------------------------------------------\
+
+p1 <- plot_ly(economics, x = ~date, y = ~uempmed)
+p2 <- plot_ly(economics, x = ~date, y = ~unemploy)
+subplot(p1, p2, p1, p2, nrows = 2, margin = 0.05)
+
+p1 <- add_lines(p1, color = I("black"), name = "1st", legendgroup = "1st")
+style()
 
 # from plotly.subplots import make_subplots
 # import plotly.graph_objects as go

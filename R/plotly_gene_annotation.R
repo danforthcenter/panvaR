@@ -177,14 +177,16 @@ plotly_gene_annotation <- function(panvar.table.list = NULL,
         theme(legend.position = "none")
     }
   }
-  
-  
 
   anno <- anno +
     geom_text(aes(x = text.x.start, y = .data$y.pos, label = .data$geneID),
               hjust = 0) 
 
   
-  return(anno)
+  anno.ly <- ggplotly(anno, tooltip = c("text", point.color))
+  anno.ly$x$data[[4]]$textposition <- "right"
+  
+  
+  return(anno.ly)
   
 }
