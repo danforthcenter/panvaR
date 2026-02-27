@@ -32,4 +32,4 @@ reference:
   desc: >
     "Functions for running the shiny app"
   contents:
-  - panvar_gui
+  - panvar_shiny
