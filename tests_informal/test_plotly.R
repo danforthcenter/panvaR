@@ -87,14 +87,27 @@ plotly::subplot(test, anno.ly, nrows = 1, shareY = T, which_layout = 1)
 
 # change the alpha thing to plot or not
 
+plotly_panvar_manhattan(panvar.table.list = tables, 
+                        pvals.in.log = F,
+                        plot.r2.thresh = .2,
+                        # unplotted.alpha = 0,
+                        remove.low.ld.points = T,
+                        window = 20,
+                        sig.line = 6,
+                        qualitative.annotation = "IMPACT")
+
+
 plotly_panvar(panvar.table.list = tables, 
               pvals.in.log = F,
               plot.r2.thresh = .2,
-              unplotted.alpha = .4,
+              # unplotted.alpha = 0,
+              remove.low.ld.points = T,
               window = 20,
               sig.line = 6,
               qualitative.annotation = "IMPACT",
               annotation.point.variable = "LD")
+
+
 
 # ------------------------------------------------------------------------\
 # example --------

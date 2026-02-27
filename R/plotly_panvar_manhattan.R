@@ -35,7 +35,8 @@ plotly_panvar_manhattan <- function(panvar.table.list = NULL,
                                   ld.list = NULL,
                                   pvals.in.log = TRUE,
                                   plot.r2.thresh = .2,
-                                  unplotted.alpha = .4,
+                                  # unplotted.alpha = .4,
+                                  remove.low.ld.points = FALSE,
                                   window,
                                   sig.line,
                                   qualitative.annotation = NULL,
@@ -90,6 +91,8 @@ plotly_panvar_manhattan <- function(panvar.table.list = NULL,
   
   
   # make manhattan
+  unplotted.alpha <- .4
+  
   plot.df <- gwas.sub %>%
     # alpha scale
     mutate(how.to.plot = case_when(.data$R2 > plot.r2.thresh ~ 1,
@@ -97,6 +100,12 @@ plotly_panvar_manhattan <- function(panvar.table.list = NULL,
     # color scale
     mutate(plot.R2 = case_when(.data$R2 < plot.r2.thresh ~ NA,
                                TRUE ~ R2))
+  
+  # remove below threshold if you want
+  if(remove.low.ld.points){
+    plot.df <- plot.df %>% 
+      filter(how.to.plot != unplotted.alpha)
+  }
   
   # change pvalue if needed
   if(!pvals.in.log){

@@ -30,12 +30,12 @@ plot_ui <- function(id){
           # plot.r2.thresh 
           div(
             style = "display: flex; align-items: center; gap: 10px;",
-            numericInput(ns("plot.r2.thresh"), "LD threshold:", value = .2, min = 0, step = 1)
+            numericInput(ns("plot.r2.thresh"), "LD threshold:", value = .2, min = 0, step = .1)
           ),
           # unplotted.alpha 
           div(
             style = "display: flex; align-items: center; gap: 10px;",
-            numericInput(ns("unplotted.alpha"), "Unfilled LD alpha:", value = .4, min = 0, step = 1)
+            checkboxInput(ns("remove.low.ld.points"), "Display low LD points?", TRUE)
           ),
           
           # sig.line
@@ -121,7 +121,8 @@ plot_server <- function(id, shared) {
         plotly_panvar(shared$analysis_results,
                     window = input$window,
                     plot.r2.thresh = input$plot.r2.thresh,
-                    unplotted.alpha = input$unplotted.alpha,
+                    # unplotted.alpha = input$unplotted.alpha,
+                    remove.low.ld.points = !input$remove.low.ld.points,
                     sig.line = input$sig.line,
                     qualitative.annotation = qc_qualitative.annotation,
                     quantitative.annotation = qc_quantitative.annotation,
