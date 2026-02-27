@@ -54,6 +54,13 @@ results”
   output from a single gwas model.
 - [`plot_pc_scree()`](https://danforthcenter.github.io/panvaR/reference/plot_pc_scree.md)
   : Calculate and plot pcs
+- [`plotly_gene_annotation()`](https://danforthcenter.github.io/panvaR/reference/plotly_gene_annotation.md)
+  : Plot genes and their locations
+- [`plotly_panvar()`](https://danforthcenter.github.io/panvaR/reference/plotly_panvar.md)
+  : Make a plot that lines up manhattan and gene locations
+- [`plotly_panvar_manhattan()`](https://danforthcenter.github.io/panvaR/reference/plotly_panvar_manhattan.md)
+  : Make sideways manhattan plot for building locus zoom. Receives
+  output from a single gwas model.
 - [`make_consistent_scale()`](https://danforthcenter.github.io/panvaR/reference/make_consistent_scale.md)
   : Generate discrete scale
 
@@ -61,6 +68,6 @@ results”
 
 “Functions for running the shiny app”
 
-- [`panvar_gui()`](https://danforthcenter.github.io/panvaR/reference/panvar_gui.md)
-  : panvar_gui Run the panvaR shiny implementation. Will launch in a
+- [`panvar_shiny()`](https://danforthcenter.github.io/panvaR/reference/panvar_shiny.md)
+  : panvar_shiny Run the panvaR shiny implementation. Will launch in a
   default browser or can navigate to IP address shown.

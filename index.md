@@ -26,8 +26,8 @@ panvar_gui()
 
 ## Getting started
 
-To get started, check out the documentation
-[here](https://danforthcenter.github.io/panvaR/).
+To get started, check out the tutorial vignette
+[here](https://danforthcenter.github.io/panvaR/articles/panvaR.html).
 
 ## Main output
 
