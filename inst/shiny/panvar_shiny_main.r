@@ -33,8 +33,8 @@ source_module <- function(file_name) {
 
 # source_module("Input_dashboard_panvar.r")
 # source_module("Output_dashboard_panvar.r")
-source_module("Gwas_input_dashboard_panvar.r")
-source_module("Plot_dashboard_panvar.R")
+source_module("input_dashboard_panvar.r")
+source_module("results_dashboard_panvar.R")
 
 ui <- fluidPage(
   tags$head(
