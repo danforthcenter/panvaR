@@ -12,7 +12,6 @@ License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-Depends:
 Suggests: 
     knitr,
     rmarkdown
@@ -40,10 +39,12 @@ Imports:
     pcadapt,
     bigsnpr,
     DT,
-  	shinyBS,
-  	plotly,
+    shinyBS,
+    plotly,
     shinyFiles,
-  	shinyjs
+    shinyjs,
+    bslib,
+    ggnewscale
 URL: https://danforthcenter.github.io/panvaR/
-Remotes:  
+Remotes: 
     xiaolei-lab/rMVP

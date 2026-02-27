@@ -31,10 +31,10 @@ source_module <- function(file_name) {
 }
 
 
-source_module("Input_dashboard_panvar.r")
-source_module("Output_dashboard_panvar.r")
-source_module("Gwas_input_dashboard_panvar.r")
-
+# source_module("Input_dashboard_panvar.r")
+# source_module("Output_dashboard_panvar.r")
+source_module("input_dashboard_panvar.r")
+source_module("results_dashboard_panvar.R")
 
 ui <- fluidPage(
   tags$head(
@@ -42,6 +42,7 @@ ui <- fluidPage(
     # tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
   useShinyjs(), # Initialize shinyjs
+  # bsplus::use_bs_tooltip(),
   div(
     class = "app-header",
     style = "background-color: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #dee2e6; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;",
@@ -56,9 +57,10 @@ ui <- fluidPage(
   ),
   tabsetPanel(
     id = "mainTabs",
-    tabPanel("De Novo Analysis", input_dashboard_UI("module1")),
-    tabPanel("Analysis from GWAS", Gwas_input_dashboard_UI("module3")), # New Tab
-    tabPanel("Results", output_dashboard_UI("module2"))
+    # tabPanel("De Novo Analysis", input_dashboard_UI("module1")),
+    tabPanel("Generate inputs", Gwas_input_dashboard_UI("module3")), # New Tab
+    # tabPanel("Results", output_dashboard_UI("module2")),
+    tabPanel("Results", plot_ui("plots"))
   )
 )
 
@@ -68,7 +70,7 @@ server <- function(input, output, session) {
   observeEvent(input$restart_app, {
     # Reset inputs in both input modules
     # This might need more specific resets based on module implementation
-    shinyjs::reset("module1")
+    # shinyjs::reset("module1")
     shinyjs::reset("module3")
     
     shared$analysis_results <- NULL
@@ -98,9 +100,10 @@ server <- function(input, output, session) {
   )
   
   # Initialize all three modules
-  input_dashboard_Server("module1", shared) # De Novo Analysis module
+  # input_dashboard_Server("module1", shared) # De Novo Analysis module
   Gwas_input_dashboard_Server("module3", shared) # Analysis from GWAS module
-  output_dashboard_Server("module2", shared) # Results module
+  # output_dashboard_Server("module2", shared) # Results module
+  plot_server("plots", shared)
   
   # Observe successful analysis completion and switch to the Results tab
   observeEvent(shared$analysis_results, {

@@ -205,6 +205,7 @@ anno <- read.csv("~/scratch/setaria_biomart.txt") %>%
   mutate(annotation = case_when(annotation == "" ~ "No gene description.",
                                 TRUE ~ annotation)) %>% 
   distinct()
+luebbert::ritecsv(anno, "~/scratch/panvar_test/setaria_shatter_full/Anno_setaria_shattering.csv")
 
 qtl.df.test <- gwas.df %>% 
   dplyr::slice_max(LOGPVAL, n = 3)
