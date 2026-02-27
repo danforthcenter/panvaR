@@ -13,14 +13,10 @@
 #' @param ld.list list, output of [panvaR::get_ld_in_window]
 #' @param pvals.in.log boolean, if TRUE PVAL column has already been converted to -log10(pvalue)
 #' @param plot.r2.thresh minimum LD with qtl snps to plot snps colored by LD
-#' @param unplotted.alpha numeric, number from 0 to 1 to indicate alpha values
-#'   of snps below the plot.r2.thresh. To not plot these snps set value to 0.
+#' @param remove.low.ld.points boolean, if TRUE, points below `plot.r2.thresh` will not be plotted. 
 #' @param window numeric, total window size in KB, all variants within .5 *
 #'   window are calculated.
 #' @param sig.line numeric, -log10(p) value to draw line on plot
-#' @param orient character, will rotate plot 90 degrees. vertical (V) or
-#'   horizontal (H) refers to how the "buildings" of the plot are plotted. "V"
-#'   places pvalue on y-axis, "H" places pvalues on x-axis.
 #' @param qualitative.annotation character, column in `gwas.res` that contains
 #'   qualitative annotations. For example impact grades from snpeff. See
 #'   [panvaR::format_snpeff_annotations]. Will be plotted as shapes. Only
@@ -37,18 +33,11 @@
 #'   that alters the color scale used. Or a previous call to a ggplot2 fill
 #'   scale for example [ggplot2::scale_fill_stepsn].
 #' @param plot.title character, a title for the plot
-#' @param include.gene.id boolean, if TRUE, `geneID` column will be included in
-#'   annotation plot.
-#' @param highlight.gene.ids character, vector of geneID's that will be
-#'   highlighted in the plot.
-#' @param gene.highlight.color character, a color to highlight specific geneIDs
 #' @param annotation.point.variable character, variable in  `annotation.table` that indicates how to color points plotted next to gene
 #'   descriptions. If not supplied, no points are plotted. The input "LD" is
 #'   reserved and will use LD.
 #' @param annotation.point.scale ggplot2 scale object, a color scale to customize
 #'   how point.color is displayed.
-#' @param plot.effect boolean, if TRUE include volcano style effect vs pvalue
-#'   plot as inset.
 #'
 #' @returns ggplot2 object of plot with manhattan plot alongside genes for a
 #' given genomic window.
@@ -62,7 +51,6 @@ plotly_panvar <- function(panvar.table.list = NULL,
                         annotation.table = NULL,
                         pvals.in.log = T,
                         plot.r2.thresh = .2,
-                        # unplotted.alpha = .4,
                         remove.low.ld.points = FALSE, 
                         window,
                         sig.line,

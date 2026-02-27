@@ -43,7 +43,8 @@ Imports:
     plotly,
     shinyFiles,
     shinyjs,
-    bslib
+    bslib,
+    ggnewscale
 URL: https://danforthcenter.github.io/panvaR/
 Remotes: 
     xiaolei-lab/rMVP

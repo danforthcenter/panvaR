@@ -62,8 +62,7 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
                                       highlight.color = "red",
                                       use.arrows = F,
                                       point.color = NULL,
-                                      point.fill.scale = NULL,
-                                 plotly.style = F){
+                                      point.fill.scale = NULL){
   
   
   # make sure we don't use both

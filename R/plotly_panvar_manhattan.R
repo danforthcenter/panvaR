@@ -1,17 +1,13 @@
-#' Make sideways manhattan plot for building locus zoom. Receives output from a single gwas model.
+#' Make sideways manhattan plot for building locus zoom. Receives output from a single gwas model. 
 #'
 #' @param panvar.table.list list, output from [panvaR::make_panvar_tables]. Provide either this list or both gwas.res and ld.list.
 #' @param gwas.res data.frame of all gwas results, should contain columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and pvalue).
 #' @param ld.list list, output of [panvaR::get_ld_in_window]
 #' @param pvals.in.log boolean, are pvalues in input data.frames in -log10(p)?
 #' @param plot.r2.thresh minimum LD with qtl snps to plot snps colored by LD
-#' @param unplotted.alpha numeric, number from 0 to 1 to indicate alpha values of snps below the plot.r2.thresh. 
-#' To not plot these snps set value to 0. 
+#' @param remove.low.ld.points boolean, if TRUE, points below `plot.r2.thresh` will not be plotted. 
 #' @param window numeric, kilobases on either side of top QTL snp to plot
 #' @param sig.line numeric, -log10(p) value to draw line on plot
-#' @param orient character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
-#' refers to how the "buildings" of the plot are plotted. 
-#' "V" places pvalue on y-axis, "H" places pvalues on x-axis. 
 #' @param qualitative.annotation character, column in gwas.res that contains qualitative annotations.
 #' For example impact grades from snpeff. See [panvaR::format_snpeff_annotations].
 #' Will be plotted as shapes. Only accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special 
@@ -25,7 +21,7 @@
 #' Or a previous call to a ggplot2 fill scale for example [ggplot2::scale_fill_stepsn].
 #'
 #' @returns
-#' GGplot of manhattan plot with points colored by R2. Accepts input
+#' Plotly of manhattan plot with points colored by R2. Accepts input
 #' @export
 #'
 #' @examples
@@ -104,7 +100,7 @@ plotly_panvar_manhattan <- function(panvar.table.list = NULL,
   # remove below threshold if you want
   if(remove.low.ld.points){
     plot.df <- plot.df %>% 
-      filter(how.to.plot != unplotted.alpha)
+      filter(.data$how.to.plot != unplotted.alpha)
   }
   
   # change pvalue if needed
