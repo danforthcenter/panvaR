@@ -58,9 +58,9 @@ ui <- fluidPage(
   tabsetPanel(
     id = "mainTabs",
     # tabPanel("De Novo Analysis", input_dashboard_UI("module1")),
-    tabPanel("Generate tables", Gwas_input_dashboard_UI("module3")), # New Tab
+    tabPanel("Generate inputs", Gwas_input_dashboard_UI("module3")), # New Tab
     # tabPanel("Results", output_dashboard_UI("module2")),
-    tabPanel("Plot", plot_ui("plots"))
+    tabPanel("Results", plot_ui("plots"))
   )
 )
 

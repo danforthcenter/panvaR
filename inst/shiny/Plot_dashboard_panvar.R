@@ -73,9 +73,12 @@ plot_ui <- function(id){
       
       # Main panel for displaying the plot
       mainPanel(
-        # plotOutput(ns("distPlot"))
-        plotlyOutput(ns("panvar_plot"))
-        
+        tabsetPanel(
+          id = "tabs",
+          tabPanel("Plot", plotlyOutput(ns("panvar_plot"))),
+          tabPanel("Genes Table", dataTableOutput(ns("table_genes"))),
+          tabPanel("SNPs Table", DTOutput(ns("table_snps")))
+        )
       )
     )
   )
@@ -131,17 +134,15 @@ plot_server <- function(id, shared) {
         
       })
       
-      # Create the plot output
-      # output$distPlot <- renderPlot({
-      #   # Ensure inputs are available before plotting (optional but good practice)
-      #   req(input$n_obs, input$x_var, input$y_var) 
-      #   
-      #   # Generate the plot based on user inputs
-      #   ggplot(data = head(iris, input$n_obs), 
-      #          aes_string(x = input$x_var, y = input$y_var, color = "Species")) +
-      #     geom_point() +
-      #     labs(title = paste("Plot of", input$y_var, "vs", input$x_var))
-      # })
+      # genes table
+      output$table_genes <- renderDataTable({
+        datatable(shared$analysis_results$anno)
+      })
+      
+      # snps table
+      output$table_snps <- renderDataTable({
+        datatable(shared$analysis_results$gwas)
+      })
     }
   )
 }
