@@ -20,7 +20,7 @@ We have also implemented a GUI for visualizing results. To use the GUI run:
 
 ``` r
 library(panvaR)
-panvar_gui()
+panvar_shiny()
 ```
 
 ## Getting started
