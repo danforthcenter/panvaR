@@ -21,7 +21,7 @@ run:
 
 ``` r
 library(panvaR)
-panvar_gui()
+panvar_shiny()
 ```
 
 ## Getting started
