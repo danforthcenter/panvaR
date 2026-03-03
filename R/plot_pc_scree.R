@@ -15,7 +15,7 @@
 #' @examples
 #' # work in progress
 plot_pc_scree <- function(bedfile.path,
-                          num.pcs,
+                          num.pcs = 10,
                           cumulative = F){
   
   bedfile.path <- normalizePath(bedfile.path)
