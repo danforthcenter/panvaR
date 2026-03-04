@@ -45,6 +45,6 @@ Imports:
     shinyjs,
     bslib,
     ggnewscale
-URL: https://danforthcenter.github.io/panvaR/
+URL: https://danforthcenter.github.io/panvaR/, https://github.com/danforthcenter/panvaR
 Remotes: 
     xiaolei-lab/rMVP
