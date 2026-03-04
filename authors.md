@@ -9,12 +9,11 @@
 
 ## Citation
 
-Luebbert C, Dhakal R (2026). *panvaR: An R package for prioritizing
-candidate genes from GWA studies*. R package version 0.0.0.9000,
-<https://danforthcenter.github.io/panvaR/>.
+Luebbert C, Dhakal R (2026). *panvaR: panvaR: finemapping GWAS peaks*. R
+package version 0.0.0.9000, <https://danforthcenter.github.io/panvaR/>.
 
     @Manual{,
-      title = {panvaR: An R package for prioritizing candidate genes from GWA studies},
+      title = {panvaR: panvaR: finemapping GWAS peaks},
       author = {Collin Luebbert and Rijan Dhakal},
       year = {2026},
       note = {R package version 0.0.0.9000},
