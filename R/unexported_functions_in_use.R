@@ -173,7 +173,7 @@ make_ld <- function(plink.path,
     "--ld-window",
     "99999",
     "--ld-window-r2",
-    "0",
+    "-1",
     "--out",
     outfile
   )

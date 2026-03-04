@@ -76,6 +76,10 @@ snp_make_clumps <- function(geno.bed.filename,
   while(length(snps.to.test) > 0){
     
     this.snp.name <- snps.to.test[1]
+    print(this.snp.name)
+    if(this.snp.name == "1-43628780"){
+      browser()
+    }
     # check if any snps are in window
     this.snp.info <- filter(gwas.res, .data$marker.ID == this.snp.name) %>%
       select("SNP" = "marker.ID", "POS", "CHR") %>%
