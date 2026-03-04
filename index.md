@@ -1,6 +1,7 @@
 # panvaR
 
-panvar: fine-mapping and prioritizing candidate genes from GWA studies.
+An R package for fine-mapping and prioritizing candidate genes from GWA
+studies.
 
 ## Installation
 
