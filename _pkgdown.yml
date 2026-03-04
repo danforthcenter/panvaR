@@ -4,7 +4,7 @@ template:
 
 navbar:
   structure:
-    right: [search, github, ai]
+    right: [search, github]
 
 
 reference:
