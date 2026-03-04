@@ -7,7 +7,7 @@ Authors@R: c(
     person("Rijan", "Dhakal", , "rijandhakal2055@gmail.com", role = c("aut"),
            comment = c(ORCID = "0000-0002-9625-3584"))
   )
-Description: panvaR is a flexible tool for integrating information related to fine-mapping GWAS peaks. It helps to speed up this important step in identifying candidate genes. 
+Description: panvaR is a flexible tool for integrating information related to fine-mapping GWAS peaks speeding up this important step in identifying candidate genes. 
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
