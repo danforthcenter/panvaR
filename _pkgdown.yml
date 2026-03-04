@@ -1,6 +1,14 @@
 url: https://danforthcenter.github.io/panvaR/
 template:
   bootstrap: 5
+
+navbar:
+  title: "panvaR"
+    right:
+    - icon: fa-github fa
+      href: https://github.com/danforthcenter/panvaR
+
+
 reference:
 - title: "Formatting Inputs"
   desc: >
