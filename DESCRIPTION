@@ -1,6 +1,6 @@
 Package: panvaR
 Title: panvaR: finemapping GWAS peaks
-Version: 0.0.0.9000
+Version: 1.1
 Authors@R: c(
     person("Collin", "Luebbert", , "cluebbert@danforthcenter.org", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8665-5950")),
