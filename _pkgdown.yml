@@ -3,10 +3,8 @@ template:
   bootstrap: 5
 
 navbar:
-  title: "panvaR"
-    right:
-    - icon: fa-github fa
-      href: https://github.com/danforthcenter/panvaR
+  structure:
+    right: [search, github, ai]
 
 
 reference:
