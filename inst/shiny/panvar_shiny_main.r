@@ -48,7 +48,7 @@ ui <- fluidPage(
     style = "background-color: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #dee2e6; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;",
     div(
       style = "display: flex; align-items: center;",
-      tags$h2("PanvaR Analysis Tool", style = "margin: 0;")
+      tags$h2("PanvaR shiny app", style = "margin: 0;")
     ),
     div(
       actionButton("restart_app", "Restart Analysis", class = "btn-success", style = "margin-right: 10px;"),
