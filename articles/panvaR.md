@@ -140,22 +140,22 @@ phenotype.path <- system.file("extdata",
 make_panvar_inputs(genotype.path = genotype.path,
                    phenotype.path = phenotype.path)
 #> Removed 0 samples due to NA values in phenotype.
-#> [1] "/tmp/RtmpYXUcHC/PanvarExample_PlinkQC_maf0.05_missing0.1"
+#> [1] "/tmp/RtmpfzZPk8/PanvarExample_PlinkQC_maf0.05_missing0.1"
 #> PLINK v2.0.0-a.7LM AVX2 Intel (28 Feb 2026)         cog-genomics.org/plink/2.0/
 #> (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
-#> Logging to /tmp/RtmpYXUcHC/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
+#> Logging to /tmp/RtmpfzZPk8/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
 #> Options in effect:
 #>   --allow-extra-chr
 #>   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned
 #>   --geno 0.1
-#>   --keep /tmp/RtmpYXUcHC/Panvar_list.of.samples.with.phenotype_shattering.txt
+#>   --keep /tmp/RtmpfzZPk8/Panvar_list.of.samples.with.phenotype_shattering.txt
 #>   --maf 0.05
 #>   --make-bed
-#>   --out /tmp/RtmpYXUcHC/PanvarExample_PlinkQC_maf0.05_missing0.1
+#>   --out /tmp/RtmpfzZPk8/PanvarExample_PlinkQC_maf0.05_missing0.1
 #>   --set-all-var-ids @-#
 #> 
-#> Start time: Thu Mar  5 20:51:15 2026
-#> 15989 MiB RAM detected, ~14442 available; reserving 7994 MiB for main
+#> Start time: Thu Mar  5 22:40:14 2026
+#> 15990 MiB RAM detected, ~14405 available; reserving 7995 MiB for main
 #> workspace.
 #> Using up to 4 compute threads.
 #> 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
@@ -172,11 +172,11 @@ make_panvar_inputs(genotype.path = genotype.path,
 #> 2557 variants removed due to allele frequency threshold(s)
 #> (--maf/--max-maf/--mac/--max-mac).
 #> 5158 variants remaining after main filters.
-#> Writing /tmp/RtmpYXUcHC/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
-#> Writing /tmp/RtmpYXUcHC/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
-#> Writing /tmp/RtmpYXUcHC/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
-#> End time: Thu Mar  5 20:51:15 2026
-#> QC was successful, output stored at /tmp/RtmpYXUcHC/PanvarExample_PlinkQC_maf0.05_missing0.1
+#> Writing /tmp/RtmpfzZPk8/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
+#> Writing /tmp/RtmpfzZPk8/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
+#> Writing /tmp/RtmpfzZPk8/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
+#> End time: Thu Mar  5 22:40:14 2026
+#> QC was successful, output stored at /tmp/RtmpfzZPk8/PanvarExample_PlinkQC_maf0.05_missing0.1
 #> Using rMVP to calculate PC's.
 #> Preparing data for MVP...
 #> Reading file...
@@ -240,7 +240,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
                 npcs = 2,
                 gwas.model = "GLM",
                 output.manhattan = T)
-#> Searching for prefix: PanvarExample in directory: /tmp/RtmpYXUcHC
+#> Searching for prefix: PanvarExample in directory: /tmp/RtmpfzZPk8
 #> Found the following files: 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bed, 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bim, 
@@ -268,7 +268,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #>   Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li      
 #>   Mailto: xiaoleiliu@mail.hzau.edu.cn, ylilin@mail.hzau.edu.cn   
 #> =================================================================
-#> Start: 2026-03-05 20:51:17 UTC 
+#> Start: 2026-03-05 22:40:15 UTC 
 #> Input data has 215 individuals and 5158 markers 
 #> Markers are detected to be stored by column 
 #> Analyzed trait: shattering 
@@ -294,8 +294,8 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #> Circular_Manhattan Plotting shattering.GLM 
 #> Rectangular_Manhattan Plotting shattering.GLM
 #> Q_Q Plotting shattering.GLM
-#> Results are stored at Working Directory: /tmp/RtmpYXUcHC 
-#> End: 2026-03-05 20:51:18 UTC 
+#> Results are stored at Working Directory: /tmp/RtmpfzZPk8 
+#> End: 2026-03-05 22:40:17 UTC 
 #> Total running time: 1s 
 #> ===================== MVP ACCOMPLISHED =====================
 ```
@@ -346,105 +346,7 @@ snp_make_clumps(geno.bed.filename = filtered.bedfile,
                 window = 500,
                 ld.thresh = .2)
 #> Creating clumps...
-#> [1] "Chr_05-6843742"
-#>   |                                                                              |=====================                                                 |  30%[1] "Chr_05-6848340"
-#>   |                                                                              |==============================                                        |  43%[1] "Chr_05-7278213"
-#>   |                                                                              |====================================                                  |  51%[1] "Chr_05-6801524"
-#>   |                                                                              |============================================                          |  63%[1] "Chr_05-7340506"
-#>   |                                                                              |=============================================                         |  65%[1] "Chr_05-6368053"
-#>   |                                                                              |===============================================                       |  66%[1] "Chr_05-7170122"
-#>   |                                                                              |===============================================                       |  67%[1] "Chr_05-6416124"
-#>   |                                                                              |===============================================                       |  68%[1] "Chr_05-7238189"
-#>   |                                                                              |================================================                      |  69%[1] "Chr_05-7237609"
-#>   |                                                                              |=================================================                     |  70%[1] "Chr_05-6653521"
-#>   |                                                                              |=====================================================                 |  75%[1] "Chr_05-6447854"
-#> [1] "Chr_05-6377807"
-#>   |                                                                              |=====================================================                 |  76%[1] "Chr_05-7352437"
-#>   |                                                                              |======================================================                |  77%[1] "Chr_05-7277709"
-#>   |                                                                              |========================================================              |  81%[1] "Chr_05-6926436"
-#>   |                                                                              |===============================================================       |  90%[1] "Chr_05-6784449"
-#> [1] "Chr_05-6539078"
-#>   |                                                                              |===============================================================       |  91%[1] "Chr_05-7177680"
-#>   |                                                                              |================================================================      |  91%[1] "Chr_05-7352077"
-#> [1] "Chr_05-6368327"
-#>   |                                                                              |================================================================      |  92%[1] "Chr_05-6679202"
-#>   |                                                                              |=================================================================     |  93%[1] "Chr_05-6702159"
-#> [1] "Chr_05-6667446"
-#> [1] "Chr_05-6930121"
-#> [1] "Chr_05-6940317"
-#>   |                                                                              |==================================================================    |  94%[1] "Chr_05-6667342"
-#> [1] "Chr_05-7067552"
-#> [1] "Chr_05-6887227"
-#>   |                                                                              |==================================================================    |  95%[1] "Chr_05-7193798"
-#> [1] "Chr_05-6687070"
-#> [1] "Chr_05-6889077"
-#> [1] "Chr_05-6778140"
-#>   |                                                                              |===================================================================   |  95%[1] "Chr_05-6921072"
-#> [1] "Chr_05-6521660"
-#> [1] "Chr_05-6830071"
-#> [1] "Chr_05-7177594"
-#>   |                                                                              |===================================================================   |  96%[1] "Chr_05-6888408"
-#> [1] "Chr_05-7015925"
-#> [1] "Chr_05-6889264"
-#> [1] "Chr_05-6668540"
-#> [1] "Chr_05-7016011"
-#> [1] "Chr_05-6930011"
-#> [1] "Chr_05-6393954"
-#>   |                                                                              |====================================================================  |  97%[1] "Chr_05-7046100"
-#> [1] "Chr_05-7075780"
-#> [1] "Chr_05-7080969"
-#> [1] "Chr_05-6920891"
-#> [1] "Chr_05-7090882"
-#> [1] "Chr_05-7193808"
-#> [1] "Chr_05-7354810"
-#>   |                                                                              |====================================================================  |  98%[1] "Chr_05-7193847"
-#> [1] "Chr_05-6661793"
-#> [1] "Chr_05-7107157"
-#> [1] "Chr_05-6889089"
-#>   |                                                                              |===================================================================== |  98%[1] "Chr_05-6661544"
-#> [1] "Chr_05-7177401"
-#> [1] "Chr_05-6374572"
-#> [1] "Chr_05-6570639"
-#> [1] "Chr_05-6889008"
-#> [1] "Chr_05-6508462"
-#> [1] "Chr_05-6517273"
-#> [1] "Chr_05-6669170"
-#> [1] "Chr_05-6740492"
-#> [1] "Chr_05-6817121"
-#> [1] "Chr_05-6676871"
-#>   |                                                                              |===================================================================== |  99%[1] "Chr_05-6808381"
-#> [1] "Chr_05-6544847"
-#> [1] "Chr_05-7344361"
-#> [1] "Chr_05-7296297"
-#> [1] "Chr_05-7046576"
-#> [1] "Chr_05-6544779"
-#> [1] "Chr_05-6920580"
-#> [1] "Chr_05-6986468"
-#>   |                                                                              |======================================================================|  99%[1] "Chr_05-7075645"
-#> [1] "Chr_05-6668589"
-#> [1] "Chr_05-6660987"
-#> [1] "Chr_05-7113285"
-#> [1] "Chr_05-7194226"
-#> [1] "Chr_05-6575593"
-#> [1] "Chr_05-6927026"
-#>   |                                                                              |======================================================================| 100%[1] "Chr_05-7197141"
-#> [1] "Chr_05-6885170"
-#> [1] "Chr_05-6885056"
-#> [1] "Chr_05-7015616"
-#> [1] "Chr_05-6421524"
-#> [1] "Chr_05-6360027"
-#> [1] "Chr_05-6399264"
-#> [1] "Chr_05-6661613"
-#> [1] "Chr_05-6576801"
-#> [1] "Chr_05-6576231"
-#> [1] "Chr_05-7089171"
-#> [1] "Chr_05-7046742"
-#> [1] "Chr_05-7335584"
-#> [1] "Chr_05-6538167"
-#> [1] "Chr_05-6638315"
-#> [1] "Chr_05-7107413"
-#> [1] "Chr_05-6408632"
-#> [1] "Chr_05-6545249"
+#>   |                                                                              |=====================                                                 |  30%  |                                                                              |==============================                                        |  43%  |                                                                              |====================================                                  |  51%  |                                                                              |============================================                          |  63%  |                                                                              |=============================================                         |  65%  |                                                                              |===============================================                       |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  77%  |                                                                              |========================================================              |  81%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================|  99%  |                                                                              |======================================================================| 100%
 
 head(clumped.df)
 #>        marker.ID clump_num
