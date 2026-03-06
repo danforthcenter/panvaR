@@ -284,7 +284,7 @@ Gwas_input_dashboard_Server <- function(id, shared) {
       }
       
       tag_snps <- clean_snp_tags_gwas(input$tag_snps)
-      current_values$`Tag SNPs` <- if (!is.null(tag_snps)) paste(tag_snps, collapse = ", ") else "Auto-infer from GWAS results"
+      current_values$`Tag SNPs` <- if (!is.null(tag_snps)) paste(tag_snps, collapse = ", ") else "Provide a tag-snp"
       current_values$`R² Threshold` <- input$r2_threshold
       current_values$`Window (kb)` <- format(input$window_span, big.mark = ",")
       

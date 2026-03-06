@@ -52,10 +52,10 @@ get_ld_in_window <- function(qtl.df= NULL,
   } else {
     out.dir <- tempdir()
   }
-  out.dir <- normalizePath(out.dir)
+  out.dir <- normalizePath(out.dir, winslash = "/")
   
   # check in.dir 
-  in.dir <- normalizePath(in.dir)
+  in.dir <- normalizePath(in.dir, winslash = "/")
   
   # check for .bed extension on input
   if(grepl("\\.bed$", geno.bed)){

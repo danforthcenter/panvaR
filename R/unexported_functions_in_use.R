@@ -160,11 +160,16 @@ make_ld <- function(plink.path,
   
   bfile <- paste0(in.dir, "/", bedfile)
   outfile <- paste0(out.dir, "/ld_out_temp")
+  # need to quote these for windows incase there is a space in the filepath
+  # bfile <- paste0("\'", bfile, "\'")
+  # outfile <- paste0("\'", outfile, "\'")
+  # bfile <- shQuote(bfile)
+  # outfile <- shQuote(outfile)
   
   current_args <- c(
     "--silent", 
     "--bfile",
-    bfile,
+    shQuote(bfile),
     "--r2-unphased",
     "--ld-snp",
     snp.name,
@@ -175,7 +180,7 @@ make_ld <- function(plink.path,
     "--ld-window-r2",
     "-1",
     "--out",
-    outfile
+    shQuote(outfile)
   )
   
   suppressWarnings(
