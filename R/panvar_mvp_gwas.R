@@ -72,6 +72,8 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
     in.prefix <- NULL
   }
   
+  # parse model type option
+  gwas.model <- arg_match(gwas.model)
   
   if(any(is.null(inputs.dir), is.null(in.prefix))){
     message("Either no input directory, input prefix or neither provided. Getting inputs from user arguments.")
