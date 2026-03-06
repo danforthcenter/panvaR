@@ -77,6 +77,7 @@
 #' @importFrom plotly ggplotly
 #' @importFrom plotly layout
 #' @importFrom rlang .data
+#' @importFrom rlang arg_match
 #' @importFrom rMVP attach.big.matrix
 #' @importFrom rMVP MVP
 #' @importFrom rMVP MVP.Data
