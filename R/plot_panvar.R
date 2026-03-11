@@ -18,9 +18,6 @@
 #' @param window numeric, total window size in KB, all variants within .5 *
 #'   window are calculated.
 #' @param sig.line numeric, -log10(p) value to draw line on plot
-#' @param orient character, will rotate plot 90 degrees. vertical (V) or
-#'   horizontal (H) refers to how the "buildings" of the plot are plotted. "V"
-#'   places pvalue on y-axis, "H" places pvalues on x-axis.
 #' @param qualitative.annotation character, column in `gwas.res` that contains
 #'   qualitative annotations. For example impact grades from snpeff. See
 #'   [panvaR::format_snpeff_annotations]. Will be plotted as shapes. Only
@@ -65,7 +62,6 @@ plot_panvar <- function(panvar.table.list = NULL,
                              unplotted.alpha = .4,
                              window,
                              sig.line,
-                             orient = "H",
                              qualitative.annotation = NULL,
                              qualitative.shape.scale = NULL,
                              quantitative.annotation = NULL,
@@ -91,7 +87,7 @@ plot_panvar <- function(panvar.table.list = NULL,
                                ld.list = ld.list,
                                window = window,
                                sig.line = sig.line,
-                               orient = orient,
+                               orient = "H",
                                qualitative.annotation = qualitative.annotation,
                                qualitative.shape.scale = qualitative.shape.scale,
                                quantitative.annotation = quantitative.annotation,
