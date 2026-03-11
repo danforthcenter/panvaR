@@ -44,7 +44,8 @@ format_snpeff_annotations <- function(vcfpath){
     group_by(.data$marker.ID) %>% 
     mutate(is.max.impact.score = .data$IMPACT_score == max(.data$IMPACT_score)) %>% 
     filter(.data$is.max.impact.score) %>% 
-    select("CHROM", "POS", "marker.ID", "IMPACT", "IMPACT_PLUS") %>% 
+    mutate(Genes.impacted = paste0(unique(GENE), collapse = "|")) %>% 
+    select("Genes.impacted", "CHROM", "POS", "marker.ID", "IMPACT", "IMPACT_PLUS") %>% 
     distinct() 
   
   # keep 2 tables

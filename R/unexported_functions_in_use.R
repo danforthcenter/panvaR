@@ -211,9 +211,6 @@ make_ld <- function(plink.path,
 #   as.numeric(stringr::str_extract(marker.ID, "(^.*)-(.*)", group = 1))
 # }
 
-# execute_snpsift2 is in use now 
-# execute_snpsift has some errors 
-# will switch over to this full time when we clean up the whole package
 execute_snpsift <- function(file_path) {
   message("~~~~~~~~~~~~~~~ Extracting SNP impacts ~~~~~~~~~~~~~~~")
   file_path <- path.expand(file_path)

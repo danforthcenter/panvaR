@@ -21,7 +21,8 @@ set_plink_path("/home/cluebbert/bin/plink2")
 set_panvar_prefix("SetShattering")
 set_out_dir("~/scratch/panvar_test/setaria_shatter_full")
 
-gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv"))
+gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv")) %>% 
+  left_join(snpeffann, by = "marker.ID")
 anno <- read.csv("~/scratch/setaria_biomart.txt") %>% 
   filter(str_detect(Chromosome.Name, "scaffold", negate = T)) %>% 
   mutate(CHR = as.numeric(str_replace(Chromosome.Name, "Chr_", ""))) %>% 
@@ -36,6 +37,13 @@ anno <- read.csv("~/scratch/setaria_biomart.txt") %>%
 qtl.df.test <- gwas.df %>% 
   dplyr::slice_max(LOGPVAL, n = 3)
 
+impact_score <- data.frame(IMPACT_PLUS = c("MODIFIER_INTERGENIC", "MODIFIER_CODING", "LOW", "MODERATE", "HIGH"),
+                           impact_score = c(1:5))
+
+gwas.df <- gwas.df %>% 
+  left_join(impact_score, by = "IMPACT_PLUS")
+  
+
 tables <- make_panvar_tables(gwas.res = gwas.df,
                              tag.snp = "5-6857045",
                              # qtl.df = qtl.df.test, 
@@ -46,7 +54,7 @@ tables <- make_panvar_tables(gwas.res = gwas.df,
                              geno.bed.directory = "/home/cluebbert/scratch/panvar_test/setaria_shatter_full/",
                              window = 500,
                              compute.scores = T,
-                             snp.to.gene.vars = c("LD", "snp.score"),
+                             snp.to.gene.vars = c("LD", "snp.score", "impact_score"),
                              snp.to.gene.buffer = 5)
 
 

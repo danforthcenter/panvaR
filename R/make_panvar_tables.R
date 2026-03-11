@@ -32,7 +32,7 @@
 #' If compute.scores is TRUE and score.vars is NULL, the default score will use equally weighted variables: "DIST", "LOGPVAL", "LD". 
 #' @param score.dirs numeric, a vector indicating which direction is to be considered more indicative
 #' of an association. 1 indicates higher is better, -1 indicates lower is better. The order should correspond 
-#' with the order in cols. 
+#' with the order in score.vars 
 #' @param score.weights numeric, a vector indicating weights for the variables. These must add up to 1. 
 #'
 #' @details
@@ -160,6 +160,10 @@ make_panvar_tables <- function(gwas.res,
       score.dirs <- c(-1, 1, 1)
       weights <- c(1/3, 1/3, 1/3)
     } else {
+      # always calculate these three, add user supplied 
+      score.vars <- c("DIST", "LOGPVAL", "LD", score.vars)
+      # if the user supplies one of these make sure its not in here twice
+      score.vars <- unique(score.vars)
       # use user defined stuff
       message(paste0("Using ", paste(score.vars, collapse = ", "), " to calculate."))
       if(is.null(score.dirs)){
