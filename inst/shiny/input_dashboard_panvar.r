@@ -193,10 +193,12 @@ Gwas_input_dashboard_Server <- function(id, shared) {
     shinyFileChoose(input, "plink_path", roots = rootDir, session = session)
     
     # troubleshooting directories
-    # shinyFileChoose(input, "bed_file_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
-    # shinyFileChoose(input, "gwas_table_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
-    # shinyFileChoose(input, "annotation_table_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
-    # shinyFileChoose(input, "plink_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
+    # ts.dir <- "Projects/panvaR/inst/extdata"
+    # ts.dir <- "C:/Users/cluebbert/OneDrive - DDPSC/~Rprojects~/panvaR"
+    # shinyFileChoose(input, "bed_file_path", roots = rootDir, defaultPath = ts.dir, session = session)
+    # shinyFileChoose(input, "gwas_table_path", roots = rootDir, defaultPath = ts.dir, session = session)
+    # shinyFileChoose(input, "annotation_table_path", roots = rootDir, defaultPath = ts.dir, session = session)
+    # shinyFileChoose(input, "plink_path", roots = rootDir, defaultPath = ts.dir, session = session)
     
     # --- Display Selected File Paths ---
     output$bed_file_path_results <- renderText({
