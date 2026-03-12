@@ -11,7 +11,11 @@ panvar_mvp_gwas(inputs.dir = "~/scratch/panvar_test/gwas/",
                 npcs = 3,
                 out.dir = "~/scratch/temp",
                 gwas.model = "GLM")
-
+panvar_mvp_gwas(inputs.dir = "~/scratch/panvar_test/gwas/",
+                in.prefix = "GWAStest",
+                npcs = 3,
+                out.dir = "~/scratch/temp",
+                gwas.model = "MLM")
 
 # run full genome, unfixed chromosomes. does it break anything besides throwing a warning?
 # outputs warning if plotting, I think will be fixed if we fix the chromosome names. this file has scaffolds
@@ -42,14 +46,14 @@ panvar_mvp_gwas(inputs.dir = "~/scratch/panvar_test/gwas/",
 
 # test mlm
 make_panvar_inputs(genotype.path = "~/scratch/setaria_annotated_chrsnumeric.vcf.gz",
-                   phenotype.table = pheno,
+                   phenotype.path = "inst/extdata/Setaria_shattering_example_phenotype.tsv",
                    calc.kinship = T,
                    out.prefix = "GWAStest",
                    out.dir = "~/scratch/panvar_test/gwas/")
 
 panvar_mvp_gwas(inputs.dir = "~/scratch/panvar_test/gwas/",
                 in.prefix = "GWAStest",
-                phenotype.table = pheno,
+                # phenotype.table = pheno,
                 npcs = 3,
                 out.dir = "~/scratch/panvar_test/gwas/",
                 gwas.model = "MLM")

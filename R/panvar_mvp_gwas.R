@@ -122,6 +122,13 @@ panvar_mvp_gwas <- function(inputs.dir = NULL,
     map <- read.table(get_an_input(inputs.dir, in.prefix, "geno.map"), header = T)
     pcs <- attach.big.matrix(get_an_input(inputs.dir, in.prefix, "pc.desc"))
     if(gwas.model == "MLM"){
+      kin.path <- get_an_input(inputs.dir, in.prefix, "kin.desc")
+      if(length(kin.path) < 1){
+        stop(paste0("Cannot find expected kinship matrix file: ", 
+                    paste0(in.prefix, "kin.desc"),
+                    " in directory: ", inputs.dir, 
+                    ". Was it created when running make_panvar_inputs()?"))
+      }
       kin <- attach.big.matrix(get_an_input(inputs.dir, in.prefix, "kin.desc"))
     }
   }
