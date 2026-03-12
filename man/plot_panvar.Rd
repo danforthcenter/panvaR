@@ -14,7 +14,6 @@ plot_panvar(
   unplotted.alpha = 0.4,
   window,
   sig.line,
-  orient = "H",
   qualitative.annotation = NULL,
   qualitative.shape.scale = NULL,
   quantitative.annotation = NULL,
@@ -51,10 +50,6 @@ of snps below the plot.r2.thresh. To not plot these snps set value to 0.}
 window are calculated.}
 
 \item{sig.line}{numeric, -log10(p) value to draw line on plot}
-
-\item{orient}{character, will rotate plot 90 degrees. vertical (V) or
-horizontal (H) refers to how the "buildings" of the plot are plotted. "V"
-places pvalue on y-axis, "H" places pvalues on x-axis.}
 
 \item{qualitative.annotation}{character, column in \code{gwas.res} that contains
 qualitative annotations. For example impact grades from snpeff. See

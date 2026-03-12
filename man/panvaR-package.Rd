@@ -4,14 +4,15 @@
 \name{panvaR-package}
 \alias{panvaR}
 \alias{panvaR-package}
-\title{panvaR: An R package for prioritizing candidate genes from GWA studies}
+\title{panvaR: panvaR: finemapping GWAS peaks}
 \description{
-What the package does (one paragraph).
+panvaR is a flexible tool for integrating information related to fine-mapping GWAS peaks speeding up this important step in identifying candidate genes.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://danforthcenter.github.io/panvaR/}
+  \item \url{https://github.com/danforthcenter/panvaR}
 }
 
 }

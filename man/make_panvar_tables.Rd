@@ -70,7 +70,7 @@ If compute.scores is TRUE and score.vars is NULL, the default score will use equ
 
 \item{score.dirs}{numeric, a vector indicating which direction is to be considered more indicative
 of an association. 1 indicates higher is better, -1 indicates lower is better. The order should correspond
-with the order in cols.}
+with the order in score.vars}
 
 \item{score.weights}{numeric, a vector indicating weights for the variables. These must add up to 1.}
 }

@@ -4,7 +4,7 @@
 \alias{plot_pc_scree}
 \title{Calculate and plot pcs}
 \usage{
-plot_pc_scree(bedfile.path, num.pcs, cumulative = F)
+plot_pc_scree(bedfile.path, num.pcs = 10, cumulative = F)
 }
 \arguments{
 \item{bedfile.path}{character, path to bedfile (include .bed extension)}

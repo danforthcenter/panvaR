@@ -187,10 +187,16 @@ Gwas_input_dashboard_Server <- function(id, shared) {
     rootDir <- c(Home = fs::path_home())
     # make this example path to reduce click
     # rootDir <- "inst/extdata"
-    shinyFileChoose(input, "bed_file_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
-    shinyFileChoose(input, "gwas_table_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
-    shinyFileChoose(input, "annotation_table_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
-    shinyFileChoose(input, "plink_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
+    shinyFileChoose(input, "bed_file_path", roots = rootDir, session = session)
+    shinyFileChoose(input, "gwas_table_path", roots = rootDir, session = session)
+    shinyFileChoose(input, "annotation_table_path", roots = rootDir, session = session)
+    shinyFileChoose(input, "plink_path", roots = rootDir, session = session)
+    
+    # troubleshooting directories
+    # shinyFileChoose(input, "bed_file_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
+    # shinyFileChoose(input, "gwas_table_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
+    # shinyFileChoose(input, "annotation_table_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
+    # shinyFileChoose(input, "plink_path", roots = rootDir, defaultPath = "Projects/panvaR/inst/extdata", session = session)
     
     # --- Display Selected File Paths ---
     output$bed_file_path_results <- renderText({
