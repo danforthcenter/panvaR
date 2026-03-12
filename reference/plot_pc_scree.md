@@ -5,7 +5,7 @@ Calculate and plot pcs
 ## Usage
 
 ``` r
-plot_pc_scree(bedfile.path, num.pcs, cumulative = F)
+plot_pc_scree(bedfile.path, num.pcs = 10, cumulative = F)
 ```
 
 ## Arguments

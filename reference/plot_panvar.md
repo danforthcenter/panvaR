@@ -15,7 +15,6 @@ plot_panvar(
   unplotted.alpha = 0.4,
   window,
   sig.line,
-  orient = "H",
   qualitative.annotation = NULL,
   qualitative.shape.scale = NULL,
   quantitative.annotation = NULL,
@@ -76,12 +75,6 @@ plot_panvar(
 - sig.line:
 
   numeric, -log10(p) value to draw line on plot
-
-- orient:
-
-  character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
-  refers to how the "buildings" of the plot are plotted. "V" places
-  pvalue on y-axis, "H" places pvalues on x-axis.
 
 - qualitative.annotation:
 

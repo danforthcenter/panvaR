@@ -111,7 +111,7 @@ make_panvar_tables(
   numeric, a vector indicating which direction is to be considered more
   indicative of an association. 1 indicates higher is better, -1
   indicates lower is better. The order should correspond with the order
-  in cols.
+  in score.vars
 
 - score.weights:
 

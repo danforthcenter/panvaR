@@ -1,12 +1,16 @@
-# panvaR: An R package for prioritizing candidate genes from GWA studies
+# panvaR: panvaR: finemapping GWAS peaks
 
-What the package does (one paragraph).
+panvaR is a flexible tool for integrating information related to
+fine-mapping GWAS peaks speeding up this important step in identifying
+candidate genes.
 
 ## See also
 
 Useful links:
 
 - <https://danforthcenter.github.io/panvaR/>
+
+- <https://github.com/danforthcenter/panvaR>
 
 ## Author
 
