@@ -122,7 +122,7 @@ make_panvar_inputs <- function(genotype.path,
   }
   
   rMVP::MVP.Data(fileBed = snp_qc_path,
-                 filePC = TRUE,
+                 filePC = F,
                  fileKin = calc.kinship,
                  filePhe = phenotype.path,
                  sep.phe = sep.phe, 

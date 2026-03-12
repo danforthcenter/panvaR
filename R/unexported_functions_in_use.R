@@ -52,6 +52,7 @@ temporary_directory <- function(dir = NULL, delete_files = FALSE) {
 # these functions are new functions that I have created that will be part of the package going forward 
 
 
+#' get an input made by mvp
 #' get an input that has a certain prefix and suffix
 #' will match exactly ^prefixsuffix$ if excluding the ".*" in the middle
 #' might have issues with unescaped "."'s 
