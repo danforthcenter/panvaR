@@ -61,6 +61,10 @@ tables <- make_panvar_tables(gwas.res = gwas.df,
 head(tables$anno)
 head(tables$gwas)
 
+x <- tables$gwas %>% 
+  filter(str_detect(genes_near_snp, "Sevir.5G085400"))
+
+out.anno <- tables$anno
 
 # ------------------------------------------------------------------------\
 # manhattan with tables --------
@@ -106,3 +110,62 @@ make_gene_annotation_plot(annotation.table = anno,
                           use.arrows = F)
 
 
+# ------------------------------------------------------------------------\
+# test snp to gene --------
+# ------------------------------------------------------------------------\
+
+gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv")) %>% 
+  left_join(snpeffann, by = "marker.ID")
+anno <- read.csv("~/scratch/setaria_biomart.txt") %>% 
+  filter(str_detect(Chromosome.Name, "scaffold", negate = T)) %>% 
+  mutate(CHR = as.numeric(str_replace(Chromosome.Name, "Chr_", ""))) %>% 
+  select(CHR, geneID = Gene.Name, 
+         start = Gene.Start..bp.,
+         end = Gene.End..bp.,
+         annotation = Description) %>% 
+  mutate(annotation = case_when(annotation == "" ~ "No gene description.",
+                                TRUE ~ annotation)) %>% 
+  distinct()
+
+gene <- "Sevir.5G085400"
+gene.info <- anno %>% 
+  filter(geneID == gene)
+
+snps.in.gene <- gwas.df %>% 
+  filter(CHR == 5) %>% 
+  filter(between(POS, gene.info$start, gene.info$end))
+
+gwas.sub <- gwas.df %>% 
+  filter(CHR == 5) %>% 
+  filter(between(POS, gene.info$start - 25e4, gene.info$end + 25e4))
+
+snp.to.gene.buffer <- 0
+
+gwas.sub_with.genes <- gwas.sub %>% 
+  rowwise() %>% 
+  mutate(snp.in.gene_list = get.gene.from.snp(.data$POS, anno, snp.to.gene.buffer)) %>% 
+  mutate(snp.in.gene = paste0(snp.in.gene_list, collapse = "|")) 
+
+point.color.stat <- gwas.sub_with.genes %>% 
+  filter(!is.null(.data$snp.in.gene_list)) %>% 
+  unnest_longer(.data$snp.in.gene_list) %>% 
+  group_by(.data$snp.in.gene_list) %>% 
+  # summarize(maximum.value = max(.data[[annotation.point.variable]])) %>% 
+  summarize(across(all_of("LOGPVAL"), ~ max(.x, na.rm = T)))  %>% 
+  rename("geneID" = "snp.in.gene_list")
+
+x <- gwas.sub_with.genes %>% 
+  select(-snp.in.gene_list) %>%
+  rename("genes_near_snp" = "snp.in.gene")
+  
+
+# temp 
+point.color.stat <- gwas.sub %>% 
+  rowwise() %>% 
+  mutate(snp.in.gene = get.gene.from.snp(.data$POS, anno.sub, snp.to.gene.buffer)) %>% 
+  filter(!is.null(.data$snp.in.gene)) %>% 
+  unnest_longer(.data$snp.in.gene) %>% 
+  group_by(.data$snp.in.gene) %>% 
+  # summarize(maximum.value = max(.data[[annotation.point.variable]])) %>% 
+  summarize(across(all_of(snp.to.gene.vars), ~ max(.x, na.rm = T)))  %>% 
+  rename("geneID" = "snp.in.gene")

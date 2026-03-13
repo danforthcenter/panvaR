@@ -212,17 +212,20 @@ make_panvar_tables <- function(gwas.res,
   
   message("Generating snp to gene correspondence")
   
+  gwas.sub_with.genes <- gwas.sub %>% 
+    rowwise() %>% 
+    mutate(snp.in.gene_list = get.gene.from.snp(.data$POS, anno, snp.to.gene.buffer)) %>% 
+    mutate(snp.in.gene = paste0(.data$snp.in.gene_list, collapse = "|")) 
+  
   if(!is.null(snp.to.gene.vars)){
     # get the snp to gene correspondence for whatever you want
-    point.color.stat <- gwas.sub %>% 
-      rowwise() %>% 
-      mutate(snp.in.gene = get.gene.from.snp(.data$POS, anno.sub, snp.to.gene.buffer)) %>% 
-      filter(!is.null(.data$snp.in.gene)) %>% 
-      unnest_longer(.data$snp.in.gene) %>% 
-      group_by(.data$snp.in.gene) %>% 
+    point.color.stat <- gwas.sub_with.genes %>% 
+      filter(!is.null(.data$snp.in.gene_list)) %>% 
+      unnest_longer(.data$snp.in.gene_list) %>% 
+      group_by(.data$snp.in.gene_list) %>% 
       # summarize(maximum.value = max(.data[[annotation.point.variable]])) %>% 
       summarize(across(all_of(snp.to.gene.vars), ~ max(.x, na.rm = T)))  %>% 
-      rename("geneID" = "snp.in.gene")
+      rename("geneID" = "snp.in.gene_list")
     
     anno.out <- anno.sub %>% 
       left_join(point.color.stat, by = "geneID")
@@ -230,12 +233,15 @@ make_panvar_tables <- function(gwas.res,
     anno.out <- anno.sub
   }
   
+  gwas.sub_with.genes <- gwas.sub_with.genes %>% 
+    select(-"snp.in.gene_list") %>%
+    rename("genes_near_snp" = "snp.in.gene")
   
   # ------------------------------------------------------------------------\
   # output tables --------
   # ------------------------------------------------------------------------\
   
-  out <- list(gwas = gwas.sub,
+  out <- list(gwas = gwas.sub_with.genes,
               anno = anno.out,
               key.snp = ld.list$key.snp,
               qtl.snps = ld.list$qtl.snps)
