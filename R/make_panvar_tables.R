@@ -214,7 +214,7 @@ make_panvar_tables <- function(gwas.res,
   
   gwas.sub_with.genes <- gwas.sub %>% 
     rowwise() %>% 
-    mutate(snp.in.gene_list = get.gene.from.snp(.data$POS, anno, snp.to.gene.buffer)) %>% 
+    mutate(snp.in.gene_list = get.gene.from.snp(.data$POS, anno.sub, snp.to.gene.buffer)) %>% 
     mutate(snp.in.gene = paste0(.data$snp.in.gene_list, collapse = "|")) 
   
   if(!is.null(snp.to.gene.vars)){
