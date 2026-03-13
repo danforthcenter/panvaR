@@ -203,22 +203,22 @@ filtered bed file.</p>
 <span><span class="fu"><a href="../reference/make_panvar_inputs.html">make_panvar_inputs</a></span><span class="op">(</span>genotype.path <span class="op">=</span> <span class="va">genotype.path</span>,</span>
 <span>                   phenotype.path <span class="op">=</span> <span class="va">phenotype.path</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Removed 0 samples due to NA values in phenotype.</span></span>
-<span><span class="co">#&gt; [1] "/tmp/RtmpGZDbt7/PanvarExample_PlinkQC_maf0.05_missing0.1"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpZgyqYL/PanvarExample_PlinkQC_maf0.05_missing0.1"</span></span>
 <span><span class="co">#&gt; PLINK v2.0.0-a.7LM AVX2 Intel (11 Mar 2026)         cog-genomics.org/plink/2.0/</span></span>
 <span><span class="co">#&gt; (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3</span></span>
-<span><span class="co">#&gt; Logging to /tmp/RtmpGZDbt7/PanvarExample_PlinkQC_maf0.05_missing0.1.log.</span></span>
+<span><span class="co">#&gt; Logging to /tmp/RtmpZgyqYL/PanvarExample_PlinkQC_maf0.05_missing0.1.log.</span></span>
 <span><span class="co">#&gt; Options in effect:</span></span>
 <span><span class="co">#&gt;   --allow-extra-chr</span></span>
 <span><span class="co">#&gt;   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned</span></span>
 <span><span class="co">#&gt;   --geno 0.1</span></span>
-<span><span class="co">#&gt;   --keep /tmp/RtmpGZDbt7/Panvar_list.of.samples.with.phenotype_shattering.txt</span></span>
+<span><span class="co">#&gt;   --keep /tmp/RtmpZgyqYL/Panvar_list.of.samples.with.phenotype_shattering.txt</span></span>
 <span><span class="co">#&gt;   --maf 0.05</span></span>
 <span><span class="co">#&gt;   --make-bed</span></span>
-<span><span class="co">#&gt;   --out /tmp/RtmpGZDbt7/PanvarExample_PlinkQC_maf0.05_missing0.1</span></span>
+<span><span class="co">#&gt;   --out /tmp/RtmpZgyqYL/PanvarExample_PlinkQC_maf0.05_missing0.1</span></span>
 <span><span class="co">#&gt;   --set-all-var-ids @-#</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Start time: Thu Mar 12 22:23:46 2026</span></span>
-<span><span class="co">#&gt; 15990 MiB RAM detected, ~14369 available; reserving 7995 MiB for main</span></span>
+<span><span class="co">#&gt; Start time: Fri Mar 13 20:40:41 2026</span></span>
+<span><span class="co">#&gt; 15994 MiB RAM detected, ~14368 available; reserving 7997 MiB for main</span></span>
 <span><span class="co">#&gt; workspace.</span></span>
 <span><span class="co">#&gt; Using up to 4 compute threads.</span></span>
 <span><span class="co">#&gt; 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from</span></span>
@@ -235,11 +235,11 @@ filtered bed file.</p>
 <span><span class="co">#&gt; 2557 variants removed due to allele frequency threshold(s)</span></span>
 <span><span class="co">#&gt; (--maf/--max-maf/--mac/--max-mac).</span></span>
 <span><span class="co">#&gt; 5158 variants remaining after main filters.</span></span>
-<span><span class="co">#&gt; Writing /tmp/RtmpGZDbt7/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.</span></span>
-<span><span class="co">#&gt; Writing /tmp/RtmpGZDbt7/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.</span></span>
-<span><span class="co">#&gt; Writing /tmp/RtmpGZDbt7/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.</span></span>
-<span><span class="co">#&gt; End time: Thu Mar 12 22:23:46 2026</span></span>
-<span><span class="co">#&gt; QC was successful, output stored at /tmp/RtmpGZDbt7/PanvarExample_PlinkQC_maf0.05_missing0.1</span></span>
+<span><span class="co">#&gt; Writing /tmp/RtmpZgyqYL/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.</span></span>
+<span><span class="co">#&gt; Writing /tmp/RtmpZgyqYL/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.</span></span>
+<span><span class="co">#&gt; Writing /tmp/RtmpZgyqYL/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.</span></span>
+<span><span class="co">#&gt; End time: Fri Mar 13 20:40:41 2026</span></span>
+<span><span class="co">#&gt; QC was successful, output stored at /tmp/RtmpZgyqYL/PanvarExample_PlinkQC_maf0.05_missing0.1</span></span>
 <span><span class="co">#&gt; Using rMVP to calculate PC's.</span></span>
 <span><span class="co">#&gt; Preparing data for MVP...</span></span>
 <span><span class="co">#&gt; Reading file...</span></span>
@@ -290,7 +290,7 @@ directory. If supplying other inputs, they should be in a format that
 <span>                npcs <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>                gwas.model <span class="op">=</span> <span class="st">"GLM"</span>,</span>
 <span>                output.manhattan <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Searching for prefix: PanvarExample in directory: /tmp/RtmpGZDbt7</span></span>
+<span><span class="co">#&gt; Searching for prefix: PanvarExample in directory: /tmp/RtmpZgyqYL</span></span>
 <span><span class="co">#&gt; Found the following files: </span></span>
 <span><span class="co">#&gt; PanvarExample_PlinkQC_maf0.05_missing0.1.bed, </span></span>
 <span><span class="co">#&gt; PanvarExample_PlinkQC_maf0.05_missing0.1.bim, </span></span>
@@ -316,7 +316,7 @@ directory. If supplying other inputs, they should be in a format that
 <span><span class="co">#&gt;   Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li      </span></span>
 <span><span class="co">#&gt;   Mailto: xiaoleiliu@mail.hzau.edu.cn, ylilin@mail.hzau.edu.cn   </span></span>
 <span><span class="co">#&gt; =================================================================</span></span>
-<span><span class="co">#&gt; Start: 2026-03-12 22:23:48 UTC </span></span>
+<span><span class="co">#&gt; Start: 2026-03-13 20:40:42 UTC </span></span>
 <span><span class="co">#&gt; Input data has 215 individuals and 5158 markers </span></span>
 <span><span class="co">#&gt; Markers are detected to be stored by column </span></span>
 <span><span class="co">#&gt; Analyzed trait: shattering </span></span>
@@ -342,8 +342,8 @@ directory. If supplying other inputs, they should be in a format that
 <span><span class="co">#&gt; Circular_Manhattan Plotting shattering.GLM </span></span>
 <span><span class="co">#&gt; Rectangular_Manhattan Plotting shattering.GLM</span></span>
 <span><span class="co">#&gt; Q_Q Plotting shattering.GLM</span></span>
-<span><span class="co">#&gt; Results are stored at Working Directory: /tmp/RtmpGZDbt7 </span></span>
-<span><span class="co">#&gt; End: 2026-03-12 22:23:49 UTC </span></span>
+<span><span class="co">#&gt; Results are stored at Working Directory: /tmp/RtmpZgyqYL </span></span>
+<span><span class="co">#&gt; End: 2026-03-13 20:40:43 UTC </span></span>
 <span><span class="co">#&gt; Total running time: 1s </span></span>
 <span><span class="co">#&gt; ===================== MVP ACCOMPLISHED =====================</span></span></code></pre></div>
 <p>Here is the manhattan:</p>
@@ -516,20 +516,17 @@ Also, retain some info about the <code>tag.snp</code> and/or
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">tables</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "gwas"     "anno"     "key.snp"  "qtl.snps"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tables</span><span class="op">$</span><span class="va">gwas</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   marker.ID CHR     POS A1 A2       MAF       EFF        SE         PVAL</span></span>
-<span><span class="co">#&gt; 1 5-6593889   5 6593889  C  T 0.3953488 1.5093899 0.3438404 1.793220e-05</span></span>
-<span><span class="co">#&gt; 2 5-6594203   5 6594203  C  T 0.4000000 1.6027790 0.3391369 4.179088e-06</span></span>
-<span><span class="co">#&gt; 3 5-6594221   5 6594221  C  T 0.2697674 0.3744463 0.1226170 2.550661e-03</span></span>
-<span><span class="co">#&gt; 4 5-6594555   5 6594555  C  T 0.3976744 1.3218306 0.3326345 9.709064e-05</span></span>
-<span><span class="co">#&gt; 5 5-6594565   5 6594565  T  C 0.3232558 0.1700479 0.1205841 1.599527e-01</span></span>
-<span><span class="co">#&gt; 6 5-6595115   5 6595115  A  G 0.4093023 1.2464036 0.2980155 4.230227e-05</span></span>
-<span><span class="co">#&gt;     LOGPVAL        LD  snp.score</span></span>
-<span><span class="co">#&gt; 1 4.7463665 0.2634650 0.17792899</span></span>
-<span><span class="co">#&gt; 2 5.3789184 0.2686300 0.19208022</span></span>
-<span><span class="co">#&gt; 3 2.5933473 0.0145675 0.05452510</span></span>
-<span><span class="co">#&gt; 4 4.0128226 0.2565160 0.16257292</span></span>
-<span><span class="co">#&gt; 5 0.7960084 0.1856760 0.07789322</span></span>
-<span><span class="co">#&gt; 6 4.3736363 0.2792060 0.17773438</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># Rowwise: </span></span></span>
+<span><span class="co">#&gt;   marker.ID   CHR     POS A1    A2      MAF   EFF    SE      PVAL LOGPVAL     LD</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 5-6593889     5 6<span style="text-decoration: underline;">593</span>889 C     T     0.395 1.51  0.344   1.79<span style="color: #949494;">e</span><span style="color: #BB0000;">-5</span>   4.75  0.263 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 5-6594203     5 6<span style="text-decoration: underline;">594</span>203 C     T     0.4   1.60  0.339   4.18<span style="color: #949494;">e</span><span style="color: #BB0000;">-6</span>   5.38  0.269 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 5-6594221     5 6<span style="text-decoration: underline;">594</span>221 C     T     0.270 0.374 0.123   2.55<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span>   2.59  0.014<span style="text-decoration: underline;">6</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 5-6594555     5 6<span style="text-decoration: underline;">594</span>555 C     T     0.398 1.32  0.333   9.71<span style="color: #949494;">e</span><span style="color: #BB0000;">-5</span>   4.01  0.257 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 5-6594565     5 6<span style="text-decoration: underline;">594</span>565 T     C     0.323 0.170 0.121   1.60<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span>   0.796 0.186 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 5-6595115     5 6<span style="text-decoration: underline;">595</span>115 A     G     0.409 1.25  0.298   4.23<span style="color: #949494;">e</span><span style="color: #BB0000;">-5</span>   4.37  0.279 </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: snp.score &lt;dbl&gt;, genes_near_snp &lt;chr&gt;</span></span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tables</span><span class="op">$</span><span class="va">anno</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># Rowwise: </span></span></span>
