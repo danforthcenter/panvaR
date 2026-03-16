@@ -1,32 +1,80 @@
 
-#' Use rMVP to run gwas 
-#' 
-#' Designed to be used with [panvaR::make_panvar_inputs]. Will read in files and 
-#' run GWAS using [rMVP::MVP]. Can also supply inputs as matrices. 
+#' Use rMVP to run gwas
 #'
-#' @param inputs.dir character, directory to find input files created by [panvaR::make_panvar_inputs]. 
-#' Consider using `options()$panvar_outdir`. 
-#' @param in.prefix character, prefix of files in input directory. Same as supplied to [panvaR::make_panvar_inputs].
-#' Consider using [panvaR::set_panvar_prefix]. 
-#' @param npcs numeric, number of principal components to be included in the gwas model. 
-#' @param gwas.model character, one of "GLM" or "MLM" to refer to a generalized linear model 
-#' and mixed-linear model respectively. 
-#' @param output.manhattan boolean, if TRUE, visualizations of gwas results will be output to out.dir
-#' @param pheno.mat matrix, optional, object to use for phenotype 
-#' @param geno.mat big.matrix, optional, object to use for genotype 
+#' Designed to be used with [panvaR::make_panvar_inputs]. Will read in files and
+#' run GWAS using [rMVP::MVP]. Can also supply inputs as matrices.
+#'
+#' @param inputs.dir character, directory to find input files created by
+#'   [panvaR::make_panvar_inputs]. Consider using `options()$panvar_outdir`.
+#' @param in.prefix character, prefix of files in input directory. Same as
+#'   supplied to [panvaR::make_panvar_inputs]. Consider using
+#'   [panvaR::set_panvar_prefix].
+#' @param npcs numeric, number of principal components to be included in the
+#'   gwas model.
+#' @param gwas.model character, one of "GLM" or "MLM" to refer to a generalized
+#'   linear model and mixed-linear model respectively.
+#' @param output.manhattan boolean, if TRUE, visualizations of gwas results will
+#'   be output to out.dir
+#' @param pheno.mat matrix, optional, object to use for phenotype
+#' @param geno.mat big.matrix, optional, object to use for genotype
 #' @param map.mat matrix, optional, object to use a genotype map file
-#' @param pcs.mat big.matrix, optional, object to use as principal component matrix
+#' @param pcs.mat big.matrix, optional, object to use as principal component
+#'   matrix
 #' @param kin.mat big.matrix, optional, object to use as kinship matrix
-#' @param out.dir character, optional, path to store output. Will overide option set by [panvaR::set_out_dir]
-#' @param out.prefix character, optional, a prefix for output files. Will overide option set by [panvaR::set_panvar_prefix].
+#' @param out.dir character, optional, path to store output. Will overide option
+#'   set by [panvaR::set_out_dir]
+#' @param out.prefix character, optional, a prefix for output files. Will
+#'   overide option set by [panvaR::set_panvar_prefix].
 #'
-#' @returns
-#' outputs table of gwas results and optionally visualizations produced by 
-#' [rMVP::MVP]
+#' @returns outputs table of gwas results and optionally visualizations produced
+#' by [rMVP::MVP]
 #' @export
+#' @references Lilin Yin, Haohao Zhang, Zhenshuang Tang, Jingya Xu, Dong Yin,
+#' Zhiwu Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li, Xiaolei Liu,
+#' rMVP: A Memory-Efficient, Visualization-Enhanced, and Parallel-Accelerated
+#' Tool for Genome-Wide Association Study, Genomics, Proteomics &
+#' Bioinformatics, Volume 19, Issue 4, August 2021, Pages 619–628,
+#' https://doi.org/10.1016/j.gpb.2020.10.007
 #'
 #' @examples
-#' # work in progress
+#' # specify some paths
+#' genotype.path <- system.file(
+#'   "extdata",
+#'   "Setaria_shattering_example_pruned.bed",
+#'   package = "panvaR")
+#' 
+#' phenotype.path <- system.file(
+#'   "extdata",
+#'   "Setaria_shattering_example_phenotype.tsv",
+#'   package = "panvaR")
+#' 
+#' plink.path <- bigsnpr::download_plink2()
+#'
+#' out.dir <- file.path(tempdir(), "panvar_ex")
+#'
+#' # make some inputs
+#' make_panvar_inputs(
+#'   plink.path = plink.path,
+#'   genotype.path = genotype.path,
+#'   phenotype.path = phenotype.path,
+#'   out.prefix = "example",
+#'   out.dir = out.dir)
+#'   
+#' # run gwas
+#' panvar_mvp_gwas(
+#'   inputs.dir = out.dir,
+#'   in.prefix = "example",
+#'   npcs = 2,
+#'   gwas.model = "GLM",
+#'   output.manhattan = FALSE,
+#'   out.dir = out.dir,
+#'   out.prefix = "GWAS.Example")
+#'   
+#' # see what we did 
+#' list.files(out.dir)
+#' 
+#' # clean up 
+#' unlink(out.dir, recursive = TRUE)
 panvar_mvp_gwas <- function(inputs.dir = NULL,
                             in.prefix = NULL,
                             npcs = NULL,

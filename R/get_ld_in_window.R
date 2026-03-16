@@ -25,7 +25,30 @@
 #' @export
 #'
 #' @examples
-#' # work in progress
+#' # set up inputs for example
+#' plink.path <- bigsnpr::download_plink2()
+#' tag.snp <- "Chr_05-6857045"
+#' geno.bed <- "Setaria_shattering_example_pruned.bed"
+#' out.dir <- file.path(tempdir(), "panvar_ex")
+#' dir.create(out.dir, showWarnings = FALSE)
+#' 
+#' # run example
+#' out <- get_ld_in_window(
+#'     tag.snp = tag.snp,
+#'     window = 25,
+#'     plink.path = plink.path,
+#'     geno.bed = geno.bed,
+#'     in.dir = system.file("extdata", package="panvaR"),
+#'     out.dir = out.dir)
+#' 
+#' # list
+#' names(out)
+#' # table
+#' head(out$table)
+#' 
+#' # clean up
+#' unlink(out.dir, recursive = TRUE)
+#' 
 get_ld_in_window <- function(qtl.df= NULL,
                              tag.snp = NULL,
                              window,

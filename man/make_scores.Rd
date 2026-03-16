@@ -30,5 +30,17 @@ A table with a score for each marker based on aggregating the variables indicate
 Make scores
 }
 \examples{
-# work in progress
+gwas.df <- read.csv(system.file(
+    "extdata", 
+    "PanvarExample_GLM_GWASresults.csv", 
+    package = "panvaR"))
+
+# use direction to specify which direction in each variable indicates 
+# greater predicted impact
+scores.out <- make_scores(
+  input.df = gwas.df,
+  cols = c("EFF", "PVAL"),
+  directions = c(1, -1),
+  weights = c(.5, .5))
+
 }

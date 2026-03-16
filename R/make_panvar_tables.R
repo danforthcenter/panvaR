@@ -13,7 +13,8 @@
 #'   of start and end of gene. CHR is chromosome of gene.
 #' @param plink.path character, optional, path to plink2 executable. Will
 #'   overide option set by [panvaR::set_plink_path].
-#' @param pvals.in.log boolean, if TRUE PVAL column has already been converted to -log10(pvalue)
+#' @param pvals.in.log boolean, if TRUE PVAL column has already been converted
+#'   to -log10(pvalue)
 #' @param geno.bed.filename character, prefix of genotype files in plink
 #'   (bed/bim/fam) format. Do not include ".bed" extension.
 #' @param geno.bed.directory character, directory where genotype files are
@@ -21,43 +22,86 @@
 #' @param temp.dir character, where to output some temporary files.
 #' @param window numeric, total window size in KB, all variants within .5 *
 #'   window are calculated.
-#' @param snp.to.gene.vars character, numeric variables in gwas.res to aggregate by gene. 
-#' For each gene, snps with a physical position with the start and end of the gene are considered. 
-#' The maximum value for all snps within the gene is returned. Special values, `DIST`, `LD` and `LOGPVAL` can
-#' be included in addition to any user supplied variables.
-#' @param snp.to.gene.buffer numeric, kilobases to add to gene start and end to include genes 
-#' that are close but not in gene. Snpeff uses 5 KB by default to call a snp "upstream"/"downstream" variant. default is 0. 
-#' @param compute.scores boolean, if TRUE, snp scores will be computed. See details for more info.  
-#' @param score.vars character, vector of column names indicating which variables to included in the score. 
-#' If compute.scores is TRUE and score.vars is NULL, the default score will use equally weighted variables: "DIST", "LOGPVAL", "LD". 
-#' @param score.dirs numeric, a vector indicating which direction is to be considered more indicative
-#' of an association. 1 indicates higher is better, -1 indicates lower is better. The order should correspond 
-#' with the order in score.vars 
-#' @param score.weights numeric, a vector indicating weights for the variables. These must add up to 1. 
+#' @param snp.to.gene.vars character, numeric variables in gwas.res to aggregate
+#'   by gene. For each gene, snps with a physical position with the start and
+#'   end of the gene are considered. The maximum value for all snps within the
+#'   gene is returned. Special values, `DIST`, `LD` and `LOGPVAL` can be
+#'   included in addition to any user supplied variables.
+#' @param snp.to.gene.buffer numeric, kilobases to add to gene start and end to
+#'   include genes that are close but not in gene. Snpeff uses 5 KB by default
+#'   to call a snp "upstream"/"downstream" variant. default is 0.
+#' @param compute.scores boolean, if TRUE, snp scores will be computed. See
+#'   details for more info.
+#' @param score.vars character, vector of column names indicating which
+#'   variables to included in the score. If compute.scores is TRUE and
+#'   score.vars is NULL, the default score will use equally weighted variables:
+#'   "DIST", "LOGPVAL", "LD".
+#' @param score.dirs numeric, a vector indicating which direction is to be
+#'   considered more indicative of an association. 1 indicates higher is better,
+#'   -1 indicates lower is better. The order should correspond with the order in
+#'   score.vars
+#' @param score.weights numeric, a vector indicating weights for the variables.
+#'   These must add up to 1.
 #'
-#' @details
-#' Scores:
-#' Scores are simple scaled and weighted averages of some variables. First variables are 
-#' normalized using min/max normalization. The variables are then made negative if 
-#' they need to be reversed to indicate a larger value as a more desirable value. 
-#' 
-#' For example, distance from the key snp should be reversed as a small distance is more desirable.
-#' A log-pvalue is already of this form 'bigger is better' so does not need to be altered. 
-#' 
-#' Finally, a weighted average is taken based on user defined weights. The default weights all variables equally. 
-#' The outcome is a score from 0-1 that ranks the snps based on these variables. 
-#' see: [panvaR::make_scores]
-#' 
-#' @returns
-#' A named list with the following entries:
+#' @details Scores: Scores are simple scaled and weighted averages of some
+#'   variables. First variables are normalized using min/max normalization. The
+#'   variables are then made negative if they need to be reversed to indicate a
+#'   larger value as a more desirable value.
+#'
+#'   For example, distance from the key snp should be reversed as a small
+#'   distance is more desirable. A log-pvalue is already of this form 'bigger is
+#'   better' so does not need to be altered.
+#'
+#'   Finally, a weighted average is taken based on user defined weights. The
+#'   default weights all variables equally. The outcome is a score from 0-1 that
+#'   ranks the snps based on these variables. see: [panvaR::make_scores]
+#'
+#' @returns A named list with the following entries:
 #' - gwas: formatted gwas results.
 #' - anno: formatted annotation results.
 #' - key.snp: tag.snp or in the qtl.df case the highest p-value snp supplied to the function for downstream use.
-#' - qtl.df: qtl.df supplied to the program if used. 
+#' - qtl.df: qtl.df supplied to the program if used.
 #' @export
 #'
 #' @examples
-#' # work in progress
+#' # organize options
+#' tag.snp <- "Chr_05-6857045"
+#' gwas.df <- read.csv(system.file(
+#'     "extdata",
+#'     "PanvarExample_GLM_GWASresults.csv",
+#'     package = "panvaR"))
+#' annotation.table <- read.csv(system.file(
+#'     "extdata",
+#'     "Setaria_shattering_annotation.csv",
+#'     package = "panvaR"))
+#' plink.path <- bigsnpr::download_plink2()
+#' temp.dir <- file.path(tempdir(), "panvar_ex")
+#' dir.create(temp.dir, showWarnings = FALSE)
+#' geno.bed.filename <- "Setaria_shattering_example_pruned.bed"
+#' geno.bed.directory <- system.file("extdata", package="panvaR")
+#'
+#' # run function
+#' tables <- make_panvar_tables(
+#'   gwas.res = gwas.df,
+#'   tag.snp = tag.snp,
+#'   annotation.table = annotation.table,
+#'   plink.path = plink.path,
+#'   pvals.in.log = F,
+#'   geno.bed.filename = geno.bed.filename,
+#'   geno.bed.directory = geno.bed.directory,
+#'   window = 25,
+#'   temp.dir = temp.dir,
+#'   compute.scores = FALSE,
+#'   snp.to.gene.buffer = 0)
+#'
+#' # snp level results
+#' head(tables$gwas)
+#' # gene level results
+#' head(tables$anno)
+#'
+#' # clean up
+#' unlink(temp.dir, recursive = TRUE)
+
 make_panvar_tables <- function(gwas.res,
                                qtl.df = NULL,
                                tag.snp = NULL,

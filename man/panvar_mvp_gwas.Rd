@@ -20,18 +20,21 @@ panvar_mvp_gwas(
 )
 }
 \arguments{
-\item{inputs.dir}{character, directory to find input files created by \link{make_panvar_inputs}.
-Consider using \code{options()$panvar_outdir}.}
+\item{inputs.dir}{character, directory to find input files created by
+\link{make_panvar_inputs}. Consider using \code{options()$panvar_outdir}.}
 
-\item{in.prefix}{character, prefix of files in input directory. Same as supplied to \link{make_panvar_inputs}.
-Consider using \link{set_panvar_prefix}.}
+\item{in.prefix}{character, prefix of files in input directory. Same as
+supplied to \link{make_panvar_inputs}. Consider using
+\link{set_panvar_prefix}.}
 
-\item{npcs}{numeric, number of principal components to be included in the gwas model.}
+\item{npcs}{numeric, number of principal components to be included in the
+gwas model.}
 
-\item{gwas.model}{character, one of "GLM" or "MLM" to refer to a generalized linear model
-and mixed-linear model respectively.}
+\item{gwas.model}{character, one of "GLM" or "MLM" to refer to a generalized
+linear model and mixed-linear model respectively.}
 
-\item{output.manhattan}{boolean, if TRUE, visualizations of gwas results will be output to out.dir}
+\item{output.manhattan}{boolean, if TRUE, visualizations of gwas results will
+be output to out.dir}
 
 \item{pheno.mat}{matrix, optional, object to use for phenotype}
 
@@ -39,22 +42,70 @@ and mixed-linear model respectively.}
 
 \item{map.mat}{matrix, optional, object to use a genotype map file}
 
-\item{pcs.mat}{big.matrix, optional, object to use as principal component matrix}
+\item{pcs.mat}{big.matrix, optional, object to use as principal component
+matrix}
 
 \item{kin.mat}{big.matrix, optional, object to use as kinship matrix}
 
-\item{out.dir}{character, optional, path to store output. Will overide option set by \link{set_out_dir}}
+\item{out.dir}{character, optional, path to store output. Will overide option
+set by \link{set_out_dir}}
 
-\item{out.prefix}{character, optional, a prefix for output files. Will overide option set by \link{set_panvar_prefix}.}
+\item{out.prefix}{character, optional, a prefix for output files. Will
+overide option set by \link{set_panvar_prefix}.}
 }
 \value{
-outputs table of gwas results and optionally visualizations produced by
-\link[rMVP:MVP]{rMVP::MVP}
+outputs table of gwas results and optionally visualizations produced
+by \link[rMVP:MVP]{rMVP::MVP}
 }
 \description{
 Designed to be used with \link{make_panvar_inputs}. Will read in files and
 run GWAS using \link[rMVP:MVP]{rMVP::MVP}. Can also supply inputs as matrices.
 }
 \examples{
-# work in progress
+# specify some paths
+genotype.path <- system.file(
+  "extdata",
+  "Setaria_shattering_example_pruned.bed",
+  package = "panvaR")
+
+phenotype.path <- system.file(
+  "extdata",
+  "Setaria_shattering_example_phenotype.tsv",
+  package = "panvaR")
+
+plink.path <- bigsnpr::download_plink2()
+
+out.dir <- file.path(tempdir(), "panvar_ex")
+
+# make some inputs
+make_panvar_inputs(
+  plink.path = plink.path,
+  genotype.path = genotype.path,
+  phenotype.path = phenotype.path,
+  out.prefix = "example",
+  out.dir = out.dir)
+  
+# run gwas
+panvar_mvp_gwas(
+  inputs.dir = out.dir,
+  in.prefix = "example",
+  npcs = 2,
+  gwas.model = "GLM",
+  output.manhattan = FALSE,
+  out.dir = out.dir,
+  out.prefix = "GWAS.Example")
+  
+# see what we did 
+list.files(out.dir)
+
+# clean up 
+unlink(out.dir, recursive = TRUE)
+}
+\references{
+Lilin Yin, Haohao Zhang, Zhenshuang Tang, Jingya Xu, Dong Yin,
+Zhiwu Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li, Xiaolei Liu,
+rMVP: A Memory-Efficient, Visualization-Enhanced, and Parallel-Accelerated
+Tool for Genome-Wide Association Study, Genomics, Proteomics &
+Bioinformatics, Volume 19, Issue 4, August 2021, Pages 619–628,
+https://doi.org/10.1016/j.gpb.2020.10.007
 }

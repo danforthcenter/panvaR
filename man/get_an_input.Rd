@@ -2,7 +2,8 @@
 % Please edit documentation in R/unexported_functions_in_use.R
 \name{get_an_input}
 \alias{get_an_input}
-\title{get an input that has a certain prefix and suffix
+\title{get an input made by mvp
+get an input that has a certain prefix and suffix
 will match exactly ^prefixsuffix$ if excluding the ".*" in the middle
 might have issues with unescaped "."'s}
 \usage{
@@ -19,6 +20,7 @@ get_an_input(inputs.dir, in.prefix, suffix)
 full path to file
 }
 \description{
+get an input made by mvp
 get an input that has a certain prefix and suffix
 will match exactly ^prefixsuffix$ if excluding the ".*" in the middle
 might have issues with unescaped "."'s

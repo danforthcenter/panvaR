@@ -1,29 +1,73 @@
 #' Make standard inputs for panvaR
-#' 
-#' Does some filtering of the genotype file for samples that have a phenotype and also minor allele frequency and snps with high missing rates. 
-#' Will also calculate prinicpal components and optionally kinship matrix of the genotype file for use downstream in gwas. 
 #'
-#' @param genotype.path character, path to genotype file, supported types: '.bed', .'vcf', '.vcf.gz'.
-#' @param phenotype.path character, path to table of phenotype to test. Expects samples (lines) in column 1 and phenotype in column 2. 
-#' This is used to determine the set of samples (lines) to use in the analysis. 
-#' @param min.maf numeric, filtering cutoff for minor allele frequency, snps are removed if they have maf less than this value. To ignore set to 0.
-#' @param max.missing.snp numeric, filtering cutoff for missing rate of snps, snps are removed if they have a missing rate higher than this. To ignore set to 1.
-#' @param calc.kinship boolean, optional, if TRUE, the kinship matrix will be calculated for use in mixed linear model gwas. 
-#' @param plink.path character, optional, path to plink2 executable. Will overide option set by [panvaR::set_plink_path].
-#' @param out.dir character, optional, path to store output. Will overide option set by [panvaR::set_out_dir].
-#' @param out.prefix character, optional, a prefix for output files. Will overide option set by [panvaR::set_panvar_prefix].
-#' @param extra.plink.options character, a vector of options to include in call to plink2. 
-#' Should be a vector with plink2 arguments and their values as separate elements of vector. 
-#' E.G. c("--max-maf", ".95", "--max-alleles", "2"). see [panvaR::snp_qc_plink]
+#' Does some filtering of the genotype file for samples that have a phenotype
+#' and also minor allele frequency and snps with high missing rates. Will also
+#' calculate prinicpal components and optionally kinship matrix of the genotype
+#' file for use downstream in gwas.
 #'
-#' @returns
-#' Input files to be used for downstream panvaR functions. Stored in `out.dir` or the option set in [panvaR::set_out_dir]. 
-#' Runs [panvaR::snp_qc_plink] to filter for maf and missing using plink2 and then [rMVP::MVP.Data] to prepare data for GWAS. 
-#' 
+#' @param genotype.path character, path to genotype file, supported types:
+#'   '.bed', .'vcf', '.vcf.gz'.
+#' @param phenotype.path character, path to table of phenotype to test. Expects
+#'   samples (lines) in column 1 and phenotype in column 2. This is used to
+#'   determine the set of samples (lines) to use in the analysis.
+#' @param min.maf numeric, filtering cutoff for minor allele frequency, snps are
+#'   removed if they have maf less than this value. To ignore set to 0.
+#' @param max.missing.snp numeric, filtering cutoff for missing rate of snps,
+#'   snps are removed if they have a missing rate higher than this. To ignore
+#'   set to 1.
+#' @param calc.kinship boolean, optional, if TRUE, the kinship matrix will be
+#'   calculated for use in mixed linear model gwas.
+#' @param plink.path character, optional, path to plink2 executable. Will
+#'   overide option set by [panvaR::set_plink_path].
+#' @param out.dir character, optional, path to store output. Will overide option
+#'   set by [panvaR::set_out_dir].
+#' @param out.prefix character, optional, a prefix for output files. Will
+#'   overide option set by [panvaR::set_panvar_prefix].
+#' @param extra.plink.options character, a vector of options to include in call
+#'   to plink2. Should be a vector with plink2 arguments and their values as
+#'   separate elements of vector. E.G. c("--max-maf", ".95", "--max-alleles",
+#'   "2"). see [panvaR::snp_qc_plink]
+#'
+#' @returns Input files to be used for downstream panvaR functions. Stored in
+#' `out.dir` or the option set in [panvaR::set_out_dir]. Runs
+#' [panvaR::snp_qc_plink] to filter for maf and missing using plink2 and then
+#' [rMVP::MVP.Data] to prepare data for GWAS.
+#'
 #' @export
 #'
 #' @examples
 #' # work in progress
+#'
+#' # specify some paths
+#' genotype.path <- system.file(
+#'   "extdata",
+#'   "Setaria_shattering_example_pruned.bed",
+#'   package = "panvaR")
+#' 
+#' phenotype.path <- system.file(
+#'   "extdata",
+#'   "Setaria_shattering_example_phenotype.tsv",
+#'   package = "panvaR")
+#' 
+#' plink.path <- bigsnpr::download_plink2()
+#'
+#' out.dir <- file.path(tempdir(), "panvar_ex")
+#' dir.create(out.dir, showWarnings = FALSE)
+#'
+#' # run the function
+#' make_panvar_inputs(
+#'   plink.path = plink.path,
+#'   genotype.path = genotype.path,
+#'   phenotype.path = phenotype.path,
+#'   out.prefix = "example",
+#'   out.dir = out.dir)
+#'
+#' # created some input files
+#' list.files(out.dir)
+#'
+#' # clean up
+#' unlink(out.dir, recursive = TRUE)
+
 make_panvar_inputs <- function(genotype.path,
                                phenotype.path, # two columns, 1: linenames 2: phenotype
                                min.maf = .05,

@@ -17,35 +17,79 @@ make_panvar_inputs(
 )
 }
 \arguments{
-\item{genotype.path}{character, path to genotype file, supported types: '.bed', .'vcf', '.vcf.gz'.}
+\item{genotype.path}{character, path to genotype file, supported types:
+'.bed', .'vcf', '.vcf.gz'.}
 
-\item{phenotype.path}{character, path to table of phenotype to test. Expects samples (lines) in column 1 and phenotype in column 2.
-This is used to determine the set of samples (lines) to use in the analysis.}
+\item{phenotype.path}{character, path to table of phenotype to test. Expects
+samples (lines) in column 1 and phenotype in column 2. This is used to
+determine the set of samples (lines) to use in the analysis.}
 
-\item{min.maf}{numeric, filtering cutoff for minor allele frequency, snps are removed if they have maf less than this value. To ignore set to 0.}
+\item{min.maf}{numeric, filtering cutoff for minor allele frequency, snps are
+removed if they have maf less than this value. To ignore set to 0.}
 
-\item{max.missing.snp}{numeric, filtering cutoff for missing rate of snps, snps are removed if they have a missing rate higher than this. To ignore set to 1.}
+\item{max.missing.snp}{numeric, filtering cutoff for missing rate of snps,
+snps are removed if they have a missing rate higher than this. To ignore
+set to 1.}
 
-\item{calc.kinship}{boolean, optional, if TRUE, the kinship matrix will be calculated for use in mixed linear model gwas.}
+\item{calc.kinship}{boolean, optional, if TRUE, the kinship matrix will be
+calculated for use in mixed linear model gwas.}
 
-\item{plink.path}{character, optional, path to plink2 executable. Will overide option set by \link{set_plink_path}.}
+\item{plink.path}{character, optional, path to plink2 executable. Will
+overide option set by \link{set_plink_path}.}
 
-\item{out.dir}{character, optional, path to store output. Will overide option set by \link{set_out_dir}.}
+\item{out.dir}{character, optional, path to store output. Will overide option
+set by \link{set_out_dir}.}
 
-\item{out.prefix}{character, optional, a prefix for output files. Will overide option set by \link{set_panvar_prefix}.}
+\item{out.prefix}{character, optional, a prefix for output files. Will
+overide option set by \link{set_panvar_prefix}.}
 
-\item{extra.plink.options}{character, a vector of options to include in call to plink2.
-Should be a vector with plink2 arguments and their values as separate elements of vector.
-E.G. c("--max-maf", ".95", "--max-alleles", "2"). see \link{snp_qc_plink}}
+\item{extra.plink.options}{character, a vector of options to include in call
+to plink2. Should be a vector with plink2 arguments and their values as
+separate elements of vector. E.G. c("--max-maf", ".95", "--max-alleles",
+"2"). see \link{snp_qc_plink}}
 }
 \value{
-Input files to be used for downstream panvaR functions. Stored in \code{out.dir} or the option set in \link{set_out_dir}.
-Runs \link{snp_qc_plink} to filter for maf and missing using plink2 and then \link[rMVP:MVP.Data]{rMVP::MVP.Data} to prepare data for GWAS.
+Input files to be used for downstream panvaR functions. Stored in
+\code{out.dir} or the option set in \link{set_out_dir}. Runs
+\link{snp_qc_plink} to filter for maf and missing using plink2 and then
+\link[rMVP:MVP.Data]{rMVP::MVP.Data} to prepare data for GWAS.
 }
 \description{
-Does some filtering of the genotype file for samples that have a phenotype and also minor allele frequency and snps with high missing rates.
-Will also calculate prinicpal components and optionally kinship matrix of the genotype file for use downstream in gwas.
+Does some filtering of the genotype file for samples that have a phenotype
+and also minor allele frequency and snps with high missing rates. Will also
+calculate prinicpal components and optionally kinship matrix of the genotype
+file for use downstream in gwas.
 }
 \examples{
 # work in progress
+
+# specify some paths
+genotype.path <- system.file(
+  "extdata",
+  "Setaria_shattering_example_pruned.bed",
+  package = "panvaR")
+
+phenotype.path <- system.file(
+  "extdata",
+  "Setaria_shattering_example_phenotype.tsv",
+  package = "panvaR")
+
+plink.path <- bigsnpr::download_plink2()
+
+out.dir <- file.path(tempdir(), "panvar_ex")
+dir.create(out.dir, showWarnings = FALSE)
+
+# run the function
+make_panvar_inputs(
+  plink.path = plink.path,
+  genotype.path = genotype.path,
+  phenotype.path = phenotype.path,
+  out.prefix = "example",
+  out.dir = out.dir)
+
+# created some input files
+list.files(out.dir)
+
+# clean up
+unlink(out.dir, recursive = TRUE)
 }
