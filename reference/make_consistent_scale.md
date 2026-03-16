@@ -47,4 +47,20 @@ ggplot scale object for use in downstream plotting
 
 ``` r
 # work in progress
+
+# fill
+my.scale <- 
+make_consistent_scale(
+values =  c("red", "blue", "gold"),
+vars = c("A", "B", "C"),
+show.example = TRUE)
+
+
+# shape 
+my.scale <- 
+make_consistent_scale(
+values =  c(21, 22, 23),
+vars = c("A", "B", "C"),
+type = "shape",
+show.example = TRUE)
 ```

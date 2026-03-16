@@ -83,5 +83,36 @@ maximum LD of the given snp to the snps in the group.
 ## Examples
 
 ``` r
-# work in progress
+# set up inputs for example
+plink.path <- bigsnpr::download_plink2()
+tag.snp <- "Chr_05-6857045"
+geno.bed <- "Setaria_shattering_example_pruned.bed"
+out.dir <- file.path(tempdir(), "panvar_ex")
+dir.create(out.dir, showWarnings = FALSE)
+
+# run example
+out <- get_ld_in_window(
+    tag.snp = tag.snp,
+    window = 25,
+    plink.path = plink.path,
+    geno.bed = geno.bed,
+    in.dir = system.file("extdata", package="panvaR"),
+    out.dir = out.dir)
+
+# list
+names(out)
+#> [1] "table"                  "key.snp"                "key.snp_geno.formatted"
+#> [4] "qtl.snps"              
+# table
+head(out$table)
+#>        marker.ID CHR     POS         R2
+#> 1 Chr_05-6832059   5 6832059 0.00679048
+#> 2 Chr_05-6832638   5 6832638 0.00679048
+#> 3 Chr_05-6833053   5 6833053 0.01793830
+#> 4 Chr_05-6833177   5 6833177 0.92282300
+#> 5 Chr_05-6833193   5 6833193 0.00513623
+#> 6 Chr_05-6833227   5 6833227 0.01793830
+
+# clean up
+unlink(out.dir, recursive = TRUE)
 ```

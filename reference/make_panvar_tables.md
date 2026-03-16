@@ -150,5 +150,64 @@ that ranks the snps based on these variables. see:
 ## Examples
 
 ``` r
-# work in progress
+# organize options
+tag.snp <- "Chr_05-6857045"
+gwas.df <- read.csv(system.file(
+    "extdata",
+    "PanvarExample_GLM_GWASresults.csv",
+    package = "panvaR"))
+annotation.table <- read.csv(system.file(
+    "extdata",
+    "Setaria_shattering_annotation.csv",
+    package = "panvaR"))
+plink.path <- bigsnpr::download_plink2()
+temp.dir <- file.path(tempdir(), "panvar_ex")
+dir.create(temp.dir, showWarnings = FALSE)
+geno.bed.filename <- "Setaria_shattering_example_pruned.bed"
+geno.bed.directory <- system.file("extdata", package="panvaR")
+
+# run function
+tables <- make_panvar_tables(
+  gwas.res = gwas.df,
+  tag.snp = tag.snp,
+  annotation.table = annotation.table,
+  plink.path = plink.path,
+  pvals.in.log = F,
+  geno.bed.filename = geno.bed.filename,
+  geno.bed.directory = geno.bed.directory,
+  window = 25,
+  temp.dir = temp.dir,
+  compute.scores = FALSE,
+  snp.to.gene.buffer = 0)
+#> Calculating LD
+#> Generating snp to gene correspondence
+
+# snp level results
+head(tables$gwas)
+#> # A tibble: 6 × 12
+#> # Rowwise: 
+#>   marker.ID   CHR     POS A1    A2      MAF   EFF    SE     PVAL LOGPVAL     LD
+#>   <chr>     <dbl>   <dbl> <chr> <chr> <dbl> <dbl> <dbl>    <dbl>   <dbl>  <dbl>
+#> 1 5-6833177     5 6833177 G     A     0.267 1.11  0.145 6.98e-13  12.2   0.923 
+#> 2 5-6833238     5 6833238 A     G     0.314 0.769 0.118 5.58e-10   9.25  0.716 
+#> 3 5-6833253     5 6833253 C     T     0.230 0.816 0.128 1.24e- 9   8.90  0.0762
+#> 4 5-6834607     5 6834607 C     T     0.423 0.757 0.258 3.76e- 3   2.42  0.278 
+#> 5 5-6834854     5 6834854 G     A     0.472 0.202 0.202 3.19e- 1   0.496 0.321 
+#> 6 5-6835212     5 6835212 C     T     0.402 1.26  0.302 4.46e- 5   4.35  0.268 
+#> # ℹ 1 more variable: genes_near_snp <chr>
+# gene level results
+head(tables$anno)
+#> # A tibble: 6 × 7
+#> # Rowwise: 
+#>     CHR geneID           start     end annotation          dist.from.snp      LD
+#>   <int> <chr>            <int>   <int> <chr>                       <dbl>   <dbl>
+#> 1     5 Sevir.5G085300 6829932 6832531 (1 of 2) PTHR20961…         24514 NA     
+#> 2     5 Sevir.5G085350 6837639 6838969 No gene descriptio…         18076  0.953 
+#> 3     5 Sevir.5G085800 6867108 6873803 (1 of 1) KOG4467 -…         10063  0.429 
+#> 4     5 Sevir.5G085400 6847970 6850236 (1 of 1) PTHR10641…          6809  0.0960
+#> 5     5 Sevir.5G085700 6866196 6868255 (1 of 1) PTHR34543…          9151  0.0471
+#> 6     5 Sevir.5G085500 6859612 6862290 (1 of 2) PTHR33146…          2567  0.119 
+
+# clean up
+unlink(temp.dir, recursive = TRUE)
 ```

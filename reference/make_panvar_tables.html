@@ -92,7 +92,8 @@ overide option set by <a href="set_plink_path.html">set_plink_path</a>.</p></dd>
 
 
 <dt id="arg-pvals-in-log">pvals.in.log<a class="anchor" aria-label="anchor" href="#arg-pvals-in-log"></a></dt>
-<dd><p>boolean, if TRUE PVAL column has already been converted to -log10(pvalue)</p></dd>
+<dd><p>boolean, if TRUE PVAL column has already been converted
+to -log10(pvalue)</p></dd>
 
 
 <dt id="arg-geno-bed-filename">geno.bed.filename<a class="anchor" aria-label="anchor" href="#arg-geno-bed-filename"></a></dt>
@@ -115,34 +116,41 @@ window are calculated.</p></dd>
 
 
 <dt id="arg-snp-to-gene-vars">snp.to.gene.vars<a class="anchor" aria-label="anchor" href="#arg-snp-to-gene-vars"></a></dt>
-<dd><p>character, numeric variables in gwas.res to aggregate by gene.
-For each gene, snps with a physical position with the start and end of the gene are considered.
-The maximum value for all snps within the gene is returned. Special values, <code>DIST</code>, <code>LD</code> and <code>LOGPVAL</code> can
-be included in addition to any user supplied variables.</p></dd>
+<dd><p>character, numeric variables in gwas.res to aggregate
+by gene. For each gene, snps with a physical position with the start and
+end of the gene are considered. The maximum value for all snps within the
+gene is returned. Special values, <code>DIST</code>, <code>LD</code> and <code>LOGPVAL</code> can be
+included in addition to any user supplied variables.</p></dd>
 
 
 <dt id="arg-snp-to-gene-buffer">snp.to.gene.buffer<a class="anchor" aria-label="anchor" href="#arg-snp-to-gene-buffer"></a></dt>
-<dd><p>numeric, kilobases to add to gene start and end to include genes
-that are close but not in gene. Snpeff uses 5 KB by default to call a snp "upstream"/"downstream" variant. default is 0.</p></dd>
+<dd><p>numeric, kilobases to add to gene start and end to
+include genes that are close but not in gene. Snpeff uses 5 KB by default
+to call a snp "upstream"/"downstream" variant. default is 0.</p></dd>
 
 
 <dt id="arg-compute-scores">compute.scores<a class="anchor" aria-label="anchor" href="#arg-compute-scores"></a></dt>
-<dd><p>boolean, if TRUE, snp scores will be computed. See details for more info.</p></dd>
+<dd><p>boolean, if TRUE, snp scores will be computed. See
+details for more info.</p></dd>
 
 
 <dt id="arg-score-vars">score.vars<a class="anchor" aria-label="anchor" href="#arg-score-vars"></a></dt>
-<dd><p>character, vector of column names indicating which variables to included in the score.
-If compute.scores is TRUE and score.vars is NULL, the default score will use equally weighted variables: "DIST", "LOGPVAL", "LD".</p></dd>
+<dd><p>character, vector of column names indicating which
+variables to included in the score. If compute.scores is TRUE and
+score.vars is NULL, the default score will use equally weighted variables:
+"DIST", "LOGPVAL", "LD".</p></dd>
 
 
 <dt id="arg-score-dirs">score.dirs<a class="anchor" aria-label="anchor" href="#arg-score-dirs"></a></dt>
-<dd><p>numeric, a vector indicating which direction is to be considered more indicative
-of an association. 1 indicates higher is better, -1 indicates lower is better. The order should correspond
-with the order in score.vars</p></dd>
+<dd><p>numeric, a vector indicating which direction is to be
+considered more indicative of an association. 1 indicates higher is better,
+-1 indicates lower is better. The order should correspond with the order in
+score.vars</p></dd>
 
 
 <dt id="arg-score-weights">score.weights<a class="anchor" aria-label="anchor" href="#arg-score-weights"></a></dt>
-<dd><p>numeric, a vector indicating weights for the variables. These must add up to 1.</p></dd>
+<dd><p>numeric, a vector indicating weights for the variables.
+These must add up to 1.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -154,20 +162,80 @@ with the order in score.vars</p></dd>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Scores:
-Scores are simple scaled and weighted averages of some variables. First variables are
-normalized using min/max normalization. The variables are then made negative if
-they need to be reversed to indicate a larger value as a more desirable value.</p>
-<p>For example, distance from the key snp should be reversed as a small distance is more desirable.
-A log-pvalue is already of this form 'bigger is better' so does not need to be altered.</p>
-<p>Finally, a weighted average is taken based on user defined weights. The default weights all variables equally.
-The outcome is a score from 0-1 that ranks the snps based on these variables.
-see: <a href="make_scores.html">make_scores</a></p>
+    <p>Scores: Scores are simple scaled and weighted averages of some
+variables. First variables are normalized using min/max normalization. The
+variables are then made negative if they need to be reversed to indicate a
+larger value as a more desirable value.</p>
+<p>For example, distance from the key snp should be reversed as a small
+distance is more desirable. A log-pvalue is already of this form 'bigger is
+better' so does not need to be altered.</p>
+<p>Finally, a weighted average is taken based on user defined weights. The
+default weights all variables equally. The outcome is a score from 0-1 that
+ranks the snps based on these variables. see: <a href="make_scores.html">make_scores</a></p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># work in progress</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># organize options</span></span></span>
+<span class="r-in"><span><span class="va">tag.snp</span> <span class="op">&lt;-</span> <span class="st">"Chr_05-6857045"</span></span></span>
+<span class="r-in"><span><span class="va">gwas.df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="st">"extdata"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"PanvarExample_GLM_GWASresults.csv"</span>,</span></span>
+<span class="r-in"><span>    package <span class="op">=</span> <span class="st">"panvaR"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">annotation.table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="st">"extdata"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"Setaria_shattering_annotation.csv"</span>,</span></span>
+<span class="r-in"><span>    package <span class="op">=</span> <span class="st">"panvaR"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">plink.path</span> <span class="op">&lt;-</span> <span class="fu">bigsnpr</span><span class="fu">::</span><span class="fu"><a href="https://privefl.github.io/bigsnpr/reference/download_plink.html" class="external-link">download_plink2</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">temp.dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"panvar_ex"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">temp.dir</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">geno.bed.filename</span> <span class="op">&lt;-</span> <span class="st">"Setaria_shattering_example_pruned.bed"</span></span></span>
+<span class="r-in"><span><span class="va">geno.bed.directory</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package<span class="op">=</span><span class="st">"panvaR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># run function</span></span></span>
+<span class="r-in"><span><span class="va">tables</span> <span class="op">&lt;-</span> <span class="fu">make_panvar_tables</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  gwas.res <span class="op">=</span> <span class="va">gwas.df</span>,</span></span>
+<span class="r-in"><span>  tag.snp <span class="op">=</span> <span class="va">tag.snp</span>,</span></span>
+<span class="r-in"><span>  annotation.table <span class="op">=</span> <span class="va">annotation.table</span>,</span></span>
+<span class="r-in"><span>  plink.path <span class="op">=</span> <span class="va">plink.path</span>,</span></span>
+<span class="r-in"><span>  pvals.in.log <span class="op">=</span> <span class="cn">F</span>,</span></span>
+<span class="r-in"><span>  geno.bed.filename <span class="op">=</span> <span class="va">geno.bed.filename</span>,</span></span>
+<span class="r-in"><span>  geno.bed.directory <span class="op">=</span> <span class="va">geno.bed.directory</span>,</span></span>
+<span class="r-in"><span>  window <span class="op">=</span> <span class="fl">25</span>,</span></span>
+<span class="r-in"><span>  temp.dir <span class="op">=</span> <span class="va">temp.dir</span>,</span></span>
+<span class="r-in"><span>  compute.scores <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  snp.to.gene.buffer <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating LD</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating snp to gene correspondence</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># snp level results</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tables</span><span class="op">$</span><span class="va">gwas</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Rowwise: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   marker.ID   CHR     POS A1    A2      MAF   EFF    SE     PVAL LOGPVAL     LD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 5-6833177     5 6<span style="text-decoration: underline;">833</span>177 G     A     0.267 1.11  0.145 6.98<span style="color: #949494;">e</span><span style="color: #BB0000;">-13</span>  12.2   0.923 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 5-6833238     5 6<span style="text-decoration: underline;">833</span>238 A     G     0.314 0.769 0.118 5.58<span style="color: #949494;">e</span><span style="color: #BB0000;">-10</span>   9.25  0.716 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 5-6833253     5 6<span style="text-decoration: underline;">833</span>253 C     T     0.230 0.816 0.128 1.24<span style="color: #949494;">e</span><span style="color: #BB0000;">- 9</span>   8.90  0.076<span style="text-decoration: underline;">2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> 5-6834607     5 6<span style="text-decoration: underline;">834</span>607 C     T     0.423 0.757 0.258 3.76<span style="color: #949494;">e</span><span style="color: #BB0000;">- 3</span>   2.42  0.278 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> 5-6834854     5 6<span style="text-decoration: underline;">834</span>854 G     A     0.472 0.202 0.202 3.19<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>   0.496 0.321 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> 5-6835212     5 6<span style="text-decoration: underline;">835</span>212 C     T     0.402 1.26  0.302 4.46<span style="color: #949494;">e</span><span style="color: #BB0000;">- 5</span>   4.35  0.268 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: genes_near_snp &lt;chr&gt;</span></span>
+<span class="r-in"><span><span class="co"># gene level results</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tables</span><span class="op">$</span><span class="va">anno</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 7</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Rowwise: </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     CHR geneID           start     end annotation          dist.from.snp      LD</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     5 Sevir.5G085300 6<span style="text-decoration: underline;">829</span>932 6<span style="text-decoration: underline;">832</span>531 (1 of 2) PTHR20961…         <span style="text-decoration: underline;">24</span>514 <span style="color: #BB0000;">NA</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     5 Sevir.5G085350 6<span style="text-decoration: underline;">837</span>639 6<span style="text-decoration: underline;">838</span>969 No gene descriptio…         <span style="text-decoration: underline;">18</span>076  0.953 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     5 Sevir.5G085800 6<span style="text-decoration: underline;">867</span>108 6<span style="text-decoration: underline;">873</span>803 (1 of 1) KOG4467 -…         <span style="text-decoration: underline;">10</span>063  0.429 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     5 Sevir.5G085400 6<span style="text-decoration: underline;">847</span>970 6<span style="text-decoration: underline;">850</span>236 (1 of 1) PTHR10641…          <span style="text-decoration: underline;">6</span>809  0.096<span style="text-decoration: underline;">0</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     5 Sevir.5G085700 6<span style="text-decoration: underline;">866</span>196 6<span style="text-decoration: underline;">868</span>255 (1 of 1) PTHR34543…          <span style="text-decoration: underline;">9</span>151  0.047<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     5 Sevir.5G085500 6<span style="text-decoration: underline;">859</span>612 6<span style="text-decoration: underline;">862</span>290 (1 of 2) PTHR33146…          <span style="text-decoration: underline;">2</span>567  0.119 </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># clean up</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">temp.dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

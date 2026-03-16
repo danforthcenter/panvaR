@@ -1,8 +1,8 @@
-# get an input that has a certain prefix and suffix will match exactly ^prefixsuffix\$ if excluding the ".\*" in the middle might have issues with unescaped "."'s
+# get an input made by mvp get an input that has a certain prefix and suffix will match exactly ^prefixsuffix\$ if excluding the ".\*" in the middle might have issues with unescaped "."'s
 
-get an input that has a certain prefix and suffix will match exactly
-^prefixsuffix\$ if excluding the ".\*" in the middle might have issues
-with unescaped "."'s
+get an input made by mvp get an input that has a certain prefix and
+suffix will match exactly ^prefixsuffix\$ if excluding the ".\*" in the
+middle might have issues with unescaped "."'s
 
 ## Usage
 
