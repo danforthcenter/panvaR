@@ -24,5 +24,13 @@ the variance contained in these components. Consequently, shouldn't set the num.
 Calculate and plot pcs
 }
 \examples{
-# work in progress
+# get input
+bedfile.path <- system.file(
+  "extdata",
+  "Setaria_shattering_example_pruned.bed",
+  package = "panvaR")
+
+# plot
+plot_pc_scree(
+  bedfile.path = bedfile.path)
 }

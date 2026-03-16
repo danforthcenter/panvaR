@@ -21,8 +21,24 @@
 #' @export
 #'
 #' @examples
-#' # work in progress
+#' # get some inputs
+#' plink.path <- bigsnpr::download_plink2()
+#' temp.dir <- file.path(tempdir(), "panvar_ex")
+#' dir.create(temp.dir, showWarnings = FALSE)
+#' genotype.path <- system.file("extdata", "Setaria_shattering_example_pruned.bed", package="panvaR")
 #' 
+#' # run function
+#' snp_qc_plink(
+#'   genotype.path = genotype.path,
+#'   plink.path = plink.path,
+#'   out.dir = temp.dir,
+#'   out.prefix = "Example")
+#'   
+#' # see what we did 
+#' list.files(temp.dir)
+#' 
+#' # clean up
+#' unlink(temp.dir, recursive = TRUE)
 snp_qc_plink <- function(genotype.path,
                          min.maf = .05, # to turn off set to 0
                          max.missing.snp = .1, # to turn off set to 1

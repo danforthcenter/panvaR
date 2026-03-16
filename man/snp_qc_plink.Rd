@@ -44,6 +44,22 @@ Does some standard qc of snp files before gwas. Mainly maf and missing filter. A
 Extra calls to plink2 can be included to filter in more ways.
 }
 \examples{
-# work in progress
+# get some inputs
+plink.path <- bigsnpr::download_plink2()
+temp.dir <- file.path(tempdir(), "panvar_ex")
+dir.create(temp.dir, showWarnings = FALSE)
+genotype.path <- system.file("extdata", "Setaria_shattering_example_pruned.bed", package="panvaR")
 
+# run function
+snp_qc_plink(
+  genotype.path = genotype.path,
+  plink.path = plink.path,
+  out.dir = temp.dir,
+  out.prefix = "Example")
+  
+# see what we did 
+list.files(temp.dir)
+
+# clean up
+unlink(temp.dir, recursive = TRUE)
 }

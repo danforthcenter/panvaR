@@ -82,5 +82,43 @@ given genomic window.
 Make a plot that lines up manhattan and gene locations
 }
 \examples{
-# work in progress
+#' # organize options
+tag.snp <- "Chr_05-6857045"
+gwas.df <- read.csv(system.file(
+    "extdata",
+    "PanvarExample_GLM_GWASresults.csv",
+    package = "panvaR"))
+annotation.table <- read.csv(system.file(
+    "extdata",
+    "Setaria_shattering_annotation.csv",
+    package = "panvaR"))
+plink.path <- bigsnpr::download_plink2()
+temp.dir <- file.path(tempdir(), "panvar_ex")
+dir.create(temp.dir, showWarnings = FALSE)
+geno.bed.filename <- "Setaria_shattering_example_pruned.bed"
+geno.bed.directory <- system.file("extdata", package="panvaR")
+
+# make input tables
+tables <- make_panvar_tables(
+  gwas.res = gwas.df,
+  tag.snp = tag.snp,
+  annotation.table = annotation.table,
+  plink.path = plink.path,
+  pvals.in.log = F,
+  geno.bed.filename = geno.bed.filename,
+  geno.bed.directory = geno.bed.directory,
+  window = 25,
+  temp.dir = temp.dir,
+  compute.scores = FALSE,
+  snp.to.gene.buffer = 0)
+
+# make plot 
+plotly_panvar(
+  panvar.table.list = tables,
+  pvals.in.log = FALSE,
+  window = 25,
+  sig.line = 6)
+  
+# clean up 
+unlink(temp.dir, recursive = TRUE)
 }

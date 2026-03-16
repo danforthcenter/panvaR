@@ -14,7 +14,41 @@
 #' @export
 #'
 #' @examples
-#' # work in progress
+#' tag.snp <- "Chr_05-6857045"
+#' gwas.df <- read.csv(system.file(
+#'     "extdata",
+#'     "PanvarExample_GLM_GWASresults.csv",
+#'     package = "panvaR"))
+#' annotation.table <- read.csv(system.file(
+#'     "extdata",
+#'     "Setaria_shattering_annotation.csv",
+#'     package = "panvaR"))
+#' plink.path <- bigsnpr::download_plink2()
+#' temp.dir <- file.path(tempdir(), "panvar_ex")
+#' dir.create(temp.dir, showWarnings = FALSE)
+#' geno.bed.filename <- "Setaria_shattering_example_pruned.bed"
+#' geno.bed.directory <- system.file("extdata", package="panvaR")
+#' 
+#' # look at only significant snps 
+#' library(dplyr)
+#' gwas.df_sub <- gwas.df %>% 
+#'   filter(LOGPVAL > 8)
+#' 
+#' # get clumps
+#' clump.table <- snp_make_clumps(
+#'   geno.bed.filename = geno.bed.filename,
+#'   geno.bed.dir = geno.bed.directory,
+#'   gwas.res = gwas.df_sub,
+#'   pvals.in.log = FALSE,
+#'   window = 500,
+#'   ld.thresh = .5,
+#'   plink.path = plink.path,
+#'   out.dir = temp.dir)
+#'   
+#'  head(clump.table)
+#' 
+#' # clean up
+#' unlink(temp.dir, recursive = TRUE)
 snp_make_clumps <- function(geno.bed.filename,
                         geno.bed.dir,
                         gwas.res,
