@@ -64,5 +64,56 @@ to reassign afterwards to be along the genome.
 ## Examples
 
 ``` r
-# work in progress
+tag.snp <- "Chr_05-6857045"
+gwas.df <- read.csv(system.file(
+    "extdata",
+    "PanvarExample_GLM_GWASresults.csv",
+    package = "panvaR"))
+annotation.table <- read.csv(system.file(
+    "extdata",
+    "Setaria_shattering_annotation.csv",
+    package = "panvaR"))
+plink.path <- bigsnpr::download_plink2()
+temp.dir <- file.path(tempdir(), "panvar_ex")
+dir.create(temp.dir, showWarnings = FALSE)
+geno.bed.filename <- "Setaria_shattering_example_pruned.bed"
+geno.bed.directory <- system.file("extdata", package="panvaR")
+
+# look at only significant snps 
+library(dplyr)
+#> 
+#> Attaching package: ‘dplyr’
+#> The following objects are masked from ‘package:stats’:
+#> 
+#>     filter, lag
+#> The following objects are masked from ‘package:base’:
+#> 
+#>     intersect, setdiff, setequal, union
+gwas.df_sub <- gwas.df %>% 
+  filter(LOGPVAL > 8)
+
+# get clumps
+clump.table <- snp_make_clumps(
+  geno.bed.filename = geno.bed.filename,
+  geno.bed.dir = geno.bed.directory,
+  gwas.res = gwas.df_sub,
+  pvals.in.log = FALSE,
+  window = 500,
+  ld.thresh = .5,
+  plink.path = plink.path,
+  out.dir = temp.dir)
+#> Creating clumps...
+#>   |                                                                              |=====================================                                 |  52%  |                                                                              |===================================================                   |  73%  |                                                                              |============================================================          |  85%  |                                                                              |===============================================================       |  90%  |                                                                              |=================================================================     |  93%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================| 100%
+  
+ head(clump.table)
+#>        marker.ID clump_num
+#> 1 Chr_05-6419601         1
+#> 2 Chr_05-6463617         1
+#> 3 Chr_05-6466490         1
+#> 4 Chr_05-6467430         1
+#> 5 Chr_05-6474403         1
+#> 6 Chr_05-6474887         1
+
+# clean up
+unlink(temp.dir, recursive = TRUE)
 ```

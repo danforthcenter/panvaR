@@ -35,5 +35,13 @@ too low, this could lead to strange results.
 ## Examples
 
 ``` r
-# work in progress
+# get input
+bedfile.path <- system.file(
+  "extdata",
+  "Setaria_shattering_example_pruned.bed",
+  package = "panvaR")
+
+# plot
+plot_pc_scree(
+  bedfile.path = bedfile.path)
 ```
