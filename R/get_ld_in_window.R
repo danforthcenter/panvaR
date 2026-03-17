@@ -21,7 +21,9 @@
 #'  - table: table with marker.IDs (CHR-POS) and maximum LD in R2 for each snp to the snps in the qtl.df or LD to tag.snp
 #'  - key.snp: marker.ID corresponding to the middle of the window, either the max(LOGPVAL) of qtl.df or tag.snp. useful to retain for downstream functions.
 #'  - qtl.snps: marker.ID corresponding to the markers in the qtl.df. useful to retain for downstream functions.
-#'  
+#'
+#' @references 
+#' Chang CC, Chow CC, Tellier LCAM, Vattikuti S, Purcell SM, Lee JJ (2015) Second-generation PLINK: rising to the challenge of larger and richer datasets. GigaScience, 4.
 #' @export
 #'
 #' @examples

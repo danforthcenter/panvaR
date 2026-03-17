@@ -1,23 +1,35 @@
 #' Quality control a snp file using plink2
-#' 
-#' Does some standard qc of snp files before gwas. Mainly maf and missing filter. Also filters for single allele snps. 
-#' Extra calls to plink2 can be included to filter in more ways. 
 #'
-#' @param genotype.path character, path to genotype file, supported types: '.bed', .'vcf', '.vcf.gz'.
-#' @param min.maf numeric, filtering cutoff for minor allele frequency, snps are removed if they have maf less than this value. To ignore set to 0.
-#' @param max.missing.snp numeric, filtering cutoff for missing rate of snps, snps are removed if they have a missing rate higher than this. To ignore set to 1.
-#' @param sample.list.path character, optional, path to a list of samples. 
-#' Samples in file will be included. Sample filtering happens before other filtering per plink's order of operations.
-#' @param plink.path character, optional, path to plink2 executable. If not provided, will default to option set by [panvaR::set_plink_path].
-#' @param out.dir character, optional, path to output files. If not provided, will default to option set by [panvaR::set_out_dir]
+#' Does some standard qc of snp files before gwas. Mainly maf and missing
+#' filter. Also filters for single allele snps. Extra calls to plink2 can be
+#' included to filter in more ways.
+#'
+#' @param genotype.path character, path to genotype file, supported types:
+#'   '.bed', .'vcf', '.vcf.gz'.
+#' @param min.maf numeric, filtering cutoff for minor allele frequency, snps are
+#'   removed if they have maf less than this value. To ignore set to 0.
+#' @param max.missing.snp numeric, filtering cutoff for missing rate of snps,
+#'   snps are removed if they have a missing rate higher than this. To ignore
+#'   set to 1.
+#' @param sample.list.path character, optional, path to a list of samples.
+#'   Samples in file will be included. Sample filtering happens before other
+#'   filtering per plink's order of operations.
+#' @param plink.path character, optional, path to plink2 executable. If not
+#'   provided, will default to option set by [panvaR::set_plink_path].
+#' @param out.dir character, optional, path to output files. If not provided,
+#'   will default to option set by [panvaR::set_out_dir]
 #' @param out.prefix character, optional, prefix for files output.
-#' @param extra.options character, a vector of options to include in call to plink2. 
-#' Should be a vector with plink2 arguments and their values as separate elements of vector. 
-#' E.G. c("--max-maf", ".95", "--max-alleles", "2")
+#' @param extra.options character, a vector of options to include in call to
+#'   plink2. Should be a vector with plink2 arguments and their values as
+#'   separate elements of vector. E.G. c("--max-maf", ".95", "--max-alleles",
+#'   "2")
 #'
-#' @returns
-#' filtered bed/bim/bam files stored in out.dir. 
-#' character string of path to bed file.
+#' @returns filtered bed/bim/bam files stored in out.dir. character string of
+#' path to bed file.
+#' @references Chang CC, Chow CC, Tellier LCAM, Vattikuti S, Purcell SM, Lee JJ
+#'   (2015) Second-generation PLINK: rising to the challenge of larger and
+#'   richer datasets. GigaScience, 4.
+#'
 #' @export
 #'
 #' @examples
@@ -26,17 +38,17 @@
 #' temp.dir <- file.path(tempdir(), "panvar_ex")
 #' dir.create(temp.dir, showWarnings = FALSE)
 #' genotype.path <- system.file("extdata", "Setaria_shattering_example_pruned.bed", package="panvaR")
-#' 
+#'
 #' # run function
 #' snp_qc_plink(
 #'   genotype.path = genotype.path,
 #'   plink.path = plink.path,
 #'   out.dir = temp.dir,
 #'   out.prefix = "Example")
-#'   
-#' # see what we did 
+#'
+#' # see what we did
 #' list.files(temp.dir)
-#' 
+#'
 #' # clean up
 #' unlink(temp.dir, recursive = TRUE)
 snp_qc_plink <- function(genotype.path,
