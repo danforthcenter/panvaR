@@ -12,22 +12,41 @@
 #' @export
 #'
 #' @examples
-#' # work in progress
+#' # These are some variables you'll be working with.
+#' # We want to retain the correspondence between a color/shape in plots
+#' # and these variables. 
+#' my.vars <- c("A", "B", "C")
 #' 
 #' # fill
 #' my.scale <- 
 #' make_consistent_scale(
 #' values =  c("red", "blue", "gold"),
-#' vars = c("A", "B", "C"),
+#' vars = my.vars,
 #' show.example = TRUE)
 #' 
 #' # shape 
+#' 
 #' my.scale <- 
 #' make_consistent_scale(
 #' values =  c(21, 22, 23),
-#' vars = c("A", "B", "C"),
+#' vars = my.vars,
 #' type = "shape",
 #' show.example = TRUE)
+#' 
+#' # will retain correspondence when a level is dropped
+#' plot.df <- data.frame(
+#'   vars = my.vars[-2],
+#'   value = c(2,1))
+#'   
+#' ggplot(data = plot.df, aes(x = value, y = 1)) +
+#'   geom_point(aes(shape = vars),  fill = "orange", size = 10) +
+#'   geom_text(aes(y = 1.1, label = vars)) +
+#'   my.scale +
+#'   ggplot2::theme_void() +
+#'   ylim(.75, 1.25) +
+#'   xlim(.5, 2.5) +
+#'   theme(legend.position = "bottom")
+#' 
 make_consistent_scale <- function(values,
                                   vars,
                                   type = c("fill", "color", "shape"),
