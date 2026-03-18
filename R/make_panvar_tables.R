@@ -205,7 +205,7 @@ make_panvar_tables <- function(gwas.res,
       weights <- c(1/3, 1/3, 1/3)
     } else {
       # always calculate these three, add user supplied 
-      score.vars <- c("DIST", "LOGPVAL", "LD", score.vars)
+      # score.vars <- c("DIST", "LOGPVAL", "LD", score.vars)
       # if the user supplies one of these make sure its not in here twice
       score.vars <- unique(score.vars)
       # use user defined stuff
