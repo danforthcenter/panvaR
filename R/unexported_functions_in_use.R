@@ -292,7 +292,7 @@ temp_file <- function(create_file = FALSE, working_directory = NULL, prefix = NU
 
 # do min/max normalization
 minmaxnormal <- function(x) {
-  return((x- min(x)) /(max(x)-min(x)))
+  return((x- min(x, na.rm = T)) /(max(x, na.rm = T)-min(x, na.rm = T)))
 }
 
 
