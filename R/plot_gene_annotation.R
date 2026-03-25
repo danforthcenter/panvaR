@@ -239,6 +239,16 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
     }
   }
   
+  # set up logic for if there is one row in annotation table
+  # single gene annotation tables were causing issues with geom_fit_text's
+  # automatic determination of y size of text box. 
+  # have to parameterize differently 
+  one.gene <- nrow(anno.spread) == 1
+  if (one.gene) {
+    text.box.height <- (window * 1000) / 10
+  } else {
+    text.box.height <- NULL
+  }
 
   if(!is.null(highlight.ids)){
     if(use.arrows){
@@ -250,7 +260,8 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
                                  hjust = 0,
                                  padding.y = grid::unit(.1, "lines"),
                                  min.size = 4,
-                                 show.legend = F) +
+                                 show.legend = F,
+                                 height = text.box.height) +
         scale_color_manual(values = c(highlight.color, "black"))
     } else {
       anno <- anno +
@@ -261,7 +272,8 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
                                  hjust = 0,
                                  padding.y = grid::unit(.1, "lines"),
                                  min.size = 4,
-                                 show.legend = F) +
+                                 show.legend = F,
+                                 height = text.box.height) +
         scale_color_manual(values = c(highlight.color, "black"))
     }
   } else {
@@ -272,7 +284,8 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
                                  #grow = TRUE,
                                  hjust = 0,
                                  padding.y = grid::unit(.1, "lines"),
-                                 min.size = 4) 
+                                 min.size = 4,
+                                 height = text.box.height) 
     } else {
       anno <- anno +
         ggfittext::geom_fit_text(aes(xmin = text.x.start, xmax = .85, y = .data$y.pos, label = .data$plot.label),
@@ -280,7 +293,8 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
                                  #grow = TRUE,
                                  hjust = 0,
                                  padding.y = grid::unit(.1, "lines"),
-                                 min.size = 4) 
+                                 min.size = 4,
+                                 height = text.box.height) 
     }
   }
   
