@@ -84,21 +84,21 @@ snp_qc_plink(
   plink.path = plink.path,
   out.dir = temp.dir,
   out.prefix = "Example")
-#> [1] "/tmp/RtmpbT85ri/panvar_ex/Example_PlinkQC_maf0.05_missing0.1"
+#> [1] "/tmp/RtmpXml4Hm/panvar_ex/Example_PlinkQC_maf0.05_missing0.1"
 #> PLINK v2.0.0-a.7LM AVX2 Intel (11 Mar 2026)         cog-genomics.org/plink/2.0/
 #> (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
-#> Logging to /tmp/RtmpbT85ri/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.log.
+#> Logging to /tmp/RtmpXml4Hm/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.log.
 #> Options in effect:
 #>   --allow-extra-chr
 #>   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned
 #>   --geno 0.1
 #>   --maf 0.05
 #>   --make-bed
-#>   --out /tmp/RtmpbT85ri/panvar_ex/Example_PlinkQC_maf0.05_missing0.1
+#>   --out /tmp/RtmpXml4Hm/panvar_ex/Example_PlinkQC_maf0.05_missing0.1
 #>   --set-all-var-ids @-#
 #> 
-#> Start time: Tue Mar 31 19:50:58 2026
-#> 15988 MiB RAM detected, ~14503 available; reserving 7994 MiB for main
+#> Start time: Tue Mar 31 20:33:16 2026
+#> 15989 MiB RAM detected, ~14540 available; reserving 7994 MiB for main
 #> workspace.
 #> Using up to 4 compute threads.
 #> 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
@@ -112,15 +112,15 @@ snp_qc_plink(
 #> 2354 variants removed due to allele frequency threshold(s)
 #> (--maf/--max-maf/--mac/--max-mac).
 #> 5361 variants remaining after main filters.
-#> Writing /tmp/RtmpbT85ri/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.fam ...
+#> Writing /tmp/RtmpXml4Hm/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.fam ...
 #> done.
-#> Writing /tmp/RtmpbT85ri/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.bim ...
+#> Writing /tmp/RtmpXml4Hm/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.bim ...
 #> done.
-#> Writing /tmp/RtmpbT85ri/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.bed ...
+#> Writing /tmp/RtmpXml4Hm/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.bed ...
 #> 0%done.
-#> End time: Tue Mar 31 19:50:58 2026
-#> QC was successful, output stored at /tmp/RtmpbT85ri/panvar_ex/Example_PlinkQC_maf0.05_missing0.1
-#> [1] "/tmp/RtmpbT85ri/panvar_ex/Example_PlinkQC_maf0.05_missing0.1"
+#> End time: Tue Mar 31 20:33:16 2026
+#> QC was successful, output stored at /tmp/RtmpXml4Hm/panvar_ex/Example_PlinkQC_maf0.05_missing0.1
+#> [1] "/tmp/RtmpXml4Hm/panvar_ex/Example_PlinkQC_maf0.05_missing0.1"
   
 # see what we did 
 list.files(temp.dir)
