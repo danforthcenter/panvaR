@@ -110,7 +110,9 @@ plot_panvar <- function(panvar.table.list = NULL,
                              gene.highlight.color = "red",
                              annotation.point.variable = "LD",
                              annotation.point.scale = NULL,
-                             plot.effect = F) {
+                             plot.effect = F,
+                        plot.text.size = 11,
+                        plot.legend.size = 1.2) {
   
   # ------------------------------------------------------------------------\
   # make manhattan --------
@@ -129,7 +131,9 @@ plot_panvar <- function(panvar.table.list = NULL,
                                qualitative.annotation = qualitative.annotation,
                                qualitative.shape.scale = qualitative.shape.scale,
                                quantitative.annotation = quantitative.annotation,
-                               quantitative.fill.scale = quantitative.fill.scale)
+                               quantitative.fill.scale = quantitative.fill.scale,
+                               plot.text.size = plot.text.size,
+                               plot.legend.size = plot.legend.size)
   
   # ------------------------------------------------------------------------\
   # make annotation --------
@@ -178,7 +182,9 @@ plot_panvar <- function(panvar.table.list = NULL,
                                     highlight.color = gene.highlight.color,
                                     use.arrows = F,
                                     point.color = annotation.point.variable,
-                                    point.fill.scale = annotation.point.scale)
+                                    point.fill.scale = annotation.point.scale,
+                               plot.text.size = plot.text.size,
+                               plot.legend.size = plot.legend.size)
   
   # ------------------------------------------------------------------------\
   # make effect --------

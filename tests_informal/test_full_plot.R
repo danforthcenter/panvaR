@@ -20,11 +20,11 @@ out_ld <-
 gwas.df <- data.table::fread(file.path(options()$panvar_outdir, "SetShattering_GLM_GWASresults.csv"))
 
 # manhattan
-make_panvar_manhattan(gwas.res = gwas.df,
+plot_panvar_manhattan(gwas.res = gwas.df,
                       pvals.in.log = F,
                       ld.list = out_ld,
-                      window = 10,
-                      sig.line = 6, orient = "V")
+                      window = 25,
+                      sig.line = 6, orient = "H")
 
 # annotation
 anno <- read.csv("~/scratch/setaria_biomart.txt") %>% 
@@ -38,7 +38,7 @@ anno <- read.csv("~/scratch/setaria_biomart.txt") %>%
                                 TRUE ~ annotation)) %>% 
   distinct()
 
-make_gene_annotation_plot(annotation.table = anno,
+plot_gene_annotation(annotation.table = anno,
                           middle.snp = out_ld$key.snp,
                           window = 250, 
                           include.id = T,
@@ -228,7 +228,15 @@ tables <- make_panvar_tables(gwas.res = gwas.df,
 plot_panvar_manhattan(panvar.table.list = tables,
                       pvals.in.log = F,
                       window = 10, 
-                      sig.line = 6)
+                      sig.line = 6,
+                      plot.text.size = 24,
+                      plot.legend.size = 1.5)
+
+plot_gene_annotation(panvar.table.list = tables,
+                     window = 10,
+                     plot.text.size = 24,
+                     point.color = "snp.score",
+                     plot.legend.size = 2)
 
 out_ld <- 
   panvaR::get_ld_in_window(tag.snp = "5-6857045",
@@ -251,7 +259,6 @@ plot_panvar(panvar.table.list = tables,
   unplotted.alpha = .4,
   window = 200,
   sig.line = 6,
-  orient = "H",
   qualitative.annotation = NULL,
   qualitative.shape.scale = NULL,
   quantitative.annotation = NULL,

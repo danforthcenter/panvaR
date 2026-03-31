@@ -98,7 +98,9 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
                                       highlight.color = "red",
                                       use.arrows = F,
                                       point.color = NULL,
-                                      point.fill.scale = NULL){
+                                      point.fill.scale = NULL,
+                                 plot.text.size = 11,
+                                 plot.legend.size = 1.2){
   
   
   # make sure we don't use both
@@ -297,6 +299,11 @@ plot_gene_annotation <- function(panvar.table.list = NULL,
                                  height = text.box.height) 
     }
   }
+  
+  # do some final tweaking of formatting
+  anno <- anno +
+    theme(text = ggplot2::element_text(size = plot.text.size),
+          legend.key.size = unit(plot.legend.size, "lines"))
   
   return(anno)
   

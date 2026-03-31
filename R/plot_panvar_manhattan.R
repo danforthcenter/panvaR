@@ -88,7 +88,9 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
                                   qualitative.annotation = NULL,
                                   qualitative.shape.scale = NULL,
                                   quantitative.annotation = NULL,
-                                  quantitative.fill.scale = NULL){
+                                  quantitative.fill.scale = NULL,
+                                  plot.text.size = 11,
+                                  plot.legend.size = 1.2){
   
   # make sure we don't use both
   if(!is.null(panvar.table.list) & (!is.null(ld.list) | !is.null(gwas.res))){
@@ -254,7 +256,9 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
       panel.background = element_rect(fill = "grey95"),
       legend.position = "left",
       legend.justification = "top",
-      panel.grid = element_blank()
+      panel.grid = element_blank(),
+      text = ggplot2::element_text(size = plot.text.size),
+      legend.key.size = unit(plot.legend.size, "lines")
     ) +
     geom_hline(yintercept = sig.line, linetype = 'dashed')
   
