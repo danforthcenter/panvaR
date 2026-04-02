@@ -267,9 +267,11 @@ plot_panvar(panvar.table.list = tables,
   include.gene.id = T,
   highlight.gene.ids = NULL,
   gene.highlight.color = "red",
-  annotation.point.variable = "LD",
+  annotation.point.variable = "snp.score",
   annotation.point.scale = ggplot2::scale_color_viridis_b(option = "plasma"),
-  plot.effect = T
+  plot.effect = T,
+  plot.text.size = 24,
+  plot.legend.size = 2
 )
 
 

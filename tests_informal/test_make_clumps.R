@@ -23,3 +23,30 @@ make_ld(plink.path = NULL,
         in.dir = "/home/cluebbert/Projects/Sorghum13CMash/data",
         out.dir = tempdir())
         
+# ------------------------------------------------------------------------\
+# another dataset --------
+# ------------------------------------------------------------------------\
+
+setwd("~/Projects/Sorghum13CMash/")
+
+bf.df_sub <- read.csv("results/setaria_d13C_mash/MashResults_BF_over5.csv")
+
+df.in <- bf.df_sub %>%
+  mutate(marker.ID = paste0(Chr, "-", Pos)) %>%
+  rename(CHR = Chr,
+         POS = Pos,
+         PVAL = bf) %>% 
+  mutate(CHR = paste0("Chr_0", CHR),
+         marker.ID = paste0(CHR, "_", POS))
+
+clumps <-
+  panvaR::snp_make_clumps(geno.bed.filename = "8.2.IB007_maf.1.maxmaf.9.hetsIMP.filteredSNPs.hetFilter0.25.recode",
+                          geno.bed.dir = "results/setaria_d13C_mash/",
+                          gwas.res = df.in,
+                          pvals.in.log = T,
+                          window = 50,
+                          ld.thresh = .6,
+                          plink.path = normalizePath("~/bin/plink2"))
+
+x <- data.table::fread("results/setaria_d13C_mash/8.2.IB007_maf.1.maxmaf.9.hetsIMP.filteredSNPs.hetFilter0.25.recode.bim")
+head(x)

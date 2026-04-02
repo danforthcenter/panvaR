@@ -100,6 +100,12 @@ snp_make_clumps <- function(geno.bed.filename,
     pull(.data$marker.ID) %>%
     unique()
   
+  # print format of marker.IDs in bed file
+  bim.sub <- data.table::fread(file.path(geno.bed.dir, paste0(geno.bed.filename, ".bim")),
+                               nrow = 5)
+  message("Markers in the following form in bed file: ",
+          bim.sub[1,2])
+  
   # make an output df and start a counter
   out <- data.frame()
   i <- 1

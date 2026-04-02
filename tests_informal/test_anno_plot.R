@@ -36,3 +36,17 @@ make_gene_annotation_plot_horiz(anno,
                           include.id = T,
                           use.arrows = F)
 
+# ------------------------------------------------------------------------\
+# setaria --------
+# ------------------------------------------------------------------------\
+
+anno <- read.csv("~/scratch/panvar_test/setaria_shatter_full/Anno_setaria_shattering.csv")
+
+anno_cleanup <- anno %>% 
+  mutate(annotation = str_replace(annotation, "^.+ - ", ""))
+
+
+panvaR::plot_gene_annotation(annotation.table = anno_cleanup,
+                             middle.snp = "9-43025000",
+                             window = 100,
+                             include.id = T)
