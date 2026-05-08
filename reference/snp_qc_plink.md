@@ -69,6 +69,12 @@ snp_qc_plink(
 filtered bed/bim/bam files stored in out.dir. character string of path
 to bed file.
 
+## References
+
+Chang CC, Chow CC, Tellier LCAM, Vattikuti S, Purcell SM, Lee JJ (2015)
+Second-generation PLINK: rising to the challenge of larger and richer
+datasets. GigaScience, 4.
+
 ## Examples
 
 ``` r
@@ -84,21 +90,21 @@ snp_qc_plink(
   plink.path = plink.path,
   out.dir = temp.dir,
   out.prefix = "Example")
-#> [1] "/tmp/RtmpPR7nRY/panvar_ex/Example_PlinkQC_maf0.05_missing0.1"
-#> PLINK v2.0.0-a.7LM AVX2 Intel (11 Mar 2026)         cog-genomics.org/plink/2.0/
+#> [1] "/tmp/Rtmpn22pEc/panvar_ex/Example_PlinkQC_maf0.05_missing0.1"
+#> PLINK v2.0.0-a.7.1LM AVX2 Intel (4 May 2026)        cog-genomics.org/plink/2.0/
 #> (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
-#> Logging to /tmp/RtmpPR7nRY/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.log.
+#> Logging to /tmp/Rtmpn22pEc/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.log.
 #> Options in effect:
 #>   --allow-extra-chr
 #>   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned
 #>   --geno 0.1
 #>   --maf 0.05
 #>   --make-bed
-#>   --out /tmp/RtmpPR7nRY/panvar_ex/Example_PlinkQC_maf0.05_missing0.1
+#>   --out /tmp/Rtmpn22pEc/panvar_ex/Example_PlinkQC_maf0.05_missing0.1
 #>   --set-all-var-ids @-#
 #> 
-#> Start time: Thu Apr  2 21:27:18 2026
-#> 15989 MiB RAM detected, ~14380 available; reserving 7994 MiB for main
+#> Start time: Fri May  8 17:43:04 2026
+#> 15988 MiB RAM detected, ~14527 available; reserving 7994 MiB for main
 #> workspace.
 #> Using up to 4 compute threads.
 #> 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
@@ -112,17 +118,17 @@ snp_qc_plink(
 #> 2354 variants removed due to allele frequency threshold(s)
 #> (--maf/--max-maf/--mac/--max-mac).
 #> 5361 variants remaining after main filters.
-#> Writing /tmp/RtmpPR7nRY/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.fam ...
+#> Writing /tmp/Rtmpn22pEc/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.fam ...
 #> done.
-#> Writing /tmp/RtmpPR7nRY/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.bim ...
+#> Writing /tmp/Rtmpn22pEc/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.bim ...
 #> done.
-#> Writing /tmp/RtmpPR7nRY/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.bed ...
+#> Writing /tmp/Rtmpn22pEc/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.bed ...
 #> 0%done.
-#> End time: Thu Apr  2 21:27:18 2026
-#> QC was successful, output stored at /tmp/RtmpPR7nRY/panvar_ex/Example_PlinkQC_maf0.05_missing0.1
-#> [1] "/tmp/RtmpPR7nRY/panvar_ex/Example_PlinkQC_maf0.05_missing0.1"
-  
-# see what we did 
+#> End time: Fri May  8 17:43:04 2026
+#> QC was successful, output stored at /tmp/Rtmpn22pEc/panvar_ex/Example_PlinkQC_maf0.05_missing0.1
+#> [1] "/tmp/Rtmpn22pEc/panvar_ex/Example_PlinkQC_maf0.05_missing0.1"
+
+# see what we did
 list.files(temp.dir)
 #> [1] "Example_PlinkQC_maf0.05_missing0.1.bed"
 #> [2] "Example_PlinkQC_maf0.05_missing0.1.bim"

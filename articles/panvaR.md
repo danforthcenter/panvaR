@@ -1,6 +1,7 @@
 # panvaR
 
 ``` r
+
 library(dplyr, warn.conflicts = F)
 library(panvaR)
 ```
@@ -98,6 +99,7 @@ We need to use a function to download plink2 for use in this vignette.
 The plink path should be modified for your own machine.
 
 ``` r
+
 plink.path <- bigsnpr::download_plink2()
 ```
 
@@ -105,6 +107,7 @@ We can set these options for the input formatting and GWAS functions to
 access.
 
 ``` r
+
 # set the path to plink
 set_plink_path(plink.path)
 
@@ -129,6 +132,7 @@ standardize marker.ID’s by setting them to `CHR-POS` in the filtered bed
 file.
 
 ``` r
+
 genotype.path <- system.file("extdata", 
                              "Setaria_shattering_example_pruned.bed",
                              package = "panvaR")
@@ -140,22 +144,22 @@ phenotype.path <- system.file("extdata",
 make_panvar_inputs(genotype.path = genotype.path,
                    phenotype.path = phenotype.path)
 #> Removed 0 samples due to NA values in phenotype.
-#> [1] "/tmp/RtmpU8vOn9/PanvarExample_PlinkQC_maf0.05_missing0.1"
-#> PLINK v2.0.0-a.7LM AVX2 Intel (11 Mar 2026)         cog-genomics.org/plink/2.0/
+#> [1] "/tmp/RtmpQqxpIU/PanvarExample_PlinkQC_maf0.05_missing0.1"
+#> PLINK v2.0.0-a.7.1LM AVX2 Intel (4 May 2026)        cog-genomics.org/plink/2.0/
 #> (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
-#> Logging to /tmp/RtmpU8vOn9/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
+#> Logging to /tmp/RtmpQqxpIU/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
 #> Options in effect:
 #>   --allow-extra-chr
 #>   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned
 #>   --geno 0.1
-#>   --keep /tmp/RtmpU8vOn9/Panvar_list.of.samples.with.phenotype_shattering.txt
+#>   --keep /tmp/RtmpQqxpIU/Panvar_list.of.samples.with.phenotype_shattering.txt
 #>   --maf 0.05
 #>   --make-bed
-#>   --out /tmp/RtmpU8vOn9/PanvarExample_PlinkQC_maf0.05_missing0.1
+#>   --out /tmp/RtmpQqxpIU/PanvarExample_PlinkQC_maf0.05_missing0.1
 #>   --set-all-var-ids @-#
 #> 
-#> Start time: Thu Apr  2 21:27:22 2026
-#> 15989 MiB RAM detected, ~14157 available; reserving 7994 MiB for main
+#> Start time: Fri May  8 17:43:08 2026
+#> 15988 MiB RAM detected, ~14321 available; reserving 7994 MiB for main
 #> workspace.
 #> Using up to 4 compute threads.
 #> 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
@@ -172,11 +176,11 @@ make_panvar_inputs(genotype.path = genotype.path,
 #> 2557 variants removed due to allele frequency threshold(s)
 #> (--maf/--max-maf/--mac/--max-mac).
 #> 5158 variants remaining after main filters.
-#> Writing /tmp/RtmpU8vOn9/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
-#> Writing /tmp/RtmpU8vOn9/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
-#> Writing /tmp/RtmpU8vOn9/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
-#> End time: Thu Apr  2 21:27:22 2026
-#> QC was successful, output stored at /tmp/RtmpU8vOn9/PanvarExample_PlinkQC_maf0.05_missing0.1
+#> Writing /tmp/RtmpQqxpIU/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
+#> Writing /tmp/RtmpQqxpIU/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
+#> Writing /tmp/RtmpQqxpIU/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
+#> End time: Fri May  8 17:43:08 2026
+#> QC was successful, output stored at /tmp/RtmpQqxpIU/PanvarExample_PlinkQC_maf0.05_missing0.1
 #> Using rMVP to calculate PC's.
 #> Preparing data for MVP...
 #> Reading file...
@@ -197,6 +201,7 @@ model to control for population structure it might be a good idea to
 make a scree plot to select a reasonable number to include.
 
 ``` r
+
 filtered.bedfile.fullpath <- list.files(options()$panvar_outdir,
                                         pattern = "bed$",
                                         full.names = TRUE)
@@ -231,11 +236,12 @@ the documentation for
 
 ``` r
 
+
 panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
                 npcs = 2,
                 gwas.model = "GLM",
                 output.manhattan = T)
-#> Searching for prefix: PanvarExample in directory: /tmp/RtmpU8vOn9
+#> Searching for prefix: PanvarExample in directory: /tmp/RtmpQqxpIU
 #> Found the following files: 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bed, 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bim, 
@@ -261,7 +267,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #>   Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li      
 #>   Mailto: xiaoleiliu@mail.hzau.edu.cn, ylilin@mail.hzau.edu.cn   
 #> =================================================================
-#> Start: 2026-04-02 21:27:23 UTC 
+#> Start: 2026-05-08 17:43:09 UTC 
 #> Input data has 215 individuals and 5158 markers 
 #> Markers are detected to be stored by column 
 #> Analyzed trait: shattering 
@@ -287,8 +293,8 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #> Circular_Manhattan Plotting shattering.GLM 
 #> Rectangular_Manhattan Plotting shattering.GLM
 #> Q_Q Plotting shattering.GLM
-#> Results are stored at Working Directory: /tmp/RtmpU8vOn9 
-#> End: 2026-04-02 21:27:25 UTC 
+#> Results are stored at Working Directory: /tmp/RtmpQqxpIU 
+#> End: 2026-05-08 17:43:10 UTC 
 #> Total running time: 1s 
 #> ===================== MVP ACCOMPLISHED =====================
 ```
@@ -296,6 +302,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 Here is the manhattan:
 
 ``` r
+
 knitr::include_graphics("shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg",
                         dpi = 600)
 ```
@@ -315,6 +322,7 @@ similar logic to that of `plink2 --clump` . See
 [here](https://www.cog-genomics.org/plink/2.0/postproc#clump).
 
 ``` r
+
 # get bedfile name
 filtered.bedfile <- list.files(options()$panvar_outdir, pattern = "bed$")
 
@@ -359,6 +367,7 @@ genome wide set of results.
 We will use the most significant p-value snp in our top clump.
 
 ``` r
+
 top_clump <- gwas.df_subset %>% 
   left_join(clumped.df, by = "marker.ID") %>% 
   filter(clump_num == 1) 
@@ -383,6 +392,7 @@ You can create a table of LD in R² in a window using the following
 function:
 
 ``` r
+
 out_ld <-
   get_ld_in_window(
     tag.snp = my.tag.snp,
@@ -411,6 +421,7 @@ function `read.gff()` from the `ape` package, to manipulate these files
 in R. An example of the format of the table:
 
 ``` r
+
 annotation.table <- read.csv(system.file("extdata",
                                          "Setaria_shattering_annotation.csv",
                                          package = "panvaR"))
@@ -437,6 +448,7 @@ results. First, read in gwas results generated from last step and format
 chromosome column.
 
 ``` r
+
 gwas.path <- list.files(options()$panvar_outdir,
                                         pattern = "GWASresults\\.csv$",
                                         full.names = TRUE)
@@ -457,6 +469,7 @@ Use these inputs to generate 2 tables at the gene and snp level. Also,
 retain some info about the `tag.snp` and/or `qtl.df` .
 
 ``` r
+
 # make the tables 
 tables <- make_panvar_tables(gwas.res = gwas.df,
                              tag.snp = my.tag.snp,
@@ -531,6 +544,7 @@ of these values is weighted in the final score.
 ## Plotting
 
 ``` r
+
 plot_panvar(panvar.table.list = tables,
   pvals.in.log = F,
   plot.r2.thresh = .2,

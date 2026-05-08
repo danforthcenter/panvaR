@@ -7,9 +7,9 @@
 - [`set_out_dir()`](https://danforthcenter.github.io/panvaR/reference/set_out_dir.md)
   : Set path for output files
 - [`set_panvar_prefix()`](https://danforthcenter.github.io/panvaR/reference/set_panvar_prefix.md)
-  : sets global option "panvar_prefix" for output directory of
-  intermediate panvar files. If not supplied will be sent to output of
-  'tempdir()'.
+  : Set panvar output file prefix sets global option "panvar_prefix".
+  Appended to outputs for organization and delineating different runs of
+  the program.
 - [`set_plink_path()`](https://danforthcenter.github.io/panvaR/reference/set_plink_path.md)
   : Set path to plink2 executable
 - [`make_panvar_inputs()`](https://danforthcenter.github.io/panvaR/reference/make_panvar_inputs.md)

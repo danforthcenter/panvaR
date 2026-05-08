@@ -126,22 +126,22 @@ make_panvar_inputs(
   out.prefix = "example",
   out.dir = out.dir)
 #> Removed 0 samples due to NA values in phenotype.
-#> [1] "/tmp/RtmpPR7nRY/panvar_ex/example_PlinkQC_maf0.05_missing0.1"
-#> PLINK v2.0.0-a.7LM AVX2 Intel (11 Mar 2026)         cog-genomics.org/plink/2.0/
+#> [1] "/tmp/Rtmpn22pEc/panvar_ex/example_PlinkQC_maf0.05_missing0.1"
+#> PLINK v2.0.0-a.7.1LM AVX2 Intel (4 May 2026)        cog-genomics.org/plink/2.0/
 #> (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
-#> Logging to /tmp/RtmpPR7nRY/panvar_ex/example_PlinkQC_maf0.05_missing0.1.log.
+#> Logging to /tmp/Rtmpn22pEc/panvar_ex/example_PlinkQC_maf0.05_missing0.1.log.
 #> Options in effect:
 #>   --allow-extra-chr
 #>   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned
 #>   --geno 0.1
-#>   --keep /tmp/RtmpPR7nRY/panvar_ex/Panvar_list.of.samples.with.phenotype_shattering.txt
+#>   --keep /tmp/Rtmpn22pEc/panvar_ex/Panvar_list.of.samples.with.phenotype_shattering.txt
 #>   --maf 0.05
 #>   --make-bed
-#>   --out /tmp/RtmpPR7nRY/panvar_ex/example_PlinkQC_maf0.05_missing0.1
+#>   --out /tmp/Rtmpn22pEc/panvar_ex/example_PlinkQC_maf0.05_missing0.1
 #>   --set-all-var-ids @-#
 #> 
-#> Start time: Thu Apr  2 21:27:07 2026
-#> 15989 MiB RAM detected, ~14190 available; reserving 7994 MiB for main
+#> Start time: Fri May  8 17:42:53 2026
+#> 15988 MiB RAM detected, ~14529 available; reserving 7994 MiB for main
 #> workspace.
 #> Using up to 4 compute threads.
 #> 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
@@ -158,14 +158,14 @@ make_panvar_inputs(
 #> 2557 variants removed due to allele frequency threshold(s)
 #> (--maf/--max-maf/--mac/--max-mac).
 #> 5158 variants remaining after main filters.
-#> Writing /tmp/RtmpPR7nRY/panvar_ex/example_PlinkQC_maf0.05_missing0.1.fam ...
+#> Writing /tmp/Rtmpn22pEc/panvar_ex/example_PlinkQC_maf0.05_missing0.1.fam ...
 #> done.
-#> Writing /tmp/RtmpPR7nRY/panvar_ex/example_PlinkQC_maf0.05_missing0.1.bim ...
+#> Writing /tmp/Rtmpn22pEc/panvar_ex/example_PlinkQC_maf0.05_missing0.1.bim ...
 #> done.
-#> Writing /tmp/RtmpPR7nRY/panvar_ex/example_PlinkQC_maf0.05_missing0.1.bed ...
+#> Writing /tmp/Rtmpn22pEc/panvar_ex/example_PlinkQC_maf0.05_missing0.1.bed ...
 #> 0%done.
-#> End time: Thu Apr  2 21:27:07 2026
-#> QC was successful, output stored at /tmp/RtmpPR7nRY/panvar_ex/example_PlinkQC_maf0.05_missing0.1
+#> End time: Fri May  8 17:42:53 2026
+#> QC was successful, output stored at /tmp/Rtmpn22pEc/panvar_ex/example_PlinkQC_maf0.05_missing0.1
 #> Using rMVP to calculate PC's.
 #> Preparing data for MVP...
 #> Reading file...
@@ -187,7 +187,7 @@ panvar_mvp_gwas(
   output.manhattan = FALSE,
   out.dir = out.dir,
   out.prefix = "GWAS.Example")
-#> Searching for prefix: GWAS.Example in directory: /tmp/RtmpPR7nRY/panvar_ex
+#> Searching for prefix: GWAS.Example in directory: /tmp/Rtmpn22pEc/panvar_ex
 #> Found the following files: 
 #> example.geno.bin, 
 #> example.geno.desc, 
@@ -213,7 +213,7 @@ panvar_mvp_gwas(
 #>   Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li      
 #>   Mailto: xiaoleiliu@mail.hzau.edu.cn, ylilin@mail.hzau.edu.cn   
 #> =================================================================
-#> Start: 2026-04-02 21:27:07 UTC 
+#> Start: 2026-05-08 17:42:53 UTC 
 #> Input data has 215 individuals and 5158 markers 
 #> Markers are detected to be stored by column 
 #> Analyzed trait: shattering 
@@ -230,7 +230,7 @@ panvar_mvp_gwas(
 #> scanning...
 #> Genomic inflation factor (lambda): 10.2215 
 #> Significant level: 9.69e-06 
-#> End: 2026-04-02 21:27:08 UTC 
+#> End: 2026-05-08 17:42:54 UTC 
 #> Total running time: 1s 
 #> ===================== MVP ACCOMPLISHED ===================== 
   

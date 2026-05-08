@@ -28,6 +28,12 @@ A list of two dataframes:
 The `IMPACT_PLUS` column has had modifier snps broken out into
 intergenic and coding modifiers.
 
+## References
+
+"Using Drosophila melanogaster as a model for genotoxic chemical
+mutational studies with a new program, SnpSift", Cingolani, P., et. al.,
+Frontiers in Genetics, 3, 2012.
+
 ## Examples
 
 ``` r

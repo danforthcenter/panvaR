@@ -80,6 +80,12 @@ Named list with 2 items
 When supplying a group a snps, the ld retained for a given snp is the
 maximum LD of the given snp to the snps in the group.
 
+## References
+
+Chang CC, Chow CC, Tellier LCAM, Vattikuti S, Purcell SM, Lee JJ (2015)
+Second-generation PLINK: rising to the challenge of larger and richer
+datasets. GigaScience, 4.
+
 ## Examples
 
 ``` r

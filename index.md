@@ -8,12 +8,14 @@ studies.
 Ensure remotes package is installed.
 
 ``` r
+
 install.packages("remotes")
 ```
 
 Install panvaR:
 
 ``` r
+
 remotes::install_github("danforthcenter/panvaR", build_vignettes = TRUE)
 ```
 
@@ -21,6 +23,7 @@ We have also implemented a GUI for visualizing results. To use the GUI
 run:
 
 ``` r
+
 library(panvaR)
 panvar_shiny()
 ```
