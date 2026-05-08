@@ -1,4 +1,5 @@
-#' sets global option "panvar_prefix" for output directory of intermediate panvar files. If not supplied will be sent to output of 'tempdir()'.
+#' Set panvar output file prefix
+#' sets global option "panvar_prefix". Appended to outputs for organization and delineating different runs of the program. 
 #' 
 #' 
 #' @param prefix character, a prefix to designate files from individual runs of the program. 

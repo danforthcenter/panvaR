@@ -40,3 +40,18 @@ set_panvar_prefix("Awesome")
 snp_qc_plink(genotype.path = "inst/extdata/Setaria_shattering_example_pruned.bed")
 set_panvar_prefix(NULL)
 snp_qc_plink(genotype.path = "inst/extdata/Setaria_shattering_example_pruned.bed")
+
+
+# ------------------------------------------------------------------------\
+# other example --------
+# ------------------------------------------------------------------------\
+
+setwd("~/Projects/panvaR_paper/")
+
+
+set_out_dir("results/primaveroside/sorghum")
+set_panvar_prefix("SorgPrimaver")
+
+# make inputs 
+make_panvar_inputs(genotype.path = "data/primaveroside_genofiles/TM026.bed",
+                   phenotype.path = "results/primaveroside/sorgh_X415_pheno.csv")

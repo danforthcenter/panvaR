@@ -16,32 +16,41 @@ snp_qc_plink(
 )
 }
 \arguments{
-\item{genotype.path}{character, path to genotype file, supported types: '.bed', .'vcf', '.vcf.gz'.}
+\item{genotype.path}{character, path to genotype file, supported types:
+'.bed', .'vcf', '.vcf.gz'.}
 
-\item{min.maf}{numeric, filtering cutoff for minor allele frequency, snps are removed if they have maf less than this value. To ignore set to 0.}
+\item{min.maf}{numeric, filtering cutoff for minor allele frequency, snps are
+removed if they have maf less than this value. To ignore set to 0.}
 
-\item{max.missing.snp}{numeric, filtering cutoff for missing rate of snps, snps are removed if they have a missing rate higher than this. To ignore set to 1.}
+\item{max.missing.snp}{numeric, filtering cutoff for missing rate of snps,
+snps are removed if they have a missing rate higher than this. To ignore
+set to 1.}
 
 \item{sample.list.path}{character, optional, path to a list of samples.
-Samples in file will be included. Sample filtering happens before other filtering per plink's order of operations.}
+Samples in file will be included. Sample filtering happens before other
+filtering per plink's order of operations.}
 
-\item{plink.path}{character, optional, path to plink2 executable. If not provided, will default to option set by \link{set_plink_path}.}
+\item{plink.path}{character, optional, path to plink2 executable. If not
+provided, will default to option set by \link{set_plink_path}.}
 
-\item{out.dir}{character, optional, path to output files. If not provided, will default to option set by \link{set_out_dir}}
+\item{out.dir}{character, optional, path to output files. If not provided,
+will default to option set by \link{set_out_dir}}
 
 \item{out.prefix}{character, optional, prefix for files output.}
 
-\item{extra.options}{character, a vector of options to include in call to plink2.
-Should be a vector with plink2 arguments and their values as separate elements of vector.
-E.G. c("--max-maf", ".95", "--max-alleles", "2")}
+\item{extra.options}{character, a vector of options to include in call to
+plink2. Should be a vector with plink2 arguments and their values as
+separate elements of vector. E.G. c("--max-maf", ".95", "--max-alleles",
+"2")}
 }
 \value{
-filtered bed/bim/bam files stored in out.dir.
-character string of path to bed file.
+filtered bed/bim/bam files stored in out.dir. character string of
+path to bed file.
 }
 \description{
-Does some standard qc of snp files before gwas. Mainly maf and missing filter. Also filters for single allele snps.
-Extra calls to plink2 can be included to filter in more ways.
+Does some standard qc of snp files before gwas. Mainly maf and missing
+filter. Also filters for single allele snps. Extra calls to plink2 can be
+included to filter in more ways.
 }
 \examples{
 # get some inputs
@@ -56,10 +65,15 @@ snp_qc_plink(
   plink.path = plink.path,
   out.dir = temp.dir,
   out.prefix = "Example")
-  
-# see what we did 
+
+# see what we did
 list.files(temp.dir)
 
 # clean up
 unlink(temp.dir, recursive = TRUE)
+}
+\references{
+Chang CC, Chow CC, Tellier LCAM, Vattikuti S, Purcell SM, Lee JJ
+(2015) Second-generation PLINK: rising to the challenge of larger and
+richer datasets. GigaScience, 4.
 }

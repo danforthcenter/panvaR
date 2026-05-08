@@ -24,7 +24,9 @@ plot_panvar(
   gene.highlight.color = "red",
   annotation.point.variable = "LD",
   annotation.point.scale = NULL,
-  plot.effect = F
+  plot.effect = F,
+  plot.text.size = 11,
+  plot.legend.size = 1.2
 )
 }
 \arguments{

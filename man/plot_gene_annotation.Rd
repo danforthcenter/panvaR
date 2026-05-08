@@ -15,7 +15,9 @@ plot_gene_annotation(
   highlight.color = "red",
   use.arrows = F,
   point.color = NULL,
-  point.fill.scale = NULL
+  point.fill.scale = NULL,
+  plot.text.size = 11,
+  plot.legend.size = 1.2
 )
 }
 \arguments{

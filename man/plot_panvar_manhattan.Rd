@@ -17,7 +17,9 @@ plot_panvar_manhattan(
   qualitative.annotation = NULL,
   qualitative.shape.scale = NULL,
   quantitative.annotation = NULL,
-  quantitative.fill.scale = NULL
+  quantitative.fill.scale = NULL,
+  plot.text.size = 11,
+  plot.legend.size = 1.2
 )
 }
 \arguments{

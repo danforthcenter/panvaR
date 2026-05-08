@@ -16,11 +16,17 @@ A list of two dataframes:
 \item formatted_snpeff_annotations: one row per transcript. snps will have multiple transcripts identified by snpeff.
 }
 
-The \code{IMPACT_PLUS} column has had modifier snps broken out into intergenic and coding modifiers.
+The \code{IMPACT_PLUS} column has had modifier snps broken out into intergenic and
+coding modifiers.
 }
 \description{
 Will take a vcf with snpeff annotations and output a list of two dataframes.
 }
 \examples{
 # work in progress 
+}
+\references{
+"Using Drosophila melanogaster as a model for genotoxic chemical
+mutational studies with a new program, SnpSift", Cingolani, P., et. al.,
+Frontiers in Genetics, 3, 2012.
 }

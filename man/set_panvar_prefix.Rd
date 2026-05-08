@@ -2,7 +2,8 @@
 % Please edit documentation in R/set_panvar_prefix.R
 \name{set_panvar_prefix}
 \alias{set_panvar_prefix}
-\title{sets global option "panvar_prefix" for output directory of intermediate panvar files. If not supplied will be sent to output of 'tempdir()'.}
+\title{Set panvar output file prefix
+sets global option "panvar_prefix". Appended to outputs for organization and delineating different runs of the program.}
 \usage{
 set_panvar_prefix(prefix)
 }
@@ -10,7 +11,8 @@ set_panvar_prefix(prefix)
 \item{prefix}{character, a prefix to designate files from individual runs of the program.}
 }
 \description{
-sets global option "panvar_prefix" for output directory of intermediate panvar files. If not supplied will be sent to output of 'tempdir()'.
+Set panvar output file prefix
+sets global option "panvar_prefix". Appended to outputs for organization and delineating different runs of the program.
 }
 \examples{
 # set_panvar_prefix("Phenotype1")

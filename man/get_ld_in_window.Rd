@@ -75,3 +75,6 @@ head(out$table)
 unlink(out.dir, recursive = TRUE)
 
 }
+\references{
+Chang CC, Chow CC, Tellier LCAM, Vattikuti S, Purcell SM, Lee JJ (2015) Second-generation PLINK: rising to the challenge of larger and richer datasets. GigaScience, 4.
+}
