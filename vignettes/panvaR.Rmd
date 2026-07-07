@@ -258,14 +258,45 @@ The first step in a typical GWAS analysis might be identifying some regions that
 
 The method presented in the package (`snp_make_clumps`) is likely not ideal as it is poorly optimized especially on larger numbers of markers.
 
-```{r} # get bedfile name filtered.bedfile <- list.files(options()$panvar_outdir, pattern = "bed$")  # read in gwas results gwas.path <- list.files(options()$panvar_outdir,                                         pattern = "GWASresults\\.csv$",                                         full.names = TRUE)   gwas.df <- read.csv(gwas.path)   # subset to only top p-value snps  gwas.df_subset <- gwas.df %>%    filter(LOGPVAL > 8)  # clump clumped.df <-  snp_make_clumps(geno.bed.filename = filtered.bedfile,                 geno.bed.dir = current.directory,                 gwas.res = gwas.df,                 pvals.in.log = F,                 window = 500,                 ld.thresh = .2)  head(clumped.df)}
+```{r}
+# get bedfile name
+filtered.bedfile <- list.files(options()$panvar_outdir, pattern = "bed$")
+
+# read in gwas results
+gwas.path <- list.files(options()$panvar_outdir,
+                                        pattern = "GWASresults\\.csv$",
+                                        full.names = TRUE)
+
+
+gwas.df <- read.csv(gwas.path) 
+
+# subset to only top p-value snps 
+gwas.df_subset <- gwas.df %>% 
+  filter(LOGPVAL > 8)
+
+# clump
+clumped.df <- 
+snp_make_clumps(geno.bed.filename = filtered.bedfile,
+                geno.bed.dir = current.directory,
+                gwas.res = gwas.df,
+                pvals.in.log = F,
+                window = 500,
+                ld.thresh = .2)
+
+head(clumped.df)
 ```
 
 Using a process like this to decide on specific regions as well as snps that represent those regions is an important first step in analyzing a genome wide set of results.
 
 We will use the most significant p-value snp in our top clump.
 
-```{r} top_clump <- gwas.df_subset %>%    left_join(clumped.df, by = "marker.ID") %>%    filter(clump_num == 1)   my.tag.snp <- top_clump$marker.ID[which.max(top_clump$LOGPVAL)] my.tag.snp}
+```{r}
+top_clump <- gwas.df_subset %>% 
+  left_join(clumped.df, by = "marker.ID") %>% 
+  filter(clump_num == 1) 
+
+my.tag.snp <- top_clump$marker.ID[which.max(top_clump$LOGPVAL)]
+my.tag.snp
 ```
 
 ### LD calculation
@@ -276,7 +307,15 @@ If supplying a group of markers via the `qtl.df` argument, the output will have 
 
 You can create a table of LD in R^2^ in a window using the following function:
 
-```{r} out_ld <-   get_ld_in_window(     tag.snp = my.tag.snp,     window = 500,     geno.bed = filtered.bedfile,     in.dir = current.directory   ) head(out_ld$table)}
+```{r}
+out_ld <-
+  get_ld_in_window(
+    tag.snp = my.tag.snp,
+    window = 500,
+    geno.bed = filtered.bedfile,
+    in.dir = current.directory
+  )
+head(out_ld$table)
 ```
 
 ### A note on chromsome names and marker.ID's
