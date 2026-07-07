@@ -104,8 +104,8 @@ This step only needs to be run once for a given dataset.</p>
 <li><strong>Create tables</strong></li>
 </ol>
 <p>PanvaR creates the tabular output for a given tag snp. This includes
-gene and snp based outputs generating snp scores and LD
-calculations.</p>
+gene and snp based outputs generating snp scores and LD calculations.
+Steps 3 and 4 are run on each tag snp.</p>
 <ol start="4" style="list-style-type: decimal">
 <li><strong>Plot</strong></li>
 </ol>
@@ -226,22 +226,22 @@ filtered bed file.</p>
 <span><span class="fu"><a href="../reference/make_panvar_inputs.html">make_panvar_inputs</a></span><span class="op">(</span>genotype.path <span class="op">=</span> <span class="va">genotype.path</span>,</span>
 <span>                   phenotype.path <span class="op">=</span> <span class="va">phenotype.path</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Removed 0 samples due to NA values in phenotype.</span></span>
-<span><span class="co">#&gt; [1] "/tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1"</span></span>
+<span><span class="co">#&gt; [1] "/tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1"</span></span>
 <span><span class="co">#&gt; PLINK v2.0.0-a.7.1LM AVX2 Intel (4 May 2026)        cog-genomics.org/plink/2.0/</span></span>
 <span><span class="co">#&gt; (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3</span></span>
-<span><span class="co">#&gt; Logging to /tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1.log.</span></span>
+<span><span class="co">#&gt; Logging to /tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1.log.</span></span>
 <span><span class="co">#&gt; Options in effect:</span></span>
 <span><span class="co">#&gt;   --allow-extra-chr</span></span>
 <span><span class="co">#&gt;   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned</span></span>
 <span><span class="co">#&gt;   --geno 0.1</span></span>
-<span><span class="co">#&gt;   --keep /tmp/RtmpPJjB3W/Panvar_list.of.samples.with.phenotype_shattering.txt</span></span>
+<span><span class="co">#&gt;   --keep /tmp/RtmpFfgcjh/Panvar_list.of.samples.with.phenotype_shattering.txt</span></span>
 <span><span class="co">#&gt;   --maf 0.05</span></span>
 <span><span class="co">#&gt;   --make-bed</span></span>
-<span><span class="co">#&gt;   --out /tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1</span></span>
+<span><span class="co">#&gt;   --out /tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1</span></span>
 <span><span class="co">#&gt;   --set-all-var-ids @-#</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Start time: Mon Jul  6 18:54:11 2026</span></span>
-<span><span class="co">#&gt; 15989 MiB RAM detected, ~14292 available; reserving 7994 MiB for main</span></span>
+<span><span class="co">#&gt; Start time: Tue Jul  7 15:41:36 2026</span></span>
+<span><span class="co">#&gt; 15989 MiB RAM detected, ~14198 available; reserving 7994 MiB for main</span></span>
 <span><span class="co">#&gt; workspace.</span></span>
 <span><span class="co">#&gt; Using up to 4 compute threads.</span></span>
 <span><span class="co">#&gt; 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from</span></span>
@@ -258,11 +258,11 @@ filtered bed file.</p>
 <span><span class="co">#&gt; 2557 variants removed due to allele frequency threshold(s)</span></span>
 <span><span class="co">#&gt; (--maf/--max-maf/--mac/--max-mac).</span></span>
 <span><span class="co">#&gt; 5158 variants remaining after main filters.</span></span>
-<span><span class="co">#&gt; Writing /tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.</span></span>
-<span><span class="co">#&gt; Writing /tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.</span></span>
-<span><span class="co">#&gt; Writing /tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.</span></span>
-<span><span class="co">#&gt; End time: Mon Jul  6 18:54:11 2026</span></span>
-<span><span class="co">#&gt; QC was successful, output stored at /tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1</span></span>
+<span><span class="co">#&gt; Writing /tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.</span></span>
+<span><span class="co">#&gt; Writing /tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.</span></span>
+<span><span class="co">#&gt; Writing /tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.</span></span>
+<span><span class="co">#&gt; End time: Tue Jul  7 15:41:36 2026</span></span>
+<span><span class="co">#&gt; QC was successful, output stored at /tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1</span></span>
 <span><span class="co">#&gt; Using rMVP to calculate PC's.</span></span>
 <span><span class="co">#&gt; Preparing data for MVP...</span></span>
 <span><span class="co">#&gt; Reading file...</span></span>
@@ -314,7 +314,7 @@ directory. If supplying other inputs, they should be in a format that
 <span>                npcs <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>                gwas.model <span class="op">=</span> <span class="st">"GLM"</span>,</span>
 <span>                output.manhattan <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Searching for prefix: PanvarExample in directory: /tmp/RtmpPJjB3W</span></span>
+<span><span class="co">#&gt; Searching for prefix: PanvarExample in directory: /tmp/RtmpFfgcjh</span></span>
 <span><span class="co">#&gt; Found the following files: </span></span>
 <span><span class="co">#&gt; PanvarExample_PlinkQC_maf0.05_missing0.1.bed, </span></span>
 <span><span class="co">#&gt; PanvarExample_PlinkQC_maf0.05_missing0.1.bim, </span></span>
@@ -340,7 +340,7 @@ directory. If supplying other inputs, they should be in a format that
 <span><span class="co">#&gt;   Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li      </span></span>
 <span><span class="co">#&gt;   Mailto: xiaoleiliu@mail.hzau.edu.cn, ylilin@mail.hzau.edu.cn   </span></span>
 <span><span class="co">#&gt; =================================================================</span></span>
-<span><span class="co">#&gt; Start: 2026-07-06 18:54:12 UTC </span></span>
+<span><span class="co">#&gt; Start: 2026-07-07 15:41:37 UTC </span></span>
 <span><span class="co">#&gt; Input data has 215 individuals and 5158 markers </span></span>
 <span><span class="co">#&gt; Markers are detected to be stored by column </span></span>
 <span><span class="co">#&gt; Analyzed trait: shattering </span></span>
@@ -366,8 +366,8 @@ directory. If supplying other inputs, they should be in a format that
 <span><span class="co">#&gt; Circular_Manhattan Plotting shattering.GLM </span></span>
 <span><span class="co">#&gt; Rectangular_Manhattan Plotting shattering.GLM</span></span>
 <span><span class="co">#&gt; Q_Q Plotting shattering.GLM</span></span>
-<span><span class="co">#&gt; Results are stored at Working Directory: /tmp/RtmpPJjB3W </span></span>
-<span><span class="co">#&gt; End: 2026-07-06 18:54:13 UTC </span></span>
+<span><span class="co">#&gt; Results are stored at Working Directory: /tmp/RtmpFfgcjh </span></span>
+<span><span class="co">#&gt; End: 2026-07-07 15:41:38 UTC </span></span>
 <span><span class="co">#&gt; Total running time: 1s </span></span>
 <span><span class="co">#&gt; ===================== MVP ACCOMPLISHED =====================</span></span></code></pre></div>
 <p>Here is the manhattan:</p>
@@ -376,10 +376,6 @@ directory. If supplying other inputs, they should be in a format that
 <span>                        dpi <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span></code></pre></div>
 <p><img src="shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg" class="r-plt" alt="" width="672"></p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="a-few-notes">A few notes<a class="anchor" aria-label="anchor" href="#a-few-notes"></a>
-</h2>
 <div class="section level3">
 <h3 id="identifying-qtl">Identifying QTL<a class="anchor" aria-label="anchor" href="#identifying-qtl"></a>
 </h3>
@@ -390,9 +386,10 @@ Following language used by <code>plink2</code> we refer to these groups
 of snps as clumps. A function is presented to sort snps into clumps.
 This follows a similar logic to that of <code>plink2 --clump</code> .
 See <a href="https://www.cog-genomics.org/plink/2.0/postproc#clump" class="external-link">here</a>.</p>
-<p>The method presented in the package (<code>snp_make_clumps</code>) is
-likely not ideal as it is poorly optimized especially on larger numbers
-of markers.</p>
+<p>Typically, QTL are identified in the original GWAS. The method
+presented in the package (<code>snp_make_clumps</code>) is likely not
+ideal as it is poorly optimized especially on larger numbers of
+markers.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get bedfile name</span></span>
 <span><span class="va">filtered.bedfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">panvar_outdir</span>, pattern <span class="op">=</span> <span class="st">"bed$"</span><span class="op">)</span></span>
@@ -442,58 +439,12 @@ analyzing a genome wide set of results.</p>
 <span><span class="va">my.tag.snp</span></span>
 <span><span class="co">#&gt; [1] "Chr_05-6843742"</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="ld-calculation">LD calculation<a class="anchor" aria-label="anchor" href="#ld-calculation"></a>
-</h3>
-<p>A main functionality of the package is to more easily calculate local
-linkage disequilbrium around a given marker. panvaR uses
-<code>plink2</code> to generate pairwise LD to a single marker or a
-group of markers within a set physical distance.</p>
-<p>If supplying a group of markers via the <code>qtl.df</code> argument,
-the output will have a single value for each snp in the window
-representing the maximum LD of that marker to any snp in the
-<code>qtl.df</code>.</p>
-<p>You can create a table of LD in R<sup>2</sup> in a window using the
-following function:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">out_ld</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="../reference/get_ld_in_window.html">get_ld_in_window</a></span><span class="op">(</span></span>
-<span>    tag.snp <span class="op">=</span> <span class="va">my.tag.snp</span>,</span>
-<span>    window <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>    geno.bed <span class="op">=</span> <span class="va">filtered.bedfile</span>,</span>
-<span>    in.dir <span class="op">=</span> <span class="va">current.directory</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out_ld</span><span class="op">$</span><span class="va">table</span><span class="op">)</span></span>
-<span><span class="co">#&gt;        marker.ID CHR     POS         R2</span></span>
-<span><span class="co">#&gt; 1 Chr_05-6357130   5 6357130 0.10427000</span></span>
-<span><span class="co">#&gt; 2 Chr_05-6357216   5 6357216 0.21802200</span></span>
-<span><span class="co">#&gt; 3 Chr_05-6357284   5 6357284 0.03239760</span></span>
-<span><span class="co">#&gt; 4 Chr_05-6357327   5 6357327 0.01377000</span></span>
-<span><span class="co">#&gt; 5 Chr_05-6357411   5 6357411 0.00551269</span></span>
-<span><span class="co">#&gt; 6 Chr_05-6357799   5 6357799 0.20275900</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="a-note-on-chromsome-names-and-marker-ids">A note on chromsome names and marker.ID’s<a class="anchor" aria-label="anchor" href="#a-note-on-chromsome-names-and-marker-ids"></a>
-</h3>
-<p>As part of <code><a href="../reference/make_panvar_inputs.html">make_panvar_inputs()</a></code> marker.ID’s are
-standardized to be of the form <code>CHR-POS</code> as they are coded in
-the input genotype file. This standardizes the marker.ID’s to have a
-consistent form but does not alter the chromosome names.</p>
-<p>Chromosome names can often have some leading characters e.g. “CHR01”.
-To standardize chromosomes across different inputs, chromosome names are
-often converted to a number using the function
-<code><a href="../reference/get_chrom_from_id.html">get_chrom_from_id()</a></code> . Some genotype files may include
-things like scaffolds that cannot be easily assigned a chromosome
-number. It is recommend to remove these from the input file before
-running panvaR. Where applicable, the form of chromosome name is
-indicated in the function documentation when a user supplied marker.ID
-is required.</p>
-</div>
 </div>
 <div class="section level2">
 <h2 id="creating-tables">3) Creating tables<a class="anchor" aria-label="anchor" href="#creating-tables"></a>
 </h2>
-<p>The next step in panvar</p>
+<p>After having identified a set of tag snps, steps 3 and 4 will be run
+once on each of these tag snps to generate tabular output and plots.</p>
 <div class="section level3">
 <h3 id="including-gene-information">Including gene information<a class="anchor" aria-label="anchor" href="#including-gene-information"></a>
 </h3>
@@ -504,7 +455,7 @@ annotations is required. This is usually generated from a .gff
 annotation file. Try the function <code>read.gff()</code> from the
 <code>ape</code> package, to manipulate these files in R. An example of
 the format of the table:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">annotation.table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,</span>
 <span>                                         <span class="st">"Setaria_shattering_annotation.csv"</span>,</span>
 <span>                                         package <span class="op">=</span> <span class="st">"panvaR"</span><span class="op">)</span><span class="op">)</span></span>
@@ -527,7 +478,7 @@ the format of the table:</p>
 <p>We will use this gene annotation table to help line up genes and GWAS
 results. First, read in gwas results generated from last step and format
 chromosome column.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gwas.path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">panvar_outdir</span>,</span>
 <span>                                        pattern <span class="op">=</span> <span class="st">"GWASresults\\.csv$"</span>,</span>
 <span>                                        full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -545,7 +496,7 @@ chromosome column.</p>
 <p>Use these inputs to generate 2 tables at the gene and snp level.
 Also, retain some info about the <code>tag.snp</code> and/or
 <code>qtl.df</code> .</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># make the tables </span></span>
 <span><span class="va">tables</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_panvar_tables.html">make_panvar_tables</a></span><span class="op">(</span>gwas.res <span class="op">=</span> <span class="va">gwas.df</span>,</span>
 <span>                             tag.snp <span class="op">=</span> <span class="va">my.tag.snp</span>,</span>
@@ -603,7 +554,7 @@ each of these values is weighted in the final score.</p>
 <div class="section level2">
 <h2 id="plotting">4) Plotting<a class="anchor" aria-label="anchor" href="#plotting"></a>
 </h2>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_panvar.html">plot_panvar</a></span><span class="op">(</span>panvar.table.list <span class="op">=</span> <span class="va">tables</span>,</span>
 <span>  pvals.in.log <span class="op">=</span> <span class="cn">F</span>,</span>
 <span>  plot.r2.thresh <span class="op">=</span> <span class="fl">.2</span>,</span>
@@ -622,7 +573,58 @@ each of these values is weighted in the final score.</p>
 <span><span class="co">#&gt; Making annotation plot</span></span>
 <span><span class="co">#&gt; Warning: Removed 1555 rows containing missing values or values outside the scale range</span></span>
 <span><span class="co">#&gt; (`geom_rug()`).</span></span></code></pre></div>
-<p><img src="panvaR_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="1000" height="700"></p>
+<p><img src="panvaR_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="1000" height="700"></p>
+</div>
+<div class="section level2">
+<h2 id="a-few-notes">A few notes<a class="anchor" aria-label="anchor" href="#a-few-notes"></a>
+</h2>
+<div class="section level3">
+<h3 id="ld-calculation">LD calculation<a class="anchor" aria-label="anchor" href="#ld-calculation"></a>
+</h3>
+<p>A main functionality of the package is to more easily calculate local
+linkage disequilbrium around a given marker. panvaR uses
+<code>plink2</code> to generate pairwise LD to a single marker or a
+group of markers within a set physical distance.</p>
+<p>If supplying a group of markers via the <code>qtl.df</code> argument,
+the output will have a single value for each snp in the window
+representing the maximum LD of that marker to any snp in the
+<code>qtl.df</code>.</p>
+<p>You can create a table of LD in R<sup>2</sup> in a window using the
+following function:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">out_ld</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="../reference/get_ld_in_window.html">get_ld_in_window</a></span><span class="op">(</span></span>
+<span>    tag.snp <span class="op">=</span> <span class="va">my.tag.snp</span>,</span>
+<span>    window <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>    geno.bed <span class="op">=</span> <span class="va">filtered.bedfile</span>,</span>
+<span>    in.dir <span class="op">=</span> <span class="va">current.directory</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out_ld</span><span class="op">$</span><span class="va">table</span><span class="op">)</span></span>
+<span><span class="co">#&gt;        marker.ID CHR     POS         R2</span></span>
+<span><span class="co">#&gt; 1 Chr_05-6357130   5 6357130 0.10427000</span></span>
+<span><span class="co">#&gt; 2 Chr_05-6357216   5 6357216 0.21802200</span></span>
+<span><span class="co">#&gt; 3 Chr_05-6357284   5 6357284 0.03239760</span></span>
+<span><span class="co">#&gt; 4 Chr_05-6357327   5 6357327 0.01377000</span></span>
+<span><span class="co">#&gt; 5 Chr_05-6357411   5 6357411 0.00551269</span></span>
+<span><span class="co">#&gt; 6 Chr_05-6357799   5 6357799 0.20275900</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="a-note-on-chromsome-names-and-marker-ids">A note on chromsome names and marker.ID’s<a class="anchor" aria-label="anchor" href="#a-note-on-chromsome-names-and-marker-ids"></a>
+</h3>
+<p>As part of <code><a href="../reference/make_panvar_inputs.html">make_panvar_inputs()</a></code> marker.ID’s are
+standardized to be of the form <code>CHR-POS</code> as they are coded in
+the input genotype file. This standardizes the marker.ID’s to have a
+consistent form but does not alter the chromosome names.</p>
+<p>Chromosome names can often have some leading characters e.g. “CHR01”.
+To standardize chromosomes across different inputs, chromosome names are
+often converted to a number using the function
+<code><a href="../reference/get_chrom_from_id.html">get_chrom_from_id()</a></code> . Some genotype files may include
+things like scaffolds that cannot be easily assigned a chromosome
+number. It is recommend to remove these from the input file before
+running panvaR. Where applicable, the form of chromosome name is
+indicated in the function documentation when a user supplied marker.ID
+is required.</p>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

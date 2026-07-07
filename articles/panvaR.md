@@ -51,6 +51,7 @@ This step only needs to be run once for a given dataset.
 
 PanvaR creates the tabular output for a given tag snp. This includes
 gene and snp based outputs generating snp scores and LD calculations.
+Steps 3 and 4 are run on each tag snp.
 
 4.  **Plot**
 
@@ -167,22 +168,22 @@ phenotype.path <- system.file("extdata",
 make_panvar_inputs(genotype.path = genotype.path,
                    phenotype.path = phenotype.path)
 #> Removed 0 samples due to NA values in phenotype.
-#> [1] "/tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1"
+#> [1] "/tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1"
 #> PLINK v2.0.0-a.7.1LM AVX2 Intel (4 May 2026)        cog-genomics.org/plink/2.0/
 #> (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
-#> Logging to /tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
+#> Logging to /tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
 #> Options in effect:
 #>   --allow-extra-chr
 #>   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned
 #>   --geno 0.1
-#>   --keep /tmp/RtmpPJjB3W/Panvar_list.of.samples.with.phenotype_shattering.txt
+#>   --keep /tmp/RtmpFfgcjh/Panvar_list.of.samples.with.phenotype_shattering.txt
 #>   --maf 0.05
 #>   --make-bed
-#>   --out /tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1
+#>   --out /tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1
 #>   --set-all-var-ids @-#
 #> 
-#> Start time: Mon Jul  6 18:54:11 2026
-#> 15989 MiB RAM detected, ~14292 available; reserving 7994 MiB for main
+#> Start time: Tue Jul  7 15:41:36 2026
+#> 15989 MiB RAM detected, ~14198 available; reserving 7994 MiB for main
 #> workspace.
 #> Using up to 4 compute threads.
 #> 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
@@ -199,11 +200,11 @@ make_panvar_inputs(genotype.path = genotype.path,
 #> 2557 variants removed due to allele frequency threshold(s)
 #> (--maf/--max-maf/--mac/--max-mac).
 #> 5158 variants remaining after main filters.
-#> Writing /tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
-#> Writing /tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
-#> Writing /tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
-#> End time: Mon Jul  6 18:54:11 2026
-#> QC was successful, output stored at /tmp/RtmpPJjB3W/PanvarExample_PlinkQC_maf0.05_missing0.1
+#> Writing /tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
+#> Writing /tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
+#> Writing /tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
+#> End time: Tue Jul  7 15:41:36 2026
+#> QC was successful, output stored at /tmp/RtmpFfgcjh/PanvarExample_PlinkQC_maf0.05_missing0.1
 #> Using rMVP to calculate PC's.
 #> Preparing data for MVP...
 #> Reading file...
@@ -265,7 +266,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
                 npcs = 2,
                 gwas.model = "GLM",
                 output.manhattan = T)
-#> Searching for prefix: PanvarExample in directory: /tmp/RtmpPJjB3W
+#> Searching for prefix: PanvarExample in directory: /tmp/RtmpFfgcjh
 #> Found the following files: 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bed, 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bim, 
@@ -291,7 +292,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #>   Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li      
 #>   Mailto: xiaoleiliu@mail.hzau.edu.cn, ylilin@mail.hzau.edu.cn   
 #> =================================================================
-#> Start: 2026-07-06 18:54:12 UTC 
+#> Start: 2026-07-07 15:41:37 UTC 
 #> Input data has 215 individuals and 5158 markers 
 #> Markers are detected to be stored by column 
 #> Analyzed trait: shattering 
@@ -317,8 +318,8 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #> Circular_Manhattan Plotting shattering.GLM 
 #> Rectangular_Manhattan Plotting shattering.GLM
 #> Q_Q Plotting shattering.GLM
-#> Results are stored at Working Directory: /tmp/RtmpPJjB3W 
-#> End: 2026-07-06 18:54:13 UTC 
+#> Results are stored at Working Directory: /tmp/RtmpFfgcjh 
+#> End: 2026-07-07 15:41:38 UTC 
 #> Total running time: 1s 
 #> ===================== MVP ACCOMPLISHED =====================
 ```
@@ -333,8 +334,6 @@ knitr::include_graphics("shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
 
 ![](shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg)
 
-## A few notes
-
 ### Identifying QTL
 
 The first step in a typical GWAS analysis might be identifying some
@@ -345,8 +344,9 @@ clumps. A function is presented to sort snps into clumps. This follows a
 similar logic to that of `plink2 --clump` . See
 [here](https://www.cog-genomics.org/plink/2.0/postproc#clump).
 
-The method presented in the package (`snp_make_clumps`) is likely not
-ideal as it is poorly optimized especially on larger numbers of markers.
+Typically, QTL are identified in the original GWAS. The method presented
+in the package (`snp_make_clumps`) is likely not ideal as it is poorly
+optimized especially on larger numbers of markers.
 
 ``` r
 
@@ -404,60 +404,10 @@ my.tag.snp
 #> [1] "Chr_05-6843742"
 ```
 
-### LD calculation
-
-A main functionality of the package is to more easily calculate local
-linkage disequilbrium around a given marker. panvaR uses `plink2` to
-generate pairwise LD to a single marker or a group of markers within a
-set physical distance.
-
-If supplying a group of markers via the `qtl.df` argument, the output
-will have a single value for each snp in the window representing the
-maximum LD of that marker to any snp in the `qtl.df`.
-
-You can create a table of LD in R² in a window using the following
-function:
-
-``` r
-
-out_ld <-
-  get_ld_in_window(
-    tag.snp = my.tag.snp,
-    window = 500,
-    geno.bed = filtered.bedfile,
-    in.dir = current.directory
-  )
-head(out_ld$table)
-#>        marker.ID CHR     POS         R2
-#> 1 Chr_05-6357130   5 6357130 0.10427000
-#> 2 Chr_05-6357216   5 6357216 0.21802200
-#> 3 Chr_05-6357284   5 6357284 0.03239760
-#> 4 Chr_05-6357327   5 6357327 0.01377000
-#> 5 Chr_05-6357411   5 6357411 0.00551269
-#> 6 Chr_05-6357799   5 6357799 0.20275900
-```
-
-### A note on chromsome names and marker.ID’s
-
-As part of
-[`make_panvar_inputs()`](https://danforthcenter.github.io/panvaR/reference/make_panvar_inputs.md)
-marker.ID’s are standardized to be of the form `CHR-POS` as they are
-coded in the input genotype file. This standardizes the marker.ID’s to
-have a consistent form but does not alter the chromosome names.
-
-Chromosome names can often have some leading characters e.g. “CHR01”. To
-standardize chromosomes across different inputs, chromosome names are
-often converted to a number using the function
-[`get_chrom_from_id()`](https://danforthcenter.github.io/panvaR/reference/get_chrom_from_id.md)
-. Some genotype files may include things like scaffolds that cannot be
-easily assigned a chromosome number. It is recommend to remove these
-from the input file before running panvaR. Where applicable, the form of
-chromosome name is indicated in the function documentation when a user
-supplied marker.ID is required.
-
 ## 3) Creating tables
 
-The next step in panvar
+After having identified a set of tag snps, steps 3 and 4 will be run
+once on each of these tag snps to generate tabular output and plots.
 
 ### Including gene information
 
@@ -596,4 +546,57 @@ plot_panvar(panvar.table.list = tables,
 #> (`geom_rug()`).
 ```
 
-![](panvaR_files/figure-html/unnamed-chunk-16-1.png)
+![](panvaR_files/figure-html/unnamed-chunk-15-1.png)
+
+## A few notes
+
+### LD calculation
+
+A main functionality of the package is to more easily calculate local
+linkage disequilbrium around a given marker. panvaR uses `plink2` to
+generate pairwise LD to a single marker or a group of markers within a
+set physical distance.
+
+If supplying a group of markers via the `qtl.df` argument, the output
+will have a single value for each snp in the window representing the
+maximum LD of that marker to any snp in the `qtl.df`.
+
+You can create a table of LD in R² in a window using the following
+function:
+
+``` r
+
+out_ld <-
+  get_ld_in_window(
+    tag.snp = my.tag.snp,
+    window = 500,
+    geno.bed = filtered.bedfile,
+    in.dir = current.directory
+  )
+head(out_ld$table)
+#>        marker.ID CHR     POS         R2
+#> 1 Chr_05-6357130   5 6357130 0.10427000
+#> 2 Chr_05-6357216   5 6357216 0.21802200
+#> 3 Chr_05-6357284   5 6357284 0.03239760
+#> 4 Chr_05-6357327   5 6357327 0.01377000
+#> 5 Chr_05-6357411   5 6357411 0.00551269
+#> 6 Chr_05-6357799   5 6357799 0.20275900
+```
+
+### A note on chromsome names and marker.ID’s
+
+As part of
+[`make_panvar_inputs()`](https://danforthcenter.github.io/panvaR/reference/make_panvar_inputs.md)
+marker.ID’s are standardized to be of the form `CHR-POS` as they are
+coded in the input genotype file. This standardizes the marker.ID’s to
+have a consistent form but does not alter the chromosome names.
+
+Chromosome names can often have some leading characters e.g. “CHR01”. To
+standardize chromosomes across different inputs, chromosome names are
+often converted to a number using the function
+[`get_chrom_from_id()`](https://danforthcenter.github.io/panvaR/reference/get_chrom_from_id.md)
+. Some genotype files may include things like scaffolds that cannot be
+easily assigned a chromosome number. It is recommend to remove these
+from the input file before running panvaR. Where applicable, the form of
+chromosome name is indicated in the function documentation when a user
+supplied marker.ID is required.

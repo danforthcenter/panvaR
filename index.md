@@ -43,5 +43,6 @@ a a flexible array of data sources.
 ## Reporting issues
 
 Please let us know if there are problems with the package via the github
-issues page. We are always open to improving the ease of use so please
-inform us of any potential improvements. Thanks for using our tool!
+issues page. We are always open to improving the ease of use and
+functionality so also please inform us of any potential additions or
+features. Thanks for using our tool!
