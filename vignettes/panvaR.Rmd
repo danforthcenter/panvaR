@@ -41,7 +41,7 @@ Re-run GWAS using a single-locus model to generate p-values for all snp's. Can o
 
 3.  **Create tables**
 
-PanvaR creates the tabular output for a given tag snp. This includes gene and snp based outputs generating snp scores and LD calculations.
+PanvaR creates the tabular output for a given tag snp. This includes gene and snp based outputs generating snp scores and LD calculations. Steps 3 and 4 are run on each tag snp.
 
 4.  **Plot**
 
@@ -166,80 +166,6 @@ knitr::include_graphics("shattering.GLM.Rectangular-Manhattan.PanvarExample.jpg"
                         dpi = 600)
 ```
 
-## A few notes
-
-### Identifying QTL
-
-The first step in a typical GWAS analysis might be identifying some regions that we want to look at closer. We can identify discrete regions or QTL using p-values from our GWAS and linkage disequilibrium. Following language used by `plink2` we refer to these groups of snps as clumps. A function is presented to sort snps into clumps. This follows a similar logic to that of `plink2 --clump` . See [here](https://www.cog-genomics.org/plink/2.0/postproc#clump).
-
-The method presented in the package (`snp_make_clumps`) is likely not ideal as it is poorly optimized especially on larger numbers of markers.
-
-```{r}
-# get bedfile name
-filtered.bedfile <- list.files(options()$panvar_outdir, pattern = "bed$")
-
-# read in gwas results
-gwas.path <- list.files(options()$panvar_outdir,
-                                        pattern = "GWASresults\\.csv$",
-                                        full.names = TRUE)
-
-
-gwas.df <- read.csv(gwas.path) 
-
-# subset to only top p-value snps 
-gwas.df_subset <- gwas.df %>% 
-  filter(LOGPVAL > 8)
-
-# clump
-clumped.df <- 
-snp_make_clumps(geno.bed.filename = filtered.bedfile,
-                geno.bed.dir = current.directory,
-                gwas.res = gwas.df,
-                pvals.in.log = F,
-                window = 500,
-                ld.thresh = .2)
-
-head(clumped.df)
-```
-
-Using a process like this to decide on specific regions as well as snps that represent those regions is an important first step in analyzing a genome wide set of results.
-
-We will use the most significant p-value snp in our top clump.
-
-```{r}
-top_clump <- gwas.df_subset %>% 
-  left_join(clumped.df, by = "marker.ID") %>% 
-  filter(clump_num == 1) 
-
-my.tag.snp <- top_clump$marker.ID[which.max(top_clump$LOGPVAL)]
-my.tag.snp
-```
-
-### LD calculation
-
-A main functionality of the package is to more easily calculate local linkage disequilbrium around a given marker. panvaR uses `plink2` to generate pairwise LD to a single marker or a group of markers within a set physical distance.
-
-If supplying a group of markers via the `qtl.df` argument, the output will have a single value for each snp in the window representing the maximum LD of that marker to any snp in the `qtl.df`.
-
-You can create a table of LD in R^2^ in a window using the following function:
-
-```{r}
-out_ld <-
-  get_ld_in_window(
-    tag.snp = my.tag.snp,
-    window = 500,
-    geno.bed = filtered.bedfile,
-    in.dir = current.directory
-  )
-head(out_ld$table)
-```
-
-### A note on chromsome names and marker.ID's
-
-As part of `make_panvar_inputs()` marker.ID's are standardized to be of the form `CHR-POS` as they are coded in the input genotype file. This standardizes the marker.ID's to have a consistent form but does not alter the chromosome names.
-
-Chromosome names can often have some leading characters e.g. "CHR01". To standardize chromosomes across different inputs, chromosome names are often converted to a number using the function `get_chrom_from_id()` . Some genotype files may include things like scaffolds that cannot be easily assigned a chromosome number. It is recommend to remove these from the input file before running panvaR. Where applicable, the form of chromosome name is indicated in the function documentation when a user supplied marker.ID is required.
-
 ## 3) Creating tables
 
 The next step in panvar
@@ -323,3 +249,38 @@ plot_panvar(panvar.table.list = tables,
   plot.effect = F
 )
 ```
+
+## A few notes
+
+### Identifying QTL
+
+The first step in a typical GWAS analysis might be identifying some regions that we want to look at closer. We can identify discrete regions or QTL using p-values from our GWAS and linkage disequilibrium. Following language used by `plink2` we refer to these groups of snps as clumps. A function is presented to sort snps into clumps. This follows a similar logic to that of `plink2 --clump` . See [here](https://www.cog-genomics.org/plink/2.0/postproc#clump).
+
+The method presented in the package (`snp_make_clumps`) is likely not ideal as it is poorly optimized especially on larger numbers of markers.
+
+```{r} # get bedfile name filtered.bedfile <- list.files(options()$panvar_outdir, pattern = "bed$")  # read in gwas results gwas.path <- list.files(options()$panvar_outdir,                                         pattern = "GWASresults\\.csv$",                                         full.names = TRUE)   gwas.df <- read.csv(gwas.path)   # subset to only top p-value snps  gwas.df_subset <- gwas.df %>%    filter(LOGPVAL > 8)  # clump clumped.df <-  snp_make_clumps(geno.bed.filename = filtered.bedfile,                 geno.bed.dir = current.directory,                 gwas.res = gwas.df,                 pvals.in.log = F,                 window = 500,                 ld.thresh = .2)  head(clumped.df)}
+```
+
+Using a process like this to decide on specific regions as well as snps that represent those regions is an important first step in analyzing a genome wide set of results.
+
+We will use the most significant p-value snp in our top clump.
+
+```{r} top_clump <- gwas.df_subset %>%    left_join(clumped.df, by = "marker.ID") %>%    filter(clump_num == 1)   my.tag.snp <- top_clump$marker.ID[which.max(top_clump$LOGPVAL)] my.tag.snp}
+```
+
+### LD calculation
+
+A main functionality of the package is to more easily calculate local linkage disequilbrium around a given marker. panvaR uses `plink2` to generate pairwise LD to a single marker or a group of markers within a set physical distance.
+
+If supplying a group of markers via the `qtl.df` argument, the output will have a single value for each snp in the window representing the maximum LD of that marker to any snp in the `qtl.df`.
+
+You can create a table of LD in R^2^ in a window using the following function:
+
+```{r} out_ld <-   get_ld_in_window(     tag.snp = my.tag.snp,     window = 500,     geno.bed = filtered.bedfile,     in.dir = current.directory   ) head(out_ld$table)}
+```
+
+### A note on chromsome names and marker.ID's
+
+As part of `make_panvar_inputs()` marker.ID's are standardized to be of the form `CHR-POS` as they are coded in the input genotype file. This standardizes the marker.ID's to have a consistent form but does not alter the chromosome names.
+
+Chromosome names can often have some leading characters e.g. "CHR01". To standardize chromosomes across different inputs, chromosome names are often converted to a number using the function `get_chrom_from_id()` . Some genotype files may include things like scaffolds that cannot be easily assigned a chromosome number. It is recommend to remove these from the input file before running panvaR. Where applicable, the form of chromosome name is indicated in the function documentation when a user supplied marker.ID is required.
