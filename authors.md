@@ -13,12 +13,12 @@ Source:
 [`DESCRIPTION`](https://github.com/danforthcenter/panvaR/blob/main/DESCRIPTION)
 
 Luebbert C, Dhakal R (2026). *panvaR: panvaR: finemapping GWAS peaks*. R
-package version 1.1, <https://danforthcenter.github.io/panvaR/>.
+package version 1.0, <https://danforthcenter.github.io/panvaR/>.
 
     @Manual{,
       title = {panvaR: panvaR: finemapping GWAS peaks},
       author = {Collin Luebbert and Rijan Dhakal},
       year = {2026},
-      note = {R package version 1.1},
+      note = {R package version 1.0},
       url = {https://danforthcenter.github.io/panvaR/},
     }
