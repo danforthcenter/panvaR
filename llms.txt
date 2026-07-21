@@ -1,5 +1,7 @@
 # panvaR
 
+[![DOI](https://zenodo.org/badge/833282717.svg)](https://doi.org/10.5281/zenodo.16578324)
+
 An R package for fine-mapping and prioritizing candidate genes from GWA
 studies.
 
