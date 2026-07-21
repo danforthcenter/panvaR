@@ -10,7 +10,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/danforthcenter/panvaR/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/danforthcenter/panvaR/blob/v1.0/DESCRIPTION)
 
 Luebbert C, Dhakal R (2026). *panvaR: panvaR: finemapping GWAS peaks*. R
 package version 1.1, <https://danforthcenter.github.io/panvaR/>.
