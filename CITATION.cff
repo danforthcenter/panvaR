@@ -1,0 +1,18 @@
+cff-version: 1.0.0
+authors:
+- family-names: Luebbert
+  given-names: Collin
+  affiliation: Donald Danforth Plant Science Center
+  orcid: "https://orcid.org/0000-0002-8665-5950"
+- family-names: Dhakal
+  given-names: Rijan
+  affiliation: Donald Danforth Plant Science Center
+  orcid: "https://orcid.org/0009-0008-0230-0409"
+- family-names: Ozersky
+  given-names: Phillip
+  affiliation: Donald Danforth Plant Science Center
+  orcid: "https://orcid.org/0000-0002-8942-0524"
+title: "panvaR"
+version: 1.0.1
+doi: 
+date-released: 2026
