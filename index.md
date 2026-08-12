@@ -1,6 +1,6 @@
 # panvaR
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21498929.svg)](https://doi.org/10.5281/zenodo.21498929)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16578324.svg)](https://doi.org/10.5281/zenodo.16578324)
 
 An R package for fine-mapping and prioritizing candidate genes from GWA
 studies.
@@ -18,7 +18,7 @@ Install panvaR:
 
 ``` r
 
-remotes::install_github("danforthcenter/panvaR", build_vignettes = TRUE)
+remotes::install_github("danforthcenter/panvaR")
 ```
 
 We have also implemented a GUI for visualizing results. To use the GUI

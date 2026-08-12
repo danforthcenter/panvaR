@@ -90,21 +90,21 @@ snp_qc_plink(
   plink.path = plink.path,
   out.dir = temp.dir,
   out.prefix = "Example")
-#> [1] "/tmp/RtmpTrYP6u/panvar_ex/Example_PlinkQC_maf0.05_missing0.1"
-#> PLINK v2.0.0-a.7.1LM AVX2 Intel (4 May 2026)        cog-genomics.org/plink/2.0/
+#> [1] "/tmp/Rtmp10DI0X/panvar_ex/Example_PlinkQC_maf0.05_missing0.1"
+#> PLINK v2.0.0-a.7.3LM AVX2 Intel (8 Aug 2026)        cog-genomics.org/plink/2.0/
 #> (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
-#> Logging to /tmp/RtmpTrYP6u/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.log.
+#> Logging to /tmp/Rtmp10DI0X/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.log.
 #> Options in effect:
 #>   --allow-extra-chr
 #>   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned
 #>   --geno 0.1
 #>   --maf 0.05
 #>   --make-bed
-#>   --out /tmp/RtmpTrYP6u/panvar_ex/Example_PlinkQC_maf0.05_missing0.1
+#>   --out /tmp/Rtmp10DI0X/panvar_ex/Example_PlinkQC_maf0.05_missing0.1
 #>   --set-all-var-ids @-#
 #> 
-#> Start time: Thu Jul 23 15:57:46 2026
-#> 15989 MiB RAM detected, ~14510 available; reserving 7994 MiB for main
+#> Start time: Wed Aug 12 18:28:16 2026
+#> 15992 MiB RAM detected, ~14515 available; reserving 7996 MiB for main
 #> workspace.
 #> Using up to 4 compute threads.
 #> 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
@@ -118,15 +118,15 @@ snp_qc_plink(
 #> 2354 variants removed due to allele frequency threshold(s)
 #> (--maf/--max-maf/--mac/--max-mac).
 #> 5361 variants remaining after main filters.
-#> Writing /tmp/RtmpTrYP6u/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.fam ...
+#> Writing /tmp/Rtmp10DI0X/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.fam ...
 #> done.
-#> Writing /tmp/RtmpTrYP6u/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.bim ...
+#> Writing /tmp/Rtmp10DI0X/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.bim ...
 #> done.
-#> Writing /tmp/RtmpTrYP6u/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.bed ...
+#> Writing /tmp/Rtmp10DI0X/panvar_ex/Example_PlinkQC_maf0.05_missing0.1.bed ...
 #> 0%done.
-#> End time: Thu Jul 23 15:57:46 2026
-#> QC was successful, output stored at /tmp/RtmpTrYP6u/panvar_ex/Example_PlinkQC_maf0.05_missing0.1
-#> [1] "/tmp/RtmpTrYP6u/panvar_ex/Example_PlinkQC_maf0.05_missing0.1"
+#> End time: Wed Aug 12 18:28:16 2026
+#> QC was successful, output stored at /tmp/Rtmp10DI0X/panvar_ex/Example_PlinkQC_maf0.05_missing0.1
+#> [1] "/tmp/Rtmp10DI0X/panvar_ex/Example_PlinkQC_maf0.05_missing0.1"
 
 # see what we did
 list.files(temp.dir)
