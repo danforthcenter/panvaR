@@ -15,7 +15,7 @@ install.packages("remotes")
 Install panvaR:
 
 ``` r
-remotes::install_github("danforthcenter/panvaR", build_vignettes = TRUE)
+remotes::install_github("danforthcenter/panvaR")
 ```
 
 We have also implemented a GUI for visualizing results. To use the GUI run:
