@@ -171,5 +171,6 @@ make_panvar_inputs <- function(genotype.path,
                  filePhe = phenotype.path,
                  sep.phe = sep.phe, 
                  pcs.keep = 10,
+                 SNP.impute = NULL,
                  out = mvp.out.path)
 }
