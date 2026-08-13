@@ -168,22 +168,22 @@ phenotype.path <- system.file("extdata",
 make_panvar_inputs(genotype.path = genotype.path,
                    phenotype.path = phenotype.path)
 #> Removed 0 samples due to NA values in phenotype.
-#> [1] "/tmp/RtmprA26SB/PanvarExample_PlinkQC_maf0.05_missing0.1"
+#> [1] "/tmp/RtmpAJhp1C/PanvarExample_PlinkQC_maf0.05_missing0.1"
 #> PLINK v2.0.0-a.7.3LM AVX2 Intel (8 Aug 2026)        cog-genomics.org/plink/2.0/
 #> (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
-#> Logging to /tmp/RtmprA26SB/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
+#> Logging to /tmp/RtmpAJhp1C/PanvarExample_PlinkQC_maf0.05_missing0.1.log.
 #> Options in effect:
 #>   --allow-extra-chr
 #>   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned
 #>   --geno 0.1
-#>   --keep /tmp/RtmprA26SB/Panvar_list.of.samples.with.phenotype_shattering.txt
+#>   --keep /tmp/RtmpAJhp1C/Panvar_list.of.samples.with.phenotype_shattering.txt
 #>   --maf 0.05
 #>   --make-bed
-#>   --out /tmp/RtmprA26SB/PanvarExample_PlinkQC_maf0.05_missing0.1
+#>   --out /tmp/RtmpAJhp1C/PanvarExample_PlinkQC_maf0.05_missing0.1
 #>   --set-all-var-ids @-#
 #> 
-#> Start time: Wed Aug 12 18:28:21 2026
-#> 15992 MiB RAM detected, ~14303 available; reserving 7996 MiB for main
+#> Start time: Thu Aug 13 16:02:59 2026
+#> 15992 MiB RAM detected, ~14264 available; reserving 7996 MiB for main
 #> workspace.
 #> Using up to 4 compute threads.
 #> 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
@@ -200,11 +200,11 @@ make_panvar_inputs(genotype.path = genotype.path,
 #> 2557 variants removed due to allele frequency threshold(s)
 #> (--maf/--max-maf/--mac/--max-mac).
 #> 5158 variants remaining after main filters.
-#> Writing /tmp/RtmprA26SB/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
-#> Writing /tmp/RtmprA26SB/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
-#> Writing /tmp/RtmprA26SB/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
-#> End time: Wed Aug 12 18:28:21 2026
-#> QC was successful, output stored at /tmp/RtmprA26SB/PanvarExample_PlinkQC_maf0.05_missing0.1
+#> Writing /tmp/RtmpAJhp1C/PanvarExample_PlinkQC_maf0.05_missing0.1.fam ... done.
+#> Writing /tmp/RtmpAJhp1C/PanvarExample_PlinkQC_maf0.05_missing0.1.bim ... done.
+#> Writing /tmp/RtmpAJhp1C/PanvarExample_PlinkQC_maf0.05_missing0.1.bed ... 0%done.
+#> End time: Thu Aug 13 16:02:59 2026
+#> QC was successful, output stored at /tmp/RtmpAJhp1C/PanvarExample_PlinkQC_maf0.05_missing0.1
 #> Using rMVP to calculate PC's.
 #> Preparing data for MVP...
 #> Reading file...
@@ -213,8 +213,7 @@ make_panvar_inputs(genotype.path = genotype.path,
 #> Loading genotype at a step of 10000...
 #> Preparation for GENOTYPE data is done within 0s 
 #> 215 common individuals between phenotype and genotype. 
-#> Preparation for PHENOTYPE data is Done within 0s
-#> No NA in genotype, imputation has been skipped.
+#> Preparation for PHENOTYPE data is Done within 0s 
 #> MVP data prepration accomplished successfully!
 ```
 
@@ -266,7 +265,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
                 npcs = 2,
                 gwas.model = "GLM",
                 output.manhattan = T)
-#> Searching for prefix: PanvarExample in directory: /tmp/RtmprA26SB
+#> Searching for prefix: PanvarExample in directory: /tmp/RtmpAJhp1C
 #> Found the following files: 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bed, 
 #> PanvarExample_PlinkQC_maf0.05_missing0.1.bim, 
@@ -292,7 +291,7 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #>   Zhang, Xiaohui Yuan, Mengjin Zhu, Shuhong Zhao, Xinyun Li      
 #>   Mailto: xiaoleiliu@mail.hzau.edu.cn, ylilin@mail.hzau.edu.cn   
 #> =================================================================
-#> Start: 2026-08-12 18:28:22 UTC 
+#> Start: 2026-08-13 16:03:00 UTC 
 #> Input data has 215 individuals and 5158 markers 
 #> Markers are detected to be stored by column 
 #> Analyzed trait: shattering 
@@ -318,8 +317,8 @@ panvar_mvp_gwas(inputs.dir = options()$panvar_outdir,
 #> Circular_Manhattan Plotting shattering.GLM 
 #> Rectangular_Manhattan Plotting shattering.GLM
 #> Q_Q Plotting shattering.GLM
-#> Results are stored at Working Directory: /tmp/RtmprA26SB 
-#> End: 2026-08-12 18:28:23 UTC 
+#> Results are stored at Working Directory: /tmp/RtmpAJhp1C 
+#> End: 2026-08-13 16:03:01 UTC 
 #> Total running time: 1s 
 #> ===================== MVP ACCOMPLISHED =====================
 ```
