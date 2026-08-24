@@ -288,9 +288,12 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
       # Only variable provided 
       # set a binned color scale
       if(is.null(quantitative.fill.scale.d)){
-        quantitative.fill.scale <- scale_fill_viridis_d(name = quantitative.annotation.discrete)
+        quantitative.fill.scale <- scale_fill_viridis_d(name = quantitative.annotation.discrete, 
+                                                        na.translate = F)
       } else {
-        quantitative.fill.scale <- scale_fill_viridis_d(name = quantitative.annotation.discrete, option = quantitative.fill.scale.d)
+        quantitative.fill.scale <- scale_fill_viridis_d(name = quantitative.annotation.discrete, 
+                                                        option = quantitative.fill.scale.d,
+                                                        na.translate = F)
       }
       # only plot that stuff that's above the LD threshold 
       plot.df <- plot.df %>% 
