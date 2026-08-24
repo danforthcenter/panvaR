@@ -87,8 +87,10 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
                                   orient = c("H", "V"),
                                   qualitative.annotation = NULL,
                                   qualitative.shape.scale = NULL,
-                                  quantitative.annotation = NULL,
-                                  quantitative.fill.scale = NULL,
+                                  quantitative.annotation.continuous = NULL,
+                                  quantitative.fill.scale.c = NULL,
+                                  quantitative.annotation.discrete = NULL,
+                                  quantitative.fill.scale.d = NULL,
                                   plot.text.size = 11,
                                   plot.legend.size = 1.2){
   
@@ -212,37 +214,93 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
   # prepare quantitative variable --------
   # ------------------------------------------------------------------------\
   
-  # check if the scale provided is a ggplot scale or not
-  if("Scale" %in% class(quantitative.fill.scale)){
-    user.supplied.scale.option <- "scale"
-  } else {
-    user.supplied.scale.option <- "not.scale"
+  # check for only providing one quantitative scale
+  if(!is.null(quantitative.annotation.continuous) & !is.null(quantitative.annotation.discrete)){
+    stop("Only one of quantitative.annotation.continuous or quantitative.annotation.discrete should be provided.")
+  }
+  # 
+  if(!is.null(quantitative.fill.scale.c) & !is.null(quantitative.fill.scale.d)){
+    stop("Only one of quantitative.annotation.continuous or quantitative.annotation.discrete should be provided.")
   }
   
-  if(!is.null(quantitative.annotation) & user.supplied.scale.option == "scale"){
-    # Both variable and scale provided 
-    # use user supplied scale
-    quantitative.fill.scale <- quantitative.fill.scale
-    # only plot that stuff that's above the LD threshold 
-    plot.df <- plot.df %>% 
-      mutate(plot.quant.var = case_when(.data$R2 < plot.r2.thresh ~ NA,
-                                        TRUE ~ .data[[quantitative.annotation]]))
-  } else if(!is.null(quantitative.annotation)){
-    # Only variable provided 
-    # set a binned color scale
-    if(is.null(quantitative.fill.scale)){
-      quantitative.fill.scale <- scale_fill_viridis_b(name = quantitative.annotation)
-    } else {
-      quantitative.fill.scale <- scale_fill_viridis_b(name = quantitative.annotation, option = quantitative.fill.scale)
-    }
-    # only plot that stuff that's above the LD threshold 
-    plot.df <- plot.df %>% 
-      mutate(plot.quant.var = case_when(.data$R2 < plot.r2.thresh ~ NA,
-                                        TRUE ~ .data[[quantitative.annotation]]))
-  } else if(is.null(quantitative.annotation) & !is.null(quantitative.fill.scale)){
+  # check if a scale is provided but no variable name
+  if(is.null(quantitative.annotation.continuous) & !is.null(quantitative.fill.scale.c)){
     warning("No quantitative annotation specified. Provided quantitative.fill.scale ignored.")
-  } else {
-    # do nothing
+  }
+  if(is.null(quantitative.annotation.discrete) & !is.null(quantitative.fill.scale.d)){
+    warning("No quantitative annotation specified. Provided quantitative.fill.scale ignored.")
+  }
+  
+
+  
+  
+  
+  # If quantitative annotation is continuous: 
+  if(!is.null(quantitative.annotation.continuous)){
+    # check if the scale provided is a ggplot scale or not
+    if("Scale" %in% class(quantitative.fill.scale.c)){
+      user.supplied.scale.option <- "scale"
+    } else {
+      user.supplied.scale.option <- "not.scale"
+    }
+    
+    if(!is.null(quantitative.annotation.continuous) & user.supplied.scale.option == "scale"){
+      # Both variable and scale provided 
+      # use user supplied scale
+      quantitative.fill.scale <- quantitative.fill.scale.c
+      # only plot that stuff that's above the LD threshold 
+      plot.df <- plot.df %>% 
+        mutate(plot.quant.var = case_when(.data$R2 < plot.r2.thresh ~ NA,
+                                          TRUE ~ .data[[quantitative.annotation.continuous]]))
+    } else if(!is.null(quantitative.annotation.continuous)){
+      # Only variable provided 
+      # set a binned color scale
+      if(is.null(quantitative.fill.scale.c)){
+        quantitative.fill.scale <- scale_fill_viridis_b(name = quantitative.annotation.continuous)
+      } else {
+        quantitative.fill.scale <- scale_fill_viridis_b(name = quantitative.annotation.continuous, option = quantitative.fill.scale.c)
+      }
+      # only plot that stuff that's above the LD threshold 
+      plot.df <- plot.df %>% 
+        mutate(plot.quant.var = case_when(.data$R2 < plot.r2.thresh ~ NA,
+                                          TRUE ~ .data[[quantitative.annotation.continuous]]))
+    } else {
+      # do nothing
+    }
+    quantitative.annotation <- quantitative.annotation.continuous
+  } else if(!is.null(quantitative.annotation.discrete)){
+    # check if the scale provided is a ggplot scale or not
+    if("Scale" %in% class(quantitative.fill.scale.c)){
+      user.supplied.scale.option <- "scale"
+    } else {
+      user.supplied.scale.option <- "not.scale"
+    }
+    
+    if(!is.null(quantitative.annotation.discrete) & user.supplied.scale.option == "scale"){
+      # Both variable and scale provided 
+      # use user supplied scale
+      quantitative.fill.scale <- quantitative.fill.scale.d
+      # only plot that stuff that's above the LD threshold 
+      plot.df <- plot.df %>% 
+        mutate(plot.quant.var = case_when(.data$R2 < plot.r2.thresh ~ NA,
+                                          TRUE ~ .data[[quantitative.annotation.discrete]]))
+    } else if(!is.null(quantitative.annotation.discrete)){
+      # Only variable provided 
+      # set a binned color scale
+      if(is.null(quantitative.fill.scale.d)){
+        quantitative.fill.scale <- scale_fill_viridis_d(name = quantitative.annotation.discrete)
+      } else {
+        quantitative.fill.scale <- scale_fill_viridis_d(name = quantitative.annotation.discrete, option = quantitative.fill.scale.d)
+      }
+      # only plot that stuff that's above the LD threshold 
+      plot.df <- plot.df %>% 
+        mutate(plot.quant.var = case_when(.data$R2 < plot.r2.thresh ~ NA,
+                                          TRUE ~ .data[[quantitative.annotation.discrete]]))
+    } else {
+      # do nothing
+    }
+    quantitative.annotation <- quantitative.annotation.discrete
+  
   }
   
   # ------------------------------------------------------------------------\

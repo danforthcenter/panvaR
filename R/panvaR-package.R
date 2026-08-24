@@ -60,6 +60,7 @@
 #' @importFrom ggplot2 scale_color_viridis_b
 #' @importFrom ggplot2 scale_fill_manual
 #' @importFrom ggplot2 scale_fill_viridis_b
+#' @importFrom ggplot2 scale_fill_viridis_d
 #' @importFrom ggplot2 scale_shape_manual
 #' @importFrom ggplot2 scale_x_continuous
 #' @importFrom ggplot2 scale_x_reverse

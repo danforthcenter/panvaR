@@ -91,26 +91,28 @@
 #'   
 #' # clean up 
 #' unlink(temp.dir, recursive = TRUE)
-plot_panvar <- function(panvar.table.list = NULL, 
-                             gwas.res = NULL,
-                             ld.list = NULL,
-                             annotation.table = NULL,
-                             pvals.in.log = T,
-                             plot.r2.thresh = .2,
-                             unplotted.alpha = .4,
-                             window,
-                             sig.line,
-                             qualitative.annotation = NULL,
-                             qualitative.shape.scale = NULL,
-                             quantitative.annotation = NULL,
-                             quantitative.fill.scale = NULL,
-                             plot.title = "",
-                             include.gene.id = F,
-                             highlight.gene.ids = NULL,
-                             gene.highlight.color = "red",
-                             annotation.point.variable = "LD",
-                             annotation.point.scale = NULL,
-                             plot.effect = F,
+plot_panvar <- function(panvar.table.list = NULL,
+                        gwas.res = NULL,
+                        ld.list = NULL,
+                        annotation.table = NULL,
+                        pvals.in.log = T,
+                        plot.r2.thresh = .2,
+                        unplotted.alpha = .4,
+                        window,
+                        sig.line,
+                        qualitative.annotation = NULL,
+                        qualitative.shape.scale = NULL,
+                        quantitative.annotation.continuous = NULL,
+                        quantitative.fill.scale.c = NULL,
+                        quantitative.annotation.discrete = NULL,
+                        quantitative.fill.scale.d = NULL,
+                        plot.title = "",
+                        include.gene.id = F,
+                        highlight.gene.ids = NULL,
+                        gene.highlight.color = "red",
+                        annotation.point.variable = "LD",
+                        annotation.point.scale = NULL,
+                        plot.effect = F,
                         plot.text.size = 11,
                         plot.legend.size = 1.2) {
   
@@ -130,8 +132,10 @@ plot_panvar <- function(panvar.table.list = NULL,
                                orient = "H",
                                qualitative.annotation = qualitative.annotation,
                                qualitative.shape.scale = qualitative.shape.scale,
-                               quantitative.annotation = quantitative.annotation,
-                               quantitative.fill.scale = quantitative.fill.scale,
+                               quantitative.annotation.continuous = quantitative.annotation.continuous,
+                               quantitative.fill.scale.c = quantitative.fill.scale.c,
+                               quantitative.annotation.discrete = quantitative.annotation.discrete,
+                               quantitative.fill.scale.d = quantitative.fill.scale.d,
                                plot.text.size = plot.text.size,
                                plot.legend.size = plot.legend.size)
   
@@ -172,40 +176,47 @@ plot_panvar <- function(panvar.table.list = NULL,
   #                        get_bp_from_id(ld.list$key.snp))
   # }
 
-
-  anno <- plot_gene_annotation(panvar.table.list = panvar.table.list,
-                                    annotation.table = annotation.table,
-                                    middle.snp = ld.list$key.snp,
-                                    window = window,
-                                    include.id = include.gene.id,
-                                    highlight.ids = highlight.gene.ids,
-                                    highlight.color = gene.highlight.color,
-                                    use.arrows = F,
-                                    point.color = annotation.point.variable,
-                                    point.fill.scale = annotation.point.scale,
-                               plot.text.size = plot.text.size,
-                               plot.legend.size = plot.legend.size)
+  
+  
+  anno <- plot_gene_annotation(
+    panvar.table.list = panvar.table.list,
+    annotation.table = annotation.table,
+    middle.snp = ld.list$key.snp,
+    window = window,
+    include.id = include.gene.id,
+    highlight.ids = highlight.gene.ids,
+    highlight.color = gene.highlight.color,
+    use.arrows = F,
+    point.color = annotation.point.variable,
+    point.fill.scale = annotation.point.scale,
+    plot.text.size = plot.text.size,
+    plot.legend.size = plot.legend.size
+  )
   
   # ------------------------------------------------------------------------\
   # make effect --------
   # ------------------------------------------------------------------------\
   
   if (plot.effect) {
-    effect.plot <- plot_effect(panvar.table.list = panvar.table.list, 
-                                    gwas.res = gwas.res,
-                                    pvals.in.log = pvals.in.log,
-                                    plot.r2.thresh = plot.r2.thresh,
-                                    unplotted.alpha = unplotted.alpha,
-                                    ld.list = ld.list,
-                                    window = window,
-                                    sig.line = sig.line,
-                                    orient = "V",
-                                    qualitative.annotation = qualitative.annotation,
-                                    qualitative.shape.scale = qualitative.shape.scale,
-                                    quantitative.annotation = quantitative.annotation,
-                                    quantitative.fill.scale = quantitative.fill.scale,
-                                    include.legend = F)
-
+    effect.plot <- plot_effect(
+      panvar.table.list = panvar.table.list,
+      gwas.res = gwas.res,
+      pvals.in.log = pvals.in.log,
+      plot.r2.thresh = plot.r2.thresh,
+      unplotted.alpha = unplotted.alpha,
+      ld.list = ld.list,
+      window = window,
+      sig.line = sig.line,
+      orient = "V",
+      qualitative.annotation = qualitative.annotation,
+      qualitative.shape.scale = qualitative.shape.scale,
+      quantitative.annotation.continuous = quantitative.annotation.continuous,
+      quantitative.fill.scale.c = quantitative.fill.scale.c,
+      quantitative.annotation.discrete = quantitative.annotation.discrete,
+      quantitative.fill.scale.d = quantitative.fill.scale.d,
+      include.legend = F
+    )
+    
   }
   
   # ------------------------------------------------------------------------\
