@@ -194,10 +194,10 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
     
   } else if(is.null(qualitative.shape.scale)){
     # make one using the unique values of qualitative annotation column
-    qual.vars <- sort(unique(plot.df[,qualitative.annotation]))
+    qual.vars <- sort(unique(as.matrix(plot.df[,qualitative.annotation])))
     
     # throw an error if there are more than 5 things for now
-    if(qual.vars > 5){
+    if(length(qual.vars) > 5){
       stop("Qualitative variable must not have more than 5 unique values. 
            Points are plotted using the fill aesthetic to give them a color, 
            R only has 5 shapes (21-25) that can be assigned fill values.")
