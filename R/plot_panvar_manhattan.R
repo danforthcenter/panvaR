@@ -131,8 +131,8 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
       mutate(R2 = .data$LD)
     
     # for rug plot
-    marker.list.in.window <- gwas.sub %>%
-      mutate(POS = get_bp_from_id(.data$marker.ID)) %>%
+    marker.list.in.window <- panvar.table.list$window.snps %>%
+      # mutate(POS = get_bp_from_id(.data$marker.ID)) %>%
       select("marker.ID", "POS") %>%
       distinct()
   }
