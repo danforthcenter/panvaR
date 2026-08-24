@@ -47,12 +47,14 @@
 <span>  plot.r2.thresh <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>  unplotted.alpha <span class="op">=</span> <span class="fl">0.4</span>,</span>
 <span>  <span class="va">window</span>,</span>
-<span>  <span class="va">sig.line</span>,</span>
+<span>  sig.line <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  orient <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H"</span>, <span class="st">"V"</span><span class="op">)</span>,</span>
 <span>  qualitative.annotation <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  qualitative.shape.scale <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  quantitative.annotation <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  quantitative.fill.scale <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quantitative.annotation.continuous <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quantitative.fill.scale.c <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quantitative.annotation.discrete <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quantitative.fill.scale.d <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  plot.text.size <span class="op">=</span> <span class="fl">11</span>,</span>
 <span>  plot.legend.size <span class="op">=</span> <span class="fl">1.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -113,15 +115,25 @@ cases that will have a pre-assigned scale used if supplied here.</p></dd>
 ggplot2::scale_shape_manual. More often an output of the function <a href="make_consistent_scale.html">make_consistent_scale</a>.</p></dd>
 
 
-<dt id="arg-quantitative-annotation">quantitative.annotation<a class="anchor" aria-label="anchor" href="#arg-quantitative-annotation"></a></dt>
-<dd><p>character, column in gwas.res that contains quantitative annotations.
-For example, variant effect scores. Will be plotted as fill to points.</p></dd>
+<dt id="arg-quantitative-annotation-continuous">quantitative.annotation.continuous<a class="anchor" aria-label="anchor" href="#arg-quantitative-annotation-continuous"></a></dt>
+<dd><p>character, column in gwas.res that contains quantitative annotations to be plotted
+as a continuous variable. For example, variant effect scores. Will be plotted as fill to points. Only provide either continuous
+or discrete quantitative annotations.</p></dd>
 
 
-<dt id="arg-quantitative-fill-scale">quantitative.fill.scale<a class="anchor" aria-label="anchor" href="#arg-quantitative-fill-scale"></a></dt>
+<dt id="arg-quantitative-fill-scale-c">quantitative.fill.scale.c<a class="anchor" aria-label="anchor" href="#arg-quantitative-fill-scale-c"></a></dt>
 <dd><p>character or scale object, either a character indicating the
 <code>option</code> parameter passed to ggplot2::scale_fill_viridis_b that alters the color scale used.
 Or a previous call to a ggplot2 fill scale for example ggplot2::scale_fill_stepsn.</p></dd>
+
+
+<dt id="arg-quantitative-annotation-discrete">quantitative.annotation.discrete<a class="anchor" aria-label="anchor" href="#arg-quantitative-annotation-discrete"></a></dt>
+<dd><p>character, column in gwas.res that contains annotations to be plotted as a discrete
+variable. For example, Year or Trial if combining multiple gwas results. Will be plotted as fill to points.
+Only provide either continuous or discrete quantitative annotations.
+#' @param quantitative.fill.scale.c character or scale object, either a character indicating the
+<code>option</code> parameter passed to ggplot2::scale_fill_viridis_c that alters the color scale used.
+Or a previous call to a ggplot2 fill scale for example <a href="https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html" class="external-link">ggplot2::scale_fill_discrete</a>.</p></dd>
 
 </dl></div>
     <div class="section level2">

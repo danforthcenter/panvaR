@@ -13,6 +13,7 @@ get_ld_in_window(
   geno.bed,
   in.dir,
   out.dir = NULL,
+  pvals.in.log = T,
   verbose = TRUE
 )
 ```
@@ -22,9 +23,9 @@ get_ld_in_window(
 - qtl.df:
 
   data.frame, table that includes list of snps to calculate LD to with
-  columns (CHR, POS, LOGPVAL), corresponding to (chromosome, physical
-  position, and -log10(p-value)). QTL are typically defined as hits
-  grouped by LD by something like `plink --clump`
+  columns (CHR, POS, PVAL), corresponding to (chromosome, physical
+  position, and p-value). QTL are typically defined as hits grouped by
+  LD by something like `plink --clump`
 
 - tag.snp:
 
@@ -56,6 +57,11 @@ get_ld_in_window(
 - out.dir:
 
   character, where to output some temporary files.
+
+- pvals.in.log:
+
+  boolean, are p-values in PVAL column of `qtl.df` represented as
+  -log10(p-value)?
 
 - verbose:
 

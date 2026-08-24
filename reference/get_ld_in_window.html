@@ -47,6 +47,7 @@
 <span>  <span class="va">geno.bed</span>,</span>
 <span>  <span class="va">in.dir</span>,</span>
 <span>  out.dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  pvals.in.log <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -56,7 +57,7 @@
 
 
 <dl><dt id="arg-qtl-df">qtl.df<a class="anchor" aria-label="anchor" href="#arg-qtl-df"></a></dt>
-<dd><p>data.frame, table that includes list of snps to calculate LD to with columns (CHR, POS, LOGPVAL), corresponding to (chromosome, physical position, and -log10(p-value)).
+<dd><p>data.frame, table that includes list of snps to calculate LD to with columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and p-value).
 QTL are typically defined as hits grouped by LD by something like <code>plink --clump</code></p></dd>
 
 
@@ -84,6 +85,10 @@ The entire size of the region centered on the tag snp within which LD will be ca
 
 <dt id="arg-out-dir">out.dir<a class="anchor" aria-label="anchor" href="#arg-out-dir"></a></dt>
 <dd><p>character, where to output some temporary files.</p></dd>
+
+
+<dt id="arg-pvals-in-log">pvals.in.log<a class="anchor" aria-label="anchor" href="#arg-pvals-in-log"></a></dt>
+<dd><p>boolean, are p-values in PVAL column of <code>qtl.df</code> represented as -log10(p-value)?</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>

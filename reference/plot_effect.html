@@ -51,8 +51,10 @@
 <span>  orient <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"V"</span>, <span class="st">"H"</span><span class="op">)</span>,</span>
 <span>  qualitative.annotation <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  qualitative.shape.scale <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  quantitative.annotation <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  quantitative.fill.scale <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quantitative.annotation.continuous <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quantitative.fill.scale.c <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quantitative.annotation.discrete <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quantitative.fill.scale.d <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  include.legend <span class="op">=</span> <span class="cn">T</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -112,19 +114,25 @@ cases that will have a pre-assigned scale used if supplied here.</p></dd>
 ggplot2::scale_shape_manual. More often an output of the function <a href="make_consistent_scale.html">make_consistent_scale</a>.</p></dd>
 
 
-<dt id="arg-quantitative-annotation">quantitative.annotation<a class="anchor" aria-label="anchor" href="#arg-quantitative-annotation"></a></dt>
-<dd><p>character, column in gwas.res that contains quantitative annotations.
-For example, variant effect scores. Will be plotted as fill to points.</p></dd>
+<dt id="arg-quantitative-annotation-continuous">quantitative.annotation.continuous<a class="anchor" aria-label="anchor" href="#arg-quantitative-annotation-continuous"></a></dt>
+<dd><p>character, column in gwas.res that contains quantitative annotations to be plotted
+as a continuous variable. For example, variant effect scores. Will be plotted as fill to points. Only provide either continuous
+or discrete quantitative annotations.</p></dd>
 
 
-<dt id="arg-quantitative-fill-scale">quantitative.fill.scale<a class="anchor" aria-label="anchor" href="#arg-quantitative-fill-scale"></a></dt>
+<dt id="arg-quantitative-fill-scale-c">quantitative.fill.scale.c<a class="anchor" aria-label="anchor" href="#arg-quantitative-fill-scale-c"></a></dt>
 <dd><p>character or scale object, either a character indicating the
 <code>option</code> parameter passed to ggplot2::scale_fill_viridis_b that alters the color scale used.
 Or a previous call to a ggplot2 fill scale for example ggplot2::scale_fill_stepsn.</p></dd>
 
 
-<dt id="arg-include-legend">include.legend<a class="anchor" aria-label="anchor" href="#arg-include-legend"></a></dt>
-<dd><p>boolean, if TRUE, legend will be included.</p></dd>
+<dt id="arg-quantitative-annotation-discrete">quantitative.annotation.discrete<a class="anchor" aria-label="anchor" href="#arg-quantitative-annotation-discrete"></a></dt>
+<dd><p>character, column in gwas.res that contains annotations to be plotted as a discrete
+variable. For example, Year or Trial if combining multiple gwas results. Will be plotted as fill to points.
+Only provide either continuous or discrete quantitative annotations.
+#' @param quantitative.fill.scale.c character or scale object, either a character indicating the
+<code>option</code> parameter passed to ggplot2::scale_fill_viridis_c that alters the color scale used.
+Or a previous call to a ggplot2 fill scale for example <a href="https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html" class="external-link">ggplot2::scale_fill_discrete</a>.#' @param include.legend boolean, if TRUE, legend will be included.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -172,7 +180,7 @@ Or a previous call to a ggplot2 fill scale for example ggplot2::scale_fill_steps
 <span class="r-in"><span>  pvals.in.log <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>  window <span class="op">=</span> <span class="fl">25</span>,</span></span>
 <span class="r-in"><span>  sig.line <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot_effect-1.png" alt="" width="700" height="433"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot_effect(panvar.table.list = tables, pvals.in.log = FALSE,     window = 25, sig.line = 6):</span> object 'quantitative.fill.scale' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># clean up</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">temp.dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>

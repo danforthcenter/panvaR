@@ -17,8 +17,10 @@ plot_effect(
   orient = c("V", "H"),
   qualitative.annotation = NULL,
   qualitative.shape.scale = NULL,
-  quantitative.annotation = NULL,
-  quantitative.fill.scale = NULL,
+  quantitative.annotation.continuous = NULL,
+  quantitative.fill.scale.c = NULL,
+  quantitative.annotation.discrete = NULL,
+  quantitative.fill.scale.d = NULL,
   include.legend = T
 )
 ```
@@ -83,21 +85,32 @@ plot_effect(
   ggplot2::scale_shape_manual. More often an output of the function
   [make_consistent_scale](https://danforthcenter.github.io/panvaR/reference/make_consistent_scale.md).
 
-- quantitative.annotation:
+- quantitative.annotation.continuous:
 
-  character, column in gwas.res that contains quantitative annotations.
-  For example, variant effect scores. Will be plotted as fill to points.
+  character, column in gwas.res that contains quantitative annotations
+  to be plotted as a continuous variable. For example, variant effect
+  scores. Will be plotted as fill to points. Only provide either
+  continuous or discrete quantitative annotations.
 
-- quantitative.fill.scale:
+- quantitative.fill.scale.c:
 
   character or scale object, either a character indicating the `option`
   parameter passed to ggplot2::scale_fill_viridis_b that alters the
   color scale used. Or a previous call to a ggplot2 fill scale for
   example ggplot2::scale_fill_stepsn.
 
-- include.legend:
+- quantitative.annotation.discrete:
 
-  boolean, if TRUE, legend will be included.
+  character, column in gwas.res that contains annotations to be plotted
+  as a discrete variable. For example, Year or Trial if combining
+  multiple gwas results. Will be plotted as fill to points. Only provide
+  either continuous or discrete quantitative annotations. \#' @param
+  quantitative.fill.scale.c character or scale object, either a
+  character indicating the `option` parameter passed to
+  ggplot2::scale_fill_viridis_c that alters the color scale used. Or a
+  previous call to a ggplot2 fill scale for example
+  [ggplot2::scale_fill_discrete](https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html).#'
+  @param include.legend boolean, if TRUE, legend will be included.
 
 ## Value
 
@@ -144,7 +157,7 @@ plot_effect(
   pvals.in.log = FALSE,
   window = 25,
   sig.line = 6)
-
+#> Error in plot_effect(panvar.table.list = tables, pvals.in.log = FALSE,     window = 25, sig.line = 6): object 'quantitative.fill.scale' not found
 
 # clean up
 unlink(temp.dir, recursive = TRUE)
