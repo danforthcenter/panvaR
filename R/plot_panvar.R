@@ -26,13 +26,18 @@
 #' @param qualitative.shape.scale ggplot scale, an object with a stored call to
 #'   [ggplot2::scale_shape_manual]. More often an output of the function
 #'   [panvaR::make_consistent_scale].
-#' @param quantitative.annotation character, column in `gwas.res` that contains
-#'   quantitative annotations. For example, variant effect scores. Will be
-#'   plotted as fill to points.
-#' @param quantitative.fill.scale character or scale object, either a character
-#'   indicating the `option` parameter passed to [ggplot2::scale_fill_viridis_b]
-#'   that alters the color scale used. Or a previous call to a ggplot2 fill
-#'   scale for example [ggplot2::scale_fill_stepsn].
+#' @param quantitative.annotation.continuous character, column in gwas.res that contains quantitative annotations to be plotted
+#' as a continuous variable. For example, variant effect scores. Will be plotted as fill to points. Only provide either continuous 
+#' or discrete quantitative annotations.
+#' @param quantitative.fill.scale.c character or scale object, either a character indicating the
+#' `option` parameter passed to [ggplot2::scale_fill_viridis_b] that alters the color scale used.
+#' Or a previous call to a ggplot2 fill scale for example [ggplot2::scale_fill_stepsn].
+#' @param quantitative.annotation.discrete character, column in gwas.res that contains annotations to be plotted as a discrete 
+#' variable. For example, Year or Trial if combining multiple gwas results. Will be plotted as fill to points. 
+#' Only provide either continuous or discrete quantitative annotations.
+#' #' @param quantitative.fill.scale.c character or scale object, either a character indicating the
+#' `option` parameter passed to [ggplot2::scale_fill_viridis_c] that alters the color scale used.
+#' Or a previous call to a ggplot2 fill scale for example [ggplot2::scale_fill_discrete].
 #' @param plot.title character, a title for the plot
 #' @param include.gene.id boolean, if TRUE, `geneID` column will be included in
 #'   annotation plot.

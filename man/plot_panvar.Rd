@@ -16,8 +16,10 @@ plot_panvar(
   sig.line,
   qualitative.annotation = NULL,
   qualitative.shape.scale = NULL,
-  quantitative.annotation = NULL,
-  quantitative.fill.scale = NULL,
+  quantitative.annotation.continuous = NULL,
+  quantitative.fill.scale.c = NULL,
+  quantitative.annotation.discrete = NULL,
+  quantitative.fill.scale.d = NULL,
   plot.title = "",
   include.gene.id = F,
   highlight.gene.ids = NULL,
@@ -63,14 +65,20 @@ will have a pre-assigned scale used if supplied here.}
 \link[ggplot2:scale_manual]{ggplot2::scale_shape_manual}. More often an output of the function
 \link{make_consistent_scale}.}
 
-\item{quantitative.annotation}{character, column in \code{gwas.res} that contains
-quantitative annotations. For example, variant effect scores. Will be
-plotted as fill to points.}
+\item{quantitative.annotation.continuous}{character, column in gwas.res that contains quantitative annotations to be plotted
+as a continuous variable. For example, variant effect scores. Will be plotted as fill to points. Only provide either continuous
+or discrete quantitative annotations.}
 
-\item{quantitative.fill.scale}{character or scale object, either a character
-indicating the \code{option} parameter passed to \link[ggplot2:scale_viridis]{ggplot2::scale_fill_viridis_b}
-that alters the color scale used. Or a previous call to a ggplot2 fill
-scale for example \link[ggplot2:scale_steps]{ggplot2::scale_fill_stepsn}.}
+\item{quantitative.fill.scale.c}{character or scale object, either a character indicating the
+\code{option} parameter passed to \link[ggplot2:scale_viridis]{ggplot2::scale_fill_viridis_b} that alters the color scale used.
+Or a previous call to a ggplot2 fill scale for example \link[ggplot2:scale_steps]{ggplot2::scale_fill_stepsn}.}
+
+\item{quantitative.annotation.discrete}{character, column in gwas.res that contains annotations to be plotted as a discrete
+variable. For example, Year or Trial if combining multiple gwas results. Will be plotted as fill to points.
+Only provide either continuous or discrete quantitative annotations.
+#' @param quantitative.fill.scale.c character or scale object, either a character indicating the
+\code{option} parameter passed to \link[ggplot2:scale_viridis]{ggplot2::scale_fill_viridis_c} that alters the color scale used.
+Or a previous call to a ggplot2 fill scale for example \link[ggplot2:scale_colour_discrete]{ggplot2::scale_fill_discrete}.}
 
 \item{plot.title}{character, a title for the plot}
 

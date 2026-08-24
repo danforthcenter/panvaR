@@ -12,11 +12,12 @@ get_ld_in_window(
   geno.bed,
   in.dir,
   out.dir = NULL,
+  pvals.in.log = T,
   verbose = TRUE
 )
 }
 \arguments{
-\item{qtl.df}{data.frame, table that includes list of snps to calculate LD to with columns (CHR, POS, LOGPVAL), corresponding to (chromosome, physical position, and -log10(p-value)).
+\item{qtl.df}{data.frame, table that includes list of snps to calculate LD to with columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and p-value).
 QTL are typically defined as hits grouped by LD by something like \code{plink --clump}}
 
 \item{tag.snp}{character, marker.ID of snp around which to calculate LD. In the form 'CHR-POS'}
@@ -32,6 +33,8 @@ The entire size of the region centered on the tag snp within which LD will be ca
 \item{in.dir}{character, directory where genotype files are located}
 
 \item{out.dir}{character, where to output some temporary files.}
+
+\item{pvals.in.log}{boolean, are p-values in PVAL column of \code{qtl.df} represented as -log10(p-value)?}
 
 \item{verbose}{boolean, if TRUE, output some status reports}
 }
