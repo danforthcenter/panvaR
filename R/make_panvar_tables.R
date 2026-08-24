@@ -304,6 +304,7 @@ make_panvar_tables <- function(gwas.res,
   
   out <- list(gwas = gwas.sub_with.genes,
               anno = anno.out,
+              window.snps = ld.list$table,
               key.snp = ld.list$key.snp,
               qtl.snps = ld.list$qtl.snps)
   
