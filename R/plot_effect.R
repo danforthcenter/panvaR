@@ -74,19 +74,21 @@
 #' # clean up
 #' unlink(temp.dir, recursive = TRUE)
 plot_effect <- function(panvar.table.list = NULL,
-                             gwas.res = NULL,
-                             ld.list = NULL,
-                             pvals.in.log = TRUE,
-                             plot.r2.thresh = .2,
-                             unplotted.alpha = .4,
-                             window,
-                             sig.line,
-                             orient = c("V", "H"),
-                             qualitative.annotation = NULL,
-                             qualitative.shape.scale = NULL,
-                             quantitative.annotation = NULL,
-                             quantitative.fill.scale = NULL,
-                             include.legend = T){
+                        gwas.res = NULL,
+                        ld.list = NULL,
+                        pvals.in.log = TRUE,
+                        plot.r2.thresh = .2,
+                        unplotted.alpha = .4,
+                        window,
+                        sig.line,
+                        orient = c("V", "H"),
+                        qualitative.annotation = NULL,
+                        qualitative.shape.scale = NULL,
+                        quantitative.annotation.continuous = NULL,
+                        quantitative.fill.scale.c = NULL,
+                        quantitative.annotation.discrete = NULL,
+                        quantitative.fill.scale.d = NULL,
+                        include.legend = T) {
   
   # make sure we don't use both
   if(!is.null(panvar.table.list) & (!is.null(ld.list) | !is.null(gwas.res))){
