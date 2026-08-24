@@ -113,22 +113,22 @@ make_panvar_inputs(
   out.prefix = "example",
   out.dir = out.dir)
 #> Removed 0 samples due to NA values in phenotype.
-#> [1] "/tmp/RtmpanGw8a/panvar_ex/example_PlinkQC_maf0.05_missing0.1"
+#> [1] "/tmp/RtmpMjvgSW/panvar_ex/example_PlinkQC_maf0.05_missing0.1"
 #> PLINK v2.0.0-a.7.4LM AVX2 Intel (18 Aug 2026)       cog-genomics.org/plink/2.0/
 #> (C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
-#> Logging to /tmp/RtmpanGw8a/panvar_ex/example_PlinkQC_maf0.05_missing0.1.log.
+#> Logging to /tmp/RtmpMjvgSW/panvar_ex/example_PlinkQC_maf0.05_missing0.1.log.
 #> Options in effect:
 #>   --allow-extra-chr
 #>   --bfile /home/runner/work/_temp/Library/panvaR/extdata/Setaria_shattering_example_pruned
 #>   --geno 0.1
-#>   --keep /tmp/RtmpanGw8a/panvar_ex/Panvar_list.of.samples.with.phenotype_shattering.txt
+#>   --keep /tmp/RtmpMjvgSW/panvar_ex/Panvar_list.of.samples.with.phenotype_shattering.txt
 #>   --maf 0.05
 #>   --make-bed
-#>   --out /tmp/RtmpanGw8a/panvar_ex/example_PlinkQC_maf0.05_missing0.1
+#>   --out /tmp/RtmpMjvgSW/panvar_ex/example_PlinkQC_maf0.05_missing0.1
 #>   --set-all-var-ids @-#
 #> 
-#> Start time: Mon Aug 24 21:47:59 2026
-#> 15989 MiB RAM detected, ~14460 available; reserving 7994 MiB for main
+#> Start time: Mon Aug 24 22:00:13 2026
+#> 15989 MiB RAM detected, ~14326 available; reserving 7994 MiB for main
 #> workspace.
 #> Using up to 4 compute threads.
 #> 598 samples (0 females, 0 males, 598 ambiguous; 598 founders) loaded from
@@ -145,14 +145,14 @@ make_panvar_inputs(
 #> 2557 variants removed due to allele frequency threshold(s)
 #> (--maf/--max-maf/--mac/--max-mac).
 #> 5158 variants remaining after main filters.
-#> Writing /tmp/RtmpanGw8a/panvar_ex/example_PlinkQC_maf0.05_missing0.1.fam ...
+#> Writing /tmp/RtmpMjvgSW/panvar_ex/example_PlinkQC_maf0.05_missing0.1.fam ...
 #> done.
-#> Writing /tmp/RtmpanGw8a/panvar_ex/example_PlinkQC_maf0.05_missing0.1.bim ...
+#> Writing /tmp/RtmpMjvgSW/panvar_ex/example_PlinkQC_maf0.05_missing0.1.bim ...
 #> done.
-#> Writing /tmp/RtmpanGw8a/panvar_ex/example_PlinkQC_maf0.05_missing0.1.bed ...
+#> Writing /tmp/RtmpMjvgSW/panvar_ex/example_PlinkQC_maf0.05_missing0.1.bed ...
 #> 0%done.
-#> End time: Mon Aug 24 21:47:59 2026
-#> QC was successful, output stored at /tmp/RtmpanGw8a/panvar_ex/example_PlinkQC_maf0.05_missing0.1
+#> End time: Mon Aug 24 22:00:13 2026
+#> QC was successful, output stored at /tmp/RtmpMjvgSW/panvar_ex/example_PlinkQC_maf0.05_missing0.1
 #> Using rMVP to calculate PC's.
 #> Preparing data for MVP...
 #> Reading file...
