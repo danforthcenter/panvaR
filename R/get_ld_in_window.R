@@ -4,7 +4,7 @@
 #' 
 #' When supplying a group a snps, the ld retained for a given snp is the maximum LD of the given snp to the snps in the group.  
 #'
-#' @param qtl.df data.frame, table that includes list of snps to calculate LD to with columns (CHR, POS, LOGPVAL), corresponding to (chromosome, physical position, and -log10(p-value)). 
+#' @param qtl.df data.frame, table that includes list of snps to calculate LD to with columns (CHR, POS, PVAL), corresponding to (chromosome, physical position, and p-value). 
 #' QTL are typically defined as hits grouped by LD by something like `plink --clump`
 #' @param tag.snp character, marker.ID of snp around which to calculate LD. In the form 'CHR-POS'
 #' @param window numeric, a physical distance to determine which snps to calculate LD for. 
@@ -14,6 +14,7 @@
 #' @param geno.bed character, prefix of genotype files in plink (bed/bim/fam) format. Do not include ".bed" extension.
 #' @param in.dir character, directory where genotype files are located
 #' @param out.dir character, where to output some temporary files. 
+#' @param pvals.in.log boolean, are p-values in PVAL column of `qtl.df` represented as -log10(p-value)?
 #' @param verbose boolean, if TRUE, output some status reports
 #'
 #' @returns
@@ -58,6 +59,7 @@ get_ld_in_window <- function(qtl.df= NULL,
                              geno.bed,
                              in.dir,
                              out.dir = NULL,
+                             pvals.in.log = T,
                              verbose = TRUE){
   
   # check plink.path
@@ -113,6 +115,14 @@ get_ld_in_window <- function(qtl.df= NULL,
   } else {
     this.clump.df <- qtl.df %>%
       mutate(marker.ID = paste(.data$CHR, .data$POS, sep = "-"))
+    
+    if(pvals.in.log){
+      this.clump.df <- this.clump.df %>% 
+        mutate(LOGPVAL = PVAL)
+    } else {
+      this.clump.df <- this.clump.df %>% 
+        mutate(LOGPVAL = -log10(PVAL))
+    }
     
     # Might be a tie here sometimes if top snp has two traits with same pvalue, I think the [1] solves it
     key.snp <- this.clump.df$marker.ID[which.max(this.clump.df$LOGPVAL)[1]]
