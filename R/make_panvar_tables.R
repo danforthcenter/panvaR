@@ -238,18 +238,35 @@ make_panvar_tables <- function(gwas.res,
   # subset annotation --------
   # ------------------------------------------------------------------------\
   
-  # filter anno to just window
-  this.chrom <- get_chrom_from_id(ld.list$key.snp)
-  this.pos <- get_bp_from_id(ld.list$key.snp)
+  # make sure annotation table chromosome column is numeric
   if(!is.numeric(annotation.table$CHR)){
     stop("Annotation table column 'CHR' must be numeric.")
   }
-  anno.sub <- annotation.table %>%
-    filter(.data$CHR == this.chrom) %>%
-    rowwise() %>%
-    mutate(dist.from.snp = get.gene.dist.from.snp(this.pos, .data$start, .data$end)) %>%
-    filter(.data$dist.from.snp <= window * 1000) 
   
+  # filter anno to just window
+  # for one key snp
+  if(!is.na(ld.list$key.snp_geno.formatted)){
+    this.chrom <- get_chrom_from_id(ld.list$key.snp)
+    this.pos <- get_bp_from_id(ld.list$key.snp)
+    
+    anno.sub <- annotation.table %>%
+      filter(.data$CHR == this.chrom) %>%
+      rowwise() %>%
+      mutate(dist.from.snp = get.gene.dist.from.snp(this.pos, .data$start, .data$end)) %>%
+      filter(.data$dist.from.snp <= window * 1000) 
+    
+  # for multiple (qtl.snps)  
+  } else {
+    this.chrom <- unique(get_chrom_from_id(ld.list$qtl.snps))
+    this.pos <- get_bp_from_id(ld.list$qtl.snps)
+    anno.sub <- annotation.table %>% 
+      filter(.data$CHR == this.chrom) %>%
+      rowwise() %>% 
+      mutate(dist.from.snp = min(get.gene.dist.from.snp(this.pos, .data$start, .data$end))) %>%
+      filter(.data$dist.from.snp <= window * 1000) 
+  }
+  
+
   # ------------------------------------------------------------------------\
   # make snp to gene stats --------
   # ------------------------------------------------------------------------\
