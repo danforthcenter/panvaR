@@ -34,6 +34,17 @@
 #' @param point.fill.scale.d character or scale object, either a character indicating the
 #' `option` parameter passed to [ggplot2::scale_fill_viridis_d] that alters the color scale used.
 #' Or a previous call to a ggplot2 discrete fill scale for example [ggplot2::scale_fill_discrete].
+#' @param snp.highlight.df data.frame, table of specific snps that will be highlighted. By default the point size will be larger
+#' and they will be plotted red. Data.frame should contain columns (CHR, POS, PVAL). PVAL column format should reflect `pvals.in.log`.
+#' @param snp.highlight.point.size numeric, size of points plotted from `snp.highlight.df`.
+#' @param snp.highlight.shape.var character, column in snp.highlight.df to be mapped to shape of points. Only one of `point.shape.variable` or `snp.highlight.shape.var`
+#' should be provided.  
+#' @param snp.highlight.shape.scale ggplot scale, an object with a stored call to 
+#' [ggplot2::scale_shape_manual]. More often an output of the function [panvaR::make_consistent_scale]. 
+#' Works best with shapes 15-20 whose color aesthetics map to the entire shape instead of just the outline.  
+#' @param snp.highlight.color.var character, column in snp.highlight.df to be mapped to color of highlighted points. 
+#' @param snp.highlight.color.scale ggplot scale, an object with a stored call to 
+#' [ggplot2::scale_shape_manual]. More often an output of the function [panvaR::make_consistent_scale]. 
 #' @param include.legend boolean, if TRUE, legend will be included. 
 #'
 #' @returns
@@ -95,6 +106,12 @@ plot_effect <- function(panvar.table.list = NULL,
                         point.fill.scale.c = NULL,
                         point.fill.variable.d = NULL,
                         point.fill.scale.d = NULL,
+                        snp.highlight.df = NULL,
+                        snp.highlight.point.size = 4,
+                        snp.highlight.shape.var = NULL,
+                        snp.highlight.shape.scale = NULL,
+                        snp.highlight.color.var = NULL,
+                        snp.highlight.color.scale = NULL,
                         include.legend = T) {
   
   # make sure we don't use both
@@ -157,6 +174,10 @@ plot_effect <- function(panvar.table.list = NULL,
   if(!pvals.in.log){
     plot.df <- plot.df %>%
       mutate(PVAL = -log10(.data$PVAL))
+    if(!is.null(snp.highlight.df)){
+      snp.highlight.df <- snp.highlight.df %>% 
+        mutate(PVAL = -log10(.data$PVAL))
+    }
   }
   
   # how far to spread labels past ends, in percentage
@@ -410,6 +431,52 @@ plot_effect <- function(panvar.table.list = NULL,
   } else {
     stop("Orientation must be either vertical (V) or horizontal (H).")
   }
+  
+  # ------------------------------------------------------------------------\
+  # add snp highlight --------
+  # ------------------------------------------------------------------------\
+  
+  if(!is.null(snp.highlight.shape.var) & !is.null(point.shape.variable)){
+    warning("Point shape and highlight shape are not designed to work nicely together. Plot may not be displayed as intended.")
+  }
+  
+  if(!is.null(snp.highlight.df)){
+    if(!is.null(snp.highlight.shape.var) & !is.null(snp.highlight.color.var)){
+      # both shape and color provided 
+      effect.plot <- effect.plot +
+        geom_point(data = snp.highlight.df, size = snp.highlight.point.size, show.legend = include.legend,
+                   aes(shape = .data[[snp.highlight.shape.var]], color = .data[[snp.highlight.color.var]]))
+      if(!is.null(snp.highlight.shape.scale) & !is.null(snp.highlight.color.scale)){
+        # both scales provided
+        effect.plot <- effect.plot +
+          snp.highlight.color.scale +
+          snp.highlight.shape.scale
+      } else if(!is.null(snp.highlight.shape.scale) & is.null(snp.highlight.color.scale)){
+        # only shape scale provided 
+        effect.plot <- effect.plot +
+          snp.highlight.shape.scale
+      } else if(is.null(snp.highlight.shape.scale) & !is.null(snp.highlight.color.scale)){
+        # only shape scale provided 
+        effect.plot <- effect.plot +
+          snp.highlight.color.scale
+      }
+    } else if(!is.null(snp.highlight.shape.var) & is.null(snp.highlight.color.var)){
+      # only shape provided 
+      effect.plot <- effect.plot +
+        geom_point(data = snp.highlight.df, size = snp.highlight.point.size, show.legend = include.legend,
+                   aes(shape = .data[[snp.highlight.shape.var]], color = 'red'))
+    } else if(is.null(snp.highlight.shape.var) & !is.null(snp.highlight.color.var)){
+      # only color provided 
+      effect.plot <- effect.plot +
+        geom_point(data = snp.highlight.df, size = snp.highlight.point.size, show.legend = include.legend,
+                   aes(color = .data[[snp.highlight.color.var]]))
+    } else {
+      # neither provided 
+      effect.plot <- effect.plot +
+        geom_point(data = snp.highlight.df, size = snp.highlight.point.size, color = "red", show.legend = include.legend)
+    }
+  }
+  
   
   return(effect.plot)
   

@@ -48,9 +48,20 @@
 #'   how point.color is displayed.
 #' @param plot.effect boolean, if TRUE include volcano style effect vs pvalue
 #'   plot as inset.
-#' @param plot.title 
-#' @param plot.text.size 
-#' @param plot.legend.size 
+#' @param plot.title character, title of plot. 
+#' @param plot.text.size numeric, size of text in plot. 
+#' @param plot.legend.size numeric, size of legend. Passed to [ggplot2::theme], `legend.key.size`. 
+#' @param snp.highlight.df data.frame, table of specific snps that will be highlighted. By default the point size will be larger
+#' and they will be plotted red. Data.frame should contain columns (CHR, POS, PVAL). PVAL column format should reflect `pvals.in.log`.
+#' @param snp.highlight.point.size numeric, size of points plotted from `snp.highlight.df`.
+#' @param snp.highlight.shape.var character, column in snp.highlight.df to be mapped to shape of points. Only one of `point.shape.variable` or `snp.highlight.shape.var`
+#' should be provided.  
+#' @param snp.highlight.shape.scale ggplot scale, an object with a stored call to 
+#' [ggplot2::scale_shape_manual]. More often an output of the function [panvaR::make_consistent_scale]. 
+#' Works best with shapes 15-20 whose color aesthetics map to the entire shape instead of just the outline.  
+#' @param snp.highlight.color.var character, column in snp.highlight.df to be mapped to color of highlighted points. 
+#' @param snp.highlight.color.scale ggplot scale, an object with a stored call to 
+#' [ggplot2::scale_shape_manual]. More often an output of the function [panvaR::make_consistent_scale]. 
 #'
 #' @returns ggplot2 object of plot with manhattan plot alongside genes for a
 #' given genomic window.
@@ -119,7 +130,13 @@ plot_panvar <- function(panvar.table.list = NULL,
                         annotation.point.scale = NULL,
                         plot.effect = F,
                         plot.text.size = 11,
-                        plot.legend.size = 1.2) {
+                        plot.legend.size = 1.2,
+                        snp.highlight.df = NULL,
+                        snp.highlight.point.size = 4,
+                        snp.highlight.shape.var = NULL,
+                        snp.highlight.shape.scale = NULL,
+                        snp.highlight.color.var = NULL,
+                        snp.highlight.color.scale = NULL) {
   
   # ------------------------------------------------------------------------\
   # make manhattan --------
@@ -142,7 +159,13 @@ plot_panvar <- function(panvar.table.list = NULL,
                                point.fill.variable.d = point.fill.variable.d,
                                point.fill.scale.d = point.fill.scale.d,
                                plot.text.size = plot.text.size,
-                               plot.legend.size = plot.legend.size)
+                               plot.legend.size = plot.legend.size,
+                               snp.highlight.df = snp.highlight.df,
+                               snp.highlight.point.size = snp.highlight.point.size,
+                               snp.highlight.shape.var = snp.highlight.shape.var,
+                               snp.highlight.shape.scale = snp.highlight.shape.scale,
+                               snp.highlight.color.var = snp.highlight.color.var,
+                               snp.highlight.color.scale = snp.highlight.color.scale)
   
   # ------------------------------------------------------------------------\
   # make annotation --------
@@ -219,6 +242,12 @@ plot_panvar <- function(panvar.table.list = NULL,
       point.fill.scale.c = point.fill.scale.c,
       point.fill.variable.d = point.fill.variable.d,
       point.fill.scale.d = point.fill.scale.d,
+      snp.highlight.df = snp.highlight.df,
+      snp.highlight.point.size = snp.highlight.point.size,
+      snp.highlight.shape.var = snp.highlight.shape.var,
+      snp.highlight.shape.scale = snp.highlight.shape.scale,
+      snp.highlight.color.var = snp.highlight.color.var,
+      snp.highlight.color.scale = snp.highlight.color.scale,
       include.legend = F
     )
     

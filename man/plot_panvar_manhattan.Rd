@@ -98,7 +98,7 @@ Works best with shapes 15-20 whose color aesthetics map to the entire shape inst
 \link[ggplot2:scale_manual]{ggplot2::scale_shape_manual}. More often an output of the function \link{make_consistent_scale}.}
 }
 \value{
-GGplot of manhattan plot with points colored by R2. Accepts input
+GGplot of manhattan plot with points colored by R2. Optionally color or change shape of points by other variables. Plots SNP density as 'rug plot' along bottom of manhattan.
 }
 \description{
 Make sideways manhattan plot for building locus zoom. Receives output from a single gwas model.

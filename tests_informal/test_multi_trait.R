@@ -12,6 +12,8 @@ annotation.table <- read.csv("C:/Users/cluebbert/OneDrive - DDPSC/~Rprojects~/PG
 
 clump.glm.res <- clump.glm.res %>% 
   rename(EFF = Effect)
+this.clump <- this.clump %>% 
+  rename(EFF = Effect)
 
 panvar.res <-
   panvaR::make_panvar_tables(gwas.res = clump.glm.res,
@@ -44,10 +46,28 @@ plot_panvar_manhattan(panvar.res,
                       point.shape.variable = "trait",
                       point.fill.variable.d = "trait")
 
+# color by trait
 plot_panvar(panvar.res,
             window = 500,
             sig.line = 6, 
             pvals.in.log = F,
             plot.effect = T,
-            point.shape.variable = "trait")
+            point.fill.variable.d = "trait",
+            snp.highlight.df = this.clump,
+            snp.highlight.shape.var = "trial",
+            snp.highlight.shape.scale = trial.scale,
+            snp.highlight.color.var = "trait_only",
+            snp.highlight.color.scale = khroma::scale_color_bright())
 
+# color by ld
+plot_panvar(panvar.res,
+            window = 500,
+            sig.line = 6, 
+            pvals.in.log = F,
+            plot.effect = T,
+            # point.fill.variable.d = "trait",
+            snp.highlight.df = this.clump,
+            snp.highlight.shape.var = "trial",
+            snp.highlight.shape.scale = trial.scale,
+            snp.highlight.color.var = "trait_only",
+            snp.highlight.color.scale = khroma::scale_color_bright())
