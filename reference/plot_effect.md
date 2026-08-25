@@ -157,7 +157,7 @@ plot_effect(
   pvals.in.log = FALSE,
   window = 25,
   sig.line = 6)
-#> Error in plot_effect(panvar.table.list = tables, pvals.in.log = FALSE,     window = 25, sig.line = 6): object 'quantitative.fill.scale' not found
+
 
 # clean up
 unlink(temp.dir, recursive = TRUE)
