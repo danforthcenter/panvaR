@@ -169,7 +169,9 @@ plot_panvar_manhattan(
 
 ## Value
 
-GGplot of manhattan plot with points colored by R2. Accepts input
+GGplot of manhattan plot with points colored by R2. Optionally color or
+change shape of points by other variables. Plots SNP density as 'rug
+plot' along bottom of manhattan.
 
 ## Examples
 
