@@ -30,9 +30,22 @@
 #' @param point.fill.scale.d character or scale object, either a character indicating the
 #' `option` parameter passed to [ggplot2::scale_fill_viridis_d] that alters the color scale used.
 #' Or a previous call to a ggplot2 discrete fill scale for example [ggplot2::scale_fill_discrete].
+#' @param plot.text.size numeric, size of text in plot. 
+#' @param plot.legend.size numeric, size of legend. Passed to [ggplot2::theme], `legend.key.size`. 
+#' @param snp.highlight.df data.frame, table of specific snps that will be highlighted. By default the point size will be larger
+#' and they will be plotted red. Data.frame should contain columns (CHR, POS, PVAL). PVAL column format should reflect `pvals.in.log`.
+#' @param snp.highlight.point.size numeric, size of points plotted from `snp.highlight.df`.
+#' @param snp.highlight.shape.var character, column in snp.highlight.df to be mapped to shape of points. Only one of `point.shape.variable` or `snp.highlight.shape.var`
+#' should be provided.  
+#' @param snp.highlight.shape.scale ggplot scale, an object with a stored call to 
+#' [ggplot2::scale_shape_manual]. More often an output of the function [panvaR::make_consistent_scale]. 
+#' Works best with shapes 15-20 whose color aesthetics map to the entire shape instead of just the outline.  
+#' @param snp.highlight.color.var character, column in snp.highlight.df to be mapped to color of highlighted points. 
+#' @param snp.highlight.color.scale ggplot scale, an object with a stored call to 
+#' [ggplot2::scale_shape_manual]. More often an output of the function [panvaR::make_consistent_scale]. 
 #'
 #' @returns
-#' GGplot of manhattan plot with points colored by R2. Accepts input
+#' GGplot of manhattan plot with points colored by R2. Optionally color or change shape of points by other variables. Plots SNP density as 'rug plot' along bottom of manhattan. 
 #' @export
 #'
 #' @examples
@@ -248,9 +261,6 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
     warning("No quantitative annotation specified. Provided quantitative.fill.scale ignored.")
   }
   
-  
-  
-  
   # If quantitative annotation is continuous: 
   if(!is.null(point.fill.variable.c)){
     # check if the scale provided is a ggplot scale or not
@@ -429,12 +439,35 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
   } else {
     stop("Orientation must be either vertical (V) or horizontal (H).")
   }
+  
+  # ------------------------------------------------------------------------\
+  # add snp highlight --------
+  # ------------------------------------------------------------------------\
+  
+  if(!is.null(snp.highlight.shape.var) & !is.null(point.shape.variable)){
+    warning("Point shape and highlight shape are not designed to work nicely together. Plot may not be displayed as intended.")
+  }
 
   if(!is.null(snp.highlight.df)){
     if(!is.null(snp.highlight.shape.var) & !is.null(snp.highlight.color.var)){
       # both shape and color provided 
       man <- man +
-        geom_point(data = snp.highlight.df, size = snp.highlight.point.size, aes(shape = .data[[snp.highlight.shape.var]], color = .data[[snp.highlight.color.var]]))
+        geom_point(data = snp.highlight.df, size = snp.highlight.point.size,
+                   aes(shape = .data[[snp.highlight.shape.var]], color = .data[[snp.highlight.color.var]]))
+      if(!is.null(snp.highlight.shape.scale) & !is.null(snp.highlight.color.scale)){
+        # both scales provided
+        man <- man +
+          snp.highlight.color.scale +
+          snp.highlight.shape.scale
+      } else if(!is.null(snp.highlight.shape.scale) & is.null(snp.highlight.color.scale)){
+        # only shape scale provided 
+        man <- man +
+          snp.highlight.shape.scale
+      } else if(is.null(snp.highlight.shape.scale) & !is.null(snp.highlight.color.scale)){
+        # only shape scale provided 
+        man <- man +
+          snp.highlight.color.scale
+      }
     } else if(!is.null(snp.highlight.shape.var) & is.null(snp.highlight.color.var)){
       # only shape provided 
       man <- man +

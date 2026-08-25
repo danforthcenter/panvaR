@@ -23,14 +23,19 @@ panvar.res <-
                              window = 500)
 
 
+trial.scale <- make_consistent_scale(values = c(15, 16, 17), vars = c("AllExps", "PGRP18", "PGRP19"), type = "shape")
+
 
 plot_panvar_manhattan(panvar.res,
                       window = 500,
                       sig.line = 6,
                       pvals.in.log = F,
+                      point.fill.variable.d = "trait",
                       snp.highlight.df = this.clump,
                       snp.highlight.shape.var = "trial",
-                      snp.highlight.color.var = "trait_only")
+                      snp.highlight.shape.scale = trial.scale,
+                      snp.highlight.color.var = "trait_only",
+                      snp.highlight.color.scale = khroma::scale_color_bright())
 
 plot_panvar_manhattan(panvar.res,
                       window = 500,

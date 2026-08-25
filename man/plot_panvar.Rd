@@ -79,6 +79,8 @@ Only provide either continuous or discrete quantitative annotations.}
 \code{option} parameter passed to \link[ggplot2:scale_viridis]{ggplot2::scale_fill_viridis_d} that alters the color scale used.
 Or a previous call to a ggplot2 discrete fill scale for example \link[ggplot2:scale_colour_discrete]{ggplot2::scale_fill_discrete}.}
 
+\item{plot.title}{}
+
 \item{include.gene.id}{boolean, if TRUE, \code{geneID} column will be included in
 annotation plot.}
 
@@ -96,6 +98,10 @@ how point.color is displayed.}
 
 \item{plot.effect}{boolean, if TRUE include volcano style effect vs pvalue
 plot as inset.}
+
+\item{plot.text.size}{}
+
+\item{plot.legend.size}{}
 }
 \value{
 ggplot2 object of plot with manhattan plot alongside genes for a

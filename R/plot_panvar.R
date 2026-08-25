@@ -48,6 +48,9 @@
 #'   how point.color is displayed.
 #' @param plot.effect boolean, if TRUE include volcano style effect vs pvalue
 #'   plot as inset.
+#' @param plot.title 
+#' @param plot.text.size 
+#' @param plot.legend.size 
 #'
 #' @returns ggplot2 object of plot with manhattan plot alongside genes for a
 #' given genomic window.
