@@ -14,12 +14,12 @@ plot_panvar_manhattan(
   window,
   sig.line = 1,
   orient = c("H", "V"),
-  qualitative.annotation = NULL,
-  qualitative.shape.scale = NULL,
-  quantitative.annotation.continuous = NULL,
-  quantitative.fill.scale.c = NULL,
-  quantitative.annotation.discrete = NULL,
-  quantitative.fill.scale.d = NULL,
+  point.shape.variable = NULL,
+  point.shape.scale = NULL,
+  point.fill.variable.c = NULL,
+  point.fill.scale.c = NULL,
+  point.fill.variable.d = NULL,
+  point.fill.scale.d = NULL,
   plot.text.size = 11,
   plot.legend.size = 1.2
 )
@@ -46,28 +46,29 @@ To not plot these snps set value to 0.}
 refers to how the "buildings" of the plot are plotted.
 "V" places pvalue on y-axis, "H" places pvalues on x-axis.}
 
-\item{qualitative.annotation}{character, column in gwas.res that contains qualitative annotations.
+\item{point.shape.variable}{character, column in gwas.res that contains qualitative annotations to be mapped to point shapes.
 For example impact grades from snpeff. See \link{format_snpeff_annotations}.
-Will be plotted as shapes. Only accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special
+Only accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special
 cases that will have a pre-assigned scale used if supplied here.}
 
-\item{qualitative.shape.scale}{ggplot scale, an object with a stored call to
+\item{point.shape.scale}{ggplot scale, an object with a stored call to
 \link[ggplot2:scale_manual]{ggplot2::scale_shape_manual}. More often an output of the function \link{make_consistent_scale}.}
 
-\item{quantitative.annotation.continuous}{character, column in gwas.res that contains quantitative annotations to be plotted
-as a continuous variable. For example, variant effect scores. Will be plotted as fill to points. Only provide either continuous
+\item{point.fill.variable.c}{character, column in gwas.res that contains quantitative annotations to be plotted
+as a continuous variable mapped to point fill. For example, variant effect scores. Only provide either continuous
 or discrete quantitative annotations.}
 
-\item{quantitative.fill.scale.c}{character or scale object, either a character indicating the
+\item{point.fill.scale.c}{character or scale object, either a character indicating the
 \code{option} parameter passed to \link[ggplot2:scale_viridis]{ggplot2::scale_fill_viridis_b} that alters the color scale used.
-Or a previous call to a ggplot2 fill scale for example \link[ggplot2:scale_steps]{ggplot2::scale_fill_stepsn}.}
+Or a previous call to a ggplot2 continuous fill scale for example \link[ggplot2:scale_steps]{ggplot2::scale_fill_stepsn}.}
 
-\item{quantitative.annotation.discrete}{character, column in gwas.res that contains annotations to be plotted as a discrete
-variable. For example, Year or Trial if combining multiple gwas results. Will be plotted as fill to points.
-Only provide either continuous or discrete quantitative annotations.
-#' @param quantitative.fill.scale.c character or scale object, either a character indicating the
-\code{option} parameter passed to \link[ggplot2:scale_viridis]{ggplot2::scale_fill_viridis_c} that alters the color scale used.
-Or a previous call to a ggplot2 fill scale for example \link[ggplot2:scale_colour_discrete]{ggplot2::scale_fill_discrete}.}
+\item{point.fill.variable.d}{character, column in gwas.res that contains annotations to be plotted as a discrete
+variable mapped to point fill. For example, Year or Trial if combining multiple gwas results.
+Only provide either continuous or discrete quantitative annotations.}
+
+\item{point.fill.scale.d}{character or scale object, either a character indicating the
+\code{option} parameter passed to \link[ggplot2:scale_viridis]{ggplot2::scale_fill_viridis_d} that alters the color scale used.
+Or a previous call to a ggplot2 discrete fill scale for example \link[ggplot2:scale_colour_discrete]{ggplot2::scale_fill_discrete}.}
 }
 \value{
 GGplot of manhattan plot with points colored by R2. Accepts input
