@@ -27,8 +27,8 @@
 #' @param quantitative.annotation.discrete character, column in gwas.res that contains annotations to be plotted as a discrete 
 #' variable. For example, Year or Trial if combining multiple gwas results. Will be plotted as fill to points. 
 #' Only provide either continuous or discrete quantitative annotations.
-#' #' @param quantitative.fill.scale.c character or scale object, either a character indicating the
-#' `option` parameter passed to [ggplot2::scale_fill_viridis_c] that alters the color scale used.
+#' @param quantitative.fill.scale.d character or scale object, either a character indicating the
+#' `option` parameter passed to [ggplot2::scale_fill_viridis_d] that alters the color scale used.
 #' Or a previous call to a ggplot2 fill scale for example [ggplot2::scale_fill_discrete].
 #'
 #' @returns
