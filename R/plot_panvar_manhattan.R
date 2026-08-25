@@ -101,8 +101,11 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
                                   plot.text.size = 11,
                                   plot.legend.size = 1.2,
                                   snp.highlight.df = NULL,
+                                  snp.highlight.point.size = 4,
                                   snp.highlight.shape.var = NULL,
-                                  snp.highlight.color.var = NULL){
+                                  snp.highlight.shape.scale = NULL,
+                                  snp.highlight.color.var = NULL,
+                                  snp.highlight.color.scale = NULL){
   
   # make sure we don't use both
   if(!is.null(panvar.table.list) & (!is.null(ld.list) | !is.null(gwas.res))){
@@ -163,8 +166,10 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
   if(!pvals.in.log){
     plot.df <- plot.df %>%
       mutate(PVAL = -log10(.data$PVAL))
-    snp.highlight.df <- snp.highlight.df %>% 
-      mutate(PVAL = -log10(.data$PVAL))
+    if(!is.null(snp.highlight.df)){
+      snp.highlight.df <- snp.highlight.df %>% 
+        mutate(PVAL = -log10(.data$PVAL))
+    }
   }
   
   # how far to spread labels past ends, in percentage
@@ -429,19 +434,19 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
     if(!is.null(snp.highlight.shape.var) & !is.null(snp.highlight.color.var)){
       # both shape and color provided 
       man <- man +
-        geom_point(data = snp.highlight.df, size = 4, aes(shape = .data[[snp.highlight.shape.var]], color = .data[[snp.highlight.color.var]]))
+        geom_point(data = snp.highlight.df, size = snp.highlight.point.size, aes(shape = .data[[snp.highlight.shape.var]], color = .data[[snp.highlight.color.var]]))
     } else if(!is.null(snp.highlight.shape.var) & is.null(snp.highlight.color.var)){
       # only shape provided 
       man <- man +
-        geom_point(data = snp.highlight.df, size = 4, aes(shape = .data[[snp.highlight.shape.var]], color = 'red'))
+        geom_point(data = snp.highlight.df, size = snp.highlight.point.size, aes(shape = .data[[snp.highlight.shape.var]], color = 'red'))
     } else if(is.null(snp.highlight.shape.var) & !is.null(snp.highlight.color.var)){
       # only color provided 
       man <- man +
-        geom_point(data = snp.highlight.df, size = 4, aes(color = .data[[snp.highlight.color.var]]))
+        geom_point(data = snp.highlight.df, size = snp.highlight.point.size, aes(color = .data[[snp.highlight.color.var]]))
     } else {
       # neither provided 
       man <- man +
-        geom_point(data = snp.highlight.df, size = 4, color = "red")
+        geom_point(data = snp.highlight.df, size = snp.highlight.point.size, color = "red")
     }
   }
   
