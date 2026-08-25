@@ -14,7 +14,7 @@ plot_panvar_manhattan(
   plot.r2.thresh = 0.2,
   unplotted.alpha = 0.4,
   window,
-  sig.line = 1,
+  sig.line = 3,
   orient = c("H", "V"),
   point.shape.variable = NULL,
   point.shape.scale = NULL,
@@ -23,7 +23,13 @@ plot_panvar_manhattan(
   point.fill.variable.d = NULL,
   point.fill.scale.d = NULL,
   plot.text.size = 11,
-  plot.legend.size = 1.2
+  plot.legend.size = 1.2,
+  snp.highlight.df = NULL,
+  snp.highlight.point.size = 4,
+  snp.highlight.shape.var = NULL,
+  snp.highlight.shape.scale = NULL,
+  snp.highlight.color.var = NULL,
+  snp.highlight.color.scale = NULL
 )
 ```
 
@@ -114,6 +120,52 @@ plot_panvar_manhattan(
   color scale used. Or a previous call to a ggplot2 discrete fill scale
   for example
   [ggplot2::scale_fill_discrete](https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html).
+
+- plot.text.size:
+
+  numeric, size of text in plot.
+
+- plot.legend.size:
+
+  numeric, size of legend. Passed to
+  [ggplot2::theme](https://ggplot2.tidyverse.org/reference/theme.html),
+  `legend.key.size`.
+
+- snp.highlight.df:
+
+  data.frame, table of specific snps that will be highlighted. By
+  default the point size will be larger and they will be plotted red.
+  Data.frame should contain columns (CHR, POS, PVAL). PVAL column format
+  should reflect `pvals.in.log`.
+
+- snp.highlight.point.size:
+
+  numeric, size of points plotted from `snp.highlight.df`.
+
+- snp.highlight.shape.var:
+
+  character, column in snp.highlight.df to be mapped to shape of points.
+  Only one of `point.shape.variable` or `snp.highlight.shape.var` should
+  be provided.
+
+- snp.highlight.shape.scale:
+
+  ggplot scale, an object with a stored call to
+  ggplot2::scale_shape_manual. More often an output of the function
+  [make_consistent_scale](https://danforthcenter.github.io/panvaR/reference/make_consistent_scale.md).
+  Works best with shapes 15-20 whose color aesthetics map to the entire
+  shape instead of just the outline.
+
+- snp.highlight.color.var:
+
+  character, column in snp.highlight.df to be mapped to color of
+  highlighted points.
+
+- snp.highlight.color.scale:
+
+  ggplot scale, an object with a stored call to
+  ggplot2::scale_shape_manual. More often an output of the function
+  [make_consistent_scale](https://danforthcenter.github.io/panvaR/reference/make_consistent_scale.md).
 
 ## Value
 

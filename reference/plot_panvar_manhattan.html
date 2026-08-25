@@ -47,7 +47,7 @@
 <span>  plot.r2.thresh <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>  unplotted.alpha <span class="op">=</span> <span class="fl">0.4</span>,</span>
 <span>  <span class="va">window</span>,</span>
-<span>  sig.line <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  sig.line <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  orient <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H"</span>, <span class="st">"V"</span><span class="op">)</span>,</span>
 <span>  point.shape.variable <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  point.shape.scale <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -56,7 +56,13 @@
 <span>  point.fill.variable.d <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  point.fill.scale.d <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  plot.text.size <span class="op">=</span> <span class="fl">11</span>,</span>
-<span>  plot.legend.size <span class="op">=</span> <span class="fl">1.2</span></span>
+<span>  plot.legend.size <span class="op">=</span> <span class="fl">1.2</span>,</span>
+<span>  snp.highlight.df <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  snp.highlight.point.size <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  snp.highlight.shape.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  snp.highlight.shape.scale <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  snp.highlight.color.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  snp.highlight.color.scale <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -137,6 +143,43 @@ Only provide either continuous or discrete quantitative annotations.</p></dd>
 <dd><p>character or scale object, either a character indicating the
 <code>option</code> parameter passed to ggplot2::scale_fill_viridis_d that alters the color scale used.
 Or a previous call to a ggplot2 discrete fill scale for example <a href="https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html" class="external-link">ggplot2::scale_fill_discrete</a>.</p></dd>
+
+
+<dt id="arg-plot-text-size">plot.text.size<a class="anchor" aria-label="anchor" href="#arg-plot-text-size"></a></dt>
+<dd><p>numeric, size of text in plot.</p></dd>
+
+
+<dt id="arg-plot-legend-size">plot.legend.size<a class="anchor" aria-label="anchor" href="#arg-plot-legend-size"></a></dt>
+<dd><p>numeric, size of legend. Passed to <a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">ggplot2::theme</a>, <code>legend.key.size</code>.</p></dd>
+
+
+<dt id="arg-snp-highlight-df">snp.highlight.df<a class="anchor" aria-label="anchor" href="#arg-snp-highlight-df"></a></dt>
+<dd><p>data.frame, table of specific snps that will be highlighted. By default the point size will be larger
+and they will be plotted red. Data.frame should contain columns (CHR, POS, PVAL). PVAL column format should reflect <code>pvals.in.log</code>.</p></dd>
+
+
+<dt id="arg-snp-highlight-point-size">snp.highlight.point.size<a class="anchor" aria-label="anchor" href="#arg-snp-highlight-point-size"></a></dt>
+<dd><p>numeric, size of points plotted from <code>snp.highlight.df</code>.</p></dd>
+
+
+<dt id="arg-snp-highlight-shape-var">snp.highlight.shape.var<a class="anchor" aria-label="anchor" href="#arg-snp-highlight-shape-var"></a></dt>
+<dd><p>character, column in snp.highlight.df to be mapped to shape of points. Only one of <code>point.shape.variable</code> or <code>snp.highlight.shape.var</code>
+should be provided.</p></dd>
+
+
+<dt id="arg-snp-highlight-shape-scale">snp.highlight.shape.scale<a class="anchor" aria-label="anchor" href="#arg-snp-highlight-shape-scale"></a></dt>
+<dd><p>ggplot scale, an object with a stored call to
+ggplot2::scale_shape_manual. More often an output of the function <a href="make_consistent_scale.html">make_consistent_scale</a>.
+Works best with shapes 15-20 whose color aesthetics map to the entire shape instead of just the outline.</p></dd>
+
+
+<dt id="arg-snp-highlight-color-var">snp.highlight.color.var<a class="anchor" aria-label="anchor" href="#arg-snp-highlight-color-var"></a></dt>
+<dd><p>character, column in snp.highlight.df to be mapped to color of highlighted points.</p></dd>
+
+
+<dt id="arg-snp-highlight-color-scale">snp.highlight.color.scale<a class="anchor" aria-label="anchor" href="#arg-snp-highlight-color-scale"></a></dt>
+<dd><p>ggplot scale, an object with a stored call to
+ggplot2::scale_shape_manual. More often an output of the function <a href="make_consistent_scale.html">make_consistent_scale</a>.</p></dd>
 
 </dl></div>
     <div class="section level2">

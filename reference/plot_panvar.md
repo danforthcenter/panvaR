@@ -123,6 +123,8 @@ plot_panvar(
   for example
   [ggplot2::scale_fill_discrete](https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html).
 
+- plot.title:
+
 - include.gene.id:
 
   boolean, if TRUE, `geneID` column will be included in annotation plot.
@@ -149,6 +151,10 @@ plot_panvar(
 - plot.effect:
 
   boolean, if TRUE include volcano style effect vs pvalue plot as inset.
+
+- plot.text.size:
+
+- plot.legend.size:
 
 ## Value
 
