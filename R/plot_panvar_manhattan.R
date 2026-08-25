@@ -90,7 +90,7 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
                                   plot.r2.thresh = .2,
                                   unplotted.alpha = .4,
                                   window,
-                                  sig.line = 1,
+                                  sig.line = 3,
                                   orient = c("H", "V"),
                                   point.shape.variable = NULL,
                                   point.shape.scale = NULL,
@@ -99,7 +99,10 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
                                   point.fill.variable.d = NULL,
                                   point.fill.scale.d = NULL,
                                   plot.text.size = 11,
-                                  plot.legend.size = 1.2){
+                                  plot.legend.size = 1.2,
+                                  snp.highlight.df = NULL,
+                                  snp.highlight.shape.var = NULL,
+                                  snp.highlight.color.var = NULL){
   
   # make sure we don't use both
   if(!is.null(panvar.table.list) & (!is.null(ld.list) | !is.null(gwas.res))){
@@ -159,6 +162,8 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
   # change pvalue if needed
   if(!pvals.in.log){
     plot.df <- plot.df %>%
+      mutate(PVAL = -log10(.data$PVAL))
+    snp.highlight.df <- snp.highlight.df %>% 
       mutate(PVAL = -log10(.data$PVAL))
   }
   
@@ -347,7 +352,7 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
     limits = c(plot.r2.thresh, 1),
     breaks = seq(plot.r2.thresh, 1, length.out = 5)[-c(1, 5)],
     show.limits = T,
-    guide = "colorsteps",
+    guide = guide_colorsteps(order = 1),
     na.value = "grey50"
   )
   
@@ -420,5 +425,25 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
     stop("Orientation must be either vertical (V) or horizontal (H).")
   }
 
+  if(!is.null(snp.highlight.df)){
+    if(!is.null(snp.highlight.shape.var) & !is.null(snp.highlight.color.var)){
+      # both shape and color provided 
+      man <- man +
+        geom_point(data = snp.highlight.df, size = 4, aes(shape = .data[[snp.highlight.shape.var]], color = .data[[snp.highlight.color.var]]))
+    } else if(!is.null(snp.highlight.shape.var) & is.null(snp.highlight.color.var)){
+      # only shape provided 
+      man <- man +
+        geom_point(data = snp.highlight.df, size = 4, aes(shape = .data[[snp.highlight.shape.var]], color = 'red'))
+    } else if(is.null(snp.highlight.shape.var) & !is.null(snp.highlight.color.var)){
+      # only color provided 
+      man <- man +
+        geom_point(data = snp.highlight.df, size = 4, aes(color = .data[[snp.highlight.color.var]]))
+    } else {
+      # neither provided 
+      man <- man +
+        geom_point(data = snp.highlight.df, size = 4, color = "red")
+    }
+  }
+  
   return(man)
 }

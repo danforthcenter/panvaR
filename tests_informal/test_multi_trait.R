@@ -21,10 +21,16 @@ panvar.res <-
                              geno.bed.filename = "1.BG_schnable23_filtered_maf0.05.maxMissing0.1_fixnames",
                              geno.bed.directory = "C:/Users/cluebbert/OneDrive - DDPSC/~Rprojects~/PGRP_both_pops/results_gwas/testing/",
                              window = 500)
+
+
+
 plot_panvar_manhattan(panvar.res,
                       window = 500,
                       sig.line = 6,
-                      pvals.in.log = F)
+                      pvals.in.log = F,
+                      snp.highlight.df = this.clump,
+                      snp.highlight.shape.var = "trial",
+                      snp.highlight.color.var = "trait_only")
 
 plot_panvar_manhattan(panvar.res,
                       window = 500,
