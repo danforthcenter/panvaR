@@ -37,7 +37,6 @@ plot_panvar(panvar.res,
             window = 500,
             sig.line = 6, 
             pvals.in.log = F,
-            # plot.effect = T,
-            qualitative.annotation = "trait",
-            quantitative.annotation.discrete = "trait")
+            plot.effect = T,
+            point.shape.variable = "trait")
 
