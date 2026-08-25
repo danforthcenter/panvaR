@@ -30,8 +30,8 @@ plot_panvar_manhattan(panvar.res,
                       window = 500,
                       sig.line = 6,
                       pvals.in.log = F,
-                      qualitative.annotation = "trait",
-                      quantitative.annotation.discrete = "trait")
+                      point.shape.variable = "trait",
+                      point.fill.variable.d = "trait")
 
 plot_panvar(panvar.res,
             window = 500,

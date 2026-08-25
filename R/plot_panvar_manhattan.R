@@ -12,24 +12,24 @@
 #' @param orient character, will rotate plot 90 degrees. vertical (V) or horizontal (H)
 #' refers to how the "buildings" of the plot are plotted. 
 #' "V" places pvalue on y-axis, "H" places pvalues on x-axis. 
-#' @param qualitative.annotation character, column in gwas.res that contains qualitative annotations.
+#' @param point.shape.variable character, column in gwas.res that contains qualitative annotations to be mapped to point shapes.
 #' For example impact grades from snpeff. See [panvaR::format_snpeff_annotations].
-#' Will be plotted as shapes. Only accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special 
+#' Only accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special 
 #' cases that will have a pre-assigned scale used if supplied here.
-#' @param qualitative.shape.scale ggplot scale, an object with a stored call to 
+#' @param point.shape.scale ggplot scale, an object with a stored call to 
 #' [ggplot2::scale_shape_manual]. More often an output of the function [panvaR::make_consistent_scale]. 
-#' @param quantitative.annotation.continuous character, column in gwas.res that contains quantitative annotations to be plotted
-#' as a continuous variable. For example, variant effect scores. Will be plotted as fill to points. Only provide either continuous 
+#' @param point.fill.variable.c character, column in gwas.res that contains quantitative annotations to be plotted
+#' as a continuous variable mapped to point fill. For example, variant effect scores. Only provide either continuous 
 #' or discrete quantitative annotations.
-#' @param quantitative.fill.scale.c character or scale object, either a character indicating the
+#' @param point.fill.scale.c character or scale object, either a character indicating the
 #' `option` parameter passed to [ggplot2::scale_fill_viridis_b] that alters the color scale used.
-#' Or a previous call to a ggplot2 fill scale for example [ggplot2::scale_fill_stepsn].
-#' @param quantitative.annotation.discrete character, column in gwas.res that contains annotations to be plotted as a discrete 
-#' variable. For example, Year or Trial if combining multiple gwas results. Will be plotted as fill to points. 
+#' Or a previous call to a ggplot2 continuous fill scale for example [ggplot2::scale_fill_stepsn].
+#' @param point.fill.variable.d character, column in gwas.res that contains annotations to be plotted as a discrete 
+#' variable mapped to point fill. For example, Year or Trial if combining multiple gwas results. 
 #' Only provide either continuous or discrete quantitative annotations.
-#' @param quantitative.fill.scale.d character or scale object, either a character indicating the
+#' @param point.fill.scale.d character or scale object, either a character indicating the
 #' `option` parameter passed to [ggplot2::scale_fill_viridis_d] that alters the color scale used.
-#' Or a previous call to a ggplot2 fill scale for example [ggplot2::scale_fill_discrete].
+#' Or a previous call to a ggplot2 discrete fill scale for example [ggplot2::scale_fill_discrete].
 #'
 #' @returns
 #' GGplot of manhattan plot with points colored by R2. Accepts input
@@ -92,12 +92,12 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
                                   window,
                                   sig.line = 1,
                                   orient = c("H", "V"),
-                                  qualitative.annotation = NULL,
-                                  qualitative.shape.scale = NULL,
-                                  quantitative.annotation.continuous = NULL,
-                                  quantitative.fill.scale.c = NULL,
-                                  quantitative.annotation.discrete = NULL,
-                                  quantitative.fill.scale.d = NULL,
+                                  point.shape.variable = NULL,
+                                  point.shape.scale = NULL,
+                                  point.fill.variable.c = NULL,
+                                  point.fill.scale.c = NULL,
+                                  point.fill.variable.d = NULL,
+                                  point.fill.scale.d = NULL,
                                   plot.text.size = 11,
                                   plot.legend.size = 1.2){
   
@@ -182,28 +182,28 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
   
   
   # If we're using IMPACT then use this scale
-  if(is.null(qualitative.shape.scale) & is.null(qualitative.annotation)){
+  if(is.null(point.shape.scale) & is.null(point.shape.variable)){
     # do nothing
-  } else if(is.null(qualitative.shape.scale) & qualitative.annotation == "IMPACT"){
+  } else if(is.null(point.shape.scale) & point.shape.variable == "IMPACT"){
     qual.vars <-  c("HIGH", "MODERATE", "LOW", "MODIFIER")
-    qualitative.shape.scale <- make_consistent_scale(values = c(24, 22, 25, 23),
+    point.shape.scale <- make_consistent_scale(values = c(24, 22, 25, 23),
                                                      vars = qual.vars,
                                                      type = "shape",
-                                                     name = qualitative.annotation)
+                                                     name = point.shape.variable)
     
     plot.df$IMPACT <- factor(plot.df$IMPACT, levels = qual.vars)
-  } else if(is.null(qualitative.shape.scale) & qualitative.annotation == "IMPACT_PLUS"){
+  } else if(is.null(point.shape.scale) & point.shape.variable == "IMPACT_PLUS"){
     qual.vars <-  c("HIGH", "MODERATE", "LOW", "MODIFIER_CODING", "MODIFIER_INTERGENIC")
-    qualitative.shape.scale <- make_consistent_scale(values = c(24, 22, 25, 23, 21),
+    point.shape.scale <- make_consistent_scale(values = c(24, 22, 25, 23, 21),
                                                      vars = qual.vars,
                                                      type = "shape",
-                                                     name = qualitative.annotation)
+                                                     name = point.shape.variable)
     
     plot.df$IMPACT_PLUS <- factor(plot.df$IMPACT_PLUS, levels = qual.vars)
     
-  } else if(is.null(qualitative.shape.scale)){
+  } else if(is.null(point.shape.scale)){
     # make one using the unique values of qualitative annotation column
-    qual.vars <- sort(unique(as.matrix(plot.df[,qualitative.annotation])))
+    qual.vars <- sort(unique(as.matrix(plot.df[,point.shape.variable])))
     
     # throw an error if there are more than 5 things for now
     if(length(qual.vars) > 5){
@@ -211,10 +211,10 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
            Points are plotted using the fill aesthetic to give them a color, 
            R only has 5 shapes (21-25) that can be assigned fill values.")
     }
-    qualitative.shape.scale <- make_consistent_scale(values = c(21:25)[1:length(qual.vars)],
+    point.shape.scale <- make_consistent_scale(values = c(21:25)[1:length(qual.vars)],
                                                      vars = qual.vars,
                                                      type = "shape",
-                                                     name = qualitative.annotation)
+                                                     name = point.shape.variable)
   }
   
   # ------------------------------------------------------------------------\
@@ -222,19 +222,19 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
   # ------------------------------------------------------------------------\
   
   # check for only providing one quantitative scale
-  if(!is.null(quantitative.annotation.continuous) & !is.null(quantitative.annotation.discrete)){
-    stop("Only one of quantitative.annotation.continuous or quantitative.annotation.discrete should be provided.")
+  if(!is.null(point.fill.variable.c) & !is.null(point.fill.variable.d)){
+    stop("Only one of point.fill.variable.c or point.fill.variable.d should be provided.")
   }
   # 
-  if(!is.null(quantitative.fill.scale.c) & !is.null(quantitative.fill.scale.d)){
-    stop("Only one of quantitative.annotation.continuous or quantitative.annotation.discrete should be provided.")
+  if(!is.null(point.fill.scale.c) & !is.null(point.fill.scale.d)){
+    stop("Only one of point.fill.variable.c or point.fill.variable.d should be provided.")
   }
   
   # check if a scale is provided but no variable name
-  if(is.null(quantitative.annotation.continuous) & !is.null(quantitative.fill.scale.c)){
+  if(is.null(point.fill.variable.c) & !is.null(point.fill.scale.c)){
     warning("No quantitative annotation specified. Provided quantitative.fill.scale ignored.")
   }
-  if(is.null(quantitative.annotation.discrete) & !is.null(quantitative.fill.scale.d)){
+  if(is.null(point.fill.variable.d) & !is.null(point.fill.scale.d)){
     warning("No quantitative annotation specified. Provided quantitative.fill.scale ignored.")
   }
   
@@ -242,78 +242,78 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
   
   
   # If quantitative annotation is continuous: 
-  if(!is.null(quantitative.annotation.continuous)){
+  if(!is.null(point.fill.variable.c)){
     # check if the scale provided is a ggplot scale or not
-    if("Scale" %in% class(quantitative.fill.scale.c)){
+    if("Scale" %in% class(point.fill.scale.c)){
       user.supplied.scale.option <- "scale"
     } else {
       user.supplied.scale.option <- "not.scale"
     }
     
-    if(!is.null(quantitative.annotation.continuous) & user.supplied.scale.option == "scale"){
+    if(!is.null(point.fill.variable.c) & user.supplied.scale.option == "scale"){
       # Both variable and scale provided 
       # use user supplied scale
-      quantitative.fill.scale <- quantitative.fill.scale.c
+      quantitative.fill.scale <- point.fill.scale.c
       # only plot that stuff that's above the LD threshold 
       plot.df <- plot.df %>% 
         mutate(plot.quant.var = case_when(.data$R2 < plot.r2.thresh ~ NA,
-                                          TRUE ~ .data[[quantitative.annotation.continuous]]))
-    } else if(!is.null(quantitative.annotation.continuous)){
+                                          TRUE ~ .data[[point.fill.variable.c]]))
+    } else if(!is.null(point.fill.variable.c)){
       # Only variable provided 
       # set a binned color scale
-      if(is.null(quantitative.fill.scale.c)){
-        quantitative.fill.scale <- scale_fill_viridis_b(name = quantitative.annotation.continuous)
+      if(is.null(point.fill.scale.c)){
+        quantitative.fill.scale <- scale_fill_viridis_b(name = point.fill.variable.c)
       } else {
-        quantitative.fill.scale <- scale_fill_viridis_b(name = quantitative.annotation.continuous, option = quantitative.fill.scale.c)
+        quantitative.fill.scale <- scale_fill_viridis_b(name = point.fill.variable.c, option = point.fill.scale.c)
       }
       # only plot that stuff that's above the LD threshold 
       plot.df <- plot.df %>% 
         mutate(plot.quant.var = case_when(.data$R2 < plot.r2.thresh ~ NA,
-                                          TRUE ~ .data[[quantitative.annotation.continuous]]))
+                                          TRUE ~ .data[[point.fill.variable.c]]))
     } else {
       # do nothing
     }
-    quantitative.annotation <- quantitative.annotation.continuous
-  } else if(!is.null(quantitative.annotation.discrete)){
+    quantitative.annotation <- point.fill.variable.c
+  } else if(!is.null(point.fill.variable.d)){
     # check if the scale provided is a ggplot scale or not
-    if("Scale" %in% class(quantitative.fill.scale.c)){
+    if("Scale" %in% class(point.fill.scale.c)){
       user.supplied.scale.option <- "scale"
     } else {
       user.supplied.scale.option <- "not.scale"
     }
     
-    if(!is.null(quantitative.annotation.discrete) & user.supplied.scale.option == "scale"){
+    if(!is.null(point.fill.variable.d) & user.supplied.scale.option == "scale"){
       # Both variable and scale provided 
       # use user supplied scale
-      quantitative.fill.scale <- quantitative.fill.scale.d
+      quantitative.fill.scale <- point.fill.scale.d
       # only plot that stuff that's above the LD threshold 
       plot.df <- plot.df %>% 
         mutate(plot.quant.var = case_when(.data$R2 < plot.r2.thresh ~ NA,
-                                          TRUE ~ .data[[quantitative.annotation.discrete]]))
-    } else if(!is.null(quantitative.annotation.discrete)){
+                                          TRUE ~ .data[[point.fill.variable.d]]))
+    } else if(!is.null(point.fill.variable.d)){
       # Only variable provided 
       # set a binned color scale
-      if(is.null(quantitative.fill.scale.d)){
-        quantitative.fill.scale <- scale_fill_viridis_d(name = quantitative.annotation.discrete, 
+      if(is.null(point.fill.scale.d)){
+        quantitative.fill.scale <- scale_fill_viridis_d(name = point.fill.variable.d, 
                                                         na.translate = F)
       } else {
-        quantitative.fill.scale <- scale_fill_viridis_d(name = quantitative.annotation.discrete, 
-                                                        option = quantitative.fill.scale.d,
+        quantitative.fill.scale <- scale_fill_viridis_d(name = point.fill.variable.d, 
+                                                        option = point.fill.scale.d,
                                                         na.translate = F)
       }
       # only plot that stuff that's above the LD threshold 
       plot.df <- plot.df %>% 
         mutate(plot.quant.var = case_when(.data$R2 < plot.r2.thresh ~ NA,
-                                          TRUE ~ .data[[quantitative.annotation.discrete]]))
+                                          TRUE ~ .data[[point.fill.variable.d]]))
     } else {
       # do nothing
     }
-    quantitative.annotation <- quantitative.annotation.discrete
+    quantitative.annotation <- point.fill.variable.d
   
   }
   
   # make sure quantitative.annotation has a value if not provided
-  if(is.null(quantitative.annotation.continuous) & is.null(quantitative.annotation.discrete)){
+  if(is.null(point.fill.variable.c) & is.null(point.fill.variable.d)){
     quantitative.annotation <- NULL
   }
   
@@ -352,27 +352,27 @@ plot_panvar_manhattan <- function(panvar.table.list = NULL,
   )
   
   # Some logic for including extra variables
-  if(!is.null(qualitative.annotation) & !is.null(quantitative.annotation)){
+  if(!is.null(point.shape.variable) & !is.null(quantitative.annotation)){
     # Use a quant and a qual
     man <- man +
-      geom_point(aes(fill = .data$plot.quant.var, alpha = .data$how.to.plot, shape = .data[[qualitative.annotation]]),
+      geom_point(aes(fill = .data$plot.quant.var, alpha = .data$how.to.plot, shape = .data[[point.shape.variable]]),
                  size = 3, color = "black") +
       scale_alpha_continuous(guide = "none", limits = c(0,NA), range = c(0, 1)) +
       quantitative.fill.scale +
-      qualitative.shape.scale
+      point.shape.scale
     
-  } else if(is.null(qualitative.annotation) & !is.null(quantitative.annotation)){
+  } else if(is.null(point.shape.variable) & !is.null(quantitative.annotation)){
     # Use just a quant 
     man <- man +
       geom_point(aes(fill = .data$plot.quant.var, alpha = .data$how.to.plot), shape = 21, size = 3, color = "black") +
       scale_alpha_continuous(guide = "none", limits = c(0,NA), range = c(0, 1)) +
       quantitative.fill.scale
     
-  } else if(!is.null(qualitative.annotation) & is.null(quantitative.annotation)){
+  } else if(!is.null(point.shape.variable) & is.null(quantitative.annotation)){
     # Use just a qual
     man <- man + 
-      geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot, shape = .data[[qualitative.annotation]]), size = 3, color = "black") +
-      qualitative.shape.scale +
+      geom_point(aes(fill = .data$plot.R2, alpha = .data$how.to.plot, shape = .data[[point.shape.variable]]), size = 3, color = "black") +
+      point.shape.scale +
       scale_alpha_continuous(guide = "none", limits = c(0,NA), range = c(0, 1)) +
       default.LD.fill.scale
     
