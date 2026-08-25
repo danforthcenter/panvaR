@@ -15,12 +15,12 @@ plot_panvar(
   unplotted.alpha = 0.4,
   window,
   sig.line,
-  qualitative.annotation = NULL,
-  qualitative.shape.scale = NULL,
-  quantitative.annotation.continuous = NULL,
-  quantitative.fill.scale.c = NULL,
-  quantitative.annotation.discrete = NULL,
-  quantitative.fill.scale.d = NULL,
+  point.shape.variable = NULL,
+  point.shape.scale = NULL,
+  point.fill.variable.c = NULL,
+  point.fill.scale.c = NULL,
+  point.fill.variable.d = NULL,
+  point.fill.scale.d = NULL,
   plot.title = "",
   include.gene.id = F,
   highlight.gene.ids = NULL,
@@ -80,50 +80,48 @@ plot_panvar(
 
   numeric, -log10(p) value to draw line on plot
 
-- qualitative.annotation:
+- point.shape.variable:
 
-  character, column in `gwas.res` that contains qualitative annotations.
-  For example impact grades from snpeff. See
+  character, column in gwas.res that contains qualitative annotations to
+  be mapped to point shapes. For example impact grades from snpeff. See
   [format_snpeff_annotations](https://danforthcenter.github.io/panvaR/reference/format_snpeff_annotations.md).
-  Will be plotted as shapes. Only accepts up to 5 classes. "IMPACT" and
-  "IMPACT_PLUS" are special cases that will have a pre-assigned scale
-  used if supplied here.
+  Only accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special
+  cases that will have a pre-assigned scale used if supplied here.
 
-- qualitative.shape.scale:
+- point.shape.scale:
 
   ggplot scale, an object with a stored call to
   ggplot2::scale_shape_manual. More often an output of the function
   [make_consistent_scale](https://danforthcenter.github.io/panvaR/reference/make_consistent_scale.md).
 
-- quantitative.annotation.continuous:
+- point.fill.variable.c:
 
   character, column in gwas.res that contains quantitative annotations
-  to be plotted as a continuous variable. For example, variant effect
-  scores. Will be plotted as fill to points. Only provide either
-  continuous or discrete quantitative annotations.
+  to be plotted as a continuous variable mapped to point fill. For
+  example, variant effect scores. Only provide either continuous or
+  discrete quantitative annotations.
 
-- quantitative.fill.scale.c:
+- point.fill.scale.c:
 
   character or scale object, either a character indicating the `option`
   parameter passed to ggplot2::scale_fill_viridis_b that alters the
-  color scale used. Or a previous call to a ggplot2 fill scale for
-  example ggplot2::scale_fill_stepsn.
+  color scale used. Or a previous call to a ggplot2 continuous fill
+  scale for example ggplot2::scale_fill_stepsn.
 
-- quantitative.annotation.discrete:
+- point.fill.variable.d:
 
   character, column in gwas.res that contains annotations to be plotted
-  as a discrete variable. For example, Year or Trial if combining
-  multiple gwas results. Will be plotted as fill to points. Only provide
-  either continuous or discrete quantitative annotations. \#' @param
-  quantitative.fill.scale.c character or scale object, either a
-  character indicating the `option` parameter passed to
-  ggplot2::scale_fill_viridis_c that alters the color scale used. Or a
-  previous call to a ggplot2 fill scale for example
+  as a discrete variable mapped to point fill. For example, Year or
+  Trial if combining multiple gwas results. Only provide either
+  continuous or discrete quantitative annotations.
+
+- point.fill.scale.d:
+
+  character or scale object, either a character indicating the `option`
+  parameter passed to ggplot2::scale_fill_viridis_d that alters the
+  color scale used. Or a previous call to a ggplot2 discrete fill scale
+  for example
   [ggplot2::scale_fill_discrete](https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html).
-
-- plot.title:
-
-  character, a title for the plot
 
 - include.gene.id:
 

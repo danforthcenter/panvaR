@@ -49,12 +49,12 @@
 <span>  <span class="va">window</span>,</span>
 <span>  sig.line <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  orient <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H"</span>, <span class="st">"V"</span><span class="op">)</span>,</span>
-<span>  qualitative.annotation <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  qualitative.shape.scale <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  quantitative.annotation.continuous <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  quantitative.fill.scale.c <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  quantitative.annotation.discrete <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  quantitative.fill.scale.d <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  point.shape.variable <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  point.shape.scale <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  point.fill.variable.c <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  point.fill.scale.c <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  point.fill.variable.d <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  point.fill.scale.d <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  plot.text.size <span class="op">=</span> <span class="fl">11</span>,</span>
 <span>  plot.legend.size <span class="op">=</span> <span class="fl">1.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -103,37 +103,40 @@ refers to how the "buildings" of the plot are plotted.
 "V" places pvalue on y-axis, "H" places pvalues on x-axis.</p></dd>
 
 
-<dt id="arg-qualitative-annotation">qualitative.annotation<a class="anchor" aria-label="anchor" href="#arg-qualitative-annotation"></a></dt>
-<dd><p>character, column in gwas.res that contains qualitative annotations.
+<dt id="arg-point-shape-variable">point.shape.variable<a class="anchor" aria-label="anchor" href="#arg-point-shape-variable"></a></dt>
+<dd><p>character, column in gwas.res that contains qualitative annotations to be mapped to point shapes.
 For example impact grades from snpeff. See <a href="format_snpeff_annotations.html">format_snpeff_annotations</a>.
-Will be plotted as shapes. Only accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special
+Only accepts up to 5 classes. "IMPACT" and "IMPACT_PLUS" are special
 cases that will have a pre-assigned scale used if supplied here.</p></dd>
 
 
-<dt id="arg-qualitative-shape-scale">qualitative.shape.scale<a class="anchor" aria-label="anchor" href="#arg-qualitative-shape-scale"></a></dt>
+<dt id="arg-point-shape-scale">point.shape.scale<a class="anchor" aria-label="anchor" href="#arg-point-shape-scale"></a></dt>
 <dd><p>ggplot scale, an object with a stored call to
 ggplot2::scale_shape_manual. More often an output of the function <a href="make_consistent_scale.html">make_consistent_scale</a>.</p></dd>
 
 
-<dt id="arg-quantitative-annotation-continuous">quantitative.annotation.continuous<a class="anchor" aria-label="anchor" href="#arg-quantitative-annotation-continuous"></a></dt>
+<dt id="arg-point-fill-variable-c">point.fill.variable.c<a class="anchor" aria-label="anchor" href="#arg-point-fill-variable-c"></a></dt>
 <dd><p>character, column in gwas.res that contains quantitative annotations to be plotted
-as a continuous variable. For example, variant effect scores. Will be plotted as fill to points. Only provide either continuous
+as a continuous variable mapped to point fill. For example, variant effect scores. Only provide either continuous
 or discrete quantitative annotations.</p></dd>
 
 
-<dt id="arg-quantitative-fill-scale-c">quantitative.fill.scale.c<a class="anchor" aria-label="anchor" href="#arg-quantitative-fill-scale-c"></a></dt>
+<dt id="arg-point-fill-scale-c">point.fill.scale.c<a class="anchor" aria-label="anchor" href="#arg-point-fill-scale-c"></a></dt>
 <dd><p>character or scale object, either a character indicating the
 <code>option</code> parameter passed to ggplot2::scale_fill_viridis_b that alters the color scale used.
-Or a previous call to a ggplot2 fill scale for example ggplot2::scale_fill_stepsn.</p></dd>
+Or a previous call to a ggplot2 continuous fill scale for example ggplot2::scale_fill_stepsn.</p></dd>
 
 
-<dt id="arg-quantitative-annotation-discrete">quantitative.annotation.discrete<a class="anchor" aria-label="anchor" href="#arg-quantitative-annotation-discrete"></a></dt>
+<dt id="arg-point-fill-variable-d">point.fill.variable.d<a class="anchor" aria-label="anchor" href="#arg-point-fill-variable-d"></a></dt>
 <dd><p>character, column in gwas.res that contains annotations to be plotted as a discrete
-variable. For example, Year or Trial if combining multiple gwas results. Will be plotted as fill to points.
-Only provide either continuous or discrete quantitative annotations.
-#' @param quantitative.fill.scale.c character or scale object, either a character indicating the
-<code>option</code> parameter passed to ggplot2::scale_fill_viridis_c that alters the color scale used.
-Or a previous call to a ggplot2 fill scale for example <a href="https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html" class="external-link">ggplot2::scale_fill_discrete</a>.</p></dd>
+variable mapped to point fill. For example, Year or Trial if combining multiple gwas results.
+Only provide either continuous or discrete quantitative annotations.</p></dd>
+
+
+<dt id="arg-point-fill-scale-d">point.fill.scale.d<a class="anchor" aria-label="anchor" href="#arg-point-fill-scale-d"></a></dt>
+<dd><p>character or scale object, either a character indicating the
+<code>option</code> parameter passed to ggplot2::scale_fill_viridis_d that alters the color scale used.
+Or a previous call to a ggplot2 discrete fill scale for example <a href="https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html" class="external-link">ggplot2::scale_fill_discrete</a>.</p></dd>
 
 </dl></div>
     <div class="section level2">
