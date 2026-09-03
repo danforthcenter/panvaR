@@ -1,6 +1,6 @@
 
 
-
+library(tidyverse)
 
 clump.glm.res <- read.csv("C:/Users/cluebbert/OneDrive - DDPSC/~Rprojects~/PGRP_both_pops/results_gwas/testing/TEST_bg_clump1_glm.res.csv")
 this.clump <- read.csv("C:/Users/cluebbert/OneDrive - DDPSC/~Rprojects~/PGRP_both_pops/results_gwas/testing/TEST_bg_clump1_qtl.df.csv")
@@ -46,6 +46,7 @@ plot_panvar_manhattan(panvar.res,
                       point.shape.variable = "trait",
                       point.fill.variable.d = "trait")
 
+# Might want to try doing both ways, by trait is interesting as it shows effect direction and could indicate 2 hits 
 # color by trait
 plot_panvar(panvar.res,
             window = 500,
