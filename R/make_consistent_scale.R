@@ -37,7 +37,8 @@
 #' plot.df <- data.frame(
 #'   vars = my.vars[-2],
 #'   value = c(2,1))
-#'   
+#' 
+#' library(ggplot2)
 #' ggplot(data = plot.df, aes(x = value, y = 1)) +
 #'   geom_point(aes(shape = vars),  fill = "orange", size = 10) +
 #'   geom_text(aes(y = 1.1, label = vars)) +

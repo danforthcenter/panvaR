@@ -118,10 +118,10 @@ get_ld_in_window <- function(qtl.df= NULL,
     
     if(pvals.in.log){
       this.clump.df <- this.clump.df %>% 
-        mutate(LOGPVAL = PVAL)
+        mutate(LOGPVAL = .data$PVAL)
     } else {
       this.clump.df <- this.clump.df %>% 
-        mutate(LOGPVAL = -log10(PVAL))
+        mutate(LOGPVAL = -log10(.data$PVAL))
     }
     
     # Might be a tie here sometimes if top snp has two traits with same pvalue, I think the [1] solves it

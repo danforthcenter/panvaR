@@ -47,6 +47,10 @@ If used, legend will not be displayed.}
 
 \item{point.fill.scale}{ggplot2 scale object, a fill scale to customize how point.color
 is displayed.}
+
+\item{plot.text.size}{numeric, numeric, size of text in plot.}
+
+\item{plot.legend.size}{numeric, size of legend. Passed to \link[ggplot2:theme]{ggplot2::theme}, \code{legend.key.size}.}
 }
 \value{
 GGplot object
