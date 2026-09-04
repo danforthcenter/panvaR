@@ -73,7 +73,8 @@ show.example = TRUE)
 plot.df <- data.frame(
   vars = my.vars[-2],
   value = c(2,1))
-  
+
+library(ggplot2)
 ggplot(data = plot.df, aes(x = value, y = 1)) +
   geom_point(aes(shape = vars),  fill = "orange", size = 10) +
   geom_text(aes(y = 1.1, label = vars)) +
@@ -82,5 +83,5 @@ ggplot(data = plot.df, aes(x = value, y = 1)) +
   ylim(.75, 1.25) +
   xlim(.5, 2.5) +
   theme(legend.position = "bottom")
-#> Error in ggplot(data = plot.df, aes(x = value, y = 1)): could not find function "ggplot"
+
 ```

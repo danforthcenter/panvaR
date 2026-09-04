@@ -83,6 +83,16 @@ plot_gene_annotation(
   ggplot2 scale object, a fill scale to customize how point.color is
   displayed.
 
+- plot.text.size:
+
+  numeric, numeric, size of text in plot.
+
+- plot.legend.size:
+
+  numeric, size of legend. Passed to
+  [ggplot2::theme](https://ggplot2.tidyverse.org/reference/theme.html),
+  `legend.key.size`.
+
 ## Value
 
 GGplot object
