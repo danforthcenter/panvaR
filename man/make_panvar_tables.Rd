@@ -59,8 +59,9 @@ window are calculated.}
 \item{snp.to.gene.vars}{character, numeric variables in gwas.res to aggregate
 by gene. For each gene, snps with a physical position with the start and
 end of the gene are considered. The maximum value for all snps within the
-gene is returned. Special values, \code{DIST}, \code{LD} and \code{LOGPVAL} can be
-included in addition to any user supplied variables.}
+gene is returned. Special values, \code{EFF}, \code{DIST}, \code{LD} and \code{LOGPVAL} can be
+included in addition to any user supplied variables. For \code{EFF} the largest
+absolute value snp effect is returned, retaining the sign.}
 
 \item{snp.to.gene.buffer}{numeric, kilobases to add to gene start and end to
 include genes that are close but not in gene. Snpeff uses 5 KB by
@@ -107,6 +108,13 @@ better' so does not need to be altered.
 Finally, a weighted average is taken based on user defined weights. The
 default weights all variables equally. The outcome is a score from 0-1 that
 ranks the snps based on these variables. see: \link{make_scores}
+
+Snp to gene: This functionality attempts to group gwas results at the gen level
+using maximum value of a given metric by default. Special cases include: \code{EFF} (effect size of SNP),
+\code{DIST} (distance to tag snp), \code{LD} (linkage disequilibrium with tag snp), and \code{LOGPVAL}. With
+these metrics the most impactful direction is chosen instead of just the maximum. So higher LD and
+-log(pvalue), smaller distance and largest absolute value for effect as effect sizes can be negative.
+``
 }
 \examples{
 # organize options

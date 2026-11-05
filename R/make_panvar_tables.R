@@ -25,8 +25,9 @@
 #' @param snp.to.gene.vars character, numeric variables in gwas.res to aggregate
 #'   by gene. For each gene, snps with a physical position with the start and
 #'   end of the gene are considered. The maximum value for all snps within the
-#'   gene is returned. Special values, `DIST`, `LD` and `LOGPVAL` can be
-#'   included in addition to any user supplied variables.
+#'   gene is returned. Special values, `EFF`, `DIST`, `LD` and `LOGPVAL` can be
+#'   included in addition to any user supplied variables. For `EFF` the largest 
+#'   absolute value snp effect is returned, retaining the sign. 
 #' @param snp.to.gene.buffer numeric, kilobases to add to gene start and end to
 #'   include genes that are close but not in gene. Snpeff uses 5 KB by
 #'   to call a snp "upstream"/"downstream" variant. This function's default is 0.
@@ -55,6 +56,13 @@
 #'   Finally, a weighted average is taken based on user defined weights. The
 #'   default weights all variables equally. The outcome is a score from 0-1 that
 #'   ranks the snps based on these variables. see: [panvaR::make_scores]
+#'   
+#'   Snp to gene: This functionality attempts to group gwas results at the gen level
+#'   using maximum value of a given metric by default. Special cases include: `EFF` (effect size of SNP),
+#'    `DIST` (distance to tag snp), `LD` (linkage disequilibrium with tag snp), and `LOGPVAL`. With 
+#'    these metrics the most impactful direction is chosen instead of just the maximum. So higher LD and 
+#'    -log(pvalue), smaller distance and largest absolute value for effect as effect sizes can be negative. 
+#'   ``
 #'
 #' @returns A named list with the following entries:
 #' - gwas: formatted gwas results.
@@ -308,17 +316,34 @@ make_panvar_tables <- function(gwas.res,
       }
     }
     
+    # don't use EFF if its present in this calculation
+    snp.to.gene.vars_sub <- snp.to.gene.vars[which(snp.to.gene.vars != "EFF")]
+    
     # get the snp to gene correspondence for whatever you want
     point.color.stat <- gwas.sub_with.genes %>% 
       filter(!is.null(.data$snp.in.gene_list)) %>% 
       unnest_longer(.data$snp.in.gene_list) %>% 
       group_by(.data$snp.in.gene_list) %>% 
       # summarize(maximum.value = max(.data[[annotation.point.variable]])) %>% 
-      summarize(across(all_of(snp.to.gene.vars), ~ max(.x, na.rm = T)))  %>% 
+      summarize(across(all_of(snp.to.gene.vars_sub), ~ max(.x, na.rm = T)))  %>% 
       rename("geneID" = "snp.in.gene_list")
+    
+    # take care of effect
+    if("EFF" %in% snp.to.gene.vars){
+      eff.stat <- gwas.sub_with.genes %>% 
+        filter(!is.null(.data$snp.in.gene_list)) %>% 
+        unnest_longer(.data$snp.in.gene_list) %>% 
+        group_by(.data$snp.in.gene_list) %>% 
+        summarize(EFF = EFF[which.max(abs(EFF))]) %>% 
+        rename("geneID" = "snp.in.gene_list")
+      
+      point.color.stat <- point.color.stat %>% 
+        left_join(eff.stat, by = "geneID")
+    }
     
     anno.out <- anno.sub %>% 
       left_join(point.color.stat, by = "geneID")
+    
   } else {
     anno.out <- anno.sub
   }

@@ -22,8 +22,10 @@ panvar.res <-
                              annotation.table = annotation.table,
                              geno.bed.filename = "1.BG_schnable23_filtered_maf0.05.maxMissing0.1_fixnames",
                              geno.bed.directory = "C:/Users/cluebbert/OneDrive - DDPSC/~Rprojects~/PGRP_both_pops/results_gwas/testing/",
-                             window = 500)
+                             window = 500,
+                             snp.to.gene.vars = c("LD", "EFF"))
 
+panvar.res$anno
 
 trial.scale <- make_consistent_scale(values = c(15, 16, 17), vars = c("AllExps", "PGRP18", "PGRP19"), type = "shape")
 
