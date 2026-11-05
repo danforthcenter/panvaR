@@ -149,12 +149,12 @@ that ranks the snps based on these variables. see:
 [make_scores](https://danforthcenter.github.io/panvaR/reference/make_scores.md)
 
 Snp to gene: This functionality attempts to group gwas results at the
-gen level using maximum value of a given metric by default. Special
+gene level using maximum value of a given metric by default. Special
 cases include: `EFF` (effect size of SNP), `DIST` (distance to tag snp),
 `LD` (linkage disequilibrium with tag snp), and `LOGPVAL`. With these
 metrics the most impactful direction is chosen instead of just the
 maximum. So higher LD and -log(pvalue), smaller distance and largest
-absolute value for effect as effect sizes can be negative. “
+absolute value for effect as effect sizes can be negative.
 
 ## Examples
 
