@@ -28,8 +28,8 @@
 #'   gene is returned. Special values, `DIST`, `LD` and `LOGPVAL` can be
 #'   included in addition to any user supplied variables.
 #' @param snp.to.gene.buffer numeric, kilobases to add to gene start and end to
-#'   include genes that are close but not in gene. Snpeff uses 5 KB by default
-#'   to call a snp "upstream"/"downstream" variant. default is 0.
+#'   include genes that are close but not in gene. Snpeff uses 5 KB by
+#'   to call a snp "upstream"/"downstream" variant. This function's default is 0.
 #' @param compute.scores boolean, if TRUE, snp scores will be computed. See
 #'   details for more info.
 #' @param score.vars character, vector of column names indicating which
