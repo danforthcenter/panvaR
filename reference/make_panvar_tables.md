@@ -91,8 +91,8 @@ make_panvar_tables(
 - snp.to.gene.buffer:
 
   numeric, kilobases to add to gene start and end to include genes that
-  are close but not in gene. Snpeff uses 5 KB by default to call a snp
-  "upstream"/"downstream" variant. default is 0.
+  are close but not in gene. Snpeff uses 5 KB by to call a snp
+  "upstream"/"downstream" variant. This function's default is 0.
 
 - compute.scores:
 
