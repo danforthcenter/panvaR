@@ -35,9 +35,9 @@ make_panvar_tables(
 - qtl.df:
 
   data.frame, table that includes list of snps to calculate LD to with
-  columns (CHR, POS, LOGPVAL), corresponding to (chromosome, physical
-  position, and -log10(p-value)). QTL are typically defined as hits
-  grouped by LD by something like `plink --clump`. See
+  columns (CHR, POS, PVAL), corresponding to (chromosome, physical
+  position, and p-value). QTL are typically defined as hits grouped by
+  LD by something like `plink --clump`. See
   [get_ld_in_window](https://danforthcenter.github.io/panvaR/reference/get_ld_in_window.md)
 
 - tag.snp:
