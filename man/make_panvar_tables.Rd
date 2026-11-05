@@ -28,8 +28,8 @@ make_panvar_tables(
 POS, PVAL), corresponding to (chromosome, physical position, and pvalue).}
 
 \item{qtl.df}{data.frame, table that includes list of snps to calculate LD to
-with columns (CHR, POS, LOGPVAL), corresponding to (chromosome, physical
-position, and -log10(p-value)). QTL are typically defined as hits grouped
+with columns (CHR, POS, PVAL), corresponding to (chromosome, physical
+position, and p-value). QTL are typically defined as hits grouped
 by LD by something like \code{plink --clump}. See \link{get_ld_in_window}}
 
 \item{tag.snp}{character, marker.ID of snp around which to calculate LD. In

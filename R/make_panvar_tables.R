@@ -3,8 +3,8 @@
 #' @param gwas.res data.frame of all gwas results, should contain columns (CHR,
 #'   POS, PVAL), corresponding to (chromosome, physical position, and pvalue).
 #' @param qtl.df data.frame, table that includes list of snps to calculate LD to
-#'   with columns (CHR, POS, LOGPVAL), corresponding to (chromosome, physical
-#'   position, and -log10(p-value)). QTL are typically defined as hits grouped
+#'   with columns (CHR, POS, PVAL), corresponding to (chromosome, physical
+#'   position, and p-value). QTL are typically defined as hits grouped
 #'   by LD by something like `plink --clump`. See [panvaR::get_ld_in_window]
 #' @param tag.snp character, marker.ID of snp around which to calculate LD. In
 #'   the form 'CHR-POS'
