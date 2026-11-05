@@ -57,12 +57,12 @@
 #'   default weights all variables equally. The outcome is a score from 0-1 that
 #'   ranks the snps based on these variables. see: [panvaR::make_scores]
 #'   
-#'   Snp to gene: This functionality attempts to group gwas results at the gen level
+#'   Snp to gene: This functionality attempts to group gwas results at the gene level
 #'   using maximum value of a given metric by default. Special cases include: `EFF` (effect size of SNP),
 #'    `DIST` (distance to tag snp), `LD` (linkage disequilibrium with tag snp), and `LOGPVAL`. With 
 #'    these metrics the most impactful direction is chosen instead of just the maximum. So higher LD and 
 #'    -log(pvalue), smaller distance and largest absolute value for effect as effect sizes can be negative. 
-#'   ``
+#'
 #'
 #' @returns A named list with the following entries:
 #' - gwas: formatted gwas results.
